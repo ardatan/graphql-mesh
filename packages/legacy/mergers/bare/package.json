@@ -35,7 +35,7 @@
     "graphql": "^16.0.0 || ^17.0.0"
   },
   "dependencies": {
-    "@graphql-mesh/merger-stitching": "^0.108.3",
+    "@graphql-mesh/merger-federation": "workspace:*",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
     "@graphql-tools/schema": "^11.0.9",

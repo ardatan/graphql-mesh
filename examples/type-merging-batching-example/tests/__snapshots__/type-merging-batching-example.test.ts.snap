@@ -2,10 +2,11 @@
 
 exports[`Type Merging and Batching Example should generate correct schema 1`] = `
 schema {query:Query}
+directive @merge(additionalArgs:String argsExpr:String key:[String!] keyArg:String keyField:String subgraph:String) repeatable on FIELD | FIELD_DEFINITION
 directive @resolveTo(additionalArgs:ResolveToSourceArgs filterBy:String keyField:String keysArg:String pubsubTopic:String requiredSelectionSet:String result:String resultType:String sourceArgs:ResolveToSourceArgs sourceFieldName:String sourceName:String sourceSelectionSet:String sourceTypeName:String valueKeyField:String) on FIELD_DEFINITION
-type Author @shareable {books:[Book] id:ID name:String}
-type Book @shareable {author:Author @resolveTo(sourceName:"AuthorService" sourceTypeName:"Query" sourceFieldName:"authors" keyField:"authorId" keysArg:"ids") authorId:ID id:ID title:String}
-type Query @shareable {author(id:ID):Author @merge(keyField:"id") authors(ids:[ID]):[Author] @merge(keyField:"id") book(id:ID):Book @merge(keyField:"id") books:[Book]}
+type Author {books:[Book] id:ID name:String}
+type Book {author:Author @resolveTo(sourceName:"AuthorService" sourceTypeName:"Query" sourceFieldName:"authors" keyField:"authorId" keysArg:"ids") authorId:ID id:ID title:String}
+type Query {author(id:ID):Author @merge(keyField:"id") authors(ids:[ID]):[Author] @merge(keyField:"id") book(id:ID):Book @merge(keyField:"id") books:[Book]}
 scalar ResolveToSourceArgs
 
 `;

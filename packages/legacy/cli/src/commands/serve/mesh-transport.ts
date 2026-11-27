@@ -7,7 +7,7 @@ import { wrapSchema } from '@graphql-tools/wrap';
 
 /**
  * In-process transport for under-the-hood supergraphs whose join URLs are
- * `mesh://legacy/<sourceName>`. Mirrors StitchingMerger's executor wiring so
+ * `mesh://legacy/<sourceName>`. Mirrors FederationMerger's executor wiring so
  * Hive Gateway can feed the same supergraph without an HTTP hop to sources.
  */
 export function createInProcessMeshTransport(rawSources: RawSourceOutput[]): Transport {
@@ -33,13 +33,13 @@ export function createInProcessMeshTransport(rawSources: RawSourceOutput[]): Tra
 
 function getSourceExecutor(rawSource: RawSourceOutput): Executor {
   if (rawSource.transforms?.length) {
+    // Same as FederationMerger: bake transforms locally; never use Mesh
+    // createProxyingResolver (re-enters the unified gateway).
     const schemaForCompose = wrapSchema({
       schema: rawSource.schema,
-      executor: rawSource.executor,
+      executor: rawSource.executor ?? createDefaultExecutor(rawSource.schema),
       transforms: rawSource.transforms,
       batch: rawSource.batch,
-      createProxyingResolver: rawSource.createProxyingResolver,
-      merge: rawSource.merge,
     });
     return createDefaultExecutor(schemaForCompose);
   }

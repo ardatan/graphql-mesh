@@ -5,7 +5,7 @@ import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import GraphQLHandler from '@graphql-mesh/graphql';
 import JsonSchemaHandler from '@graphql-mesh/json-schema';
 import BareMerger from '@graphql-mesh/merger-bare';
-import StitchingMerger from '@graphql-mesh/merger-stitching';
+import FederationMerger from '@graphql-mesh/merger-federation';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { defaultImportFn } from '@graphql-mesh/utils';
 import { makeExecutableSchema } from '@graphql-tools/schema';
@@ -19,7 +19,7 @@ describe('getMesh', () => {
   let cache: InMemoryLRUCache;
   let pubsub: MemPubSub;
   let store: MeshStore;
-  let merger: StitchingMerger;
+  let merger: FederationMerger;
   beforeEach(() => {
     cache = new InMemoryLRUCache();
     pubsub = new MemPubSub();
@@ -27,7 +27,7 @@ describe('getMesh', () => {
       readonly: false,
       validate: false,
     });
-    merger = new StitchingMerger({
+    merger = new FederationMerger({
       store,
       cache,
       pubsub,
@@ -100,7 +100,7 @@ describe('getMesh', () => {
         log,
         async importFn(moduleId) {
           if (config.delayImport) {
-            await new Promise(r => setTimeout(r, 1));
+            await new Promise(resolve => setTimeout(resolve, 1));
           }
           if (moduleId.endsWith(`schema${config.suffix}.ts`)) {
             return createGraphQLSchema(config);
@@ -113,6 +113,8 @@ describe('getMesh', () => {
   }
 
   it('handle sources with different query type names', async () => {
+    // Distinct root field names per source: Federation rejects overlapping
+    // Subscription fields (cannot be @shareable), so suffix field names.
     const mesh = await getMesh({
       cache,
       pubsub,
@@ -121,8 +123,8 @@ describe('getMesh', () => {
         createGraphQLSource({
           suffix: i.toString(),
           suffixRootTypeNames: true,
-          suffixFieldNames: false,
-          suffixResponses: false,
+          suffixFieldNames: true,
+          suffixResponses: true,
         }),
       ),
       merger,
@@ -130,9 +132,9 @@ describe('getMesh', () => {
 
     expect(printSchemaWithDirectives(mesh.schema)).toMatchInlineSnapshot(`
 schema {query:Query mutation:Mutation subscription:Subscription}
-type Query @shareable {hello:String}
-type Mutation @shareable {bye:String}
-type Subscription {wave:String}
+type Query {hello0:String hello1:String hello2:String}
+type Mutation {bye0:String bye1:String bye2:String}
+type Subscription {wave0:String wave1:String wave2:String}
 
 `);
 
@@ -148,10 +150,14 @@ type Subscription {wave:String}
     );
 
     expect(result).toMatchInlineSnapshot(`
-      {
-        "data": {},
-      }
-    `);
+{
+  "data": {
+    "hello0": "Hello from service0",
+    "hello1": "Hello from service1",
+    "hello2": "Hello from service2",
+  },
+}
+`);
   });
 
   it('can stitch a mutation field to a query field', async () => {

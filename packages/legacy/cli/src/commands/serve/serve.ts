@@ -184,9 +184,7 @@ export async function serveMesh(
     let gateway: GatewayRuntime | undefined;
 
     if (hasSupergraph) {
-      log.info(
-        `Starting Hive Gateway with under-the-hood supergraph (${supergraphGraphqlPath})`,
-      );
+      log.info(`Starting Hive Gateway with under-the-hood supergraph (${supergraphGraphqlPath})`);
       const mesh = await getBuiltMesh();
       gateway = createGatewayRuntime({
         supergraph: supergraphGraphqlPath,

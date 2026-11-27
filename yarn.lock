@@ -8912,6 +8912,7 @@ __metadata:
     "@graphql-mesh/cache-localforage": "npm:^0.108.3"
     "@graphql-mesh/cross-helpers": "npm:^0.4.18"
     "@graphql-mesh/merger-bare": "npm:^0.108.3"
+    "@graphql-mesh/merger-federation": "workspace:*"
     "@graphql-mesh/merger-stitching": "npm:^0.108.3"
     "@graphql-mesh/runtime": "npm:^0.109.3"
     "@graphql-mesh/store": "npm:^0.107.3"
@@ -9144,7 +9145,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@graphql-mesh/merger-bare@workspace:packages/legacy/mergers/bare"
   dependencies:
-    "@graphql-mesh/merger-stitching": "npm:^0.108.3"
+    "@graphql-mesh/merger-federation": "workspace:*"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@graphql-tools/schema": "npm:^11.0.9"
@@ -9156,9 +9157,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@graphql-mesh/merger-stitching@npm:^0.108.3, @graphql-mesh/merger-stitching@workspace:packages/legacy/mergers/stitching":
+"@graphql-mesh/merger-federation@workspace:*, @graphql-mesh/merger-federation@workspace:packages/legacy/mergers/federation":
   version: 0.0.0-use.local
-  resolution: "@graphql-mesh/merger-stitching@workspace:packages/legacy/mergers/stitching"
+  resolution: "@graphql-mesh/merger-federation@workspace:packages/legacy/mergers/federation"
   dependencies:
     "@graphql-hive/logger": "npm:^1.2.0"
     "@graphql-mesh/fusion-composition": "workspace:*"
@@ -9167,10 +9168,20 @@ __metadata:
     "@graphql-mesh/transport-common": "workspace:*"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
-    "@graphql-tools/delegate": "npm:^13.0.0"
-    "@graphql-tools/stitch": "workspace:*"
     "@graphql-tools/utils": "npm:^13.2.2"
     "@graphql-tools/wrap": "workspace:*"
+    graphql: "npm:17.1.0"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    graphql: ^16.0.0 || ^17.0.0
+  languageName: unknown
+  linkType: soft
+
+"@graphql-mesh/merger-stitching@npm:^0.108.3, @graphql-mesh/merger-stitching@workspace:packages/legacy/mergers/stitching":
+  version: 0.0.0-use.local
+  resolution: "@graphql-mesh/merger-stitching@workspace:packages/legacy/mergers/stitching"
+  dependencies:
+    "@graphql-mesh/merger-federation": "workspace:*"
     graphql: "npm:17.1.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -10037,7 +10048,6 @@ __metadata:
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
     "@graphql-tools/delegate": "npm:^13.0.0"
-    "@graphql-tools/stitching-directives": "npm:^5.0.0"
     graphql: "npm:17.1.0"
     tslib: "npm:^2.4.0"
   peerDependencies:

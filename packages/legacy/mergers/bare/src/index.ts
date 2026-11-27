@@ -1,29 +1,23 @@
-import type { GraphQLSchema } from 'graphql';
-import StitchingMerger from '@graphql-mesh/merger-stitching';
-import type {
-  MeshMerger,
-  MeshMergerContext,
-  MeshMergerOptions,
-  RawSourceOutput,
-} from '@graphql-mesh/types';
+import FederationMerger from '@graphql-mesh/merger-federation';
+import type { MeshMerger, MeshMergerContext, MeshMergerOptions } from '@graphql-mesh/types';
 import { applySchemaTransforms, extendSchemaPreservingExtensions } from '@graphql-mesh/utils';
-import { addResolversToSchema, mergeSchemas } from '@graphql-tools/schema';
+import { addResolversToSchema } from '@graphql-tools/schema';
 import { asArray, mapSchema } from '@graphql-tools/utils';
 
 export default class BareMerger implements MeshMerger {
   name = 'bare';
-  private stitchingMerger: StitchingMerger;
+  private federationMerger: FederationMerger;
   constructor(private options: MeshMergerOptions) {}
 
   handleSingleWrappedExtendedSource(mergerCtx: MeshMergerContext) {
-    // switch to stitching merger
-    this.name = 'stitching';
+    // switch to federation merger (compose + in-process executors)
+    this.name = 'federation';
     this.options.log.debug(
-      `Switching to Stitching merger due to the transforms and additional resolvers`,
+      `Switching to Federation merger due to the transforms and additional resolvers`,
     );
-    this.options.log = this.options.log.child({ proxy: 'stitching' });
-    this.stitchingMerger = this.stitchingMerger || new StitchingMerger(this.options);
-    return this.stitchingMerger.getUnifiedSchema(mergerCtx);
+    this.options.log = this.options.log.child({ proxy: 'federation' });
+    this.federationMerger = this.federationMerger || new FederationMerger(this.options);
+    return this.federationMerger.getUnifiedSchema(mergerCtx);
   }
 
   handleSingleRegularSource({ rawSources: [rawSource], typeDefs, resolvers }: MeshMergerContext) {
@@ -77,41 +71,7 @@ export default class BareMerger implements MeshMerger {
       }
       return this.handleSingleRegularSource({ rawSources, typeDefs, resolvers });
     }
-    const sourceMap = new Map<RawSourceOutput, GraphQLSchema>();
-    this.options.log.debug(`Applying transforms for each source`);
-    const schemas = rawSources.map(source => {
-      let schema = source.schema;
-      let sourceLevelSchema = source.schema;
-
-      schema = applySchemaTransforms(schema, undefined, schema, source.transforms);
-
-      // After that step, it will be considered as root level schema
-      sourceLevelSchema = schema;
-
-      sourceMap.set(source, sourceLevelSchema);
-
-      return schema;
-    });
-
-    this.options.log.debug(`Merging sources`);
-    // Connectors/Mesh may stamp directive *apps* via extensions without
-    // GraphQLDirective defs (Apollo-like loader SDL). Skip SDL validation.
-    const unifiedSchema = mergeSchemas({
-      schemas,
-      typeDefs,
-      resolvers,
-      assumeValid: true,
-      assumeValidSDL: true,
-    });
-
-    this.options.log.debug(`Attaching sources to the unified schema`);
-    unifiedSchema.extensions = unifiedSchema.extensions || {};
-    Object.defineProperty(unifiedSchema.extensions, 'sourceMap', {
-      get: () => sourceMap,
-    });
-
-    return {
-      schema: unifiedSchema,
-    };
+    // Multi-source: federation is the only merger path.
+    return this.handleSingleWrappedExtendedSource({ rawSources, typeDefs, resolvers });
   }
 }

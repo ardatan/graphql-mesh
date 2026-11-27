@@ -518,7 +518,8 @@ export async function processConfig(
   // Decide what is the default merger
   if (!mergerName) {
     if (config.sources.length > 1) {
-      mergerName = 'stitching';
+      // Federation/join supergraph under the hood (Hive Gateway–aligned).
+      mergerName = 'federation';
     } else {
       // eslint-disable-next-line no-labels
       resolversLoop: for (const resolversObj of additionalResolvers || []) {
@@ -528,9 +529,9 @@ export async function processConfig(
             for (const fieldName in fieldResolvers) {
               const fieldResolveObj = fieldResolvers[fieldName];
               if (typeof fieldResolveObj === 'object') {
-                // selectionSet needs stitching merger even if there is a single source
+                // selectionSet needs federation merger even if there is a single source
                 if (fieldResolveObj.selectionSet != null) {
-                  mergerName = 'stitching';
+                  mergerName = 'federation';
                   // eslint-disable-next-line no-labels
                   break resolversLoop;
                 }

@@ -1,0 +1,60 @@
+{
+  "name": "@graphql-mesh/merger-federation",
+  "version": "0.108.3",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "ardatan/graphql-mesh",
+    "directory": "packages/legacy/mergers/federation"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
+  "peerDependencies": {
+    "graphql": "^16.0.0 || ^17.0.0"
+  },
+  "dependencies": {
+    "@graphql-hive/logger": "^1.2.0",
+    "@graphql-mesh/fusion-composition": "workspace:*",
+    "@graphql-mesh/fusion-runtime": "workspace:*",
+    "@graphql-mesh/store": "^0.107.3",
+    "@graphql-mesh/transport-common": "workspace:*",
+    "@graphql-mesh/types": "^0.107.3",
+    "@graphql-mesh/utils": "^0.107.3",
+    "@graphql-tools/utils": "^13.2.2",
+    "@graphql-tools/wrap": "workspace:*",
+    "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "graphql": "17.1.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
+  }
+}
