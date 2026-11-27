@@ -16,12 +16,6 @@ const DIRECTIVES = {
     anchor: 'connect',
     description: 'Named HTTP source for @connect (HTTP/REST Connectors).',
   },
-  merge: {
-    label: '@merge',
-    anchor: 'merge',
-    description:
-      'Legacy Mesh entity hop (keyField / keyArg); runtime back-compat -- prefer Federation @lookup.',
-  },
   lookup: {
     label: '@lookup',
     anchor: 'lookup',
