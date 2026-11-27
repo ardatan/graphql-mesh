@@ -19,8 +19,8 @@ Typical `mesh.config.ts`:
 
 - `subgraphs` entries with a `sourceHandler` (loader) **or** a hand-written `schema` file / SDL
   string.
-- Shared options: optional [transforms](/v2/transforms), additional type defs, output mode
-  (`graphql` / binary formats as supported).
+- Shared options: optional [Transform Subgraph](/v2/transforms) (Automatic or By hand), additional
+  type defs, output mode (`graphql` / binary formats as supported).
 - Optional `ignoreSemanticConventions` (see below).
 
 ```ts
@@ -56,8 +56,8 @@ mesh-compose -o supergraph.graphql
 ```
 
 Generated and hand-written subgraphs share the same compose and
-[schema registry](/v2/concepts/schema-registry) path. Transforms are optional -- skip them when
-Hand-write or Generate-then-edit already owns the SDL.
+[schema registry](/v2/concepts/schema-registry) path. [Transform Subgraph](/v2/transforms) is
+optional -- skip it when Hand-write or Generate-then-edit already owns the SDL.
 
 ## Hand-written SDL
 
@@ -99,8 +99,8 @@ Naming is matched in snake_case. Typical patterns (key field often `id`):
 Examples: `Query.bookById`, OpenAPI Billing `getCustomer` (`Query.getCustomer` + `entity: true`).
 
 If your schema almost matches but names differ, use a
-[rename / naming-convention transform](/v2/transforms) so the field fits the convention -- or stamp
-entities yourself with `createFederationTransform` (see
+[rename / naming-convention transform](/v2/transforms/automatic) so the field fits the convention --
+or stamp entities yourself with `createFederationTransform` (see
 [Federation](/v2/concepts/federation#entity-resolution)).
 
 Disable with `ignoreSemanticConventions: true` on the compose config when you want full manual
@@ -166,19 +166,21 @@ Mesh / Connect directives must survive composition via `@composeDirective` **and
 [Schema registry](/v2/concepts/schema-registry) and [Directives](/v2/directives#federation).
 
 Worked multi-subgraph config: [Music Store Example](/v2/examples/music-store) (catalog + reviews +
-recommendations, then compose all). Serve: [Serve Supergraph](/v2/serve).
+recommendations, then compose all). Serve the composed graph: [Serve Supergraph](/v2/serve). Serve
+one subgraph as a Federation endpoint: [Serve Subgraph](/v2/serve-subgraph).
 
 <Callout type="info">
   First-class hand-written SDL Compose + registry helpers continue to land in Mesh releases; the
   `--subgraph` emit + registry CLI pattern above is the stable consumer UX. To **execute** Mesh
   subgraph SDL in your own GraphQL server (Yoga, ...), use `buildSubgraphSchema` from
   `@graphql-mesh/subgraph` -- same input for Generate, Generate-then-edit, and Hand-write
-  ([buildSubgraphSchema](/v2/guides/build-subgraph-schema)).
+  ([buildSubgraphSchema](/v2/guides/build-subgraph-schema) / [Serve Subgraph](/v2/serve-subgraph)).
 </Callout>
 
 <Cards>
   <Cards.Card arrow title="Composition (concept)" href="/v2/concepts/composition" />
   <Cards.Card arrow title="buildSubgraphSchema" href="/v2/guides/build-subgraph-schema" />
+  <Cards.Card arrow title="Serve Subgraph" href="/v2/serve-subgraph" />
   <Cards.Card arrow title="Schema registry" href="/v2/concepts/schema-registry" />
   <Cards.Card arrow title="Architecture" href="/v2/architecture" />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />

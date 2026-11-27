@@ -1,0 +1,44 @@
+---
+description: Transform Subgraph -- reshape Mesh subgraph SDL automatically or by hand
+---
+
+import { Cards } from '@theguild/components'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
+
+# Transform Subgraph
+
+After you have subgraph SDL (from a [loader](/v2/paths/generate), a checked-in edit, or
+[hand-written](/v2/paths/hand-write) GraphQL), you may still need to reshape names, drop noise, or
+stamp Federation annotations before [Composition](/v2/compose). **Transform Subgraph** is that step
+-- optional, per subgraph, two ways:
+
+| Approach                              | What you change                                                              | When it fits                                                                                      |
+| ------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| [Automatic](/v2/transforms/automatic) | `transforms: [...]` in Compose config (`createRenameTransform`, filter, ...) | Repeatable renames / filters / Federation stamps without touching the `.graphql`                  |
+| [By hand](/v2/transforms/by-hand)     | Edit the subgraph `.graphql` yourself                                        | You want the public schema as committed SDL -- binders, keys, and fields updated in the same file |
+
+<V2FlowDiagram
+  ariaLabel="Transform Subgraph inside Mesh Compose"
+  caption="Optional reshape before the subgraph joins the supergraph."
+  steps={[
+    { title: 'Input SDL', lines: ['Loader or file'] },
+    { title: 'Transform', lines: ['Automatic or by hand'], accent: true },
+    { title: 'Annotated SDL', accent: true },
+    { title: 'Composition', lines: ['Supergraph'] }
+  ]}
+/>
+
+Skip Transform Subgraph when Generate-then-edit or Hand-write already owns the public names you
+want. Prefer **Automatic** for small, repeatable rewrites that should stay in config. Prefer **By
+hand** when the edit is the source of truth -- worked SDL diffs live on that page.
+
+Root-level (supergraph-wide) transforms are not the default story yet; reshape on the subgraph that
+owns the names you want to change.
+
+<Cards>
+  <Cards.Card arrow title="Automatic" href="/v2/transforms/automatic" />
+  <Cards.Card arrow title="By hand" href="/v2/transforms/by-hand" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
+  <Cards.Card arrow title="Generate-then-edit" href="/v2/paths/generate-then-edit" />
+  <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
+</Cards>

@@ -1,0 +1,100 @@
+---
+description: Automatic Transform Subgraph -- Mesh Compose transforms in mesh.config.ts
+---
+
+import { Cards } from '@theguild/components'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
+
+# Automatic
+
+**Automatic** Transform Subgraph means Compose applies ordered `transforms` from `mesh.config.ts` to
+a subgraph's SDL before it joins the supergraph. You keep the loader emit or committed file as
+input; the public GraphQL names come from config. Prefer this when the rewrite is small and
+repeatable. For editing the `.graphql` itself, see [By hand](/v2/transforms/by-hand).
+
+<V2FlowDiagram
+  ariaLabel="Automatic transforms pipeline inside Mesh Compose"
+  caption="Config-driven rewrites; binders follow GraphQL renames."
+  steps={[
+    { title: 'Input SDL', lines: ['Loader or file'] },
+    { title: 'transforms: []', lines: ['Ordered'], accent: true },
+    { title: 'Annotated SDL', accent: true },
+    { title: 'Composition', lines: ['Supergraph'] }
+  ]}
+/>
+
+1. Compose loads each subgraph (generated or `schema:` file).
+2. If that subgraph lists `transforms`, Compose applies them **in order** to that subgraph's schema
+   before / as it is annotated for composition.
+3. Transformed SDL is what joins the supergraph -- including rewritten `$args` / `$this` inside
+   `@connect`, `@source`, and Mesh protocol directives (`@protobuf__rpc`, `@sql`, ...) so Hive
+   Gateway and Apollo Router dual-run stay valid.
+
+## Concrete example
+
+Loader (or hand SDL) exposes `Query.moviesByYear(year:)`. Public API should say `releaseYear`
+without regenerating or hand-editing every `@protobuf__rpc(args:)` line:
+
+```ts
+{
+  name: 'movies',
+  schema: './movies.graphql', // or sourceHandler: load...
+  transforms: [
+    createRenameTransform({
+      argRenamer: ({ fieldName, argName }) =>
+        fieldName === 'moviesByYear' && argName === 'year' ? 'releaseYear' : argName,
+    }),
+  ],
+}
+```
+
+After Compose, clients call `moviesByYear(releaseYear: ...)` (`Query.moviesByYear(releaseYear:)`)
+and the directive `args` mapping tracks `$args.releaseYear`. Same idea for OpenAPI / `@connect` emit
+with `createPrefixTransform` or naming-convention, and for hand-written protobuf SDL plus a rename
+transform.
+
+## When automatic helps
+
+- **Rename / prefix / naming-convention** on output you mostly like (including shaping fields toward
+  [semantic ById conventions](/v2/compose#semantic-conventions)).
+- **Federation transform** (`createFederationTransform`) to annotate a non-federated GraphQL source
+  with `@key` + `resolveReference` -- config keys are `Type` / `Type.field` today; see
+  [Entity resolution](/v2/concepts/federation#entity-resolution).
+- **Filter / wrap** generated noise before a first review. Filter patterns such as `Query.*` or
+  `Type.!User` are Mesh **schema selectors** (globs), not single-element coordinates -- see
+  [Schema Coordinates](/v2/guides/schema-coordinates).
+- Keep dual-run valid when GraphQL names change but directive mappings must follow.
+
+## When to skip (or go By hand)
+
+- You are already **editing** emitted SDL ([Generate-then-edit](/v2/paths/generate-then-edit) or
+  [By hand](/v2/transforms/by-hand)).
+- You are **hand-writing** protocol SDL with the public names you want
+  ([Hand-write](/v2/paths/hand-write)).
+- Selection shape, entity rules, or join logic need real authorship -- transforms will not replace
+  that.
+
+## Applicability matrix
+
+| Transform family                         | Rewrites `@connect` / `@source` binders     | Rewrites Mesh protocol dirs (`@sql`, `@protobuf__rpc`, ...) | Dual-run impact                                      |
+| ---------------------------------------- | ------------------------------------------- | ----------------------------------------------------------- | ---------------------------------------------------- |
+| Rename / naming-convention / prefix      | Yes (`$args` / `$this` follow)              | Yes where binders exist                                     | Keep Connect-compatible when you only rename GraphQL |
+| Filter / prune                           | Drops fields/types; remaining Connect stays | Same                                                        | Smaller Connect surface still Router-ok              |
+| Federation (`createFederationTransform`) | N/A (adds `@key` / resolveReference)        | Same on GraphQL sources                                     | Hive Gateway entity path; not a Connect rewrite      |
+| Hoist / encapsulate / wrap               | Case-by-case; re-read SDL after             | Case-by-case                                                | Re-check Apollo Router if Connect shape changes      |
+
+Always re-[read the SDL](/v2/guides/reading-generated-sdl) after transforms: binders must still
+match the public GraphQL names.
+
+## Deeper catalog
+
+Individual transform reference today: [v1 Transforms](/v1/transforms) (v2 per-transform pages will
+replace this link).
+
+<Cards>
+  <Cards.Card arrow title="By hand" href="/v2/transforms/by-hand" />
+  <Cards.Card arrow title="Transform Subgraph overview" href="/v2/transforms" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
+  <Cards.Card arrow title="Generate-then-edit" href="/v2/paths/generate-then-edit" />
+  <Cards.Card arrow title="v1 Transforms reference" href="/v1/transforms" />
+</Cards>

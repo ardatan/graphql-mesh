@@ -8,7 +8,9 @@ import { ConceptRef, ProtocolRef } from '../../../components/v2-directive-ref'
 # Serve Supergraph
 
 After [Composition](/v2/compose) you have subgraph or supergraph GraphQL SDL. **Serve Supergraph**
-means running that SDL on a <ConceptRef name="gateway">federation gateway</ConceptRef> runtime.
+means running the **composed** SDL on a <ConceptRef name="gateway">federation gateway</ConceptRef>
+runtime. To run one Mesh subgraph as its own Federation endpoint (Hive Gateway subgraph mode or
+`buildSubgraphSchema` on Yoga / any GraphQL server), see [Serve Subgraph](/v2/serve-subgraph).
 
 | Runtime                                        | Role in Mesh docs               | What it executes                                                                                                                                                                                                |
 | ---------------------------------------------- | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -34,6 +36,7 @@ Concept overview: [Gateway](/v2/concepts/gateway). Worked example:
 <Cards>
   <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
   <Cards.Card arrow title="Apollo Router" href="/v2/serve/apollo-router" />
+  <Cards.Card arrow title="Serve Subgraph" href="/v2/serve-subgraph" />
   <Cards.Card arrow title="Composition" href="/v2/compose" />
   <Cards.Card arrow title="HTTP/REST Connectors" href="/v2/concepts/connectors" />
 </Cards>
