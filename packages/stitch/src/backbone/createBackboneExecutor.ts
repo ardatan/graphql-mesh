@@ -156,22 +156,13 @@ export function createBackboneExecutor(
       return schemaExecutor(request);
     }
 
-    // Variables: trust the true entry. Stock graphql-js execute already
-    // schema-coerces before root proxies call us with
-    // `getCoercedVariableValues(info.variableValues)` - do NOT re-run
-    // getVariableValues here (double-coerce custom scalars + HTTP cost).
-    // Defaults-only fill keeps @skip/@include safe for direct executor callers.
-    const op = operation;
-    const coerced = op
-      ? coerceOperationVariables(op, request.variables ?? {})
-      : { ...(request.variables ?? {}) };
-    const requestWithVars: ExecutionRequest = {
+    const plan = getCachedPlan(request);
+    const op = operation ?? plan.operation;
+    const coerced = coerceOperationVariables(op, request.variables ?? {});
+    const requestWithCoercedVars: ExecutionRequest = {
       ...request,
       variables: coerced,
     };
-
-    const plan = getCachedPlan(requestWithVars);
-    const planOp = op ?? plan.operation;
 
     if (plan.incomplete) {
       return {
@@ -186,7 +177,7 @@ export function createBackboneExecutor(
     }
 
     return handleMaybePromise(
-      () => executeStitchPlan(schema, plan, requestWithVars),
+      () => executeStitchPlan(schema, plan, requestWithCoercedVars),
       (result: ExecutionResult) => {
         if (isAsyncIterable(result)) {
           return result;
@@ -195,7 +186,7 @@ export function createBackboneExecutor(
           ...result,
           data: projectDataToOperation(
             schema,
-            planOp,
+            op,
             plan.fragments,
             coerced,
             result.data as any,
