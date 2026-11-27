@@ -11,25 +11,25 @@ export function DatasourcesIllustration({ className }: { className?: string }) {
     >
       <div className="[@media(width>=760px)]:w-[400px]">
         <Heading as="h3" size="md">
-          Connect datasources
+          Build Federation subgraphs
         </Heading>
         <p className="mt-4 text-white-800">
-          Transform non-GraphQL services into GraphQL-ready interfaces with Mesh, enhancing API
-          consistency.
+          Generate Mesh subgraph SDL from any API -- REST, SQL, gRPC, and more -- then compose and
+          run with any Federation Gateway.
         </p>
         <ul className="flex flex-col gap-6 lg:gap-8 mt-10 lg:mt-12">
           {[
             {
               icon: <TiltMeterIcon />,
-              text: 'Automate the creation of type-safe GraphQL APIs from any data source, ensuring reliability and developer efficiency.',
+              text: 'Generate, Hand-write, or Generate-then-edit Federation-ready subgraphs from the sources you already have.',
             },
             {
               icon: <PaperclipIcon />,
-              text: 'Enhance data sources by integrating additional data with full type safety, using Mesh.',
+              text: 'Compose those subgraphs into a supergraph without locking into one registry or gateway.',
             },
             {
               icon: <ScanLine />,
-              text: 'Extend the capabilities of your schema with Mesh by mocking, caching, and transforming data seamlessly.',
+              text: 'Serve on Hive Gateway, Apollo Router, or any Federation-compatible gateway -- Mesh stays independent.',
             },
           ].map(({ icon, text }) => (
             <li key={text} className="flex items-start gap-4">
@@ -74,12 +74,10 @@ function Illustration({ className }: { className?: string }) {
       <Diagonal variant="right" className="col-start-2 -row-end-2 col-span-2" />
       <Diagonal variant="middle" className="col-start-5 -row-end-2" />
       <Diagonal variant="left" className="col-start-6 -row-end-2 col-span-2 justify-self-end" />
-      <SmallNode className="col-span-2 col-start-0 -row-end-1 self-start">Books Rest API</SmallNode>
-      <SmallNode className="col-span-2 col-start-4 -row-end-1 self-start">
-        Authors gRPC API
-      </SmallNode>
+      <SmallNode className="col-span-2 col-start-0 -row-end-1 self-start">OpenAPI / REST</SmallNode>
+      <SmallNode className="col-span-2 col-start-4 -row-end-1 self-start">SQL / gRPC</SmallNode>
       <SmallNode className="col-span-2 col-start-7 -row-end-1 self-start">
-        Stores GraphQL API
+        GraphQL subgraph
       </SmallNode>
     </article>
   );
