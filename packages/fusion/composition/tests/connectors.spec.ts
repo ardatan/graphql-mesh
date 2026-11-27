@@ -775,7 +775,7 @@ describe('Federation Connectors composition', () => {
     expect(lifted).toContain('directive @transport');
     expect(compactGql(lifted)).toMatch(/connect\/v0\.4",import:\["@connect","@source"\]/);
     expect(compactGql(lifted)).toMatch(
-      /specs\.graphql-mesh\.com\/.*\/v0\.1".*import:\["@transport"\]/,
+      /specs\.graphql-mesh\.dev\/.*\/v0\.1".*import:\["@transport"\]/,
     );
     expect(() => buildSchema(lifted, { assumeValidSDL: true })).not.toThrow();
   });
@@ -917,7 +917,7 @@ describe('Federation Connectors composition', () => {
     expect(sdl).not.toMatch(/@meshSource\s*\(/);
     // Join-carried meshSource still keeps the aliased Mesh `@link` import.
     expect(compactGql(sdl)).toMatch(
-      /specs\.graphql-mesh\.com\/core\/v0\.1",import:\[[^\]]*\{name:"@source",as:"@meshSource"\}/,
+      /specs\.graphql-mesh\.dev\/core\/v0\.1",import:\[[^\]]*\{name:"@source",as:"@meshSource"\}/,
     );
     expect(sdl).toMatch(/@join__directive\([\s\S]*name: "source"[\s\S]*name: "rest"/);
     expect(sdl).toMatch(/@join__directive\([\s\S]*name: "connect"/);

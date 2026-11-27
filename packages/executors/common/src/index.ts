@@ -72,3 +72,5 @@ export interface UpstreamErrorExtensions {
     body?: unknown;
   };
 }
+
+export { copyJson } from './copyJson.js';
