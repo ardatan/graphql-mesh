@@ -156,14 +156,15 @@ Full package comparison vs `@apollo/subgraph`:
 
 ## When this is useful
 
-| Situation                                                           | Prefer                                                      |
-| ------------------------------------------------------------------- | ----------------------------------------------------------- |
-| One Mesh supergraph, all transports on Hive                         | [Serve Supergraph](/v2/serve) -- skip Serve Subgraph        |
-| Connect-only graph, dual-run Hive + Apollo Router                   | Serve Supergraph; Router executes Connect from composed SDL |
-| Non-Connect Mesh subgraph behind Apollo Router (or another gateway) | **Hive Gateway subgraph** option                            |
-| Yoga / custom Node server as the Federation subgraph                | **`buildSubgraphSchema`**                                   |
-| Mix Mesh directives with code `@lookup` (or other) resolvers        | **`buildSubgraphSchema` + `resolvers`**                     |
-| You only need published SDL for composition / registry              | Compose + registry -- no subgraph process                   |
+| Situation                                                           | Prefer                                                                                                                                             |
+| ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| One Mesh supergraph, all transports on Hive                         | [Serve Supergraph](/v2/serve) -- skip Serve Subgraph                                                                                               |
+| Connect-only graph, dual-run Hive + Apollo Router                   | Serve Supergraph; Router executes Connect from composed SDL                                                                                        |
+| Community Connectors SDL as a Fed peer in an existing fleet         | **Hive Gateway subgraph** or **`buildSubgraphSchema`** -- [Community Connectors](/v2/examples/community-connectors#serve-as-a-federation-subgraph) |
+| Non-Connect Mesh subgraph behind Apollo Router (or another gateway) | **Hive Gateway subgraph** option                                                                                                                   |
+| Yoga / custom Node server as the Federation subgraph                | **`buildSubgraphSchema`**                                                                                                                          |
+| Mix Mesh directives with code `@lookup` (or other) resolvers        | **`buildSubgraphSchema` + `resolvers`**                                                                                                            |
+| You only need published SDL for composition / registry              | Compose + registry -- no subgraph process                                                                                                          |
 
 Upstream IA: [Build your Subgraph](/v2/paths) → optional [Transform Subgraph](/v2/transforms) →
 **Serve Subgraph** (this page) and/or [Serve Supergraph](/v2/serve).
@@ -171,6 +172,7 @@ Upstream IA: [Build your Subgraph](/v2/paths) → optional [Transform Subgraph](
 <Cards>
   <Cards.Card arrow title="FAQ" href="/v2/faq" />
   <Cards.Card arrow title="buildSubgraphSchema" href="/v2/guides/build-subgraph-schema" />
+  <Cards.Card arrow title="Community Connectors" href="/v2/examples/community-connectors" />
   <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
   <Cards.Card arrow title="Serve Supergraph" href="/v2/serve" />
   <Cards.Card arrow title="Build your Subgraph" href="/v2/paths/generate" />
