@@ -1,0 +1,132 @@
+---
+description:
+  Mesh v2 FAQ -- Apollo Router with SQL, Hive Gateway subgraph, buildSubgraphSchema, transforms, and
+  more
+---
+
+import { Callout, Cards } from '@theguild/components'
+
+# FAQ
+
+Short answers for common Mesh v2 setup questions. Prefer the linked pages when you need the full
+story.
+
+<Callout type="info">
+  Draft FAQ -- scenarios mirror the current IA ([Build your Subgraph](/v2/paths) → [Transform
+  Subgraph](/v2/transforms) → [Serve Subgraph](/v2/serve-subgraph) → [Serve Supergraph](/v2/serve)).
+</Callout>
+
+## I have Apollo Router but a SQL subgraph -- what do I do?
+
+Apollo Router executes **HTTP/REST Connectors** (`@connect` / `@source`) from composed SDL. It does
+**not** execute Mesh protocol directives such as `@sql`, `@protobuf__rpc`, or `@mongo`.
+
+Pick one:
+
+1. **Hive Gateway as the supergraph** for the full graph (SQL + anything else) --
+   [Serve Supergraph: Hive Gateway](/v2/serve/hive-gateway).
+2. **Hive Gateway subgraph proxy**: run the SQL subgraph on Hive Gateway; point Apollo Router (or
+   another gateway) at that subgraph URL for Federation --
+   [Serve Subgraph](/v2/serve-subgraph#hive-gateway-as-a-subgraph) /
+   [Architecture: patterns](/v2/architecture#patterns).
+3. **`buildSubgraphSchema`**: host the SQL subgraph SDL on Yoga (or any GraphQL server) as a
+   Federation peer -- [buildSubgraphSchema](/v2/guides/build-subgraph-schema).
+
+Same answer for other non-Connect protocols (Protobuf, Mongo, Neo4j, binary Thrift, ...).
+Connect-only slices can still dual-run on Apollo Router beside a Hive-served Mesh surface --
+[Music Store Example](/v2/examples/music-store).
+
+## Do I need Hive Gateway if everything is Connect?
+
+No. For Connect-compatible supergraphs you can serve on **Apollo Router**, **Hive Gateway**, or both
+(dual-run). Hive Gateway remains preferred when any Mesh protocol transport is in the supergraph.
+See [Serve Supergraph](/v2/serve) / [Apollo Router](/v2/serve/apollo-router).
+
+## When should I Serve Subgraph instead of Serve Supergraph?
+
+**Serve Supergraph** = one gateway process runs the composed graph. That is the default.
+
+**Serve Subgraph** when you need a **standalone Federation subgraph URL**: foreign router / mixed
+fleet, independent deploy, subgraph smoke tests, or code resolvers mixed with Mesh directives.
+Details: [Serve Subgraph](/v2/serve-subgraph).
+
+## Hive Gateway subgraph vs `buildSubgraphSchema` -- which?
+
+| Choice                                                                 | Prefer when                                                                                          |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| [Hive Gateway subgraph](/v2/serve-subgraph#hive-gateway-as-a-subgraph) | You already run Hive; same transport registration as supergraph serve; ops stay on Hive Gateway      |
+| [`buildSubgraphSchema`](/v2/guides/build-subgraph-schema)              | You want Yoga / Apollo Server / Mercurius / any GraphQL HTTP stack; or custom `resolvers` beside SDL |
+
+Both produce a Federation subgraph peer. Neither replaces [Composition](/v2/compose).
+
+## How do I add a custom `@lookup` resolver?
+
+Stamp Federation draft `@lookup` on an entity entry field that returns **one object**, then pass a
+matching resolver into `buildSubgraphSchema({ resolvers: { ... } })`. Directive-driven fields still
+come from the SDL. Use Mesh `@merge` only for **list / batch** entry fields.
+
+- [Serve Subgraph: resolvers for `@lookup`](/v2/serve-subgraph#resolvers-for-lookup)
+- [Directives: @lookup](/v2/directives#lookup) / [Directives: @merge](/v2/directives#merge)
+- [buildSubgraphSchema](/v2/guides/build-subgraph-schema)
+
+## Generate, Generate-then-edit, or Hand-write?
+
+| Path                                               | When                                                                  |
+| -------------------------------------------------- | --------------------------------------------------------------------- |
+| [Generate](/v2/paths/generate)                     | Bootstrap from OpenAPI, SQL, Mongo, protobuf, ... and read the emit   |
+| [Generate-then-edit](/v2/paths/generate-then-edit) | You dislike the shape and take ownership of the `.graphql`            |
+| [Hand-write](/v2/paths/hand-write)                 | Author Connect / protocol / Federation SDL from scratch (human or AI) |
+
+All three produce subgraph SDL that Compose, registries, and `buildSubgraphSchema` accept the same
+way. Overview: [Build your Subgraph](/v2/paths/generate).
+
+## Automatic transform or edit the SDL by hand?
+
+| Approach                              | When                                                                                          |
+| ------------------------------------- | --------------------------------------------------------------------------------------------- |
+| [Automatic](/v2/transforms/automatic) | Repeatable rename / filter / Federation stamp in `transforms: []` without touching `.graphql` |
+| [By hand](/v2/transforms/by-hand)     | The edited schema is the source of truth (binders, keys, prune in the same file)              |
+
+Skip transforms when Generate-then-edit or Hand-write already owns the public names.
+[Transform Subgraph](/v2/transforms).
+
+## Does Mesh `@merge` replace Federation `@lookup`?
+
+No. Prefer Federation draft `@lookup` / `@is` / `@internal` for **one-object** entity entry fields.
+Keep Mesh `@merge` for **list / batch** hops. They are not deprecated synonyms -- different shapes.
+[Directives](/v2/directives#lookup).
+
+## Can I use Mesh Compose with Hive / Rover composition?
+
+Yes. Mesh Compose emits Federation-compatible subgraph / supergraph SDL. You can also publish
+subgraphs to a [schema registry](/v2/concepts/schema-registry) and let Hive composition, Rover, or
+another Federation composer build the supergraph. Mesh docs center on Mesh Compose; the SDL contract
+is what matters. [Composition](/v2/compose).
+
+## How is `@graphql-mesh/subgraph` different from `@apollo/subgraph`?
+
+Same export name (`buildSubgraphSchema`), different jobs: Apollo's package Federation-wraps
+**code-first** resolvers; Mesh's package makes **Mesh subgraph SDL** (transports + entity hops)
+executable. Not drop-in replacements.
+[buildSubgraphSchema: vs `@apollo/subgraph`](/v2/guides/build-subgraph-schema#vs-apollosubgraph).
+
+## Where is the Music Store / FHIR / Microsoft Graph walkthrough?
+
+- [Music Store Example](/v2/examples/music-store) -- SQL + Connect + Protobuf, dual-run
+- [FHIR](/v2/examples/fhir) -- JSON Schema + Connect join
+- [Microsoft Graph](/v2/examples/microsoft-graph) -- OData → Connect
+
+## Coming from Mesh v1?
+
+Read [Mesh journey (v0 → v1 → v2)](/v2/guides/mesh-journey) and [Migration](/v2/guides/migration).
+v2 docs are draft; prefer [Mesh v1](/v1) for production until this section ships.
+
+<Cards>
+  <Cards.Card arrow title="Build your Subgraph" href="/v2/paths/generate" />
+  <Cards.Card arrow title="Transform Subgraph" href="/v2/transforms" />
+  <Cards.Card arrow title="Serve Subgraph" href="/v2/serve-subgraph" />
+  <Cards.Card arrow title="Serve Supergraph" href="/v2/serve" />
+  <Cards.Card arrow title="Architecture" href="/v2/architecture" />
+  <Cards.Card arrow title="buildSubgraphSchema" href="/v2/guides/build-subgraph-schema" />
+  <Cards.Card arrow title="Directives" href="/v2/directives" />
+</Cards>
