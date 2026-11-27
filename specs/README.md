@@ -1,6 +1,6 @@
-# GraphQL Mesh Directives Specification
+# GraphQL Mesh Specs
 
-Static site for the GraphQL Mesh Directives Specification hosted at
+Static site for GraphQL Mesh Specs hosted at
 [https://specs.graphql-mesh.dev](https://specs.graphql-mesh.dev).
 
 Index lists Current Specs and All Schemas. Each family page is written for schema authors and
@@ -15,7 +15,7 @@ numbered definitions, and a sibling raw `.graphql` artifact.
 | `content/<family>/v0.1.graphql`   | Directive SDL source of truth (loader / compose shapes)          |
 | `content/<family>/v0.1.docs.json` | Dual-audience prose per directive / arg (not GraphQL `"""` docs) |
 | `generate.mjs`                    | Builds `out/` HTML, Markdown twins, `llms.txt`, and copies SDL   |
-| `assets/spec.css`                 | Spec-md-like styles                                              |
+| `assets/spec.css`                 | Mesh specs styles (serifs + sticky TOC; not a spec-md build)     |
 | `out/`                            | Deploy artifact (generated in CI; local via `node generate.mjs`) |
 
 URL contract:
