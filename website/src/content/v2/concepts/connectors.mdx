@@ -45,6 +45,7 @@ same as Spec field names like `Query.review` -- see
 
 ## Short example
 
+<!-- prettier-ignore -->
 ```graphql
 type Query {
   review(id: ID!): Review
@@ -52,9 +53,9 @@ type Query {
       source: "reviews"
       http: { GET: "/reviews/{$args.id}" }
       selection: """
-      id
-      rating
-      body
+        id
+        rating
+        body
       """
     )
 }

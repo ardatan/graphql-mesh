@@ -11,6 +11,7 @@ import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 A **transport** (`@graphql-mesh/transport-*`) runs at **gateway request time**. It reads Mesh /
 Connect directives on the supergraph (or subgraph) and talks to the upstream -- SQL, HTTP Connect,
 gRPC, Thrift, ... Transports do **not** design schema;
+
 <ConceptRef name="loaders">loaders</ConceptRef> and hand SDL do that earlier.
 
 Hive Gateway loads transports from `@transport(kind: ...)` (and built-in Connect). Stock Apollo
@@ -63,6 +64,7 @@ Serve docs: [Hive Gateway](/v2/serve/hive-gateway) | [Apollo Router](/v2/serve/a
 
 Emitted / authored SDL:
 
+<!-- prettier-ignore -->
 ```graphql
 schema @transport(subgraph: "chinook", kind: "sql", location: "file:chinook.db") {
   query: Query
@@ -74,11 +76,11 @@ type Query {
       table: "tracks"
       kind: ROW
       where: """
-      TrackId: $args.id
+        TrackId: $args.id
       """
       selection: """
-      id: TrackId
-      name: Name
+        id: TrackId
+        name: Name
       """
     )
 }

@@ -86,6 +86,7 @@ Transforms that rename GraphQL args rewrite `$args` / `$this` inside these binde
 
 `Track` is a join stub (`@key` resolvable false). Reviews come from REST using `$this.id`:
 
+<!-- prettier-ignore -->
 ```graphql
 type Track @key(fields: "id", resolvable: false) {
   id: ID!
@@ -94,8 +95,8 @@ type Track @key(fields: "id", resolvable: false) {
       source: "reviews"
       http: { GET: "/reviews?trackId={$this.id}" }
       selection: """
-      id
-      rating
+        id
+        rating
       """
     )
 }
@@ -106,6 +107,7 @@ type Track @key(fields: "id", resolvable: false) {
 Composition semantic conventions (`get_<Type>` + key-typed arg matching the key field) stamp
 `entity: true` and `@key` -- Connect entity fill (loader path; hand GraphQL hops use `@lookup`):
 
+<!-- prettier-ignore -->
 ```graphql
 type Query {
   getCustomer(id: String!): Customer
@@ -113,8 +115,8 @@ type Query {
       source: "Billing"
       http: { GET: "/customers/{$args.id}" }
       selection: """
-      id
-      name
+        id
+        name
       """
       entity: true
     )
@@ -132,6 +134,7 @@ type Customer @key(fields: "id") {
 Query as the client entrypoint with `$args.userId` and adds a **type-level** `@connect` with
 `$this.id` for `_entities`:
 
+<!-- prettier-ignore -->
 ```graphql
 type Query {
   getUserById(userId: ID!): User
@@ -139,8 +142,8 @@ type Query {
       source: "rest"
       http: { GET: "/users/{$args.userId}" }
       selection: """
-      id
-      name
+        id
+        name
       """
     )
 }
@@ -151,8 +154,8 @@ type User
     source: "rest"
     http: { GET: "/users/{$this.id}" }
     selection: """
-    id
-    name
+      id
+      name
     """
   ) {
   id: ID!
@@ -597,6 +600,7 @@ extend schema
 
 Query uses `$args`; type-level `@sql` uses `$this` so `_entities` can refill the row:
 
+<!-- prettier-ignore -->
 ```graphql
 type Query {
   album(id: ID!): Album
@@ -604,12 +608,12 @@ type Query {
       table: "albums"
       kind: ROW
       where: """
-      AlbumId: $args.id
+        AlbumId: $args.id
       """
       selection: """
-      id: AlbumId
-      title: Title
-      artistId: ArtistId
+        id: AlbumId
+        title: Title
+        artistId: ArtistId
       """
     )
 }
@@ -620,12 +624,12 @@ type Album
     table: "albums"
     kind: ROW
     where: """
-    AlbumId: $this.id
+      AlbumId: $this.id
     """
     selection: """
-    id: AlbumId
-    title: Title
-    artistId: ArtistId
+      id: AlbumId
+      title: Title
+      artistId: ArtistId
     """
   ) {
   id: ID!
@@ -636,6 +640,7 @@ type Album
 
 ### Scenario: FK list (`Artist.albums`)
 
+<!-- prettier-ignore -->
 ```graphql
 type Artist @key(fields: "id") {
   id: ID!
@@ -644,15 +649,15 @@ type Artist @key(fields: "id") {
       table: "albums"
       kind: ROWS
       where: """
-      ArtistId: $this.id
-      ...$args.where
+        ArtistId: $this.id
+        ...$args.where
       """
       limit: "$args.limit"
       offset: "$args.offset"
       selection: """
-      id: AlbumId
-      title: Title
-      artistId: ArtistId
+        id: AlbumId
+        title: Title
+        artistId: ArtistId
       """
     )
 }
@@ -660,6 +665,7 @@ type Artist @key(fields: "id") {
 
 ### Scenario: many-to-many `through` (Playlist -> tracks)
 
+<!-- prettier-ignore -->
 ```graphql
 type Playlist {
   tracks(where: TrackFilter, limit: Int, offset: Int): [Track!]!
@@ -677,8 +683,8 @@ type Playlist {
       limit: "$args.limit"
       offset: "$args.offset"
       selection: """
-      id: TrackId
-      name: Name
+        id: TrackId
+        name: Name
       """
     )
 }
@@ -686,6 +692,7 @@ type Playlist {
 
 ### Scenario: INSERT / DELETE
 
+<!-- prettier-ignore -->
 ```graphql
 type Mutation {
   createAlbum(input: CreateAlbumInput!): AlbumPayload!
@@ -697,11 +704,11 @@ type Mutation {
       ArtistId: $args.input.artistId
       """
       selection: """
-      album {
-        id: AlbumId
-        title: Title
-        artistId: ArtistId
-      }
+        album {
+          id: AlbumId
+          title: Title
+          artistId: ArtistId
+        }
       """
     )
 
@@ -710,11 +717,11 @@ type Mutation {
       table: "albums"
       kind: DELETE
       where: """
-      AlbumId: $args.id
+        AlbumId: $args.id
       """
       selection: """
-      ok: $affectedRows
-      affectedRows: $affectedRows
+        ok: $affectedRows
+        affectedRows: $affectedRows
       """
     )
 }
@@ -757,6 +764,7 @@ variants). Typical args: `collection`, `query`, `selection`, `sort` / `limit` / 
 
 ### Scenario: findById + entity fill
 
+<!-- prettier-ignore -->
 ```graphql
 schema @transport(subgraph: "users", kind: "mongo", location: "mongodb://localhost:27017/test") {
   query: Query
@@ -770,9 +778,9 @@ type Query {
       _id: $args.id
       """
       selection: """
-      id: _id
-      name: name
-      age: age
+        id: _id
+        name: name
+        age: age
       """
     )
 }
@@ -785,9 +793,9 @@ type User
     _id: $this.id
     """
     selection: """
-    id: _id
-    name: name
-    age: age
+      id: _id
+      name: name
+      age: age
     """
   ) {
   id: ObjectID!
@@ -798,6 +806,7 @@ type User
 
 ### Scenario: filtered list
 
+<!-- prettier-ignore -->
 ```graphql
 type Query {
   findUsers(filter: UserFilterInput, sort: [UserSort!], limit: Int = 100, skip: Int): [User!]!
@@ -808,8 +817,8 @@ type Query {
       limit: "$args.limit"
       skip: "$args.skip"
       selection: """
-      id: _id
-      name: name
+        id: _id
+        name: name
       """
     )
 }
@@ -817,6 +826,7 @@ type Query {
 
 ### Scenario: insert / update
 
+<!-- prettier-ignore -->
 ```graphql
 type Mutation {
   insertOneUser(document: UserDocumentInput!): User
@@ -824,8 +834,8 @@ type Mutation {
       collection: "user_users"
       set: "$args.document"
       selection: """
-      id: _id
-      name: name
+        id: _id
+        name: name
       """
     )
 
@@ -837,8 +847,8 @@ type Mutation {
       """
       set: "$args.update"
       selection: """
-      id: _id
-      name: name
+        id: _id
+        name: name
       """
     )
 }
@@ -876,6 +886,7 @@ extend schema
 
 Flat `$args.*`; rename transforms rewrite binders the same way as `@connect`:
 
+<!-- prettier-ignore -->
 ```graphql
 type Query {
   moviesByYear(year: Int!): MoviesResult!
@@ -883,18 +894,18 @@ type Query {
       service: "Example"
       method: "GetMovies"
       args: """
-      1(message): {
-        2(int64): $args.year
-      }
+        1(message): {
+          2(int64): $args.year
+        }
       """
       selection: """
-      1(repeated message): result {
-        1(string): name
-        2(int64): year
-        3(float): rating
-        4(repeated string): cast
-        6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
-      }
+        1(repeated message): result {
+          1(string): name
+          2(int64): year
+          3(float): rating
+          4(repeated string): cast
+          6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
+        }
       """
     )
 }
@@ -905,6 +916,7 @@ type Query {
 Loader emit for `SearchMoviesByCast` sets `stream: true` and uses `input.*` paths against an Input
 type:
 
+<!-- prettier-ignore -->
 ```graphql
 type Query {
   exampleSearchMoviesByCast(input: SearchByCastRequest_Input): [Movie]
@@ -912,14 +924,14 @@ type Query {
       service: "Example"
       method: "SearchMoviesByCast"
       args: """
-      1(string): input.castName
+        1(string): input.castName
       """
       selection: """
-      1(string): name
-      2(int64): year
-      3(float): rating
-      4(repeated string): cast
-      6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
+        1(string): name
+        2(int64): year
+        3(float): rating
+        4(repeated string): cast
+        6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
       """
       stream: true
     )
@@ -961,6 +973,7 @@ extend schema
 Binary Thrift uses `@thrift__rpc` with wire field maps. `CALL` is the default request/response
 shape; `ONEWAY` has no reply payload (`$(void)`):
 
+<!-- prettier-ignore -->
 ```graphql
 type Query {
   # CALL: request struct in, i32 out
@@ -968,10 +981,10 @@ type Query {
     @thrift__rpc(
       function: "add"
       args: """
-      1(struct): $args.request {
-        1(i32): left # Thrift field 1
-        2(i32): right # Thrift field 2
-      }
+        1(struct): $args.request {
+          1(i32): left # Thrift field 1
+          2(i32): right # Thrift field 2
+        }
       """
       selection: "$(i32)" # unwrap success i32
       messageType: CALL

@@ -42,6 +42,7 @@ export const composeConfig = defineConfig({
 
 Query `findUserById` uses `$args`; type-level `@mongo__findOne` uses `$this` for Federation:
 
+<!-- prettier-ignore -->
 ```graphql
 extend schema
   @link(
@@ -62,9 +63,9 @@ type Query {
       _id: $args.id
       """
       selection: """
-      id: _id
-      name: name
-      age: age
+        id: _id
+        name: name
+        age: age
       """
     )
 
@@ -76,9 +77,9 @@ type Query {
       limit: "$args.limit"
       skip: "$args.skip"
       selection: """
-      id: _id
-      name: name
-      age: age
+        id: _id
+        name: name
+        age: age
       """
     )
 }
@@ -91,9 +92,9 @@ type User
     _id: $this.id
     """
     selection: """
-    id: _id
-    name: name
-    age: age
+      id: _id
+      name: name
+      age: age
     """
   ) {
   id: ObjectID!
@@ -104,6 +105,7 @@ type User
 
 ## Mutations
 
+<!-- prettier-ignore -->
 ```graphql
 type Mutation {
   insertOneUser(document: UserDocumentInput!): User
@@ -111,8 +113,8 @@ type Mutation {
       collection: "user_users"
       set: "$args.document"
       selection: """
-      id: _id
-      name: name
+        id: _id
+        name: name
       """
     )
 
@@ -124,8 +126,8 @@ type Mutation {
       """
       set: "$args.update"
       selection: """
-      id: _id
-      name: name
+        id: _id
+        name: name
       """
     )
 }
@@ -138,6 +140,7 @@ type Mutation {
 Beside singular `findUserById`, batch lookup passes an id list into `_id`. Federation / entity
 batching can use this when many parents need the same collection filled at once:
 
+<!-- prettier-ignore -->
 ```graphql
 type Query {
   findUsersByIds(ids: [ObjectID!]!, limit: Int = 100, sort: [UserSort!]): [User!]!
@@ -149,8 +152,8 @@ type Query {
       limit: "$args.limit"
       sort: "$args.sort"
       selection: """
-      id: _id # Mongo _id -> GraphQL id
-      name: name
+        id: _id # Mongo _id -> GraphQL id
+        name: name
       """
     )
 }
@@ -161,6 +164,7 @@ type Query {
 `@mongo__aggregate` forwards a client `pipeline` JSON; `@mongo__connection` is the cursor-style list
 companion to offset `find`:
 
+<!-- prettier-ignore -->
 ```graphql
 type Query {
   # Pass-through aggregation stages from the client
@@ -185,10 +189,10 @@ type Query {
       first: "$args.first"
       after: "$args.after"
       selection: """
-      nodes {
-        id: _id
-        name: name
-      }
+        nodes {
+          id: _id
+          name: name
+        }
       """
     )
 }

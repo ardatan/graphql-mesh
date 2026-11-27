@@ -66,6 +66,7 @@ Example is the other: **author the RPC surface** with a Mesh protocol directive.
 
 Sketch -- Music Store Example gRPC / Protobuf slice (field-level `@protobuf__rpc`, not only `@key`):
 
+<!-- prettier-ignore -->
 ```graphql
 extend schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
@@ -105,11 +106,11 @@ type Query {
       service: "Recommendations"
       method: "GetRecommendation"
       args: """
-      1(string): $args.trackId
+        1(string): $args.trackId
       """
       selection: """
-      1(string): id
-      2(string): trackId
+        1(string): id
+        2(string): trackId
       """
     )
 }

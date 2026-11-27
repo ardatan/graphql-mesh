@@ -92,6 +92,7 @@ export const composeConfig = defineComposeConfig({
 
 Emitted shape (GraphQL names are camelCase; SQL columns stay in `where` / `selection`):
 
+<!-- prettier-ignore -->
 ```graphql
 extend schema
   @link(url: "https://specs.graphql-mesh.dev/sql/v0.1", import: ["@sql"])
@@ -107,12 +108,12 @@ type Query {
       table: "tracks"
       kind: ROW
       where: """
-      TrackId: $args.id
+        TrackId: $args.id
       """
       selection: """
-      id: TrackId
-      name: Name
-      albumId: AlbumId
+        id: TrackId
+        name: Name
+        albumId: AlbumId
       """
     )
 }
@@ -123,12 +124,12 @@ type Track
     table: "tracks"
     kind: ROW
     where: """
-    TrackId: $this.id
+      TrackId: $this.id
     """
     selection: """
-    id: TrackId
-    name: Name
-    albumId: AlbumId
+      id: TrackId
+      name: Name
+      albumId: AlbumId
     """
   ) {
   id: ID!
@@ -174,6 +175,7 @@ import { loadOpenAPISubgraph } from '@omnigraph/openapi'
 Loader emit for a ById root (Billing-style OpenAPI -- Composition stamps `entity: true` when the
 Query matches [semantic conventions](/v2/compose#semantic-conventions)):
 
+<!-- prettier-ignore -->
 ```graphql
 extend schema
   @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
@@ -185,8 +187,8 @@ type Query {
       source: "Billing"
       http: { GET: "/customers/{$args.id}" }
       selection: """
-      id
-      name
+        id
+        name
       """
       entity: true
     )
@@ -195,6 +197,7 @@ type Query {
 
 After edit -- Reviews extend catalog Track (join stub + field-level Connect):
 
+<!-- prettier-ignore -->
 ```graphql
 type Track @key(fields: "id", resolvable: false) {
   id: ID!
@@ -203,9 +206,9 @@ type Track @key(fields: "id", resolvable: false) {
       source: "reviews"
       http: { GET: "/reviews?trackId={$this.id}" }
       selection: """
-      id
-      rating
-      body
+        id
+        rating
+        body
       """
     )
 }
@@ -228,6 +231,7 @@ Skill: [Hand-write](/v2/paths/hand-write) | Protocol: [Protobuf / gRPC](/v2/prot
 
 Compact field-number mapping adapted to a recommendation field:
 
+<!-- prettier-ignore -->
 ```graphql
 extend schema
   @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"])
@@ -266,11 +270,11 @@ type Query {
       service: "Recommendations"
       method: "GetRecommendation"
       args: """
-      1(string): $args.trackId
+        1(string): $args.trackId
       """
       selection: """
-      1(string): id
-      2(string): trackId
+        1(string): id
+        2(string): trackId
       """
     )
 }

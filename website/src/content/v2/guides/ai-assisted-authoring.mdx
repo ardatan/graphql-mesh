@@ -72,6 +72,7 @@ Output Mesh subgraph SDL only.
 Suppose you already generated a Connect ById field and want the assistant to add a type-level
 `$this` entity fill (arg name was `userId`, not `id`):
 
+<!-- prettier-ignore -->
 ```graphql
 extend schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
@@ -86,8 +87,8 @@ type Query {
       source: "rest"
       http: { GET: "/users/{$args.userId}" }
       selection: """
-      id
-      name
+        id
+        name
       """
     )
 }
@@ -99,8 +100,8 @@ type User
     source: "rest"
     http: { GET: "/users/{$this.id}" }
     selection: """
-    id
-    name
+      id
+      name
     """
   ) {
   id: ID!

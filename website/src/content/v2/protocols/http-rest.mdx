@@ -67,6 +67,7 @@ export const composeConfig = defineComposeConfig({
 
 Emitted shape:
 
+<!-- prettier-ignore -->
 ```graphql
 extend schema
   @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
@@ -78,8 +79,8 @@ type Query {
       source: "Billing"
       http: { GET: "/customers/{$args.id}" }
       selection: """
-      id
-      name
+        id
+        name
       """
       entity: true
     )
@@ -150,6 +151,7 @@ export const composeConfig = defineConfig({
 
 Emitted shape (OData also maps `@odata.type` unions in selection):
 
+<!-- prettier-ignore -->
 ```graphql
 type Person
   @key(fields: "UserName")
@@ -157,9 +159,9 @@ type Person
     source: "Trippin"
     http: { GET: "/People/{$this.UserName}/" }
     selection: """
-    UserName
-    FirstName
-    LastName
+      UserName
+      FirstName
+      LastName
     """
     entity: true
   ) {
@@ -171,9 +173,9 @@ type Person
       source: "Trippin"
       http: { GET: "/People/{$this.UserName}/Friends/{$args.id}/" }
       selection: """
-      UserName
-      FirstName
-      LastName
+        UserName
+        FirstName
+        LastName
       """
     )
 }
@@ -265,6 +267,7 @@ When the Query arg is not the same name as the entity key (e.g. `userId` vs `id`
 `entity: true` is invalid. Keep the Query as the client entrypoint with `$args.userId`, and put a
 second `@connect` on the **type** that looks the entity up by `$this.id` for Federation `_entities`:
 
+<!-- prettier-ignore -->
 ```graphql
 type Query {
   # Client entrypoint -- arg name stays userId; no entity: true here
@@ -273,8 +276,8 @@ type Query {
       source: "rest"
       http: { GET: "/users/{$args.userId}" }
       selection: """
-      id
-      name
+        id
+        name
       """
     )
 }
@@ -287,8 +290,8 @@ type User
     source: "rest"
     http: { GET: "/users/{$this.id}" }
     selection: """
-    id
-    name
+      id
+      name
     """
   ) {
   id: ID!
@@ -304,24 +307,25 @@ FHIR `Reference.reference` is a string like `Patient/123`. Hand SDL (no `@source
 string and `->match`es the type segment onto abstract `Resource` stubs so other subgraphs can own
 `Patient` / `Observation` roots:
 
+<!-- prettier-ignore -->
 ```graphql
 type Reference @key(fields: "reference") {
   reference: String!
   resource: Resource
     @connect(
       selection: """
-      # "Patient/123" -> typename Patient, id 123
-      $this.reference->split("/")->get(0)->match(
-        ["Patient", {
-          __typename: $("Patient")
-          id: $this.reference->split("/")->get(1)
-        }],
-        ["Observation", {
-          __typename: $("Observation")
-          id: $this.reference->split("/")->get(1)
-        }],
-        [@, null]
-      )
+        # "Patient/123" -> typename Patient, id 123
+        $this.reference->split("/")->get(0)->match(
+          ["Patient", {
+            __typename: $("Patient")
+            id: $this.reference->split("/")->get(1)
+          }],
+          ["Observation", {
+            __typename: $("Observation")
+            id: $this.reference->split("/")->get(1)
+          }],
+          [@, null]
+        )
       """
     )
 }
@@ -336,6 +340,7 @@ If you rename a GraphQL argument (e.g. `input` -> `requestBody`), Compose rewrit
 `@connect` the same way it rewrites `@protobuf__rpc` / `@thrift__rpc`. After rename, the HTTP body
 must read `$args.requestBody`, not `$args.input`:
 
+<!-- prettier-ignore -->
 ```graphql
 type Mutation {
   # Arg renamed to requestBody; body binder follows
@@ -347,8 +352,8 @@ type Mutation {
         body: "$args.requestBody" # was $args.input before rename
       }
       selection: """
-      id
-      rating
+        id
+        rating
       """
     )
 }
