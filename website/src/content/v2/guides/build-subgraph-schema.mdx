@@ -65,54 +65,134 @@ Apollo library docs: [@apollo/subgraph](https://www.npmjs.com/package/@apollo/su
 
 ## Step-by-step: Yoga Federation subgraph
 
-Minimal path from empty folder to a Mesh-backed subgraph URL that Rover, Hive, or Apollo Router can
-compose against.
+Minimal path from empty folder to a Mesh-backed **gRPC** subgraph URL that Rover, Hive, or Apollo
+Router can compose against. Apollo Router already executes HTTP/REST Connectors (`@connect` /
+`@source`) natively, so Connect is a weak teaching choice here -- use a **Mesh protocol** loader
+(`loadProtobufSubgraph`) whose `@protobuf__rpc` hops need this Yoga (or Hive Gateway subgraph) peer.
 
 ### 1. Create the project files
 
 ```text
 my-subgraph/
   package.json
-  subgraph.graphql      # Mesh / Federation subgraph SDL
+  recommendations.proto # gRPC service definition
+  mesh.config.ts        # loadProtobufSubgraph + Compose
+  subgraph.graphql      # emitted Mesh / Federation subgraph SDL
   subgraph-server.ts    # Yoga + buildSubgraphSchema
-  mesh.config.ts        # optional -- Compose / Generate
 ```
 
-Hand-write `subgraph.graphql`, or emit it with `mesh-compose --subgraph <name> -o subgraph.graphql`
-from [Generate](/v2/paths/generate) / [Generate-then-edit](/v2/paths/generate-then-edit). Example
-SDL (Connect + `@key`):
+Point `loadProtobufSubgraph` at the `.proto` (or gRPC reflection), then emit with
+`mesh-compose --subgraph <name> -o subgraph.graphql` -- [Generate](/v2/paths/generate). You can also
+[Hand-write](/v2/paths/hand-write) the same shape; the Yoga step is identical.
+
+**Proto** (unary RPC; field numbers must match the SDL maps):
+
+```protobuf filename="recommendations.proto"
+syntax = "proto3";
+
+package recommendations;
+
+service Recommendations {
+  rpc GetRecommendation(GetRecommendationRequest) returns (Recommendation);
+}
+
+message GetRecommendationRequest {
+  string track_id = 1;
+}
+
+message Recommendation {
+  string id = 1;
+  string track_id = 2;
+}
+```
+
+**Compose / Generate** -- Mesh loader (not Connect):
+
+```ts filename="mesh.config.ts"
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { loadProtobufSubgraph } from '@omnigraph/protobuf'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      // First argument becomes the subgraph name (use with --subgraph)
+      sourceHandler: loadProtobufSubgraph('recommendations', {
+        type: 'grpc',
+        endpoint: 'localhost:50051',
+        source: {
+          file: './recommendations.proto',
+          load: { defaults: true }
+        }
+      })
+    }
+  ]
+})
+```
+
+```sh npm2yarn
+npm i -D @graphql-mesh/compose-cli @omnigraph/protobuf
+```
+
+```bash
+npx mesh-compose --subgraph recommendations -o subgraph.graphql
+```
+
+**Emitted subgraph SDL** (shape; loader print may differ slightly -- read yours). Comments mark the
+Mesh protocol pieces Apollo Router will **not** execute natively:
 
 {/* prettier-ignore */}
 ```graphql
 extend schema
+  # Federation entity key
   @link(url: "https://specs.apollo.dev/link/v1.0")
-  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])
-  @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
-  @source(name: "Reviews", http: { baseURL: "http://localhost:4001" })
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"])
+  # Mesh core + protobuf protocol specs
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
+  @link(url: "https://specs.graphql-mesh.dev/protobuf/v0.1", import: ["@protobuf__rpc"])
+  @composeDirective(name: "@transport")
+  @composeDirective(name: "@protobuf__rpc")
+
+# Schema-level dial: kind "protobuf" + gRPC host:port (Hive Gateway / this Yoga peer)
+schema
+  @transport(
+    subgraph: "recommendations"
+    kind: "protobuf"
+    location: "localhost:50051"
+  ) {
+  query: Query
+}
 
 type Query {
-  reviewById(id: ID!): Review
-    @connect(
-      source: "Reviews"
-      http: { GET: "/reviews/{$args.id}" }
-      selection: """
-        id
-        body
+  # Unary RPC Recommendations.GetRecommendation
+  recommendation(trackId: ID!): Recommendation!
+    @protobuf__rpc(
+      service: "Recommendations"
+      method: "GetRecommendation"
+      # Request field 1 = track_id on the wire
+      args: """
+        1(string): $args.trackId
       """
-      entity: true
+      # Response fields 1 / 2 = id / track_id
+      selection: """
+        1(string): id
+        2(string): trackId
+      """
     )
 }
 
-type Review @key(fields: "id") {
+type Recommendation @key(fields: "id") {
   id: ID!
-  body: String
+  trackId: ID!
 }
 ```
+
+Field-number dialect: [Protobuf / gRPC](/v2/protocols/protobuf). Full Music Store stage (server +
+hand SDL): [Recommendations gRPC](/v2/examples/music-store/recommendations-grpc).
 
 ### 2. Install packages
 
 ```sh npm2yarn
-npm i graphql graphql-yoga @graphql-mesh/subgraph
+npm i graphql graphql-yoga @graphql-mesh/subgraph @graphql-mesh/transport-protobuf
 ```
 
 TypeScript runner (pick one):
@@ -121,16 +201,13 @@ TypeScript runner (pick one):
 npm i -D tsx typescript @types/node
 ```
 
-Add transports your SDL needs (example for Connect):
-
-```sh npm2yarn
-npm i @graphql-mesh/transport-connect
-```
-
-Protocol subgraphs add the matching transport (`@graphql-mesh/transport-sql`, `transport-protobuf`,
-…) the same way [Hive Gateway](/v2/serve/hive-gateway) registers them.
+Register `transport-protobuf` the same way [Hive Gateway](/v2/serve/hive-gateway) does for protocol
+subgraphs. Other protocols swap the matching transport (`transport-sql`, …).
 
 ### 3. Serve with `buildSubgraphSchema`
+
+Run a gRPC server on `localhost:50051` that implements `Recommendations.GetRecommendation` (see the
+Music Store tutorial), then:
 
 ```ts filename="subgraph-server.ts"
 import { createServer } from 'node:http'
@@ -143,7 +220,7 @@ const typeDefs = readFileSync('./subgraph.graphql', 'utf8')
 const schema = buildSubgraphSchema(typeDefs, {
   // optional GraphQL resolvers for fields you own in code
   // resolvers: { ... },
-  // optional fetch / transport context for @transport and @connect
+  // optional fetch / transport context for @transport and protocol directives
   // fetch: globalThis.fetch,
 })
 
@@ -177,66 +254,68 @@ buildSubgraphSchema(
 You still need a **supergraph** (or registry composition). The subgraph process above is one
 Federation peer; composition stays outside Yoga.
 
-**Mesh Compose** (local file):
+**Mesh Compose** (after emit, compose from the SDL file or keep the loader):
 
 ```ts filename="mesh.config.ts"
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { loadProtobufSubgraph } from '@omnigraph/protobuf'
 
 export const composeConfig = defineComposeConfig({
   subgraphs: [
     {
-      name: 'reviews',
-      // SDL file, or schema: { kind: 'url', url: 'http://localhost:4002/graphql' }
-      schema: './subgraph.graphql'
+      // Keep Generate:
+      sourceHandler: loadProtobufSubgraph('recommendations', {
+        type: 'grpc',
+        endpoint: 'localhost:50051',
+        source: { file: './recommendations.proto', load: { defaults: true } }
+      })
+      // Or pin the emitted file:
+      // schema: './subgraph.graphql'
     }
   ]
 })
 ```
 
-```sh npm2yarn
-npm i -D @graphql-mesh/compose-cli
-```
-
 ```bash
 npx mesh-compose -o supergraph.graphql
 # or refresh only this subgraph's emit:
-npx mesh-compose --subgraph reviews -o subgraph.graphql
+npx mesh-compose --subgraph recommendations -o subgraph.graphql
 ```
 
 **Apollo Rover** (GraphOS / local supergraph):
 
 ```bash
-# subgraph.yaml -- routing URL is the Yoga process from step 3
+# routing URL is the Yoga process from step 3
 rover supergraph compose --config ./supergraph.yaml -o supergraph.graphql
 ```
 
 ```yaml filename="supergraph.yaml"
 federation_version: '=2.6'
 subgraphs:
-  reviews:
+  recommendations:
     routing_url: http://localhost:4002/graphql
     schema:
       file: ./subgraph.graphql
 ```
 
 **Hive** (CLI / app): publish or check the same `subgraph.graphql` (or introspect the Yoga URL) as
-the `reviews` subgraph, then let Hive compose for [Hive Gateway](/v2/serve/hive-gateway) -- see
-[Hive schema registry](https://the-guild.dev/graphql/hive/docs/schema-registry).
+the `recommendations` subgraph, then let Hive compose for [Hive Gateway](/v2/serve/hive-gateway) --
+see [Hive schema registry](https://the-guild.dev/graphql/hive/docs/schema-registry).
 
 ### 5. Point the gateway
 
 ```bash
-# Hive Gateway (full Mesh transports on the supergraph, or subgraph mode)
+# Hive Gateway -- preferred for full Mesh transports (including @protobuf__rpc on the supergraph)
 hive-gateway supergraph
 
-# Apollo Router -- Connect-compatible supergraph SDL only
+# Apollo Router -- does not execute @protobuf__rpc; keep the Yoga URL as the Fed subgraph peer
 ./router --supergraph supergraph.graphql
 ```
 
-When Apollo Router (or another non-Hive gateway) must call a **non-Connect** Mesh subgraph, keep
-this Yoga URL as the Federation subgraph endpoint (or run
+When Apollo Router (or another non-Hive gateway) must call this **gRPC / Mesh protocol** subgraph,
+keep this Yoga URL as the Federation subgraph endpoint (or run
 [Hive Gateway as a subgraph](/v2/serve-subgraph#hive-gateway-as-a-subgraph) instead of Yoga).
-Details: [Serve Subgraph](/v2/serve-subgraph).
+Details: [Serve Subgraph](/v2/serve-subgraph) / [Protobuf / gRPC](/v2/protocols/protobuf).
 
 ## What it wires
 
