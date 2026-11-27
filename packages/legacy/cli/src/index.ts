@@ -13,7 +13,10 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fakePromise } from '@whatwg-node/promise-helpers';
 import { serveMesh } from './commands/serve/serve.js';
 import { generateTsArtifacts } from './commands/ts-artifacts.js';
-import { writeSupergraphArtifacts } from './commands/write-supergraph-artifacts.js';
+import {
+  SUPERGRAPH_MODULE_IMPORT,
+  writeSupergraphArtifacts,
+} from './commands/write-supergraph-artifacts.js';
 import { findAndParseConfig } from './config.js';
 import { handleFatalError } from './handleFatalError.js';
 import { include, registerTsconfigPaths } from './include.js';
@@ -164,7 +167,7 @@ export async function graphqlMesh(
                   meshConfigImportCodes: new Set([
                     `import { findAndParseConfig } from '@graphql-mesh/cli';`,
                     `import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';`,
-                    ...(hasSupergraphSdl ? [`import supergraph from './supergraph.graphql';`] : []),
+                    ...(hasSupergraphSdl ? [SUPERGRAPH_MODULE_IMPORT] : []),
                     ...(playgroundOffline
                       ? [`import { renderGraphiQL } from '@graphql-yoga/render-graphiql';`]
                       : []),
@@ -445,8 +448,9 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
             `import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';`,
           );
           if (wroteSupergraph) {
-            // Default-export SDL module; HTTP stays createMeshHTTPHandler (Gateway under the hood).
-            meshConfig.importCodes.add(`import supergraph from './supergraph.graphql';`);
+            // Loadable default-export SDL module (not plain .graphql — that fails under jiti/Node).
+            // HTTP stays createMeshHTTPHandler (Gateway under the hood).
+            meshConfig.importCodes.add(SUPERGRAPH_MODULE_IMPORT);
           }
           if (resolvePlaygroundConfig(meshConfig.config.serve?.playground, false).offline) {
             meshConfig.importCodes.add(

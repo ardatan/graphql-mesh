@@ -127,6 +127,10 @@ describe('runtime', () => {
         pathModule.join(artifactsDir, 'supergraph.graphql.ts'),
         'utf8',
       );
+      const supergraphGraphqlJs = await fs.promises.readFile(
+        pathModule.join(artifactsDir, 'supergraph.graphql.js'),
+        'utf8',
+      );
 
       expect(supergraphGraphql).toContain('join__Graph');
       expect(supergraphGraphql).not.toContain('mesh://legacy/');
@@ -135,14 +139,48 @@ describe('runtime', () => {
       expect(supergraphGraphqlTs).not.toContain('createBuiltHiveGateway');
       expect(supergraphGraphqlTs).not.toContain('createGatewayRuntime');
       expect(supergraphGraphqlTs).not.toContain('export const supergraphSdl');
+      expect(supergraphGraphqlJs).toMatch(/export default \/\*\s*GraphQL\s*\*\/ `/);
+      expect(supergraphGraphqlJs).toContain('join__Graph');
 
-      const builtMesh = await fs.promises.readFile(
-        pathModule.join(artifactsDir, 'index.ts'),
-        'utf8',
-      );
-      expect(builtMesh).toContain(`import supergraph from './supergraph.graphql'`);
+      const indexPath = pathModule.join(artifactsDir, 'index.ts');
+      const builtMesh = await fs.promises.readFile(indexPath, 'utf8');
+      // Must import the loadable JS module — `./supergraph.graphql` resolves to plain SDL.
+      expect(builtMesh).toContain(`import supergraph from './supergraph.graphql.js'`);
+      expect(builtMesh).not.toContain(`import supergraph from './supergraph.graphql';`);
       expect(builtMesh).toContain('createMeshHTTPHandler');
       expect(builtMesh).not.toContain('createBuiltHiveGateway');
+
+      // Runtime resolution outside Jest's VM (jiti + native ESM deps need a real Node process).
+      const { execFile } = await import('node:child_process');
+      const { promisify } = await import('node:util');
+      const execFileAsync = promisify(execFile);
+      const { stdout } = await execFileAsync(
+        process.execPath,
+        [
+          '--input-type=module',
+          '-e',
+          `
+            import { createJiti } from 'jiti';
+            const jiti = createJiti('', { interopDefault: true });
+            const sg = await jiti.import(${JSON.stringify(
+              pathModule.join(artifactsDir, 'supergraph.graphql.js'),
+            )}, { default: true });
+            if (typeof sg !== 'string' || !sg.includes('join__Graph')) {
+              throw new Error('supergraph.graphql.js did not load as SDL string');
+            }
+            const mod = await jiti.import(${JSON.stringify(indexPath)});
+            if (typeof mod.createBuiltMeshHTTPHandler !== 'function') {
+              throw new Error('generated index missing createBuiltMeshHTTPHandler');
+            }
+            if (typeof mod.getBuiltMesh !== 'function') {
+              throw new Error('generated index missing getBuiltMesh');
+            }
+            console.log('LOADED_OK');
+          `,
+        ],
+        { cwd: pathModule.resolve(__dirname, '../../..') },
+      );
+      expect(stdout).toContain('LOADED_OK');
     });
   });
 });
