@@ -34,7 +34,7 @@ export function HeroFeatures(props: HeroFeaturesProps) {
     <ul
       {...props}
       className={cn(
-        'mx-auto flex list-none gap-x-6 gap-y-2 text-sm font-medium max-md:flex-col [&>li]:flex [&>li]:items-center [&>li]:gap-2',
+        'mx-auto flex max-w-xl list-none flex-col gap-y-2 text-sm font-medium [&>li]:flex [&>li]:items-start [&>li]:gap-2',
         props.className,
       )}
     />

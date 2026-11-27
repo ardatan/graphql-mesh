@@ -2,10 +2,11 @@
 
 - What is GraphQL Mesh?
 
-  GraphQL Mesh is a **Federation Framework for REST, SOAP, OData, gRPC, SQL, and more**. You
-  generate (or hand-write) Federation-ready Mesh subgraph SDL from GraphQL and non-GraphQL sources
-  -- then compose and serve. Mesh is **platform / registry / gateway independent** (Hive Gateway and
-  Apollo Router supported): keep GraphOS, Hive, Rover, or any Federation-compatible stack.
+  GraphQL Mesh is **The Federation Framework for any API** (REST, SOAP, OData, gRPC, SQL, and more).
+  You generate (or hand-write) Federation-ready Mesh subgraph SDL from GraphQL and non-GraphQL
+  sources, then compose and serve. Mesh is **platform / registry / gateway independent** (Hive
+  Gateway and Apollo Router supported): keep GraphOS, Hive, Rover, or any Federation-compatible
+  stack.
   [Mesh v2 introduction](/v2).
 
 - Already have Federation: why Mesh?
@@ -36,10 +37,10 @@
 
 - Can Mesh enhance an existing Federation setup?
 
-  Yes. Mesh **enhances** the Federation graph you already operate -- it does not require a stack
-  swap. Keep Apollo GraphOS + Router, Hive Gateway + Registry, or any other Federation-compatible
-  gateway; add Mesh-generated (or authored) subgraphs beside your GraphQL peers, recompose, and
-  continue serving on the same gateway.
+  Yes. Mesh **enhances** the Federation graph you already operate; it does not require a stack swap.
+  Keep Apollo GraphOS + Router, Hive Gateway + Registry, or any other Federation-compatible gateway;
+  add Mesh-generated (or authored) subgraphs beside your GraphQL peers, recompose, and continue
+  serving on the same gateway.
   [Enhance an existing Federation](/v2#enhance-an-existing-federation) /
   [FAQ: drop-in](/v2/faq#can-mesh-drop-into-an-existing-federation-setup).
 
@@ -48,7 +49,7 @@
   **Hive Gateway** across any JS environment (Node.js, Bun, Docker, serverless), **Apollo Router**
   (Rust) with Connectors native in both, **any Federation Gateway** for composed SDL, and a Mesh
   subgraph process on Yoga or any GraphQL server via
-  [`buildSubgraphSchema`](/v2/guides/build-subgraph-schema) from `@graphql-mesh/subgraph` -- same
+  [`buildSubgraphSchema`](/v2/guides/build-subgraph-schema) from `@graphql-mesh/subgraph`: same
   Federation wiring job as Apollo's `buildSubgraphSchema`, plus Mesh directive / Mesh specification
   execution (including non-Connect protocols behind Apollo Router). [Serve Supergraph](/v2/serve) /
   [Hive Gateway](/v2/serve/hive-gateway) / [Apollo Router](/v2/serve/apollo-router).

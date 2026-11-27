@@ -12,7 +12,7 @@ const data: Array<{
   {
     name: 'GraphQL Mesh',
     'Non-GraphQL → subgraph': {
-      text: 'Generate Federation-ready Mesh subgraph SDL from REST, SOAP, OData, gRPC, SQL, and more -- or Hand-write / Generate-then-edit.',
+      text: 'Generate Federation-ready Mesh subgraph SDL from REST, SOAP, OData, gRPC, SQL, and more, or Hand-write / Generate-then-edit.',
       score: 2,
     },
     Connectors: {
@@ -24,7 +24,7 @@ const data: Array<{
       score: 2,
     },
     'Gateway / registry': {
-      text: 'Gateway-independent -- Compose once, then run with any Federation Gateway (Hive Gateway, Apollo Router, peers).',
+      text: 'Gateway-independent: compose once, then run with any Federation Gateway (Hive Gateway, Apollo Router, peers).',
       score: 2,
     },
   },
@@ -39,7 +39,7 @@ const data: Array<{
       score: 1,
     },
     Transforms: {
-      text: 'Schema shape lives in each subgraph codebase -- no Mesh-style Automatic / By-hand transform path on composed SDL.',
+      text: 'Schema shape lives in each subgraph codebase; no Mesh-style Automatic / By-hand transform path on composed SDL.',
       score: 1,
     },
     'Gateway / registry': {
@@ -54,11 +54,11 @@ const data: Array<{
       score: 1,
     },
     Connectors: {
-      text: 'No Connectors contract -- REST/HTTP usually wired with custom resolvers or DataLoader code at the stitch layer.',
+      text: 'No Connectors contract: REST/HTTP usually wired with custom resolvers or DataLoader code at the stitch layer.',
       score: 0,
     },
     Transforms: {
-      text: 'In-process stitchSchemas / type merge config -- not Federation subgraph SDL + Transform Subgraph.',
+      text: 'In-process stitchSchemas / type merge config, not Federation subgraph SDL + Transform Subgraph.',
       score: 1,
     },
     'Gateway / registry': {
@@ -83,7 +83,7 @@ export function ComparisonTable({ children, className, ...rest }: ComparisonTabl
           What Mesh adds
         </Heading>
         <p className="mt-4 mb-8 sm:mb-16 text-green-800">
-          Beside plain Federation and Schema Stitching -- non-GraphQL → subgraph, Connectors,
+          Beside plain Federation and Schema Stitching: non-GraphQL → subgraph, Connectors,
           transforms, and gateway independence
         </p>
       </header>

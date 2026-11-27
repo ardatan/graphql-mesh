@@ -14,7 +14,7 @@ export function DatasourcesIllustration({ className }: { className?: string }) {
           Build Federation subgraphs
         </Heading>
         <p className="mt-4 text-white-800">
-          Generate Mesh subgraph SDL from REST, SOAP, OData, gRPC, SQL, and more -- then compose and
+          Generate Mesh subgraph SDL from REST, SOAP, OData, gRPC, SQL, and more, then compose and
           run with any Federation Gateway.
         </p>
         <ul className="flex flex-col gap-6 lg:gap-8 mt-10 lg:mt-12">
@@ -29,7 +29,7 @@ export function DatasourcesIllustration({ className }: { className?: string }) {
             },
             {
               icon: <ScanLine />,
-              text: 'Serve on Hive Gateway, Apollo Router, or any Federation-compatible gateway -- Mesh stays independent.',
+              text: 'Serve on Hive Gateway, Apollo Router, or any Federation-compatible gateway. Mesh stays independent.',
             },
           ].map(({ icon, text }) => (
             <li key={text} className="flex items-start gap-4">

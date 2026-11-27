@@ -19,7 +19,7 @@ export function RunAnywhereSection(props: RunAnywhereSectionProps) {
         Mesh is gateway-independent. Serve the supergraph on{' '}
         <strong className="font-medium">Hive Gateway</strong> (any JS environment),{' '}
         <strong className="font-medium">Apollo Router</strong> (Rust) for Connect-compatible SDL, or
-        any Federation Gateway -- and serve a Mesh subgraph on Yoga (or any GraphQL server) with{' '}
+        any Federation Gateway, and serve a Mesh subgraph on Yoga (or any GraphQL server) with{' '}
         <code className="text-sm">buildSubgraphSchema</code>.
       </p>
 
