@@ -57,6 +57,16 @@ Same contract whether you Generate or Hand-write: Mesh directives and HTTP/REST 
 [Protocols](https://the-guild.dev/graphql/mesh/v2/protocols) ·
 [Mesh specs](https://specs.graphql-mesh.dev)
 
+## Support GraphQL Mesh
+
+GraphQL Mesh is built and maintained in the open for everyone who wants to federate GraphQL and
+non-GraphQL APIs into a Supergraph. If GraphQL Mesh helps you or your team ship with more
+confidence, consider [sponsoring the project](https://github.com/sponsors/ardatan).
+
+Your support helps fund ongoing maintenance, better documentation, performance improvements, and new
+features for the community. Every contribution, large or small, helps keep GraphQL Mesh healthy and
+moving forward.
+
 ## Contributions
 
 Contributions, issues and feature requests are very welcome. If you are using this package and fixed
