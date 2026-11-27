@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "@graphql-hive/signal": "^3.0.0",
-    "@graphql-tools/utils": "^13.2.2",
+    "@graphql-tools/utils": "^13.2.3",
     "@whatwg-node/promise-helpers": "^2.0.2",
     "dataloader": "^2.2.3",
     "tslib": "^2.9.1"
