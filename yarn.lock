@@ -5348,6 +5348,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/mesh-subgraph-schema@workspace:e2e/mesh-subgraph-schema":
+  version: 0.0.0-use.local
+  resolution: "@e2e/mesh-subgraph-schema@workspace:e2e/mesh-subgraph-schema"
+  dependencies:
+    "@graphql-mesh/subgraph": "workspace:*"
+    graphql: "npm:17.1.0"
+    graphql-yoga: "npm:^6.1.1"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/mongoose-users@workspace:e2e/mongoose-users":
   version: 0.0.0-use.local
   resolution: "@e2e/mongoose-users@workspace:e2e/mongoose-users"
@@ -9512,6 +9522,29 @@ __metadata:
     graphql: "npm:17.1.0"
     json-pointer: "npm:^0.6.2"
     lodash.get: "npm:^4.4.2"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    graphql: ^16.0.0 || ^17.0.0
+  languageName: unknown
+  linkType: soft
+
+"@graphql-mesh/subgraph@workspace:*, @graphql-mesh/subgraph@workspace:packages/subgraph":
+  version: 0.0.0-use.local
+  resolution: "@graphql-mesh/subgraph@workspace:packages/subgraph"
+  dependencies:
+    "@apollo/subgraph": "npm:^2.16.0"
+    "@graphql-hive/logger": "npm:^1.2.0"
+    "@graphql-hive/pubsub": "npm:^2.2.1"
+    "@graphql-mesh/transport-common": "npm:^2.0.0"
+    "@graphql-mesh/transport-connect": "npm:^0.12.4"
+    "@graphql-mesh/types": "npm:^0.107.3"
+    "@graphql-mesh/utils": "npm:^0.107.3"
+    "@graphql-tools/schema": "npm:^11.0.9"
+    "@graphql-tools/utils": "npm:^13.2.3"
+    "@graphql-tools/wrap": "workspace:*"
+    "@whatwg-node/promise-helpers": "npm:^2.0.2"
+    graphql: "npm:17.1.0"
+    graphql-yoga: "npm:^6.1.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: ^16.0.0 || ^17.0.0

@@ -54,6 +54,7 @@
       "@graphql-tools/executor-http": ["./packages/executors/http/src/index.ts"],
       "@graphql-tools/executor-graphql-ws": ["./packages/executors/graphql-ws/src/index.ts"],
       "@graphql-mesh/compose-cli": ["./packages/compose-cli/src/index.ts"],
+      "@graphql-mesh/subgraph": ["./packages/subgraph/src/index.ts"],
       "@graphql-mesh/transport-*": ["./packages/transports/*/src/index.ts"],
       "@graphql-mesh/transport-protobuf": ["./packages/transports/protobuf/src/index.ts"],
       "@omnigraph/protobuf": ["./packages/loaders/protobuf/src/index.ts"],

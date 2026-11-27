@@ -1,0 +1,10 @@
+{
+  "name": "@e2e/mesh-subgraph-schema",
+  "private": true,
+  "dependencies": {
+    "@graphql-mesh/subgraph": "workspace:*",
+    "@whatwg-node/fetch": "^0.12.1",
+    "graphql": "17.1.0",
+    "graphql-yoga": "^6.1.1"
+  }
+}
