@@ -27,7 +27,7 @@ export function ManipulateDataSection({ className }: { className?: string }) {
       <dl className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4 lg:gap-6 mt-8 lg:mt-16 xl:[&>*:not(:first-child)]:pl-6 max-sm:[&>*:not(:first-child)]:pt-4 max-sm:divide-y xl:divide-x divide-green-700">
         <ListItem
           title="Generate"
-          description="Emit Federation-ready Mesh subgraph SDL from REST, SQL, gRPC, and more."
+          description="Emit Federation-ready Mesh subgraph SDL from REST, SOAP, OData, gRPC, SQL, and more."
           href="/v2/paths/generate"
         />
         <ListItem

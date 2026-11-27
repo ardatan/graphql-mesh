@@ -15,7 +15,7 @@ export function InfoCardsSection() {
           className="flex-1 rounded-2xl md:rounded-3xl"
         >
           Generate, Hand-write, or Generate-then-edit Federation-ready Mesh subgraph SDL from REST,
-          SQL, gRPC, and more.
+          SOAP, OData, gRPC, SQL, and more.
         </InfoCard>
         <InfoCard
           as="li"
@@ -34,8 +34,8 @@ export function InfoCardsSection() {
           icon={<GroupIcon />}
           className="flex-1 basis-full rounded-2xl md:rounded-3xl lg:basis-0"
         >
-          Registry and gateway independent -- drop into GraphOS, Hive, Rover, or any
-          Federation-compatible stack without replacing it.
+          Registry and gateway independent -- Hive Gateway and Apollo Router supported. Drop into
+          GraphOS, Hive, Rover, or any Federation-compatible stack without replacing it.
         </InfoCard>
       </ul>
     </section>

@@ -12,7 +12,7 @@ const data: Array<{
   {
     name: 'GraphQL Mesh',
     'Non-GraphQL → subgraph': {
-      text: 'Generate Federation-ready Mesh subgraph SDL from REST, SQL, gRPC, and more -- or Hand-write / Generate-then-edit.',
+      text: 'Generate Federation-ready Mesh subgraph SDL from REST, SOAP, OData, gRPC, SQL, and more -- or Hand-write / Generate-then-edit.',
       score: 2,
     },
     Connectors: {
