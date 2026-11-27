@@ -71,11 +71,11 @@ come from the SDL. Use Mesh `@merge` only for **list / batch** entry fields.
 
 ## Generate, Generate-then-edit, or Hand-write?
 
-| Path                                               | When                                                                  |
-| -------------------------------------------------- | --------------------------------------------------------------------- |
-| [Generate](/v2/paths/generate)                     | Bootstrap from OpenAPI, SQL, Mongo, protobuf, ... and read the emit   |
-| [Generate-then-edit](/v2/paths/generate-then-edit) | You dislike the shape and take ownership of the `.graphql`            |
-| [Hand-write](/v2/paths/hand-write)                 | Author Connect / protocol / Federation SDL from scratch (human or AI) |
+| Path                                               | When                                                                       |
+| -------------------------------------------------- | -------------------------------------------------------------------------- |
+| [Generate](/v2/paths/generate)                     | Bootstrap from OpenAPI, SQL, Mongo, protobuf, ... and read the emit        |
+| [Generate-then-edit](/v2/paths/generate-then-edit) | Emit with a loader config, then switch to `schema:` and own the `.graphql` |
+| [Hand-write](/v2/paths/hand-write)                 | Author Connect / protocol / Federation SDL from scratch (human or AI)      |
 
 All three produce subgraph SDL that Compose, registries, and `buildSubgraphSchema` accept the same
 way. Overview: [Build your Subgraph](/v2/paths/generate).
