@@ -156,12 +156,11 @@ jobs:
             }
             const stitchNode = node.find((r) => r.name === 'Stitching' && r.complete);
             const apolloNode = node.find((r) => r.name === 'Apollo Gateway' && r.complete);
-            // "Hive Gateway w/ Tools" is the Tools/stitching QP path vs Router QP.
-            const hiveToolsNode = node.find(
-              (r) => r.name === 'Hive Gateway w/ Tools' && r.complete,
+            const hiveStitchNode = node.find(
+              (r) => r.name === 'Hive GW w/ Stitching' && r.complete,
             );
             const hiveRouterNode = node.find(
-              (r) => r.name === 'Hive Gateway w/ Hive Router Query Planner' && r.complete,
+              (r) => r.name === 'Hive GW w/ Router QP' && r.complete,
             );
             const ratios = [];
             if (stitchNode && apolloNode && apolloNode.hz > 0) {
@@ -169,10 +168,9 @@ jobs:
                 `**Stitching / Apollo (node):** **${(stitchNode.hz / apolloNode.hz).toFixed(2)}×**`,
               );
             }
-            if (hiveToolsNode && hiveRouterNode && hiveRouterNode.hz > 0) {
+            if (hiveStitchNode && hiveRouterNode && hiveRouterNode.hz > 0) {
               ratios.push(
-                // Bench name is "…Tools"; sticky label matches Arda pref (Tools = stitching QP).
-                `**Hive Gateway w/ Stitching / Hive Gateway w/ Hive Router QP (node):** **${(hiveToolsNode.hz / hiveRouterNode.hz).toFixed(2)}×**`,
+                `**Hive GW w/ Stitching / Hive GW w/ Router QP (node):** **${(hiveStitchNode.hz / hiveRouterNode.hz).toFixed(2)}×**`,
               );
             }
             const ratio = ratios.length ? `\n${ratios.join('\n')}\n` : '';
