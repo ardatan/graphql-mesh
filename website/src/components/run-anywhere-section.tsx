@@ -16,8 +16,8 @@ export function RunAnywhereSection(props: RunAnywhereSectionProps) {
       </Heading>
       {/* the design has text-green-800 here, but it doesn't pass the contrast check */}
       <p className="mt-4 text-center text-balance">
-        Deploy Mesh across any JavaScript environment, powered by its versatile Fetch API
-        compatibility.
+        Mesh stays gateway-independent -- serve your composed supergraph with Hive Gateway (or any
+        Federation Gateway) across Node.js, Bun, Docker, and serverless.
       </p>
 
       <ul className="flex mt-4 sm:mt-8 lg:mt-16 flex-wrap gap-2 sm:gap-4 max-sm:grid max-sm:grid-cols-3 justify-center items-center max-w-[1200px] mx-auto">
@@ -64,9 +64,9 @@ export function RunAnywhereSection(props: RunAnywhereSectionProps) {
           Express
         </ListItemAnchor>
         <ListItemAnchor href="/v2/serve">
-          Serve
+          Any
           <br />
-          Supergraph
+          Federation Gateway
         </ListItemAnchor>
         <ListItemAnchor href="https://the-guild.dev/graphql/hive/docs/gateway/deployment/node-frameworks/fastify">
           Fastify

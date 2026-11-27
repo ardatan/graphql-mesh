@@ -4,83 +4,53 @@ import { Table, TableCell, TableHeader, TableRow } from './table';
 type Entry = { text: string; score: number };
 const data: Array<{
   name: string;
-  'Productivity / Maintainability': Entry;
-  'Unified Schema design': Entry;
-  'Sub-services support': Entry;
+  'Non-GraphQL → subgraph': Entry;
+  Transforms: Entry;
+  'Gateway / registry': Entry;
 }> = [
   {
     name: 'GraphQL Mesh',
-    'Productivity / Maintainability': {
-      text: 'Packages with a server, caching, Envelop plugins, and large sub-service types support. Configuration-based with custom resolvers.',
+    'Non-GraphQL → subgraph': {
+      text: 'Generate Federation-ready Mesh subgraph SDL from REST, SQL, gRPC, and more -- or Hand-write / Generate-then-edit.',
       score: 2,
     },
-    'Unified Schema design': {
-      text: 'Flexible Schema design with Transforms and custom resolvers support.',
+    Transforms: {
+      text: 'Optional Transform Subgraph (Automatic Compose transforms or edit the .graphql by hand) before Compose.',
       score: 2,
     },
-    'Sub-services support': {
-      text: 'Support for a large range of types of sub-services and databases.',
+    'Gateway / registry': {
+      text: 'Gateway-independent -- Compose once, then run with any Federation Gateway (Hive Gateway, Apollo Router, peers).',
       score: 2,
-    },
-  },
-  {
-    name: 'GraphQL Tools',
-    'Productivity / Maintainability': {
-      text: 'Programmatic approach at the Gateway level. Type merging makes it easier to deal with sub-services conflicts.',
-      score: 1,
-    },
-    'Unified Schema design': {
-      text: 'Access to all GraphQL Schema building libraries.',
-      score: 2,
-    },
-    'Sub-services support': {
-      text: 'Only supports GraphQL sub-services out of the box. Other sub-service types can be supported with Schema extensions at the Gateway level.',
-      score: 1,
-    },
-  },
-  {
-    name: 'Apollo Server with DataSources',
-    'Productivity / Maintainability': {
-      text: 'Requires a lot of coding and maintenance work at the DataSources level.',
-      score: 0,
-    },
-    'Unified Schema design': {
-      text: 'Access to all GraphQL Schema building libraries.',
-      score: 2,
-    },
-    'Sub-services support': {
-      text: 'Integrating with some types of sub-services might require some extra work.',
-      score: 1,
     },
   },
   {
     name: 'Apollo Federation',
-    'Productivity / Maintainability': {
-      text: 'Rover CLI and Apollo Studio. Only the Apollo Gateway needs maintenance.',
-      score: 2,
-    },
-    'Unified Schema design': {
-      text: 'Access to all GraphQL Schema building libraries.',
-      score: 2,
-    },
-    'Sub-services support': {
-      text: "Only supports 'Federation compliant' GraphQL sub-services.",
+    'Non-GraphQL → subgraph': {
+      text: 'Expects Federation-compliant GraphQL subgraphs. Non-GraphQL sources need a separate subgraph process you own.',
       score: 0,
+    },
+    Transforms: {
+      text: 'Schema shape lives in each subgraph codebase -- no Mesh-style Automatic / By-hand transform path on composed SDL.',
+      score: 1,
+    },
+    'Gateway / registry': {
+      text: 'Strong GraphOS / Router story; Mesh drops in as Federation subgraphs beside the stack you already run.',
+      score: 1,
     },
   },
   {
-    name: 'Hasura',
-    'Productivity / Maintainability': {
-      text: 'Plug and play solution. Configuration-based with custom resolvers.',
-      score: 2,
-    },
-    'Unified Schema design': {
-      text: 'The Unified Schema is directly linked to the underlying database schema or sub-services design.',
+    name: 'Schema Stitching',
+    'Non-GraphQL → subgraph': {
+      text: 'Typically GraphQL executors + programmatic merge. Non-GraphQL sources need custom gateway-level wiring.',
       score: 1,
     },
-    'Sub-services support': {
-      text: 'Only supports GraphQL and REST sub-services and a set of databases.',
+    Transforms: {
+      text: 'In-process stitchSchemas / type merge config -- not Federation subgraph SDL + Transform Subgraph.',
       score: 1,
+    },
+    'Gateway / registry': {
+      text: 'Often one stitched GraphQLSchema in-process. Mesh migrates you to subgraph SDL + Compose + any Federation Gateway.',
+      score: 0,
     },
   },
 ];
@@ -91,15 +61,17 @@ export interface ComparisonTableProps extends React.HTMLAttributes<HTMLDivElemen
 export function ComparisonTable({ children, className, ...rest }: ComparisonTableProps) {
   return (
     <section
+      id="consider-switching-from-other-tools"
       className={cn('py-6 sm:py-12 md:px-6 xl:px-[120px] lg:py-[120px]', className)}
       {...rest}
     >
       <header className="sm:text-center sm:text-balance">
         <Heading as="h3" size="md">
-          Consider switching from other tools?
+          What Mesh adds
         </Heading>
         <p className="mt-4 mb-8 sm:mb-16 text-green-800">
-          Learn the differences between Mesh, Apollo Federation, Hasura and GraphQL Tools
+          Beside plain Federation and Schema Stitching -- non-GraphQL → subgraph, transforms, and
+          gateway independence
         </p>
       </header>
       {/* this is focusable (by default) because a keyboard user will scroll through the overflowing table with arrows */}
