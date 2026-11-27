@@ -96,7 +96,8 @@ Mesh subgraph SDL into an executable `GraphQLSchema` and host it on **Yoga**, Ap
 Mercurius, or any GraphQL HTTP stack. It does **what Apollo's** `@apollo/subgraph`
 `buildSubgraphSchema` does for Federation wiring, **plus** Mesh directive / Mesh specification
 execution (protocol transports, Connect in-process, entity hops). Transports and entity hops come
-from the SDL; you optionally pass `resolvers` on the schema module (`{ typeDefs, resolvers }`) for fields you own in code. Mesh opts (`fetch`, …) stay in the second argument.
+from the SDL; you optionally pass `resolvers` on the schema module (`{ typeDefs, resolvers }`) for
+fields you own in code. Mesh opts (`fetch`, …) stay in the second argument.
 
 ```sh npm2yarn
 npm i graphql graphql-yoga @graphql-mesh/subgraph

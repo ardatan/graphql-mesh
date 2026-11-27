@@ -151,7 +151,7 @@ import { readFileSync } from 'node:fs'
 
 const schema = await buildSubgraphSchema(
   {
-    typeDefs: readFileSync('./recommendations.graphql', 'utf8'),
+    typeDefs: readFileSync('./recommendations.graphql', 'utf8')
     // resolvers: { ... } for fields you own in code
   },
   {

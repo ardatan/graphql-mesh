@@ -48,7 +48,7 @@ Connect in-process, entity hops). The jobs differ in what each package executes:
 |                     | **`@apollo/subgraph`**                                                                                    | **`@graphql-mesh/subgraph`**                                                                                                                        |
 | ------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Job                 | Make a **hand-coded** GraphQL schema Federation-compatible                                                | Same Federation wiring job, **plus** execute Mesh directives / Mesh spec on **Mesh subgraph SDL**                                                   |
-| Typical input       | `[{ typeDefs, resolvers }]` or SDL + your resolver map                                                    | Same module shape (`{ typeDefs, resolvers }` / array) **or** bare Mesh SDL (`string` / `DocumentNode` / `GraphQLSchema`); Mesh opts in 2nd arg       |
+| Typical input       | `[{ typeDefs, resolvers }]` or SDL + your resolver map                                                    | Same module shape (`{ typeDefs, resolvers }` / array) **or** bare Mesh SDL (`string` / `DocumentNode` / `GraphQLSchema`); Mesh opts in 2nd arg      |
 | What you write      | Field resolvers + `__resolveReference` for entities                                                       | Mostly directives on SDL; optional `resolvers` on the schema module for fields you own in code                                                      |
 | Federation plumbing | Adds Fed types / directives (`_Entity`, `_Any`, ...) and wires `_entities` from your `__resolveReference` | Wires entity entry from Fed `@lookup` / `@is` / `@internal` (one-object) and Type Merging `@merge` (list/batch)                                     |
 | HTTP/REST Connect   | `@connect` / `@source` may appear in SDL; **Router executes** Connectors, not this library                | `@connect` / `@source` run via Mesh transports in **this** subgraph process; Connectors are also native on Apollo Router when the SDL is compatible |
@@ -220,7 +220,7 @@ const typeDefs = readFileSync('./subgraph.graphql', 'utf8')
 // Prefer await: return is MaybePromise when transports wire async
 const schema = await buildSubgraphSchema(
   {
-    typeDefs,
+    typeDefs
     // optional GraphQL resolvers for fields you own in code
     // resolvers: { ... },
   },
