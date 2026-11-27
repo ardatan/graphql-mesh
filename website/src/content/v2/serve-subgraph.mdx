@@ -42,7 +42,7 @@ Most Mesh deployments [compose](/v2/compose) and [serve the supergraph](/v2/serv
 | ---------------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | Foreign router / mixed fleet             | Apollo Router (or another gateway) talks GraphQL to a Mesh-backed subgraph for non-Connect protocols |
 | Independent deploy / scale               | Ship and scale one subgraph process without redeploying the whole supergraph runtime                 |
-| Local or CI subgraph smoke tests         | Hit the subgraph GraphQL endpoint before full composition                                            |
+| Local or CI subgraph endpoint checks     | Hit the subgraph GraphQL endpoint before full composition                                            |
 | Code-owned fields beside Mesh directives | Mix directive-driven transports with your own resolvers (e.g. custom `@lookup` entry fields)         |
 
 Default path remains Compose → Serve Supergraph. Serve Subgraph is the opt-in when the subgraph must
@@ -73,11 +73,14 @@ Use this when:
   runs.
 
 ```bash
+# Packages: @graphql-mesh/compose-cli @graphql-hive/gateway + loader/transport for the SDL
+# e.g. pnpm add @omnigraph/sql @graphql-mesh/transport-sql
+
 # Emit subgraph SDL (Generate or owned file via composeConfig)
-mesh-compose --subgraph chinook -o chinook-subgraph.graphql
+pnpm exec mesh-compose --subgraph chinook -o chinook-subgraph.graphql
 
 # Serve that file as a Federation subgraph (foreign router talks here)
-hive-gateway subgraph chinook-subgraph.graphql
+pnpm exec hive-gateway subgraph chinook-subgraph.graphql
 # default http://0.0.0.0:4000 -- point Apollo Router / another gateway at this URL
 ```
 
@@ -92,7 +95,13 @@ Mesh subgraph SDL into an executable `GraphQLSchema` and host it on **Yoga**, Ap
 Mercurius, or any GraphQL HTTP stack. Transports and entity hops come from the SDL; you optionally
 pass `resolvers` for fields you own in code.
 
-```ts {9-15}
+```bash
+pnpm add graphql graphql-yoga @graphql-mesh/subgraph
+# plus transports your SDL uses, e.g. @graphql-mesh/transport-connect / transport-sql
+# npm i … (same package names)
+```
+
+```ts {8-14}
 import { createServer } from 'node:http'
 import { createYoga } from 'graphql-yoga'
 import { buildSubgraphSchema } from '@graphql-mesh/subgraph'
@@ -123,7 +132,7 @@ npx tsx subgraph-server.ts
 Emit or refresh the SDL the process loads:
 
 ```bash
-mesh-compose --subgraph reviews -o reviews.graphql
+pnpm exec mesh-compose --subgraph reviews -o reviews.graphql
 ```
 
 ### Resolvers for `@lookup`
@@ -138,7 +147,7 @@ object** (not a list). Type Merging `@merge` stays for **list / batch** entry fi
   `@lookup` on the field in SDL and implement it in `resolvers`. Same pattern as a classic
   Federation subgraph, except Mesh still executes the directive-driven surface beside your code.
 
-```graphql {5-7,9-13}
+```graphql {3,9}
 extend schema
   @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"])
   @link(url: "https://graphql.github.io/graphql-federation-spec/draft", import: ["@lookup"])
@@ -161,7 +170,7 @@ Full package comparison vs `@apollo/subgraph`:
 | One Mesh supergraph, all transports on Hive                         | [Serve Supergraph](/v2/serve) -- skip Serve Subgraph                                                                                               |
 | Connect-only graph, dual-run Hive + Apollo Router                   | Serve Supergraph; Router executes Connect from composed SDL                                                                                        |
 | Community Connectors SDL as a Fed peer in an existing fleet         | **Hive Gateway subgraph** or **`buildSubgraphSchema`** -- [Community Connectors](/v2/examples/community-connectors#serve-as-a-federation-subgraph) |
-| Non-Connect Mesh subgraph behind Apollo Router (or another gateway) | **Hive Gateway subgraph** option                                                                                                                   |
+| Non-Connect Mesh subgraph behind Apollo Router (or another gateway) | **Hive Gateway subgraph** or **`buildSubgraphSchema`** (`@graphql-mesh/subgraph`)                                                                  |
 | Yoga / custom Node server as the Federation subgraph                | **`buildSubgraphSchema`**                                                                                                                          |
 | Mix Mesh directives with code `@lookup` (or other) resolvers        | **`buildSubgraphSchema` + `resolvers`**                                                                                                            |
 | You only need published SDL for composition / registry              | Compose + registry -- no subgraph process                                                                                                          |

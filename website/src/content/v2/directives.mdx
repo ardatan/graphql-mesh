@@ -1005,7 +1005,7 @@ type Query {
 `@thrift__rpc`
 
 Binary Thrift path. TJSON over HTTP can emit HTTP/REST Connectors `@connect` instead (dual-run when
-Connect-compatible). Do **not** brand binary Thrift as Connectors. Protocol:
+Connect-compatible). Binary Thrift is a Mesh protocol -- not HTTP/REST Connectors. Protocol:
 
 <ProtocolRef name="thrift" />.
 
@@ -1211,15 +1211,16 @@ Federation transform stamps do -- same semantics as any Federation subgraph.
 ### `@composeDirective` for non-core directives
 
 Federation **core** names from the federation `@link` do **not** need `@composeDirective`. Use
-`@composeDirective` for **everything else** you import that must remain on the supergraph so Hive
-Gateway / Apollo Router (or Mesh transports) can read it:
+`@composeDirective` for **non-Connect** Mesh directives and other non-core imports that must remain
+on the supergraph so Hive Gateway (or Mesh transports) can read them. **HTTP/REST Connect**
+`@connect` / `@source` use the Connect composition path -- they do **not** use `@composeDirective`.
 
-| Family                      | Examples                                         | Needs `@composeDirective`?      |
-| --------------------------- | ------------------------------------------------ | ------------------------------- |
-| Federation core             | `@key`, `@requires`, `@external`, …              | No                              |
-| Federation draft hops       | `@lookup`, `@is`, `@internal`                    | **Yes**                         |
-| Mesh core / protocol / auth | `@transport`, `@sql`, `@merge`, `@skipAuth`, …   | **Yes**                         |
-| HTTP/REST Connect           | `@connect`, `@source` (Connect composition path) | Follow Connect / composer rules |
+| Family                      | Examples                                       | Needs `@composeDirective`?                                |
+| --------------------------- | ---------------------------------------------- | --------------------------------------------------------- |
+| Federation core             | `@key`, `@requires`, `@external`, …            | No                                                        |
+| Federation draft hops       | `@lookup`, `@is`, `@internal`                  | **Yes**                                                   |
+| Mesh core / protocol / auth | `@transport`, `@sql`, `@merge`, `@skipAuth`, … | **Yes**                                                   |
+| HTTP/REST Connect           | `@connect`, `@source`                          | **No** -- Connect composition path (not composeDirective) |
 
 After importing the non-core directive, list each local name **and** keep a matching `directive`
 definition (loaders stamp both; hand SDL must include defs):

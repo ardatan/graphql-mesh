@@ -13,12 +13,20 @@ Use this family when the source speaks **HTTP** and you want GraphQL fields that
 (<DirectiveRef name="connect" /> / <DirectiveRef name="source" />); you can also hand-write the same
 shape.
 
-| Piece     | Detail                                                                               |
-| --------- | ------------------------------------------------------------------------------------ |
-| Loaders   | `@omnigraph/openapi`, `@omnigraph/json-schema`, OData, SOAP                          |
-| Transport | `@graphql-mesh/transport-connect` on Hive Gateway                                    |
-| Dual-run  | Same Connect SDL on [Apollo Router](/v2/serve/apollo-router) when Connect-compatible |
-| Spec      | `https://specs.apollo.dev/connect/v0.4`                                              |
+| Piece     | Detail                                                                                                                                                  |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Loaders   | `@omnigraph/openapi`, `@omnigraph/json-schema`, OData, SOAP                                                                                             |
+| Transport | `@graphql-mesh/transport-connect` on Hive Gateway                                                                                                       |
+| Dual-run  | Same Connect SDL on [Apollo Router](/v2/serve/apollo-router) when Connect-compatible; SOAP envelope expects Hive / [Serve Subgraph](/v2/serve-subgraph) |
+| Spec      | `https://specs.apollo.dev/connect/v0.4`                                                                                                                 |
+
+## Packages
+
+```bash
+pnpm add @graphql-mesh/compose-cli @omnigraph/openapi @graphql-hive/gateway @graphql-mesh/transport-connect
+# JSON Schema / OData loaders as needed: @omnigraph/json-schema / OData package used by Mesh
+# npm i … (same package names)
+```
 
 SOAP stays in this HTTP/REST chapter (not a separate Protocols nav entry). Same `@connect` /
 `@source` author API plus a Mesh JSON↔XML codec -- see [SOAP-as-Connect](#soap-as-connect).
@@ -35,9 +43,8 @@ contract that upstream GraphOS Connectors document. Hand-authored Connect SDL is
 | Mesh serve         | Hive Gateway `transport-connect`; Apollo Router dual-run when the surface stays Connect-compatible                                          |
 | Mesh-only deltas   | SOAP / XML codec (Hive Gateway only); non-Connect protocols (`@sql`, `@protobuf__rpc`, ...) are **not** Connectors                          |
 
-Do **not** brand every mention **Apollo Connector(s)** -- say **HTTP/REST Connectors** (or
-**Connectors** when the family is already clear). Spec URLs (`https://specs.apollo.dev/connect/...`)
-stay as-is in SDL.
+Mesh docs call this family **HTTP/REST Connectors** (or **Connectors** when the context is clear).
+Spec URLs (`https://specs.apollo.dev/connect/...`) stay as-is in SDL.
 
 Community `@connect` schemas (Stripe, JSONPlaceholder, ...) can also compose under Mesh Compose +
 Hive Gateway / Apollo Router when the SDL is stock Connect -- Mesh does not require Rover / GraphOS

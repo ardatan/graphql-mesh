@@ -52,13 +52,17 @@ export const composeConfig = defineComposeConfig({
 Compose to a file, then serve:
 
 ```bash
-# Supergraph for local Serve Supergraph
-mesh-compose -o supergraph.graphql
-hive-gateway supergraph
+# Packages (example mix): @graphql-mesh/compose-cli @omnigraph/sql @omnigraph/openapi
+#   @graphql-hive/gateway @graphql-mesh/transport-sql @graphql-mesh/transport-connect
+# pnpm add … / npm i … (same names)
 
-# Or emit one subgraph (Generate / registry)
-mesh-compose --subgraph catalog -o catalog-subgraph.graphql
-mesh-compose --subgraph reviews -o reviews-subgraph.graphql
+# Supergraph for local Serve Supergraph
+pnpm exec mesh-compose -o supergraph.graphql
+pnpm exec hive-gateway supergraph
+
+# Or emit one subgraph (Generate / registry / Serve Subgraph)
+pnpm exec mesh-compose --subgraph catalog -o catalog-subgraph.graphql
+pnpm exec mesh-compose --subgraph reviews -o reviews-subgraph.graphql
 ```
 
 Generated and hand-written subgraphs share the same compose and
@@ -77,30 +81,32 @@ optional -- skip it when Hand-write or Generate-then-edit already owns the SDL.
 Use this for join-only subgraphs, fully authored Connect SDL, and edited loader output. FHIR's
 `reference-resource.graphql` is the canonical join-only example.
 
-<a id="semantic-conventions" />
-
-## Semantic conventions (ById / ByIds)
+## Semantic conventions (ById / ByIds) {#semantic-conventions}
 
 During composition, Mesh applies **loader / Query semantic conventions** unless you opt out. When
 the same object type appears across subgraphs and a Query field matches a ById / ByIds naming
 pattern with a key arg that lines up with a key field on that type, Compose stamps Federation entity
-wiring automatically -- `@key` plus Connect/protocol `entity: true` (or type-level `$this` maps), on
-HTTP/REST Connectors and protocol subgraphs (<ProtocolRef name="http-rest" />,
+wiring automatically -- `@key` plus Connect/protocol `entity: true` (or type-level `$this` maps) on
+HTTP/REST Connectors and protocol subgraphs (<ProtocolRef name="http-rest" />,{' '}
 
-<ProtocolRef name="sql" />, ...). GraphQL one-object hops use Federation `@lookup` (+ `@is` when
+<ProtocolRef name="sql" />, …). GraphQL one-object hops use Federation `@lookup` (+ `@is` when
 needed); list/batch GraphQL hops may use Type Merging `@merge` -- see [Directives:
 @lookup](/v2/directives#lookup) and [Directives: @merge](/v2/directives#merge).
 
 Naming is matched in snake_case. Typical patterns (key field often `id`):
 
-| Field / arg (examples)                                 | Intent                 | Connect / protocol / hop result                                                                  |
-| ------------------------------------------------------ | ---------------------- | ------------------------------------------------------------------------------------------------ |
-| `Query.bookById` / `Query.bookById(id:)`               | Singular ById          | `entity: true` (or type-level `$this` / Federation `@lookup`)                                    |
-| `Query.getCustomer` / `Query.getCustomer(id:)`         | `get_<Type>` + key arg | Same                                                                                             |
-| `Query.getCustomerById` / `Query.getCustomerById(id:)` | Explicit ById suffix   | Same                                                                                             |
-| `Query.customer` / `Query.customer(id:)`               | Type name + key arg    | Same                                                                                             |
-| `Query.customersByIds` / `Query.customersByIds(ids:)`  | Batch ByIds            | Batch Connect / protocol maps, or Type Merging `@merge` on list entry (not one-object `@lookup`) |
-| `Query.getFoosByIds` / `Query.getFoosByIds(ids:)`      | Batch with `get_`      | Same                                                                                             |
+<div className="overflow-x-auto">
+
+| Field / arg (examples)                                 | Intent                 | Result                                              |
+| ------------------------------------------------------ | ---------------------- | --------------------------------------------------- |
+| `Query.bookById` / `Query.bookById(id:)`               | Singular ById          | `entity: true` / `$this` / Federation `@lookup`     |
+| `Query.getCustomer` / `Query.getCustomer(id:)`         | `get_<Type>` + key arg | Same                                                |
+| `Query.getCustomerById` / `Query.getCustomerById(id:)` | Explicit ById suffix   | Same                                                |
+| `Query.customer` / `Query.customer(id:)`               | Type name + key arg    | Same                                                |
+| `Query.customersByIds` / `Query.customersByIds(ids:)`  | Batch ByIds            | Batch maps or Type Merging `@merge` (not `@lookup`) |
+| `Query.getFoosByIds` / `Query.getFoosByIds(ids:)`      | Batch with `get_`      | Same                                                |
+
+</div>
 
 Examples: `Query.bookById`, OpenAPI Billing `getCustomer` (`Query.getCustomer` + `entity: true`).
 
@@ -174,9 +180,11 @@ hive-gateway supergraph
 ./router --supergraph supergraph.graphql
 ```
 
-Mesh / Connect directives must survive composition via `@composeDirective` **and** matching
-`directive` definitions, or they are stripped before publish -- see
-[Schema registry](/v2/concepts/schema-registry) and [Directives](/v2/directives#federation).
+**Non-Connect** Mesh directives (and other non-core imports such as draft `@lookup`) must survive
+composition via `@composeDirective` **and** matching `directive` definitions, or they are stripped
+before publish. HTTP/REST Connect `@connect` / `@source` use the **Connect composition path** --
+they do **not** need `@composeDirective`. See [Schema registry](/v2/concepts/schema-registry) and
+[Directives: @composeDirective](/v2/directives#federation).
 
 Worked multi-subgraph config: [Music Store Example](/v2/examples/music-store) (catalog + reviews +
 recommendations, then compose all). Serve the composed graph: [Serve Supergraph](/v2/serve). Serve

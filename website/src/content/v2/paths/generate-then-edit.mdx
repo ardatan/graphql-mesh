@@ -41,25 +41,30 @@ would regenerate over your edits. Step 2 matches [Hand-write](/v2/paths/hand-wri
 ### Shell walkthrough (Generate → edit → consume)
 
 ```bash
+# Packages (OpenAPI / Connect example):
+pnpm add @graphql-mesh/compose-cli @omnigraph/openapi @graphql-hive/gateway \
+  @graphql-mesh/transport-connect
+# npm i … (same package names)
+
 # --- Config 1 in place: sourceHandler loadOpenAPISubgraph('reviews', ...) ---
 
 # 1. Generate emit
-mesh-compose --subgraph reviews -o reviews-subgraph.graphql
+pnpm exec mesh-compose --subgraph reviews -o reviews-subgraph.graphql
 
 # 2. Own the file (copy, then edit what you dislike)
 cp reviews-subgraph.graphql reviews.graphql
-# $EDITOR reviews.graphql
+# edit reviews.graphql
 
 # --- Flip mesh.config.ts to Config 2: name + schema: './reviews.graphql' ---
 
 # 3. Consume / re-compose the supergraph
-mesh-compose -o supergraph.graphql
+pnpm exec mesh-compose -o supergraph.graphql
 
 # 4. Serve Supergraph (optional next)
-hive-gateway supergraph
+pnpm exec hive-gateway supergraph
 
 # Optional: subgraph SDL for registry (reads the file, does not re-hit OpenAPI)
-mesh-compose --subgraph reviews -o reviews-subgraph.graphql
+pnpm exec mesh-compose --subgraph reviews -o reviews-subgraph.graphql
 ```
 
 ### 1. Generate emit (config)
@@ -146,7 +151,7 @@ Loader emit for a ById root (`Query.getCustomer` / `Query.getCustomer(id:)`). Co
 `entity: true`:
 
 {/* prettier-ignore */}
-```graphql {11}
+```graphql {10}
 type Query {
   getCustomer(id: String!): Customer
     @connect(

@@ -5,8 +5,9 @@
   "private": true,
   "scripts": {
     "analyze": "cross-env ANALYZE=true next build",
-    "build": "next build --webpack && next-sitemap && yarn pagefind",
-    "dev": "next dev --webpack",
+    "build": "node scripts/generate-llm-docs.mjs && next build --webpack && next-sitemap && yarn pagefind",
+    "dev": "node scripts/generate-llm-docs.mjs && next dev --webpack",
+    "generate:llm-docs": "node scripts/generate-llm-docs.mjs",
     "pagefind": "pagefind --site .next/server/app --output-path out/_pagefind",
     "start": "next start --webpack"
   },

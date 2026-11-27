@@ -15,14 +15,21 @@ directives (`@node`, `@relationship`, `@relationshipProperties`). Cypher and sch
 **under the hood via Neo4j GraphQL** -- Mesh's job is the transport + federation join. Not HTTP/REST
 Connectors. Hive Gateway only.
 
-| Piece      | Detail                                                  |
-| ---------- | ------------------------------------------------------- |
-| Loader     | `@omnigraph/neo4j` (introspect or accept author SDL)    |
-| Directives | Native `@neo4j/graphql` (`@node`, `@relationship`, ...) |
-| Transport  | `@graphql-mesh/transport-neo4j`                         |
-| Spec stamp | `https://specs.graphql-mesh.dev/neo4j/v0.1`             |
-| Dual-run   | Hive Gateway only                                       |
-| Examples   | Movies dataset (ACTED_IN / DIRECTED / REVIEWED)         |
+| Piece      | Detail                                                               |
+| ---------- | -------------------------------------------------------------------- |
+| Loader     | `@omnigraph/neo4j` (introspect or accept author SDL)                 |
+| Directives | Native `@neo4j/graphql` (`@node`, `@relationship`, ...)              |
+| Transport  | `@graphql-mesh/transport-neo4j`                                      |
+| Spec stamp | `https://specs.graphql-mesh.dev/neo4j/v0.1`                          |
+| Dual-run   | Hive Gateway; Apollo Router via [Serve Subgraph](/v2/serve-subgraph) |
+| Examples   | Movies dataset (ACTED_IN / DIRECTED / REVIEWED)                      |
+
+## Packages
+
+```bash
+pnpm add @graphql-mesh/compose-cli @omnigraph/neo4j @graphql-hive/gateway @graphql-mesh/transport-neo4j
+# npm i @graphql-mesh/compose-cli @omnigraph/neo4j @graphql-hive/gateway @graphql-mesh/transport-neo4j
+```
 
 Upstream type definitions: [Relationships](https://neo4j.com/docs/graphql/current/relationships/) /
 [Database mapping](https://neo4j.com/docs/graphql/current/directives/database-mapping/).

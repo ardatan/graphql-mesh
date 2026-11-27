@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { cn, DecorationIsolation, Heading } from '@theguild/components';
+import { Anchor, cn, DecorationIsolation, Heading } from '@theguild/components';
 import manipulateSectionBlurBackground from './manipulate-section-blur-background.webp';
 
 export function ManipulateDataSection({ className }: { className?: string }) {
@@ -18,28 +18,32 @@ export function ManipulateDataSection({ className }: { className?: string }) {
         />
       </DecorationIsolation>
       <Heading as="h3" size="md" className="text-white text-center">
-        Manipulate data
+        Transform Subgraph
       </Heading>
       <p className="mt-4 text-white/80 text-center text-balance">
-        Transform and tailor your schema within Mesh to meet specific business requirements
-        efficiently.
+        Optional reshape after you have Mesh subgraph SDL -- Automatic Compose transforms or edit
+        the committed <code>.graphql</code> by hand.
       </p>
       <dl className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-8 mt-8 lg:mt-16 xl:[&>*:not(:first-child)]:pl-8 max-sm:[&>*:not(:first-child)]:pt-4 max-sm:divide-y xl:divide-x divide-green-700">
         <ListItem
-          title="Naming conventions"
-          description="Customize field names within your GraphQL schema using Mesh's flexible naming conventions."
+          title="Automatic"
+          description="Ordered transforms in mesh.config.ts -- rename, filter, prefix at Compose time."
+          href="/v2/transforms/automatic"
         />
         <ListItem
-          title="Modify results"
-          description="Refine and adjust query results directly within Mesh to suit precise user needs."
+          title="By hand"
+          description="Commit the public shape in subgraph SDL when you already own the names."
+          href="/v2/transforms/by-hand"
         />
         <ListItem
-          title="Alter resolvers"
-          description="Incorporate middleware into your resolvers with Mesh, enhancing your GraphQL service's functionality."
+          title="Serve Subgraph"
+          description="Run SDL as its own Federation endpoint for any compatible gateway."
+          href="/v2/serve-subgraph"
         />
         <ListItem
-          title="Schema structure"
-          description="Employ Mesh to merge types and extend sources, structuring your GraphQL schema optimally."
+          title="Serve Supergraph"
+          description="Compose and run on Hive Gateway; Apollo Router for Connect-compatible graphs."
+          href="/v2/serve"
         />
       </dl>
     </section>
@@ -49,11 +53,16 @@ export function ManipulateDataSection({ className }: { className?: string }) {
 interface ListItemProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
   description: string;
+  href: string;
 }
-function ListItem({ title, description, ...rest }: ListItemProps) {
+function ListItem({ title, description, href, ...rest }: ListItemProps) {
   return (
     <div {...rest}>
-      <dt className="text-white font-medium">{title}</dt>
+      <dt className="text-white font-medium">
+        <Anchor href={href} className="hive-focus rounded-sm underline-offset-4 hover:underline">
+          {title}
+        </Anchor>
+      </dt>
       <dd className="text-white/80 block mt-2">{description}</dd>
     </div>
   );

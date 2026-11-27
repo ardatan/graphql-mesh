@@ -1,5 +1,13 @@
-import { CallToAction, cn, DecorationIsolation, Heading, MeshIcon } from '@theguild/components';
-import { HeroContainer, HeroContainerProps, HeroLinks } from './hero';
+import {
+  CallToAction,
+  CheckIcon,
+  cn,
+  DecorationIsolation,
+  GitHubIcon,
+  Heading,
+  MeshIcon,
+} from '@theguild/components';
+import { HeroContainer, HeroContainerProps, HeroFeatures, HeroLinks } from './hero';
 
 export function MeshHero(props: HeroContainerProps) {
   return (
@@ -12,12 +20,34 @@ export function MeshHero(props: HeroContainerProps) {
       <p className="mx-auto w-[512px] max-w-[80%] text-balance text-center leading-6 text-green-800">
         Federation Framework for any API
       </p>
+      <HeroFeatures>
+        <li>
+          <CheckIcon className="text-green-800" />
+          Build subgraphs from any API
+        </li>
+        <li>
+          <CheckIcon className="text-green-800" />
+          Platform, registry, gateway independent
+        </li>
+        <li>
+          <CheckIcon className="text-green-800" />
+          Serve on Hive Gateway or Apollo Router
+        </li>
+      </HeroFeatures>
       <HeroLinks>
         <CallToAction variant="primary-inverted" href="/v2/paths/generate">
           Build Subgraph
         </CallToAction>
         <CallToAction variant="secondary" href="/v2/serve">
           Serve Supergraph
+        </CallToAction>
+        <CallToAction
+          variant="secondary"
+          target="_blank"
+          href="https://github.com/ardatan/graphql-mesh"
+        >
+          <GitHubIcon className="size-6" />
+          GitHub
         </CallToAction>
       </HeroLinks>
     </HeroContainer>

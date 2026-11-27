@@ -7,8 +7,8 @@ import { ConceptRef, DirectiveRef, ProtocolRef } from '../../../components/v2-di
 
 # Apollo Router
 
-**Apollo Router** is a **peer** <ConceptRef name="gateway">gateway</ConceptRef> to Hive Gateway in
-the Mesh Serve Supergraph section (equal nav weight). Use it when your composed SDL is
+**Apollo Router** is a peer <ConceptRef name="gateway">gateway</ConceptRef> to Hive Gateway under
+[Serve Supergraph](/v2/serve). Use it when your composed SDL is
 **<ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef>-compatible**
 (<DirectiveRef name="connect" /> / <DirectiveRef name="source" /> on connect/v0.4-style emit).
 
@@ -16,14 +16,15 @@ the Mesh Serve Supergraph section (equal nav weight). Use it when your composed 
 
 Stock Apollo Router executes **Connect** only. It does **not** run Mesh protocol transports:
 
-| Surface                                                                                                                                                       | On Apollo Router?           |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
-| <ProtocolRef name="http-rest" /> JSON Connect (OpenAPI / JSON Schema / OData when Connect-shaped)                                                             | Yes when Connect-compatible |
-| SOAP-as-Connect (XML envelope)                                                                                                                                | No (expect Hive Gateway)    |
-| <ProtocolRef name="sql" />, <ProtocolRef name="mongo" />, <ProtocolRef name="protobuf" />, <ProtocolRef name="thrift" /> binary, <ProtocolRef name="neo4j" /> | No                          |
+| Surface                                                                                                                                                       | On Apollo Router?                                                                                                         |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| <ProtocolRef name="http-rest" /> JSON Connect (OpenAPI / JSON Schema / OData when Connect-shaped)                                                             | Yes when Connect-compatible                                                                                               |
+| SOAP-as-Connect (XML envelope)                                                                                                                                | No -- Hive Gateway / [Serve Subgraph](/v2/serve-subgraph)                                                                 |
+| <ProtocolRef name="sql" />, <ProtocolRef name="mongo" />, <ProtocolRef name="protobuf" />, <ProtocolRef name="thrift" /> binary, <ProtocolRef name="neo4j" /> | No -- [Serve Subgraph](/v2/serve-subgraph) (Hive Gateway subgraph or `buildSubgraphSchema` from `@graphql-mesh/subgraph`) |
 
 For multi-protocol Music Store graphs, run the **full** supergraph on
-[Hive Gateway](/v2/serve/hive-gateway); dual-run only the Connect slice here.
+[Hive Gateway](/v2/serve/hive-gateway); dual-run only the Connect slice here. Non-Connect peers
+behind Apollo Router: [Serve Subgraph](/v2/serve-subgraph).
 
 ## Dual-run
 

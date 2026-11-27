@@ -185,9 +185,14 @@ transport options stay Mesh-side.
 ## 3. Compose and dual-run
 
 ```bash
-mesh-compose -o supergraph.graphql
+# Packages:
+pnpm add @graphql-mesh/compose-cli @omnigraph/odata @graphql-hive/gateway \
+  @graphql-mesh/transport-connect
+# npm i … (same package names)
+
+pnpm exec mesh-compose -o supergraph.graphql
 # Hive Gateway (JS/TS)
-hive-gateway supergraph
+pnpm exec hive-gateway supergraph
 # Apollo Router -- same Connect-compatible supergraph
 ./router --supergraph supergraph.graphql
 ```

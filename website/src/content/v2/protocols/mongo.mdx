@@ -11,14 +11,21 @@ ops, ObjectId keys, and Federation entity fill -- without inventing a REST facad
 protocol** (not HTTP/REST Connectors). The loader stamps `@mongo__*` ops; Hive Gateway runs
 `transport-mongo`. Stock Apollo Router does **not** execute them.
 
-| Piece      | Detail                                       |
-| ---------- | -------------------------------------------- |
-| Loader     | `@omnigraph/mongo` (`loadMongoSubgraph`)     |
-| Directives | `@mongo__findOne`, `@mongo__find`, CRUD, ... |
-| Transport  | `@graphql-mesh/transport-mongo`              |
-| Spec       | `https://specs.graphql-mesh.dev/mongo/v0.1`  |
-| Dual-run   | Hive Gateway only                            |
-| Examples   | Mongoose users model                         |
+| Piece      | Detail                                                               |
+| ---------- | -------------------------------------------------------------------- |
+| Loader     | `@omnigraph/mongo` (`loadMongoSubgraph`)                             |
+| Directives | `@mongo__findOne`, `@mongo__find`, CRUD, ...                         |
+| Transport  | `@graphql-mesh/transport-mongo`                                      |
+| Spec       | `https://specs.graphql-mesh.dev/mongo/v0.1`                          |
+| Dual-run   | Hive Gateway; Apollo Router via [Serve Subgraph](/v2/serve-subgraph) |
+| Examples   | Mongoose users model                                                 |
+
+## Packages
+
+```bash
+pnpm add @graphql-mesh/compose-cli @omnigraph/mongo @graphql-hive/gateway @graphql-mesh/transport-mongo
+# npm i @graphql-mesh/compose-cli @omnigraph/mongo @graphql-hive/gateway @graphql-mesh/transport-mongo
+```
 
 ## Generate from a Mongoose model
 

@@ -16,8 +16,17 @@ Stock Apollo Router does **not** execute `@protobuf__rpc`.
 | Directive | `@protobuf__rpc` (`service`, `method`, `args`, `selection`, `stream`, `entity`) |
 | Transport | `@graphql-mesh/transport-protobuf`                                              |
 | Spec      | `https://specs.graphql-mesh.dev/protobuf/v0.1`                                  |
-| Dual-run  | Hive Gateway only                                                               |
+| Dual-run  | Hive Gateway; Apollo Router via [Serve Subgraph](/v2/serve-subgraph)            |
 | Examples  | Hand SDL movies subgraph; Music Store recommendations; streaming RPCs           |
+
+## Packages
+
+```bash
+pnpm add @graphql-mesh/compose-cli @graphql-hive/gateway @graphql-mesh/transport-protobuf
+# Hand SDL needs no loader package; Yoga peer optional:
+# pnpm add graphql graphql-yoga @graphql-mesh/subgraph
+# npm i … (same package names)
+```
 
 ## Hand SDL
 
