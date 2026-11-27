@@ -546,6 +546,29 @@ function errorFromFetchThrow(
   });
 }
 
+/**
+ * Mutation serial parity: after a root was nullified with errors, skip later
+ * hops when the root field is non-null (Fetch + root Island).
+ */
+function maybeAbortMutationAfterNullifiedRoot(
+  ctx: BackboneExecutionContext,
+  responseKey: string,
+  fieldName: string,
+  hadErrors: boolean,
+): void {
+  if (!hadErrors || ctx.operation.operation !== 'mutation') {
+    return;
+  }
+  if (ctx.data[responseKey] != null) {
+    return;
+  }
+  const rootType = getDefinedRootType(ctx.schema, ctx.operation.operation);
+  const fieldDef = rootType.getFields()[fieldName];
+  if (fieldDef && !isNullableType(fieldDef.type)) {
+    ctx.abortRemainingHops = true;
+  }
+}
+
 /** Local Island resolver throw → GraphQLError on the field path (no serviceName). */
 function errorFromIslandThrow(
   err: unknown,
@@ -1006,23 +1029,6 @@ function executeFetchNode(
   if (node.rootField) {
     const responseKey = node.rootField.alias?.value ?? node.rootField.name.value;
     const rootFieldNode = node.rootField;
-    const maybeAbortMutationAfterRoot = (hadErrors: boolean) => {
-      // Only abort when a non-null mutation root was nullified. Errors confined
-      // to nullable descendants leave a non-null root object and must not skip
-      // later mutation roots (graphql-js / GraphQL spec serial mutation parity).
-      if (!hadErrors || ctx.operation.operation !== 'mutation') {
-        return;
-      }
-      if (ctx.data[responseKey] != null) {
-        return;
-      }
-      const rootType = getDefinedRootType(ctx.schema, ctx.operation.operation);
-      const fieldDef = rootType.getFields()[rootFieldNode.name.value];
-      if (fieldDef && !isNullableType(fieldDef.type)) {
-        ctx.abortRemainingHops = true;
-      }
-    };
-
     const writeRootResult = (value: any, errors: readonly GraphQLError[] = []) => {
       if (errors.length) {
         ctx.errors.push(
@@ -1048,7 +1054,12 @@ function executeFetchNode(
         // so finalizeRootResult can apply nullability bubbling.
         ctx.data[responseKey] = null;
       }
-      maybeAbortMutationAfterRoot(errors.length > 0);
+      maybeAbortMutationAfterNullifiedRoot(
+        ctx,
+        responseKey,
+        rootFieldNode.name.value,
+        errors.length > 0,
+      );
     };
 
     const writeRootThrowFailure = (err: unknown) => {
@@ -1056,7 +1067,7 @@ function executeFetchNode(
       if (!(responseKey in ctx.data)) {
         ctx.data[responseKey] = null;
       }
-      maybeAbortMutationAfterRoot(true);
+      maybeAbortMutationAfterNullifiedRoot(ctx, responseKey, rootFieldNode.name.value, true);
     };
 
     // Rename / encapsulate / defer transforms need Transformer - prebuilt
@@ -1445,7 +1456,9 @@ function tryExecuteEntitiesBatch(
         ctx.errors.push(...result.errors);
       }
       let payload = result.data?.[entry.fieldName];
-      if (entry.valuesFromResults != null) {
+      // Errors-only responses leave payload undefined; do not call unwrap
+      // callbacks that assume an array (mergeResults already no-ops on absent).
+      if (entry.valuesFromResults != null && payload != null) {
         payload = entry.valuesFromResults(payload, keys);
       }
       mergeResults(payload);
@@ -1557,9 +1570,10 @@ function executeIslandNode(
     },
     err => {
       // Local/gateway Island throws must become GraphQL errors (classic parity),
-      // not reject the whole plan — otherwise result.errors is empty.
+      // not reject the whole plan - otherwise result.errors is empty.
       ctx.errors.push(errorFromIslandThrow(err, responseKey, node.fieldNode));
       ctx.data[responseKey] = null;
+      maybeAbortMutationAfterNullifiedRoot(ctx, responseKey, fieldName, true);
     },
   );
 }
@@ -2182,7 +2196,7 @@ function executeBatchFetchNode(
             ctx.errors.push(...result.errors);
           }
           let entities = result.data?.[fieldName];
-          if (mergeEntry.valuesFromResults != null) {
+          if (mergeEntry.valuesFromResults != null && entities != null) {
             entities = mergeEntry.valuesFromResults(entities, allKeys);
           }
           if (!Array.isArray(entities)) {
