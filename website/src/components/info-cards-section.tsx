@@ -18,8 +18,8 @@ export function InfoCardsSection() {
             icon={<GitBranchIcon />}
             className="h-full rounded-2xl md:rounded-3xl"
           >
-            Generate, Hand-write, or Generate-then-edit Federation-ready Mesh subgraph SDL from REST,
-            SOAP, OData, gRPC, SQL, and more.
+            Generate, Hand-write, or Generate-then-edit Federation-ready Mesh subgraph SDL from
+            REST, SOAP, OData, gRPC, SQL, and more.
           </InfoCard>
         </li>
         <li className="flex-1 basis-full list-none md:basis-0">

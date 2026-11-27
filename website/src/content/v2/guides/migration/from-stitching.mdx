@@ -48,7 +48,7 @@ Do not mix up these “merge” / hop ideas:
 | Batch `users(ids:)` merge           | Mesh Type Merging `@merge` on the list entry field -- [Directives: @merge](/v2/directives#merge) |
 | `stitchSchemas` as the gateway      | [Serve Supergraph](/v2/serve) (Hive Gateway preferred; Apollo Router for Connect-compatible SDL) |
 | Keep a foreign router               | [Serve Subgraph](/v2/serve-subgraph) so Router / GraphOS can call Mesh-backed Federation URLs    |
-| Programmatic `delegateToSchema`     | Mesh `@resolveTo` on SDL (field delegation / additional resolvers)                              |
+| Programmatic `delegateToSchema`     | Mesh `@resolveTo` on SDL (field delegation / additional resolvers)                               |
 
 ## Before: programmatic stitch
 
@@ -217,14 +217,14 @@ Prefer Federation `@key` + `@lookup` / Connect / protocol joins for **entity** h
 Use `@resolveTo` when you still need an explicit field-level delegation (gateway
 `additionalTypeDefs`, or a join that is not a clean entity entry).
 
-| Stitching (`delegateToSchema`)                         | Mesh (`@resolveTo`)                                              |
-| ------------------------------------------------------ | ---------------------------------------------------------------- |
-| `schema` / subschema config                            | `sourceName` (Compose subgraph name)                             |
-| `operation: 'query'` + parent type                     | `sourceTypeName` (usually `Query`)                               |
-| `fieldName`                                            | `sourceFieldName`                                                |
-| `args: { id: parent.authorId }`                        | `sourceArgs: { id: "{root.authorId}" }`                          |
-| `selectionSet: '{ authorId }'` on the stitching field  | `requiredSelectionSet: "{ authorId }"`                           |
-| Batch `argsFromKeys` / list arg + DataLoader           | `keyField` + `keysArg` (optional `valueKeyField`)                |
+| Stitching (`delegateToSchema`)                        | Mesh (`@resolveTo`)                               |
+| ----------------------------------------------------- | ------------------------------------------------- |
+| `schema` / subschema config                           | `sourceName` (Compose subgraph name)              |
+| `operation: 'query'` + parent type                    | `sourceTypeName` (usually `Query`)                |
+| `fieldName`                                           | `sourceFieldName`                                 |
+| `args: { id: parent.authorId }`                       | `sourceArgs: { id: "{root.authorId}" }`           |
+| `selectionSet: '{ authorId }'` on the stitching field | `requiredSelectionSet: "{ authorId }"`            |
+| Batch `argsFromKeys` / list arg + DataLoader          | `keyField` + `keysArg` (optional `valueKeyField`) |
 
 ### Single-id hop
 
@@ -303,8 +303,8 @@ extend type Book {
 }
 ```
 
-When the upstream returns rows out of key order (or keyed by a different field), set
-`valueKeyField` as well -- see [Directives: @resolveTo](/v2/directives#resolveTo).
+When the upstream returns rows out of key order (or keyed by a different field), set `valueKeyField`
+as well -- see [Directives: @resolveTo](/v2/directives#resolveTo).
 
 {/* prettier-ignore */}
 ```diff
