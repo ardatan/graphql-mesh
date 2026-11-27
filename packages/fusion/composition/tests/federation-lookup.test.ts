@@ -387,6 +387,64 @@ describe('Federation Spec @lookup / @is / @internal', () => {
     expect(argDirs.is?.length || 0).toBe(0);
   });
 
+  it('preserves explicit keyArg→keyField with @is even when a same-named field exists', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      type Query {
+        productBySku(sku: ID!): Product
+      }
+      type Product {
+        id: ID!
+        sku: ID!
+      }
+    `);
+    const transform = createFederationTransform({
+      Product: {
+        key: {
+          fields: 'id',
+          resolveReference: {
+            fieldName: 'productBySku',
+            keyArg: 'sku',
+            keyField: 'id',
+          },
+        },
+      },
+    });
+    const result = transform(schema, { name: 'products', schema });
+    const field = result.getQueryType()!.getFields().productBySku!;
+    expect(getDirectiveExtensions(field).lookup?.length).toBeGreaterThan(0);
+    const skuArg = field.args.find(a => a.name === 'sku')!;
+    const argDirs = getDirectiveExtensions(skuArg);
+    expect(argDirs.is?.some((d: { field?: string }) => d?.field === 'id')).toBe(true);
+  });
+
+  it('stamps @is(field: keyField) when same-named return field has a different type', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      type Query {
+        productByCode(code: ID!): Product
+      }
+      type Product {
+        id: ID!
+        code: String!
+      }
+    `);
+    const transform = createFederationTransform({
+      Product: {
+        key: {
+          fields: 'id',
+          resolveReference: {
+            fieldName: 'productByCode',
+          },
+        },
+      },
+    });
+    const result = transform(schema, { name: 'products', schema });
+    const field = result.getQueryType()!.getFields().productByCode!;
+    expect(getDirectiveExtensions(field).lookup?.length).toBeGreaterThan(0);
+    const codeArg = field.args.find(a => a.name === 'code')!;
+    const argDirs = getDirectiveExtensions(codeArg);
+    expect(argDirs.is?.some((d: { field?: string }) => d?.field === 'id')).toBe(true);
+  });
+
   it('stamps @is(field: keyField) when the arg has no matching return field', () => {
     const schema = buildSchema(/* GraphQL */ `
       type Query {

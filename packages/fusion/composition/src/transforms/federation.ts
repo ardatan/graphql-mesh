@@ -523,22 +523,30 @@ export function createFederationTransform(config: FederationTransformConfig): Su
               }
               lookupDirectiveUsed = true;
               // Prefer inferred keyArg when omitted (e.g. productId → Product.id).
-              // When Product also has a same-named field as the arg (sku), inferred
-              // argsExpr was `sku: $key.sku` — keep that binding via implicit mapping.
-              // Only stamp `@is(field: keyField)` when the arg has no matching return
-              // field (productId → id).
+              // Suppress `@is` only for *inferred* same-name+same-type bindings
+              // (omitted keyArg → sku↔Product.sku). Explicit keyArg→keyField always
+              // stamps `@is` so `keyArg: "sku", keyField: "id"` is preserved even when
+              // Product also defines `sku`.
               if (
                 effectiveKeyArg &&
                 keyField &&
                 effectiveKeyArg !== keyField &&
                 fieldConfig.args?.[effectiveKeyArg]
               ) {
-                const returnNamedType = getNamedType(fieldConfig.type);
-                const hasMatchingReturnField =
-                  !!returnNamedType &&
-                  'getFields' in returnNamedType &&
-                  !!returnNamedType.getFields()[effectiveKeyArg];
-                if (!hasMatchingReturnField) {
+                let suppressIs = false;
+                if (!keyArg) {
+                  const argConfig = fieldConfig.args[effectiveKeyArg];
+                  const returnNamedType = getNamedType(fieldConfig.type);
+                  const returnField =
+                    returnNamedType && 'getFields' in returnNamedType
+                      ? returnNamedType.getFields()[effectiveKeyArg]
+                      : undefined;
+                  // Match argsExpr inference: same name *and* same named type.
+                  suppressIs =
+                    !!returnField &&
+                    getNamedType(returnField.type).name === getNamedType(argConfig.type).name;
+                }
+                if (!suppressIs) {
                   const argConfig = fieldConfig.args[effectiveKeyArg];
                   const argDirs = getDirectiveExtensions(argConfig) || {};
                   argDirs.is ||= [];
