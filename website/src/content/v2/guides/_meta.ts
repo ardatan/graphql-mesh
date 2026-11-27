@@ -3,6 +3,7 @@ export default {
   migration: 'Migration (v0 / v1 → v2)',
   'ai-assisted-authoring': 'AI-assisted authoring',
   'reading-generated-sdl': 'Reading generated SDL',
+  'build-subgraph-schema': 'buildSubgraphSchema',
   'schema-coordinates': 'Schema Coordinates',
   'selection-mapping': 'Selection mapping',
   'subscriptions-pubsub': 'Subscriptions and pubsub',

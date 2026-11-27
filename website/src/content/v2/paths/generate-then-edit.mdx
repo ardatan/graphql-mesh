@@ -9,7 +9,10 @@ import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 Generate gets you a working subgraph fast. Generate-then-edit is when you **dislike** the shape --
 names, extras, selection maps -- and take ownership: edit the `.graphql`, re-compose, re-query.
-Compose, schema registry, and gateway treat that edited file the same as hand-written SDL.
+Compose, schema registry, and gateway treat that edited file the same as hand-written SDL. The
+edited file is also valid `typeDefs` for `buildSubgraphSchema` from `@graphql-mesh/subgraph` -- same
+call as [Generate](/v2/paths/generate) and [Hand-write](/v2/paths/hand-write)
+([buildSubgraphSchema](/v2/guides/build-subgraph-schema)).
 
 <V2FlowDiagram
   ariaLabel="Generate-then-edit path"
@@ -85,9 +88,25 @@ Trace binders: [Selection mapping](/v2/guides/selection-mapping). Protocol:
 
 Full stage walkthrough: [Music Store Example](/v2/examples/music-store).
 
+## Optional: run the edited subgraph yourself
+
+After you check in the edited `.graphql`, you can serve it with Yoga (or any GraphQL server) via
+`buildSubgraphSchema` -- transports and entity hops come from the SDL:
+
+```ts
+import { buildSubgraphSchema } from '@graphql-mesh/subgraph'
+import { readFileSync } from 'node:fs'
+
+const schema = buildSubgraphSchema(readFileSync('./reviews.graphql', 'utf8'))
+```
+
+Prefer Federation `@lookup` for one-object entity entry fields; Mesh `@merge` only for list/batch --
+[Directives](/v2/directives#lookup). Guide: [buildSubgraphSchema](/v2/guides/build-subgraph-schema).
+
 <Cards>
   <Cards.Card arrow title="Generate" href="/v2/paths/generate" />
   <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
+  <Cards.Card arrow title="buildSubgraphSchema" href="/v2/guides/build-subgraph-schema" />
   <Cards.Card arrow title="AI-assisted authoring" href="/v2/guides/ai-assisted-authoring" />
   <Cards.Card arrow title="Transforms (optional)" href="/v2/transforms" />
   <Cards.Card arrow title="Selection mapping" href="/v2/guides/selection-mapping" />

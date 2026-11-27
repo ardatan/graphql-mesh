@@ -1,0 +1,141 @@
+---
+description:
+  buildSubgraphSchema from @graphql-mesh/subgraph -- turn Mesh subgraph SDL into an executable
+  GraphQLSchema for any GraphQL server
+---
+
+import { Callout, Cards } from '@theguild/components'
+import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
+
+# buildSubgraphSchema
+
+`@graphql-mesh/subgraph` turns **Mesh subgraph SDL** into an executable `GraphQLSchema` you can
+serve on **Yoga** (or any GraphQL server) as a Federation subgraph for **Hive Gateway** or **Apollo
+Router**.
+
+The same call accepts SDL from every authoring path:
+
+| Path                                               | What you pass in                                                 |
+| -------------------------------------------------- | ---------------------------------------------------------------- |
+| [Generate](/v2/paths/generate)                     | Loader-emitted subgraph SDL                                      |
+| [Generate-then-edit](/v2/paths/generate-then-edit) | Edited `.graphql` after you own the emit                         |
+| [Hand-write](/v2/paths/hand-write)                 | Authored `.graphql` (protocol / Connect / Federation directives) |
+
+Composition and schema registries still consume that SDL as subgraph input. `buildSubgraphSchema` is
+the **runtime** step when you want the subgraph process itself to execute Mesh transports and entity
+hops -- not only publish SDL into a supergraph.
+
+<V2FlowDiagram
+  ariaLabel="Subgraph SDL into buildSubgraphSchema then any GraphQL server"
+  steps={[
+    { title: 'Subgraph SDL', lines: ['Generate / edit / hand'], accent: true },
+    { title: 'buildSubgraphSchema', accent: true },
+    { title: 'GraphQL server', lines: ['Yoga / ...'] },
+    { title: 'Gateway', lines: ['Hive / Apollo Router'] }
+  ]}
+/>
+
+## Package and export
+
+```ts
+import { createServer } from 'node:http'
+import { createYoga } from 'graphql-yoga'
+import { buildSubgraphSchema } from '@graphql-mesh/subgraph'
+import { readFileSync } from 'node:fs'
+
+const typeDefs = readFileSync('./subgraph.graphql', 'utf8')
+
+const schema = buildSubgraphSchema(typeDefs, {
+  // optional GraphQL resolvers for fields you own in code
+  // resolvers: { ... },
+  // optional fetch / transport context for @transport and @connect
+  // fetch: globalThis.fetch,
+})
+
+const yoga = createYoga({ schema })
+createServer(yoga).listen(4001)
+```
+
+**Signature (shape):**
+
+```ts
+buildSubgraphSchema(
+  typeDefs: string | DocumentNode | GraphQLSchema,
+  options?: {
+    resolvers?: IResolvers
+    fetch?: typeof fetch
+    // ...transport context as supported by the package
+  }
+): GraphQLSchema
+```
+
+`typeDefs` may be:
+
+- Generated Mesh subgraph SDL (string or `DocumentNode`)
+- Hand-written / edited `.graphql`
+- An existing `GraphQLSchema` already carrying Mesh / Federation directives
+
+## What it wires
+
+From the SDL directives, `buildSubgraphSchema` builds executable behavior:
+
+| SDL / directive family                                           | Runtime role                                                             |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| <DirectiveRef name="transport" />                                | Which Mesh transport runs for this subgraph                              |
+| <DirectiveRef name="connect" /> / <DirectiveRef name="source" /> | HTTP/REST Connectors mapping                                             |
+| Protocol directives (`@sql`, `@protobuf__rpc`, ...)              | Protocol transports                                                      |
+| Federation `@lookup` / `@is` / `@internal`                       | Entity entry fields that return **one object**                           |
+| Mesh <DirectiveRef name="merge" />                               | **List / batch** entity entry fields (when `@lookup` is one-object only) |
+| Federation <DirectiveRef name="key" />                           | Entity keys for Federation                                               |
+
+Prefer Federation `@lookup` / `@is` / `@internal` for one-object entity entry fields. Use Mesh
+`@merge` only for list/batch hops -- [Directives: @lookup](/v2/directives#lookup) /
+[Directives: @merge](/v2/directives#merge).
+
+<Callout type="info">
+  Serving with `buildSubgraphSchema` does **not** replace{' '}
+  <ConceptRef name="composition">composition</ConceptRef>. Gateways still need composed supergraph
+  (or registry) SDL. This package runs **one subgraph** process that understands Mesh directives.
+</Callout>
+
+## Same call for every path
+
+### Generate
+
+1. Loader + Compose emit subgraph SDL ([Generate](/v2/paths/generate)).
+2. Read it ([Reading generated SDL](/v2/guides/reading-generated-sdl)).
+3. Pass that SDL into `buildSubgraphSchema` if you serve the subgraph yourself, **or** keep letting
+   Hive Gateway / Apollo Router execute from the composed supergraph.
+
+### Generate-then-edit
+
+1. Edit the emitted `.graphql` ([Generate-then-edit](/v2/paths/generate-then-edit)).
+2. Re-compose / re-publish as usual.
+3. The **same** edited file is valid `typeDefs` for `buildSubgraphSchema`.
+
+### Hand-write
+
+1. Author protocol / Connect / Federation SDL ([Hand-write](/v2/paths/hand-write)).
+2. Drop the file into Compose **and** (optionally) `buildSubgraphSchema` for a local subgraph
+   server.
+
+## Serve as a Federation subgraph
+
+Point Hive Gateway or Apollo Router at your composed supergraph. The subgraph URL is whatever host
+runs Yoga (or your server) with the schema from `buildSubgraphSchema`. Connect-compatible slices can
+dual-run on Apollo Router when the SDL stays within Connect; protocol transports (`@sql`,
+`@protobuf__rpc`, ...) need **Hive Gateway** (JS/TS) or a Mesh-aware subgraph process.
+
+See [Hive Gateway](/v2/serve/hive-gateway) / [Apollo Router](/v2/serve/apollo-router) /
+[Composition](/v2/compose).
+
+<Cards>
+  <Cards.Card arrow title="Generate" href="/v2/paths/generate" />
+  <Cards.Card arrow title="Generate-then-edit" href="/v2/paths/generate-then-edit" />
+  <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
+  <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
+  <Cards.Card arrow title="Directives" href="/v2/directives" />
+  <Cards.Card arrow title="Entity resolution" href="/v2/concepts/federation#entity-resolution" />
+</Cards>
