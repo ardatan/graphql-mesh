@@ -10,7 +10,10 @@ import {
   type GraphQLInterfaceType,
   type GraphQLObjectType,
 } from 'graphql';
-import { suggestionList } from '@graphql-mesh/fusion-composition';
+import {
+  suggestionList,
+  validateFederationLookupDirectives,
+} from '@graphql-mesh/fusion-composition';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
 import type { ServiceDefinition } from '@theguild/federation-composition';
 
@@ -54,8 +57,13 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
   });
   const graphEnumToName = readJoinGraphEnumToName(schema);
   const errors: GraphQLError[] = [];
+  // Federation Spec draft `@lookup` / `@is` / `@internal` when still native on the SG.
+  // Join-rewritten apps are validated earlier on annotated subgraphs during compose.
+  // Gate on the parsed schema (not raw SDL) so whitespace variants like `@ is` still run.
+  if (schemaHasFederationLookupDirectives(schema)) {
+    errors.push(...validateFederationLookupDirectives(schema));
+  }
   const typeMap = schema.getTypeMap();
-
   for (const typeName in typeMap) {
     const type = typeMap[typeName];
     if (!type || typeName.startsWith('__')) {
@@ -334,4 +342,36 @@ function readJoinGraphEnumToName(schema: ReturnType<typeof buildSchema>): Map<st
     }
   }
   return map;
+}
+
+/** True when the schema defines or applies Federation Spec draft lookup directives. */
+function schemaHasFederationLookupDirectives(schema: ReturnType<typeof buildSchema>): boolean {
+  if (
+    schema.getDirective('lookup') ||
+    schema.getDirective('is') ||
+    schema.getDirective('internal')
+  ) {
+    return true;
+  }
+  for (const type of Object.values(schema.getTypeMap())) {
+    if ((!isObjectType(type) && !isInterfaceType(type)) || type.name.startsWith('__')) {
+      continue;
+    }
+    const typeDirs = getDirectiveExtensions(type, schema);
+    if (typeDirs?.internal?.length) {
+      return true;
+    }
+    for (const field of Object.values(type.getFields())) {
+      const fieldDirs = getDirectiveExtensions(field, schema);
+      if (fieldDirs?.lookup?.length || fieldDirs?.internal?.length) {
+        return true;
+      }
+      for (const arg of field.args) {
+        if (getDirectiveExtensions(arg, schema)?.is?.length) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
 }

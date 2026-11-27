@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Composition with Auth @authenticated 1`] = `
-schema@link(url:"https://specs.apollo.dev/link/v1.0")@link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION)@link(url:"https://specs.apollo.dev/requiresScopes/v0.1" for:SECURITY)@link(url:"https://specs.apollo.dev/authenticated/v0.1" for:SECURITY)@link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@merge"]){query:Query}
+schema@link(url:"https://specs.apollo.dev/link/v1.0")@link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION)@link(url:"https://specs.apollo.dev/requiresScopes/v0.1" for:SECURITY)@link(url:"https://specs.apollo.dev/authenticated/v0.1" for:SECURITY)@link(url:"https://graphql.github.io/graphql-federation-spec/v0.0" import:["@lookup"]){query:Query}
 directive@join__enumValue(graph:join__Graph!)repeatable on ENUM_VALUE
 directive@join__graph(name:String!url:String!)on ENUM_VALUE
 directive@join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet
@@ -17,16 +17,16 @@ directive@requiresScopes(scopes:[[requiresScopes__Scope!]!]!)on FIELD_DEFINITION
 scalar requiresScopes__Scope
 directive@authenticated on FIELD_DEFINITION|OBJECT|INTERFACE|SCALAR|ENUM
 enum join__Graph{A@join__graph(name:"A" url:"")}
-type Query@join__type(graph:A){me:User@authenticated post(id:ID!):Post@join__directive(graphs:[A]name:"merge" args:{keyField:"id" keyArg:"id"})}
+type Query@join__type(graph:A){me:User@authenticated post(id:ID!):Post@join__directive(graphs:[A]name:"lookup" args:{})}
 type User@join__type(graph:A){id:ID!username:String email:String@requiresScopes(scopes:[["read:email"]])posts:[Post!]!}
 type Post@join__type(graph:A key:"id"){id:ID!author:User!title:String!content:String!views:Int@authenticated}
-directive@join__directive(graphs:[join__Graph!]name:String!args:join__DirectiveArguments)repeatable on SCHEMA|OBJECT|INTERFACE|FIELD_DEFINITION
+directive@join__directive(graphs:[join__Graph!]name:String!args:join__DirectiveArguments)repeatable on SCHEMA|OBJECT|INTERFACE|FIELD_DEFINITION|ARGUMENT_DEFINITION
 scalar join__DirectiveArguments
 
 `;
 
 exports[`Composition with Auth @requiresScopes 1`] = `
-schema@link(url:"https://specs.apollo.dev/link/v1.0")@link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION)@link(url:"https://specs.apollo.dev/requiresScopes/v0.1" for:SECURITY)@link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@merge"]){query:Query}
+schema@link(url:"https://specs.apollo.dev/link/v1.0")@link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION)@link(url:"https://specs.apollo.dev/requiresScopes/v0.1" for:SECURITY)@link(url:"https://graphql.github.io/graphql-federation-spec/v0.0" import:["@lookup"]){query:Query}
 directive@join__enumValue(graph:join__Graph!)repeatable on ENUM_VALUE
 directive@join__graph(name:String!url:String!)on ENUM_VALUE
 directive@join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet
@@ -41,10 +41,10 @@ enum link__Purpose{"""\`SECURITY\` features provide metadata necessary to secure
 directive@requiresScopes(scopes:[[requiresScopes__Scope!]!]!)on FIELD_DEFINITION|OBJECT|INTERFACE|SCALAR|ENUM
 scalar requiresScopes__Scope
 enum join__Graph{A@join__graph(name:"A" url:"")}
-type Query@join__type(graph:A){user(id:ID!):User@join__directive(graphs:[A]name:"merge" args:{keyField:"id" keyArg:"id"})@requiresScopes(scopes:[["read:others"]])users:[User!]!@requiresScopes(scopes:[["read:others"]])post(id:ID!):Post@join__directive(graphs:[A]name:"merge" args:{keyField:"id" keyArg:"id"})}
+type Query@join__type(graph:A){user(id:ID!):User@join__directive(graphs:[A]name:"lookup" args:{})@requiresScopes(scopes:[["read:others"]])users:[User!]!@requiresScopes(scopes:[["read:others"]])post(id:ID!):Post@join__directive(graphs:[A]name:"lookup" args:{})}
 type User@join__type(graph:A key:"id"){id:ID!username:String email:String@requiresScopes(scopes:[["read:email"]])profileImage:String posts:[Post!]!}
 type Post@join__type(graph:A key:"id"){id:ID!author:User!title:String!content:String!}
-directive@join__directive(graphs:[join__Graph!]name:String!args:join__DirectiveArguments)repeatable on SCHEMA|OBJECT|INTERFACE|FIELD_DEFINITION
+directive@join__directive(graphs:[join__Graph!]name:String!args:join__DirectiveArguments)repeatable on SCHEMA|OBJECT|INTERFACE|FIELD_DEFINITION|ARGUMENT_DEFINITION
 scalar join__DirectiveArguments
 
 `;

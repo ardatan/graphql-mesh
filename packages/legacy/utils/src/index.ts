@@ -27,6 +27,7 @@ export * from './with-filter.js';
 export * from './transport-directive.js';
 export * from './mesh-spec.js';
 export * from './federation-ready.js';
+export * from './federation-lookup-directives.js';
 export * from './prefer-block-strings.js';
 export * from './validate-mesh-directives.js';
 export * from './extend-schema.js';

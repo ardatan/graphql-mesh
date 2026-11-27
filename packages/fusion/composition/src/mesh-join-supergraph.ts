@@ -12,17 +12,18 @@ import { prepareJoinDirectiveArgs } from './ast-from-value-block.js';
 const JOIN_V05 = 'https://specs.apollo.dev/join/v0.5';
 
 /**
- * Locations `@graphql-tools/federation` extract reconstitutes from
- * `@join__directive` → native apps. Argument / enum-value / input-field
- * join apps are left as-is by extract, so Mesh rename metadata on those
- * locations must stay native on the final supergraph.
+ * Locations Mesh rewrites to `@join__directive` on the lean SG.
+ * Federation extract reconstitutes FIELD_DEFINITION / OBJECT / INTERFACE /
+ * SCHEMA joins → native apps. ARGUMENT_DEFINITION joins are copied through
+ * as `@join__directive` (extract does not reconstitute args); Gateway reads
+ * `name: "is"` from those joins when synthesizing `@lookup` hops.
  */
 const JOIN_DIRECTIVE_DEFS = /* GraphQL */ `
   directive @join__directive(
     graphs: [join__Graph!]
     name: String!
     args: join__DirectiveArguments
-  ) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+  ) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION | ARGUMENT_DEFINITION
   scalar join__DirectiveArguments
 `;
 
@@ -44,6 +45,7 @@ const JOIN_SAFE_MESH_LOCATIONS = new Set<MeshJoinLocation>([
   'OBJECT',
   'INTERFACE',
   'FIELD_DEFINITION',
+  'ARGUMENT_DEFINITION',
 ]);
 
 /**
@@ -67,6 +69,10 @@ const JOIN_SAFE_MESH_LOCATIONS = new Set<MeshJoinLocation>([
  */
 const MESH_TO_JOIN = new Set([
   'merge',
+  // Federation Spec draft entity-recall dirs (same join pattern as `@merge`).
+  'lookup',
+  'is',
+  'internal',
   'hoist',
   'pubsubOperation',
   'pubsubPublish',
@@ -84,6 +90,9 @@ const MESH_TO_JOIN = new Set([
 const MESH_PROTOCOL_COMPANION_TYPES: Readonly<Record<string, readonly string[]>> = {
   thrift__rpc: ['ThriftMessageType'],
   sql: ['SqlKind'],
+  // Federation Spec `@is(field: FieldSelectionMap!)` — drop the scalar when
+  // native `@is` apps are fully join-carried.
+  is: ['FieldSelectionMap'],
 };
 
 /**
@@ -102,14 +111,16 @@ const MESH_PROTOCOL_COMPANION_TYPES: Readonly<Record<string, readonly string[]>>
  *    - drop `location` when it equals `@join__graph(url:)`
  *    - keep `kind` / `options` / non-empty `headers` / override `location`
  * 4. Prune unused `@transport` def / `TransportOptions` / core `@link` import.
- * 5. `@merge` / `@hoist` / Mesh `@source`|`@meshSource` / protocol field dirs
- *    (`@thrift__rpc`, `@sql`, `@protobuf__rpc`, …) → join without `subgraph:`
- *    (graphs: owns attribution). When Connectors `@source` is also present,
- *    Compose aliases Mesh stitching source as `@meshSource` and join uses
- *    `name: "meshSource"`. Mesh `@link` **imports** for those names stay
- *    (join apps still reference them); native defs / composeDirective / companion
- *    enums (`ThriftMessageType`, `SqlKind`) drop. Federation extract reconstitutes
- *    native apps onto subgraph schemas without needing those defs on the SG.
+ * 5. `@merge` / `@lookup` / `@is` / `@internal` / `@hoist` / Mesh `@source`|
+ *    `@meshSource` / protocol field dirs (`@thrift__rpc`, `@sql`,
+ *    `@protobuf__rpc`, …) → join without `subgraph:` (graphs: owns attribution).
+ *    When Connectors `@source` is also present, Compose aliases Mesh stitching
+ *    source as `@meshSource` and join uses `name: "meshSource"`. Mesh /
+ *    federation-spec `@link` **imports** for those names stay (join apps still
+ *    reference them); native defs / composeDirective / companion enums
+ *    (`ThriftMessageType`, `SqlKind`) drop. Federation extract reconstitutes
+ *    native apps onto subgraph schemas without needing those defs on the SG
+ *    (`@is` arg joins stay as `@join__directive`; Gateway reads them).
  * 6. Leave `@resolveTo` / `@additionalField` native (not subgraph-owned).
  * 7. Always prune orphan Mesh artifacts loaders leave when nothing was
  *    rewritten (unused `TransportOptions`, unused `@source` def/`@link` import
@@ -120,6 +131,8 @@ export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
     !supergraphSdl?.includes('join__graph') &&
     !supergraphSdl?.includes('@transport') &&
     !supergraphSdl?.includes('@merge') &&
+    !supergraphSdl?.includes('@lookup') &&
+    !supergraphSdl?.includes('@internal') &&
     !supergraphSdl?.includes('@meshSource') &&
     !supergraphSdl?.includes('@hoist') &&
     !supergraphSdl?.includes('@thrift__rpc') &&
@@ -234,7 +247,38 @@ export function finalizeMeshJoinDirectives(supergraphSdl: string): string {
               rewrittenMeshNames.add(n);
             }
           }
-          return mesh.node;
+          let nextField = mesh.node;
+          // Federation Spec `@is` (and Mesh `@source` on args) live on
+          // ARGUMENT_DEFINITION — rewrite here; extract keeps arg joins as
+          // `@join__directive` (Gateway synthesizes lookup hops from them).
+          if (nextField.arguments?.length) {
+            // Prefer the field's `@join__field`, else a single graph from any
+            // `@join__directive` already on the field (e.g. just-rewritten
+            // `@lookup`), else leave fallback unset so rewrite broadcasts.
+            const fieldGraph =
+              graphEnumFromJoinField(nextField.directives) ||
+              graphEnumFromJoinDirective(nextField.directives);
+            const nextArgs = nextField.arguments.map(arg => {
+              const argMesh = rewriteMeshDirectivesOnNode(arg, joinInfo, {
+                location: 'ARGUMENT_DEFINITION',
+                preferJoinField: true,
+                fallbackGraphEnum: fieldGraph,
+                // Only Federation Spec `@is` — Mesh `@source` on args stays
+                // native (rename metadata; extract does not reconstitute those).
+                onlyNames: new Set(['is']),
+              });
+              if (argMesh.changed) {
+                changed = true;
+                emittedMeshJoin = true;
+                for (const n of argMesh.rewrittenNames) {
+                  rewrittenMeshNames.add(n);
+                }
+              }
+              return argMesh.node;
+            });
+            nextField = { ...nextField, arguments: nextArgs };
+          }
+          return nextField;
         },
       })
     : document;
@@ -425,6 +469,8 @@ function rewriteMeshDirectivesOnNode<T extends { directives?: readonly ConstDire
     preferJoinField?: boolean;
     preferJoinType?: boolean;
     fallbackGraphEnum?: string;
+    /** When set, only rewrite these directive names (e.g. `@is` on args). */
+    onlyNames?: ReadonlySet<string>;
   },
 ): { node: T; changed: boolean; rewrittenNames: Set<string> } {
   const rewrittenNames = new Set<string>();
@@ -443,6 +489,10 @@ function rewriteMeshDirectivesOnNode<T extends { directives?: readonly ConstDire
     (opts.preferJoinType ? graphEnumFromJoinType(node.directives) : undefined);
 
   for (const dir of node.directives) {
+    if (opts.onlyNames && !opts.onlyNames.has(dir.name.value)) {
+      next.push(dir);
+      continue;
+    }
     if (!shouldRewriteMeshDirective(dir)) {
       next.push(dir);
       continue;
@@ -458,8 +508,20 @@ function rewriteMeshDirectivesOnNode<T extends { directives?: readonly ConstDire
       ? joinInfo.nameToEnum.get(subgraph as string)
       : fallbackGraph;
 
-    if (!ownerGraphEnum) {
-      // Cannot attribute - leave native so Gateway / Router can still see it.
+    // Root Query fields often omit `@join__field` (single-subgraph ownership).
+    // Fall back to sibling join__field/join__type graphs, else every join__Graph
+    // — same broadcast used for stitching `@source`. Explicit `subgraph:` that
+    // does not map still leaves the app native (do not re-attribute).
+    const siblingGraphs = allJoinGraphsOnNode(node.directives);
+    const fallbackGraphs =
+      ownerGraphEnum != null
+        ? [ownerGraphEnum]
+        : !hasExplicitSubgraph
+          ? siblingGraphs.length > 0
+            ? siblingGraphs
+            : [...joinInfo.nameToEnum.values()]
+          : [];
+    if (fallbackGraphs.length === 0) {
       next.push(dir);
       continue;
     }
@@ -471,9 +533,7 @@ function rewriteMeshDirectivesOnNode<T extends { directives?: readonly ConstDire
       // graphs when none - e.g. shared root without `@join__field`), keep
       // `subgraph` in args, keep name `source` or `meshSource` (Compose alias
       // when Connectors `@source` is also in the composition).
-      const siblingGraphs = allJoinGraphsOnNode(node.directives);
-      const graphs = siblingGraphs.length > 0 ? siblingGraphs : [...joinInfo.nameToEnum.values()];
-      for (const g of graphs) {
+      for (const g of fallbackGraphs) {
         next.push(buildJoinDirective(g, dir.name.value, args));
       }
       changed = true;
@@ -481,10 +541,13 @@ function rewriteMeshDirectivesOnNode<T extends { directives?: readonly ConstDire
       continue;
     }
 
-    // `@merge` / `@hoist` / …: drop redundant subgraph - graphs: is enough.
+    // `@merge` / `@lookup` / `@is` / `@hoist` / …: drop redundant subgraph -
+    // graphs: is enough.
     const joinArgs = { ...args };
     delete joinArgs.subgraph;
-    next.push(buildJoinDirective(ownerGraphEnum, dir.name.value, joinArgs));
+    for (const g of fallbackGraphs) {
+      next.push(buildJoinDirective(g, dir.name.value, joinArgs));
+    }
     changed = true;
     rewrittenNames.add(dir.name.value);
   }
@@ -563,6 +626,22 @@ function graphEnumFromJoinType(
     }
     const g = getEnumArg(d, 'graph');
     if (g) {
+      graphs.add(g);
+    }
+  }
+  return graphs.size === 1 ? graphs.values().next().value : undefined;
+}
+
+/** Single shared `graphs:` enum across `@join__directive` apps on this node. */
+function graphEnumFromJoinDirective(
+  directives: readonly ConstDirectiveNode[] | undefined,
+): string | undefined {
+  const graphs = new Set<string>();
+  for (const d of directives || []) {
+    if (d.name.value !== 'join__directive') {
+      continue;
+    }
+    for (const g of getEnumListArg(d, 'graphs')) {
       graphs.add(g);
     }
   }
@@ -914,6 +993,9 @@ function pruneRewrittenMeshArtifacts(
                   name === '@meshSource' ||
                   name === '@source' ||
                   name === '@merge' ||
+                  name === '@lookup' ||
+                  name === '@is' ||
+                  name === '@internal' ||
                   name === '@hoist')
               ) {
                 return null;
@@ -1216,6 +1298,26 @@ function getEnumArg(directive: ConstDirectiveNode, name: string): string | undef
     return arg.value.value;
   }
   return undefined;
+}
+
+function getEnumListArg(directive: ConstDirectiveNode, name: string): string[] {
+  const arg = directive.arguments?.find(a => a.name.value === name);
+  if (!arg) {
+    return [];
+  }
+  if (arg.value.kind === Kind.ENUM) {
+    return [arg.value.value];
+  }
+  if (arg.value.kind !== Kind.LIST) {
+    return [];
+  }
+  const out: string[] = [];
+  for (const v of arg.value.values) {
+    if (v.kind === Kind.ENUM) {
+      out.push(v.value);
+    }
+  }
+  return out;
 }
 
 function constDirectiveArgsToJs(directive: ConstDirectiveNode): Record<string, unknown> {

@@ -81,6 +81,9 @@ jobs:
           const path = require('node:path');
           const { createRequire } = require('node:module');
           const meshRoot = path.resolve('..');
+          // Do not overlay `@graphql-mesh/utils` / `@graphql-tools/utils` — Mesh's
+          // utils pulls a newer tools/utils that drops exports Gateway plugins still
+          // need. fusion-runtime inlines lookup helpers so it can overlay alone.
           const packages = {
             '@graphql-tools/stitch': 'packages/stitch',
             '@graphql-tools/stitching-directives': 'packages/stitching-directives',
@@ -137,11 +140,7 @@ jobs:
             if (fs.existsSync(path.join(top, 'package.json'))) targets.add(top);
             return [...targets];
           }
-          for (const [name, rel] of Object.entries(packages)) {
-            const dist = path.join(meshRoot, rel, 'dist');
-            if (!fs.existsSync(dist)) {
-              throw new Error(`Missing Mesh build output: ${dist}`);
-            }
+          function overlayIntoTargets(name, src, label) {
             let targets = findInstalls(name);
             if (targets.length === 0) {
               const top = path.join(process.cwd(), 'node_modules', ...name.split('/'));
@@ -150,13 +149,22 @@ jobs:
             }
             for (const target of targets) {
               for (const ent of fs.readdirSync(target)) {
-                if (ent === 'node_modules') continue;
                 rmrf(path.join(target, ent));
               }
-              copyDir(dist, target);
-              rewriteWorkspaceDeps(path.join(target, 'package.json'));
-              console.log(`Overlaid ${name} <- ${rel}/dist -> ${path.relative(process.cwd(), target)}`);
+              copyDir(src, target);
+              const nestedNm = path.join(target, 'node_modules');
+              if (fs.existsSync(nestedNm)) rmrf(nestedNm);
+              const pkgJsonPath = path.join(target, 'package.json');
+              if (fs.existsSync(pkgJsonPath)) rewriteWorkspaceDeps(pkgJsonPath);
+              console.log(`Overlaid ${name} <- ${label} -> ${path.relative(process.cwd(), target)}`);
             }
+          }
+          for (const [name, rel] of Object.entries(packages)) {
+            const dist = path.join(meshRoot, rel, 'dist');
+            if (!fs.existsSync(dist)) {
+              throw new Error(`Missing Mesh build output: ${dist}`);
+            }
+            overlayIntoTargets(name, dist, `${rel}/dist`);
           }
           NODE
       - name: Hash Docker Images

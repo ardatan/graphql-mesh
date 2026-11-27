@@ -23,7 +23,7 @@ type SubscriptionInfo @join__type(graph:OPEN_API_CALLBACK_EXAMPLE) {"""this uniq
 type Subscription @join__type(graph:OPEN_API_CALLBACK_EXAMPLE) {"""PubSub Topic:webhook:post:/callback/{args.subscriptionId}""" onData(subscriptionId:String):SubscriptionPayload @join__directive(graphs:[OPEN_API_CALLBACK_EXAMPLE] name:"pubsubOperation" args:{pubsubTopic:"webhook:post:/callback/{args.subscriptionId}"})}
 type SubscriptionPayload @join__type(graph:OPEN_API_CALLBACK_EXAMPLE) {timestamp:DateTime userData:String}
 input post_streams_request_Input @join__type(graph:OPEN_API_CALLBACK_EXAMPLE) {"""the location where data will be sent. Must be network accessible by the source server""" callbackUrl:URL}
-directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION | ARGUMENT_DEFINITION
 scalar join__DirectiveArguments
 
 `;

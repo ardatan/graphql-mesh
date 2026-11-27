@@ -12,7 +12,7 @@ directive @join__type(graph:join__Graph! key:join__FieldSet extension:Boolean! =
 directive @join__unionMember(graph:join__Graph! member:String!) repeatable on UNION
 directive @link(url:String as:String for:link__Purpose import:[link__Import]) repeatable on SCHEMA
 directive @example(subgraph:String value:ObjMap) repeatable on FIELD_DEFINITION | OBJECT | INPUT_OBJECT | ENUM | SCALAR
-directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION | ARGUMENT_DEFINITION
 directive @additionalField on FIELD_DEFINITION
 directive @live on QUERY
 scalar join__FieldSet

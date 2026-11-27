@@ -50,7 +50,7 @@ input UpdateCityInput @join__type(graph:GEO) {name:String countrycode:String dis
 input CreateCountryInput @join__type(graph:GEO) {id:ID! name:String! continent:String! region:String! surfacearea:Float! indepyear:Int population:Int! lifeexpectancy:Float gnp:Float gnpold:Float localname:String! governmentform:String! headofstate:String capital:Int code2:String!}
 input UpdateCountryInput @join__type(graph:GEO) {name:String continent:String region:String surfacearea:Float indepyear:Int population:Int lifeexpectancy:Float gnp:Float gnpold:Float localname:String governmentform:String headofstate:String capital:Int code2:String}
 input CreateCountrylanguageInput @join__type(graph:GEO) {countrycode:String! language:String! isofficial:Boolean! percentage:Float!}
-directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION | ARGUMENT_DEFINITION
 scalar join__DirectiveArguments
 
 `;

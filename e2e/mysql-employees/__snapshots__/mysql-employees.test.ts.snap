@@ -71,7 +71,7 @@ input CreateEmployeeInput @join__type(graph:EMPLOYEES) {id:ID! birthDate:Date! f
 input UpdateEmployeeInput @join__type(graph:EMPLOYEES) {birthDate:Date firstName:String lastName:String gender:String hireDate:Date}
 input CreateSalaryInput @join__type(graph:EMPLOYEES) {empNo:Int! salary:Int! fromDate:Date! toDate:Date!}
 input CreateTitleInput @join__type(graph:EMPLOYEES) {empNo:Int! title:String! fromDate:Date! toDate:Date}
-directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION | ARGUMENT_DEFINITION
 scalar join__DirectiveArguments
 
 `;

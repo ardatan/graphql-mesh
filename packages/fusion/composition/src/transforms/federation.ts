@@ -1,16 +1,20 @@
 import {
   DirectiveLocation,
   getNamedType,
+  getNullableType,
   GraphQLDirective,
   GraphQLList,
   GraphQLNonNull,
   GraphQLSchema,
   GraphQLString,
+  isInputObjectType,
+  isListType,
   isObjectType,
   Kind,
   OperationTypeNode,
   parseSchemaCoordinate,
 } from 'graphql';
+import { importFederationLookupDirectives } from '@graphql-mesh/utils';
 import {
   asArray,
   getDefinedRootType,
@@ -290,6 +294,8 @@ export function createFederationTransform(config: FederationTransformConfig): Su
     );
     const usedFederationDirectives = new Set<string>();
     let mergeDirectiveUsed = false;
+    let lookupDirectiveUsed = false;
+    let isDirectiveUsed = false;
     subgraphSchema = mapSchema(subgraphSchema, {
       [MapperKind.TYPE]: type => {
         const configByType = configurationByType.get(type.name);
@@ -413,7 +419,10 @@ export function createFederationTransform(config: FederationTransformConfig): Su
           }
         }
         if (mergeDirectiveConfig) {
-          let argsExpr = mergeDirectiveConfig.argsExpr;
+          // Only author-supplied argsExpr forces Mesh `@merge` (nested/composite keys).
+          // Auto-inferred `id: $key.id` must not block Federation Spec `@lookup`.
+          const explicitArgsExpr = mergeDirectiveConfig.argsExpr;
+          let argsExpr = explicitArgsExpr;
           if (!argsExpr && fieldConfig.args && !mergeDirectiveConfig.keyArg) {
             const argsExprElems: string[] = [];
             const returnNamedType = getNamedType(fieldConfig.type);
@@ -437,7 +446,7 @@ export function createFederationTransform(config: FederationTransformConfig): Su
           // - keyArg === keyField → Query `@connect(entity: true)`
           // - keyArg !== keyField → type-level `@connect` with `$this.<keyField>`
           //   (see https://www.apollographql.com/docs/graphos/connectors/entities/patterns)
-          // Hive uses REST transport `Query._entities` — skip Mesh `@merge` when Connectors cover it.
+          // Hive uses REST transport `Query._entities` — no Mesh `@merge` when Connectors cover it.
           if (fieldDirectives.connect?.length) {
             const keyArg = mergeDirectiveConfig.keyArg;
             const keyField = mergeDirectiveConfig.keyField;
@@ -461,17 +470,106 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                 entity: true,
               }));
             }
-            // Connectors entity covered — no `@merge`.
+            // Connectors entity covered — no `@merge` / `@lookup`.
           } else {
-            const mergeDirectiveExtensions = (fieldDirectives.merge ||= []);
-            mergeDirectiveExtensions.push({
-              subgraph: subgraphConfig.name,
-              key: mergeDirectiveConfig.key,
-              keyField: mergeDirectiveConfig.keyField,
-              keyArg: mergeDirectiveConfig.keyArg,
-              argsExpr,
-            });
-            mergeDirectiveUsed = true;
+            const keyArg = mergeDirectiveConfig.keyArg;
+            const keyField = mergeDirectiveConfig.keyField;
+            const returnsList = isListType(getNullableType(fieldConfig.type));
+            const argNames = fieldConfig.args ? Object.keys(fieldConfig.args) : [];
+            // When keyArg is omitted, a lone list arg still counts as batch.
+            const effectiveKeyArg = keyArg || (argNames.length === 1 ? argNames[0] : undefined);
+            const batchListArg =
+              !!effectiveKeyArg &&
+              !!fieldConfig.args?.[effectiveKeyArg] &&
+              isListType(getNullableType(fieldConfig.args[effectiveKeyArg].type));
+            // Multi-arg entry fields (multi-field keys, @requires extras) need Mesh
+            // `@merge` / argsExpr — `@lookup` hop synthesis only maps one keyArg today.
+            const multiArg = argNames.length > 1;
+            // Fed draft: `@lookup` must be Query-reachable — non-Query resolveReference
+            // stays on Mesh `@merge`.
+            const isQueryOperation = operation === OperationTypeNode.QUERY;
+            // `@is` can only target a direct field argument; dotted keyArg (e.g.
+            // `input.id`) stays on Mesh `@merge`.
+            const keyArgIsDirect = !keyArg || !!fieldConfig.args?.[keyArg];
+            // Whole input-object keyArg with no keyField cannot map to an entity
+            // field via `@lookup`/`@is` — keep Mesh `@merge` (merge-base behavior).
+            const keyArgNamedType =
+              effectiveKeyArg && fieldConfig.args?.[effectiveKeyArg]
+                ? getNamedType(fieldConfig.args[effectiveKeyArg].type)
+                : undefined;
+            const inputObjectKeyWithoutField =
+              !!effectiveKeyArg && !keyField && isInputObjectType(keyArgNamedType);
+            // Keep Mesh `@merge` when:
+            // - list / batch (draft `@lookup` must not return a list)
+            // - explicit `argsExpr` (nested / composite key mapping)
+            // - more than one argument (multi-key / requires-related args)
+            // - non-Query operation
+            // - keyArg is not a direct field argument
+            // - input-object keyArg with unset keyField
+            if (
+              returnsList ||
+              batchListArg ||
+              explicitArgsExpr ||
+              multiArg ||
+              !isQueryOperation ||
+              !keyArgIsDirect ||
+              inputObjectKeyWithoutField
+            ) {
+              const mergeDirectiveExtensions = (fieldDirectives.merge ||= []);
+              mergeDirectiveExtensions.push({
+                subgraph: subgraphConfig.name,
+                key: mergeDirectiveConfig.key,
+                keyField: mergeDirectiveConfig.keyField,
+                keyArg: mergeDirectiveConfig.keyArg,
+                argsExpr,
+              });
+              mergeDirectiveUsed = true;
+            } else {
+              // Single-arg entity entry that returns one object → Federation Spec `@lookup`
+              // (+ `@is` when arg name ≠ key field).
+              fieldDirectives.lookup ||= [];
+              if (!fieldDirectives.lookup.length) {
+                // Optional Mesh `subgraph:` for join attribution (stripped in mesh-join).
+                fieldDirectives.lookup.push({ subgraph: subgraphConfig.name });
+              }
+              lookupDirectiveUsed = true;
+              // Prefer inferred keyArg when omitted (e.g. productId → Product.id).
+              // Suppress `@is` only for *inferred* same-name+same-type bindings
+              // (omitted keyArg → sku↔Product.sku). Explicit keyArg→keyField always
+              // stamps `@is` so `keyArg: "sku", keyField: "id"` is preserved even when
+              // Product also defines `sku`.
+              if (
+                effectiveKeyArg &&
+                keyField &&
+                effectiveKeyArg !== keyField &&
+                fieldConfig.args?.[effectiveKeyArg]
+              ) {
+                let suppressIs = false;
+                if (!keyArg) {
+                  const argConfig = fieldConfig.args[effectiveKeyArg];
+                  const returnNamedType = getNamedType(fieldConfig.type);
+                  const returnField =
+                    returnNamedType && 'getFields' in returnNamedType
+                      ? returnNamedType.getFields()[effectiveKeyArg]
+                      : undefined;
+                  // Match argsExpr inference: same name *and* same named type.
+                  suppressIs =
+                    !!returnField &&
+                    getNamedType(returnField.type).name === getNamedType(argConfig.type).name;
+                }
+                if (!suppressIs) {
+                  const argConfig = fieldConfig.args[effectiveKeyArg];
+                  const argDirs = getDirectiveExtensions(argConfig) || {};
+                  argDirs.is ||= [];
+                  if (!argDirs.is.some((d: { field?: string }) => d?.field === keyField)) {
+                    argDirs.is.push({ field: keyField });
+                  }
+                  const argExtensions: Record<string, unknown> = (argConfig.extensions ||= {});
+                  argExtensions.directives = argDirs;
+                  isDirectiveUsed = true;
+                }
+              }
+            }
           }
         }
         for (const directiveName of federationDirectiveNames) {
@@ -523,6 +621,12 @@ export function createFederationTransform(config: FederationTransformConfig): Su
     });
     subgraphSchema = addFederation2DirectivesToSubgraph(subgraphSchema);
     subgraphSchema = importFederationDirectives(subgraphSchema, [...usedFederationDirectives]);
+    if (lookupDirectiveUsed || isDirectiveUsed) {
+      subgraphSchema = importFederationLookupDirectives(subgraphSchema, [
+        ...(lookupDirectiveUsed ? (['@lookup'] as const) : []),
+        ...(isDirectiveUsed ? (['@is'] as const) : []),
+      ]);
+    }
     if (mergeDirectiveUsed) {
       subgraphSchema = importMeshDirectives(subgraphSchema, ['@merge']);
       const schemaConfig = subgraphSchema.toConfig();

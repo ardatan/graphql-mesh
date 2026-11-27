@@ -1,6 +1,7 @@
 import type {
   GraphQLArgument,
   GraphQLArgumentConfig,
+  GraphQLFieldConfig,
   GraphQLFieldConfigArgumentMap,
 } from 'graphql';
 import {
@@ -126,7 +127,9 @@ export function handleFederationSubschema({
   stitchingDirectivesTransformer,
   onSubgraphExecute,
 }: HandleFederationSubschemaOpts) {
-  // Fix name
+  // Fix name — keep the join__Graph enum identifier for filtering arg `@is` joins
+  // (`graphs: [PRODUCTS_2]`), which may differ from the real subgraph name.
+  const subgraphEnumName = subschemaConfig.name || '';
   const subgraphName =
     (subschemaConfig.name =
       realSubgraphNameMap?.get(subschemaConfig.name || '') || subschemaConfig.name) || '';
@@ -169,6 +172,8 @@ export function handleFederationSubschema({
   interface FieldDirectives {
     additionalField: {};
     merge: {};
+    /** Federation Spec draft `@lookup` entity entry (single-object; list/batch stay on `@merge`). */
+    lookup: Array<Record<string, unknown>>;
     resolveTo: YamlConfig.AdditionalStitchingResolverObject;
     source: SourceDirective;
     hoist: any;
@@ -219,6 +224,20 @@ export function handleFederationSubschema({
     },
     [MapperKind.OBJECT_FIELD]: (fieldConfig, fieldName, typeName, schema) => {
       const fieldDirectives = getDirectiveExtensions<FieldDirectives>(fieldConfig);
+      // Federation Spec `@lookup` (+ `@is`) → stitching `@merge` hop config.
+      if (fieldDirectives.lookup?.length && !fieldDirectives.merge?.length) {
+        const mergeFromLookup = synthesizeMergeFromLookup(
+          fieldConfig,
+          fieldDirectives,
+          subgraphName,
+          subgraphEnumName,
+        );
+        if (mergeFromLookup) {
+          fieldDirectives.merge = mergeFromLookup;
+          const fieldExtensions: Record<string, unknown> = (fieldConfig.extensions ||= {});
+          fieldExtensions.directives = fieldDirectives;
+        }
+      }
       if (fieldDirectives.merge?.length) {
         mergeDirectiveUsed = true;
       }
@@ -654,4 +673,104 @@ function renameSelectionSetFieldNames(
   } catch {
     return selectionSet;
   }
+}
+
+/**
+ * Prefer `@is(field:)`; otherwise the argument name is the entity key field.
+ * Inlined here so Gateway memtests can overlay fusion-runtime without also
+ * overlaying unpublished `@graphql-mesh/utils` (which pulls a mismatched
+ * `@graphql-tools/utils` into Gateway's install).
+ */
+function resolveLookupKeyField(
+  argName: string,
+  isDirectives: Array<{ field?: string }> | undefined,
+): string {
+  const fromIs = isDirectives?.find(d => typeof d?.field === 'string')?.field;
+  if (typeof fromIs === 'string' && fromIs.trim()) {
+    return fromIs.trim();
+  }
+  return argName;
+}
+
+/**
+ * `@graphql-tools/federation` extract filters field/type `@join__directive` by
+ * graph, but leaves ARGUMENT_DEFINITION joins unfiltered — keep only `is`
+ * mappings whose `graphs` include this subgraph (or omit graphs entirely).
+ */
+function joinDirectiveTargetsSubgraph(
+  directive: { graphs?: string[] } | null | undefined,
+  subgraphName: string,
+  subgraphEnumName: string,
+): boolean {
+  const graphs = directive?.graphs;
+  if (!graphs?.length) {
+    return true;
+  }
+  // When the join__Graph enum id is known (pre-rename), match only that —
+  // name-normalization can accept a foreign graph (e.g. PRODUCTS vs CATALOG→products).
+  if (subgraphEnumName) {
+    return graphs.some(g => g === subgraphEnumName);
+  }
+  return graphs.some(
+    g => compareSubgraphNames(g, subgraphName) || g === subgraphName.toUpperCase(),
+  );
+}
+
+/**
+ * Build stitching `@merge` hop args from Federation Spec draft `@lookup` + `@is`
+ * on entity entry fields that return one object (not a list). Keeps the existing
+ * stitching transformer path while preferring `@lookup` on SDL.
+ */
+function synthesizeMergeFromLookup(
+  fieldConfig: GraphQLFieldConfig<any, any>,
+  fieldDirectives: { lookup?: unknown[]; merge?: unknown[] },
+  subgraphName: string,
+  subgraphEnumName: string,
+): Array<Record<string, unknown>> | undefined {
+  if (!fieldDirectives.lookup?.length || fieldDirectives.merge?.length) {
+    return undefined;
+  }
+  const args = fieldConfig.args || {};
+  const argNames = Object.keys(args) as string[];
+  if (!argNames.length) {
+    // Zero-arg lookup: keyless type merge entry (selection only).
+    return [{}];
+  }
+  const mappings: Array<{ keyArg: string; keyField: string }> = [];
+  for (const argName of argNames) {
+    const argConfig = args[argName]!;
+    const argDirs = getDirectiveExtensions(argConfig);
+    // Native `@is` (subgraph SDL / reconstituted) or Supergraph
+    // `@join__directive(name: "is")` left on ARGUMENT_DEFINITION by extract.
+    const isFromJoin = (
+      (argDirs?.join__directive as
+        Array<{ name?: string; graphs?: string[]; args?: { field?: string } }> | undefined) || []
+    )
+      .filter(
+        d => d?.name === 'is' && joinDirectiveTargetsSubgraph(d, subgraphName, subgraphEnumName),
+      )
+      .map(d => ({ field: d.args?.field }));
+    const keyField = resolveLookupKeyField(String(argName), [
+      ...((argDirs?.is as Array<{ field?: string }> | undefined) || []),
+      ...isFromJoin,
+    ]);
+    // Stitching transformer supports dotted `keyField` (builds nested selections).
+    mappings.push({
+      keyArg: String(argName),
+      keyField,
+    });
+  }
+  if (!mappings.length) {
+    return undefined;
+  }
+  // One `@merge` app per field. Multi-arg lookups need argsExpr so every required
+  // argument is supplied from the entity representation.
+  if (mappings.length === 1) {
+    return [mappings[0]!];
+  }
+  return [
+    {
+      argsExpr: mappings.map(m => `${m.keyArg}: $key.${m.keyField}`).join(', '),
+    },
+  ];
 }

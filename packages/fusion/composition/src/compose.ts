@@ -19,6 +19,8 @@ import pluralize from 'pluralize';
 import { snakeCase } from 'snake-case';
 import {
   assertSupportedMeshSpecOnSchema,
+  FEDERATION_LOOKUP_DIRECTIVES_SDL,
+  importFederationLookupDirectives,
   MESH_SUPPORTED_SPEC_VERSIONS,
   TRANSPORT_DIRECTIVE_SDL,
   validateMeshDirectives,
@@ -51,6 +53,7 @@ import {
 import { liftExtraSchemaDefinitionDirectives } from './lift-extra-schema-directives.js';
 import { finalizeMeshJoinDirectives } from './mesh-join-supergraph.js';
 import { prepareConnectorsBeforeGuild } from './prepare-connectors-for-guild.js';
+import { validateFederationLookupDirectives } from './validate-federation-lookup.js';
 
 export interface SubgraphConfig {
   name: string;
@@ -184,6 +187,16 @@ export function getAnnotatedSubgraphs(
   );
 
   const annotatedSubgraphs: ServiceDefinition[] = [];
+  // Defer `@inaccessible` stamping until every subgraph is annotated so a
+  // source-local `@internal` cannot hide a peer's public declaration.
+  type PendingAnnotated = {
+    subgraphName: string;
+    url: string | undefined;
+    transformedSubgraph: GraphQLSchema;
+    importedDirectivesAST: Set<string>;
+    composeDirectiveNames: string[];
+  };
+  const pendingAnnotated: PendingAnnotated[] = [];
   for (const subgraphConfig of subgraphs) {
     const { name: subgraphName, schema, transforms } = subgraphConfig;
     let url: string = subgraphConfig.url;
@@ -226,6 +239,8 @@ export function getAnnotatedSubgraphs(
     }
 
     let mergeDirectiveUsed = false;
+    let lookupDirectiveUsed = false;
+    let isDirectiveUsed = false;
     // Stitching source is only for subgraphs that do not rewrite directive mappings
     // (Connectors `@connect`, protobuf `@protobuf__rpc`, Neo4j `@node` / `@alias`,
     // Mongo `@mongo__*`). Those skip Mesh `@source`.
@@ -401,9 +416,11 @@ export function getAnnotatedSubgraphs(
           astNode: undefined,
         };
       },
-      [MapperKind.ROOT_FIELD]: (fieldConfig, fieldName) => {
+      [MapperKind.ROOT_FIELD]: (fieldConfig, fieldName, typeName, schema) => {
         const directiveExtensions = getDirectiveExtensions(fieldConfig);
         // Connectors must never get stitching `@meshSource` (Apollo owns SCHEMA `@source`).
+        // Fed draft `@lookup` is Query-reachable only; Mutation/Subscription keep Mesh `@merge`.
+        const allowLookup = typeName === schema.getQueryType()?.name;
         if (!sourceDirectiveUsed) {
           if (!transforms?.length && !options.ignoreSemanticConventions) {
             addAnnotationsForSemanticConventions({
@@ -411,9 +428,20 @@ export function getAnnotatedSubgraphs(
               queryFieldConfig: fieldConfig,
               directiveExtensions,
               subgraphName,
+              allowLookup,
             });
             if (directiveExtensions.merge) {
               mergeDirectiveUsed = true;
+            }
+            if (directiveExtensions.lookup) {
+              lookupDirectiveUsed = true;
+            }
+            if (fieldConfig.args) {
+              for (const aName in fieldConfig.args) {
+                if (getDirectiveExtensions(fieldConfig.args[aName]).is?.length) {
+                  isDirectiveUsed = true;
+                }
+              }
             }
             return {
               ...fieldConfig,
@@ -431,6 +459,9 @@ export function getAnnotatedSubgraphs(
           for (const argName in fieldConfig.args) {
             const arg = fieldConfig.args[argName];
             const directives = getDirectiveExtensions(arg);
+            if (directives.is?.length) {
+              isDirectiveUsed = true;
+            }
             const existingSourceDirectives =
               directives[meshSourceDirectiveName] || directives.source || [];
             if (existingSourceDirectives.length > 1) {
@@ -515,17 +546,30 @@ export function getAnnotatedSubgraphs(
       // Semantic conventions (ById/ByIds) after transforms - including connectors / protobuf.
       // `@connect` / `@protobuf__rpc` with `entity: true` skip Mesh `@merge`; `@key` still lands.
       transformedSubgraph = mapSchema(transformedSubgraph, {
-        [MapperKind.ROOT_FIELD]: (fieldConfig, fieldName) => {
+        [MapperKind.ROOT_FIELD]: (fieldConfig, fieldName, typeName, schema) => {
           const directiveExtensions = getDirectiveExtensions(fieldConfig);
+          const allowLookup = typeName === schema.getQueryType()?.name;
           if (!options.ignoreSemanticConventions) {
             addAnnotationsForSemanticConventions({
               queryFieldName: fieldName,
               queryFieldConfig: fieldConfig,
               directiveExtensions,
               subgraphName,
+              allowLookup,
             });
             if (directiveExtensions.merge) {
               mergeDirectiveUsed = true;
+            }
+            if (directiveExtensions.lookup) {
+              lookupDirectiveUsed = true;
+            }
+            if (fieldConfig.args) {
+              for (const argName in fieldConfig.args) {
+                const argDirs = getDirectiveExtensions(fieldConfig.args[argName]);
+                if (argDirs.is?.length) {
+                  isDirectiveUsed = true;
+                }
+              }
             }
             return {
               ...fieldConfig,
@@ -538,6 +582,26 @@ export function getAnnotatedSubgraphs(
           }
         },
       });
+    }
+    // Hand-authored `@lookup` / `@is` / `@merge` (e.g. with ignoreSemanticConventions).
+    for (const type of Object.values(transformedSubgraph.getTypeMap())) {
+      if (!isObjectType(type) || type.name.startsWith('__')) {
+        continue;
+      }
+      for (const field of Object.values(type.getFields())) {
+        const dirs = getDirectiveExtensions(field, transformedSubgraph);
+        if (dirs.merge?.length) {
+          mergeDirectiveUsed = true;
+        }
+        if (dirs.lookup?.length) {
+          lookupDirectiveUsed = true;
+        }
+        for (const arg of field.args) {
+          if (getDirectiveExtensions(arg, transformedSubgraph).is?.length) {
+            isDirectiveUsed = true;
+          }
+        }
+      }
     }
     // Cross-subgraph Connectors stubs → `@key(..., resolvable: false)` so Hive
     // plans `_entities` (Router already resolves stubs from selection). Runs for
@@ -553,6 +617,7 @@ export function getAnnotatedSubgraphs(
     // but omit `@composeDirective(name: "@connect")`; Guild gets that stamp via
     // `prepareConnectorsBeforeGuild` only.
     const importedCoreDirectives: MeshDirectiveImport[] = [];
+    // `@merge` for list/batch entity entry (and any hand-authored / legacy apps).
     if (mergeDirectiveUsed) {
       importedCoreDirectives.push('@merge');
     }
@@ -753,7 +818,7 @@ export function getAnnotatedSubgraphs(
     if (mergeDirectiveUsed) {
       if (!transformedSubgraph.getDirective('merge')) {
         const { mergeDirectiveTypeDefs } = stitchingDirectives();
-        // Add subgraph argument to @merge directive
+        // Mesh `@merge` def (list/batch stamps + hand-authored apps).
         importedDirectivesAST.add(
           mergeDirectiveTypeDefs
             .replace('@merge(', '@merge(subgraph: String, ')
@@ -761,6 +826,20 @@ export function getAnnotatedSubgraphs(
         );
         transformedSubgraph = importFederationDirectives(transformedSubgraph, ['@key']);
       }
+    }
+    if (lookupDirectiveUsed || isDirectiveUsed) {
+      const imports = [
+        ...(lookupDirectiveUsed ? (['@lookup'] as const) : []),
+        ...(isDirectiveUsed ? (['@is'] as const) : []),
+      ];
+      transformedSubgraph = importFederationLookupDirectives(transformedSubgraph, imports);
+      if (
+        !transformedSubgraph.getDirective('lookup') ||
+        (isDirectiveUsed && !transformedSubgraph.getType('FieldSelectionMap'))
+      ) {
+        importedDirectivesAST.add(FEDERATION_LOOKUP_DIRECTIVES_SDL);
+      }
+      transformedSubgraph = importFederationDirectives(transformedSubgraph, ['@key']);
     }
     if (sourceDirectiveUsed) {
       importedDirectivesAST.add(/* GraphQL */ `
@@ -817,6 +896,37 @@ export function getAnnotatedSubgraphs(
     validateMeshDirectives(transformedSubgraph, {
       consumer: `@graphql-mesh/fusion-composition(subgraph: ${subgraphName})`,
     });
+    // Federation Spec draft `@lookup` / `@is` / `@internal` (compose DX).
+    const lookupErrors = validateFederationLookupDirectives(transformedSubgraph);
+    if (lookupErrors.length) {
+      throw lookupErrors.length === 1
+        ? lookupErrors[0]
+        : new AggregateError(lookupErrors, lookupErrors.map(e => e.message).join('\n'));
+    }
+
+    pendingAnnotated.push({
+      subgraphName,
+      url,
+      transformedSubgraph,
+      importedDirectivesAST,
+      composeDirectiveNames,
+    });
+  }
+
+  // Coordinates any subgraph exposes without `@internal` stay public in the API schema.
+  const publicCoords = new Set<string>();
+  for (const pending of pendingAnnotated) {
+    collectPublicFederationCoords(pending.transformedSubgraph, publicCoords);
+  }
+
+  for (const pending of pendingAnnotated) {
+    let { transformedSubgraph, importedDirectivesAST, composeDirectiveNames, subgraphName, url } =
+      pending;
+    const stamped = stampInaccessibleForInternalOnlyCoords(transformedSubgraph, publicCoords);
+    transformedSubgraph = stamped.schema;
+    if (stamped.needsInaccessibleImport) {
+      transformedSubgraph = importFederationDirectives(transformedSubgraph, ['@inaccessible']);
+    }
 
     let subgraphAST = getDocumentNodeFromSchema(transformedSubgraph);
     if (importedDirectivesAST.size) {
@@ -825,8 +935,6 @@ export function getAnnotatedSubgraphs(
         parse([...importedDirectivesAST].join('\n'), { noLocation: true }),
       ]);
     }
-    // `@transport` often lives only in extensions / extras; printers may omit the
-    // SCHEMA directive definition while `@composeDirective(name: "@transport")` remains.
     if (composeDirectiveNames.includes('@transport')) {
       const hasTransportDef = subgraphAST.definitions.some(
         d => d.kind === 'DirectiveDefinition' && d.name.value === 'transport',
@@ -850,6 +958,72 @@ export function getAnnotatedSubgraphs(
   }
 
   return annotatedSubgraphs;
+}
+
+function collectPublicFederationCoords(schema: GraphQLSchema, publicCoords: Set<string>): void {
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!isObjectType(type) || type.name.startsWith('__')) {
+      continue;
+    }
+    const typeDirs = getDirectiveExtensions(type, schema);
+    // Fields of `@internal` object types are not public merge contributions.
+    if (typeDirs?.internal?.length) {
+      continue;
+    }
+    publicCoords.add(type.name);
+    for (const [fieldName, field] of Object.entries(type.getFields())) {
+      const fieldDirs = getDirectiveExtensions(field, schema);
+      if (!fieldDirs?.internal?.length) {
+        publicCoords.add(`${type.name}.${fieldName}`);
+      }
+    }
+  }
+}
+
+/**
+ * Federation Spec `@internal` is source-local. Stamp `@inaccessible` only when no
+ * peer subgraph exposes the same coordinate publicly, so client/API schema hide
+ * does not erase another subgraph's public declaration.
+ */
+function stampInaccessibleForInternalOnlyCoords(
+  schema: GraphQLSchema,
+  publicCoords: Set<string>,
+): { schema: GraphQLSchema; needsInaccessibleImport: boolean } {
+  let needsInaccessibleImport = false;
+  const next = mapSchema(schema, {
+    [MapperKind.OBJECT_TYPE]: type => {
+      const dirs = getDirectiveExtensions(type, schema);
+      if (dirs.internal?.length && !dirs.inaccessible?.length && !publicCoords.has(type.name)) {
+        dirs.inaccessible = [{}];
+        needsInaccessibleImport = true;
+        return new (Object.getPrototypeOf(type).constructor)({
+          ...type.toConfig(),
+          astNode: undefined,
+          extensions: { ...(type.extensions || {}), directives: dirs },
+        });
+      }
+    },
+    [MapperKind.OBJECT_FIELD]: (fieldConfig, fieldName, typeName) => {
+      const dirs = getDirectiveExtensions(fieldConfig, schema);
+      if (
+        dirs.internal?.length &&
+        !dirs.inaccessible?.length &&
+        !publicCoords.has(`${typeName}.${fieldName}`)
+      ) {
+        dirs.inaccessible = [{}];
+        needsInaccessibleImport = true;
+        return {
+          ...fieldConfig,
+          astNode: undefined,
+          extensions: {
+            ...(fieldConfig.extensions || {}),
+            directives: dirs,
+          },
+        };
+      }
+    },
+  });
+  return { schema: next, needsInaccessibleImport };
 }
 
 export interface GetAnnotatedSubgraphsOptions {
@@ -900,13 +1074,17 @@ function addAnnotationsForSemanticConventions({
   queryFieldConfig,
   directiveExtensions,
   subgraphName,
+  allowLookup = true,
 }: {
   queryFieldConfig: GraphQLFieldConfig<any, any>;
   queryFieldName: string;
   directiveExtensions: any;
   subgraphName: string;
+  /** Federation Spec `@lookup` is Query-reachable only; false → Mesh `@merge`. */
+  allowLookup?: boolean;
 }) {
-  if (directiveExtensions.merge?.length) {
+  // Prefer federation-spec `@lookup` for single-object entry; honor `@merge` if already present.
+  if (directiveExtensions.merge?.length || directiveExtensions.lookup?.length) {
     return;
   }
   const type = getNamedType(queryFieldConfig.type);
@@ -973,14 +1151,15 @@ function addAnnotationsForSemanticConventions({
               ...(opts?.resolvable === false ? { resolvable: false } : {}),
             });
           } else if (opts?.resolvable !== false && existing.resolvable === false) {
-            // Singular entity resolver exists - upgrade a previously batch-stamped non-resolvable key.
+            // Non-list entity entry field exists - upgrade a previously batch-stamped non-resolvable key.
             delete existing.resolvable;
           }
           const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
           typeExtensions.directives = typeDirectives;
         };
-        // Non-resolvable @key is only for Connectors/protobuf batch RPCs that lack a singular
-        // entity resolver. Ordinary Mesh `@merge` batch fields keep the default resolvable key.
+        // Non-resolvable @key is only for Connectors/protobuf batch RPCs that lack an
+        // entity entry field that returns one object (not a list). Non-connect batch
+        // fields keep Mesh `@merge` and the default resolvable key.
         const isConnectOrProtobufField = !!(
           directiveExtensions.connect?.length ||
           directiveExtensions.protobuf__rpc?.length ||
@@ -1099,13 +1278,41 @@ function addAnnotationsForSemanticConventions({
             typeExtensions.directives = typeDirectives;
             return true;
           }
-          // Other non-Connectors subgraphs still use Mesh `@merge` for type merging.
-          directiveExtensions.merge ||= [];
-          directiveExtensions.merge.push({
-            subgraph: subgraphName,
-            keyField: fieldName,
-            keyArg: argName,
-          });
+          // Non-Connectors / non-protobuf:
+          // - Entity entry fields that return one object (not a list) → Federation
+          //   Spec draft `@lookup` (+ `@is` when arg name ≠ entity field).
+          // - List returns / batch list key args stay on Mesh `@merge` (draft
+          //   forbids `@lookup` returning a list; do not extend `@lookup` for batch).
+          const nullableReturn = getNullableType(queryFieldConfig.type);
+          const returnsList = isListType(nullableReturn);
+          // Multi-arg entry (extra defaults / locale / …) stays on Mesh `@merge` —
+          // `@lookup` hop synthesis maps one keyArg today. Non-Query roots also
+          // keep `@merge` (Fed draft: `@lookup` must be Query-reachable).
+          const argCount = Object.keys(queryFieldConfig.args || {}).length;
+          if (batchListArg || returnsList || argCount > 1 || !allowLookup) {
+            directiveExtensions.merge ||= [];
+            directiveExtensions.merge.push({
+              subgraph: subgraphName,
+              keyField: fieldName,
+              keyArg: argName,
+            });
+            return true;
+          }
+          directiveExtensions.lookup ||= [];
+          if (!directiveExtensions.lookup.length) {
+            // Optional Mesh `subgraph:` for join attribution (stripped in mesh-join).
+            directiveExtensions.lookup.push({ subgraph: subgraphName });
+          }
+          if (argName !== fieldName && queryFieldConfig.args?.[argName]) {
+            const argConfig = queryFieldConfig.args[argName];
+            const argDirs = getDirectiveExtensions(argConfig);
+            argDirs.is ||= [];
+            if (!argDirs.is.some((d: { field?: string }) => d?.field === fieldName)) {
+              argDirs.is.push({ field: fieldName });
+            }
+            const argExtensions: Record<string, unknown> = (argConfig.extensions ||= {});
+            argExtensions.directives = argDirs;
+          }
           return true;
         };
         switch (queryFieldNameSnakeCase) {
@@ -1118,7 +1325,8 @@ function addAnnotationsForSemanticConventions({
             if (isNonNullType(arg.type)) {
               const batchListArg = isBatchListArgType(arg.type);
               const hasSingularEntity = markConnectEntityOrMerge();
-              // Only advertise a resolvable @key when a singular entity resolver exists.
+              // Only advertise a resolvable @key when an entity entry field that
+              // returns one object (not a list) exists for recall.
               // Batch keys and protobuf/Connect fields that could not become entity stay
               // non-resolvable so `_entities` is not claimed without a usable resolver.
               ensureKey(
@@ -1138,8 +1346,8 @@ function addAnnotationsForSemanticConventions({
             const batchListArg = isBatchListArgType(arg.type);
             const hasSingularEntity = markConnectEntityOrMerge();
             // Batch Connectors/protobuf Query fields keep field-level RPC only; a resolvable
-            // @key would claim a missing singular entity resolver for `_entities`. Mesh `@merge`
-            // batch fields still use the default resolvable key.
+            // @key would claim `_entities` without a non-list lookup field. Plain GraphQL
+            // list/batch fields keep Mesh `@merge` (not `@lookup`).
             ensureKey(
               isConnectOrProtobufField && (batchListArg || !hasSingularEntity)
                 ? { resolvable: false }

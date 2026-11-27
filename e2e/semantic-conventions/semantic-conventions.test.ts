@@ -1,10 +1,10 @@
 import { createTenv } from '@e2e/tenv';
 
 const { compose, fs } = createTenv(__dirname);
-// Mesh `@merge` may be lifted into lean federation `@join__directive(..., name: "merge", ...)`.
-const regExp = /@(?:merge\(|join__directive\([^)]*name:\s*"merge")/;
+// Federation Spec `@lookup` may be lifted into lean `@join__directive(..., name: "lookup", ...)`.
+const regExp = /@(?:lookup\b|join__directive\([^)]*name:\s*"lookup")/;
 
-it('should generate merge directives', async () => {
+it('should generate lookup directives', async () => {
   const { output } = await compose({
     output: 'graphql',
     args: ['-c', 'mesh.config.conventions-enabled.ts'],
@@ -12,7 +12,7 @@ it('should generate merge directives', async () => {
   await expect(fs.read(output)).resolves.toMatch(regExp);
 });
 
-it('should not generate merge directives', async () => {
+it('should not generate lookup directives', async () => {
   const { output } = await compose({
     output: 'graphql',
     args: ['-c', 'mesh.config.conventions-disabled.ts'],

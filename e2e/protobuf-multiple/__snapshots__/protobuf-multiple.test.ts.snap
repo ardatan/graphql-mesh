@@ -30,7 +30,7 @@ type pets__Pet @join__type(graph:PETS) {id:Int name:String} """Response with a l
 type petstore__PetStoreList @join__type(graph:STORES) {petStores:[petstore__PetStore]} """Message for pet store information"""
 type petstore__PetStore @join__type(graph:STORES) {id:Int name:String location:Int petsForSale:[Int]} """Message for pet store information"""
 input petstore__PetStore_Input @join__type(graph:STORES) {id:Int name:String location:Int petsForSale:[Int]}
-directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION | ARGUMENT_DEFINITION
 scalar join__DirectiveArguments
 
 `;
