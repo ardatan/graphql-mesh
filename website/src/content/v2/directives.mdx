@@ -1390,10 +1390,9 @@ extend schema @link(url: "https://specs.apollo.dev/link/v1.0")
 Do **not** import `@skipAuth` or `@rateLimit` from Mesh `core` -- those are separate **family**
 specs (`auth`, `rate-limit`), not core.
 
-**Spec host:** Document Mesh `@link` URLs only as **`https://specs.graphql-mesh.dev/<family>/v0.1`**
-(core, sql, auth, rate-limit, ...). Do **not** use `specs.graphql-mesh.com` -- that host was never
-published. Older Hive / Mesh v1 snippets may show `https://the-guild.dev/graphql/mesh/spec/v1.0` as
-a legacy catch-all; do not use that for new SDL.
+**Spec host:** Document Mesh `@link` URLs as **`https://specs.graphql-mesh.dev/<family>/v0.1`**
+(core, sql, auth, rate-limit, ...). Older Hive / Mesh v1 snippets may show
+`https://the-guild.dev/graphql/mesh/spec/v1.0` as a legacy catch-all; do not use that for new SDL.
 
 `@link` names the import; Federation still requires a matching `directive @...` definition on the
 subgraph when you `@composeDirective` that name. Loaders stamp both. Hand SDL must include the
