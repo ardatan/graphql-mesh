@@ -1,0 +1,23 @@
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+directive @key(fields: String!, resolvable: Boolean = true) repeatable on OBJECT | INTERFACE
+directive @transport(
+  subgraph: String
+  kind: String
+  location: String
+  headers: [[String!]!]
+  options: String
+) repeatable on SCHEMA
+
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
+  @transport(subgraph: "products", kind: "http", location: "{{PRODUCTS_UPSTREAM_URL}}")
+
+type Query {
+  product(id: ID!): Product
+}
+
+type Product @key(fields: "id") {
+  id: ID!
+  name: String!
+}

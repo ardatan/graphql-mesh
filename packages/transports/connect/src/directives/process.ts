@@ -257,11 +257,15 @@ export function processDirectives(
             // `@resolveRoot` / `@flatten` / `@resolveRootField` / `@statusCodeTypeName`
             // / `@enum` are baked into `@connect` selections / http.body.
             case 'pubsubOperation':
-              processPubSubOperationAnnotations({
-                field: field as GraphQLField<any, any>,
-                pubsubTopic: directiveAnnotation.args.pubsubTopic,
-                globalPubsub: pubsub,
-              });
+              // Skip when no pubsub — clear no-op (subscribe is not installed).
+              // Callers that need Mesh `@pubsubOperation` must pass `pubsub`.
+              if (pubsub) {
+                processPubSubOperationAnnotations({
+                  field: field as GraphQLField<any, any>,
+                  pubsubTopic: directiveAnnotation.args.pubsubTopic,
+                  globalPubsub: pubsub,
+                });
+              }
               break;
             // Legacy `@httpOperation` / `@oas_link` were replaced by `@connect` (breaking).
             // `@dictionary` / `@responseMetadata` are baked into `@connect(selection:)`.

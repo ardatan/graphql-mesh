@@ -1,0 +1,66 @@
+{
+  "name": "@graphql-mesh/subgraph",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Build an executable Federation subgraph schema from Mesh subgraph SDL (generated or hand-written)",
+  "repository": {
+    "type": "git",
+    "url": "ardatan/graphql-mesh",
+    "directory": "packages/subgraph"
+  },
+  "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/typings/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "default": {
+        "types": "./dist/typings/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typings": "dist/typings/index.d.ts",
+  "peerDependencies": {
+    "graphql": "^16.0.0 || ^17.0.0"
+  },
+  "dependencies": {
+    "@apollo/subgraph": "^2.16.0",
+    "@graphql-hive/logger": "^1.2.0",
+    "@graphql-hive/pubsub": "^2.2.1",
+    "@graphql-mesh/transport-common": "^2.0.0",
+    "@graphql-mesh/transport-connect": "^0.12.4",
+    "@graphql-mesh/types": "^0.107.3",
+    "@graphql-mesh/utils": "^0.107.3",
+    "@graphql-tools/delegate": "workspace:*",
+    "@graphql-tools/schema": "^11.0.9",
+    "@graphql-tools/utils": "^13.2.3",
+    "@graphql-tools/wrap": "workspace:*",
+    "@whatwg-node/promise-helpers": "^2.0.2",
+    "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "graphql": "17.1.0",
+    "graphql-yoga": "^6.1.1"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  },
+  "sideEffects": false,
+  "typescript": {
+    "definition": "dist/typings/index.d.ts"
+  }
+}
