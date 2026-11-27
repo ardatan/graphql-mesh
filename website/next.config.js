@@ -47,6 +47,8 @@ export default withGuildDocs({
       '/v2/tutorials/music-store': '/v2/examples/music-store',
       '/v2/reference': '/v2/directives',
       '/v2/reference/directives': '/v2/directives',
+      '/v2/guides/mesh-journey': '/v2/guides/migration',
+      '/v2/guides/migrate-from-stitching': '/v2/guides/migration/from-stitching',
     }).map(([from, to]) => ({
       destination: to,
       permanent: true,
