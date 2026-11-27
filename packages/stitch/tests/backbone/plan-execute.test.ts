@@ -1,4 +1,4 @@
-import { parse, print } from 'graphql';
+import { execute, GraphQLScalarType, parse, print } from 'graphql';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import type { StitchingInfo } from '@graphql-tools/delegate';
 import { makeExecutableSchema } from '@graphql-tools/schema';
@@ -251,7 +251,7 @@ describe('stitching backbone', () => {
       },
     });
 
-    const stitchingInfo = schema.extensions?.['stitchingInfo'] as StitchingInfo;
+    const stitchingInfo = schema.extensions?.stitchingInfo as StitchingInfo;
     expect(stitchingInfo.localFields.get('Query')?.has('me')).toBe(true);
 
     const executor = createBackboneExecutor(schema);
@@ -319,7 +319,7 @@ describe('stitching backbone', () => {
       },
     });
 
-    const stitchingInfo = schema.extensions?.['stitchingInfo'] as StitchingInfo;
+    const stitchingInfo = schema.extensions?.stitchingInfo as StitchingInfo;
     expect(stitchingInfo.localFields.get('Query')?.has('Group')).toBe(true);
     expect(stitchingInfo.localFields.get('GroupQuery')?.has('echo')).toBe(true);
 
@@ -388,7 +388,7 @@ describe('stitching backbone', () => {
       },
     });
 
-    const stitchingInfo = schema.extensions?.['stitchingInfo'] as StitchingInfo;
+    const stitchingInfo = schema.extensions?.stitchingInfo as StitchingInfo;
     expect(stitchingInfo.localFields.get('TargetType')?.has('label')).toBe(true);
 
     const document = parse(/* GraphQL */ `
@@ -502,7 +502,7 @@ describe('stitching backbone', () => {
       },
     });
 
-    const stitchingInfo = schema.extensions?.['stitchingInfo'] as StitchingInfo;
+    const stitchingInfo = schema.extensions?.stitchingInfo as StitchingInfo;
     expect(stitchingInfo.localFields.get('Book')?.has('author')).toBe(true);
 
     const document = parse(/* GraphQL */ `
@@ -837,5 +837,174 @@ describe('backbone plan quality', () => {
     expect(plan.incomplete).toBe(false);
     const counts = countFetches(plan.root);
     expect(counts.root).toBeGreaterThanOrEqual(2);
+  });
+});
+
+/**
+ * Variable coercion - two entries:
+ * - Direct createBackboneExecutor (Hive Gateway): schema-coerce once here.
+ * - graphql-js trampoline: host coerces; root proxies mark already-coerced;
+ *   backbone must not re-run getVariableValues (custom scalars).
+ */
+describe('backbone correctness: variable coercion', () => {
+  it('direct backbone executor rejects missing required variables with zero hops', async () => {
+    let hopCount = 0;
+    const remote = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          echo(id: ID!): String
+        }
+      `,
+      resolvers: {
+        Query: {
+          echo: (_: unknown, { id }: { id: string }) => {
+            hopCount += 1;
+            return `ok:${id}`;
+          },
+        },
+      },
+    });
+    const schema = stitchSchemas({
+      subschemas: [{ schema: remote, executor: createDefaultExecutor(remote) }],
+    });
+    const document = parse(/* GraphQL */ `
+      query ($id: ID!) {
+        echo(id: $id)
+      }
+    `);
+
+    const backbone = createBackboneExecutor(schema);
+    const result = await exec(backbone, { document, variables: {} });
+    expect(result.data).toBeNull();
+    expect(result.errors?.length).toBeGreaterThan(0);
+    expect(hopCount).toBe(0);
+  });
+
+  it('direct backbone executor rejects wrong-type variables with zero hops', async () => {
+    let hopCount = 0;
+    const remote = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          echo(n: Int!): String
+        }
+      `,
+      resolvers: {
+        Query: {
+          echo: (_: unknown, { n }: { n: number }) => {
+            hopCount += 1;
+            return `ok:${n}`;
+          },
+        },
+      },
+    });
+    const schema = stitchSchemas({
+      subschemas: [{ schema: remote, executor: createDefaultExecutor(remote) }],
+    });
+    const document = parse(/* GraphQL */ `
+      query ($n: Int!) {
+        echo(n: $n)
+      }
+    `);
+
+    const backbone = createBackboneExecutor(schema);
+    const result = await exec(backbone, {
+      document,
+      variables: { n: 'not-an-int' },
+    });
+    expect(result.data).toBeNull();
+    expect(result.errors?.length).toBeGreaterThan(0);
+    expect(hopCount).toBe(0);
+  });
+
+  it('graphql-js trampoline rejects missing required variables with zero hops (host coerces)', async () => {
+    let hopCount = 0;
+    const remote = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Query {
+          echo(id: ID!): String
+        }
+      `,
+      resolvers: {
+        Query: {
+          echo: (_: unknown, { id }: { id: string }) => {
+            hopCount += 1;
+            return `ok:${id}`;
+          },
+        },
+      },
+    });
+    const schema = stitchSchemas({
+      subschemas: [{ schema: remote, executor: createDefaultExecutor(remote) }],
+    });
+    const document = parse(/* GraphQL */ `
+      query ($id: ID!) {
+        echo(id: $id)
+      }
+    `);
+
+    const result = await execute({
+      schema,
+      document,
+      variableValues: {},
+    });
+    expect(result.data).toBeUndefined();
+    expect(result.errors?.length).toBeGreaterThan(0);
+    expect(hopCount).toBe(0);
+  });
+
+  it('graphql-js trampoline does not double-coerce custom scalars', async () => {
+    let parseCount = 0;
+    const DateScalar = new GraphQLScalarType({
+      name: 'Date',
+      serialize: v => (v instanceof Date ? v.toISOString() : v),
+      parseValue: v => {
+        parseCount += 1;
+        if (v instanceof Date) {
+          return v;
+        }
+        return new Date(String(v));
+      },
+      parseLiteral: ast => new Date((ast as { value: string }).value),
+    });
+    const remote = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        scalar Date
+        type Query {
+          when(d: Date!): String
+        }
+      `,
+      resolvers: {
+        Date: DateScalar,
+        Query: {
+          when: (_: unknown, { d }: { d: Date }) =>
+            d instanceof Date ? d.toISOString() : String(d),
+        },
+      },
+    });
+    const schema = stitchSchemas({
+      subschemas: [{ schema: remote, executor: createDefaultExecutor(remote) }],
+    });
+    // Stitched schema has its own Date scalar - count parses on gateway type.
+    const stitchedDate = schema.getType('Date') as InstanceType<typeof GraphQLScalarType>;
+    const originalParse = stitchedDate.parseValue.bind(stitchedDate);
+    stitchedDate.parseValue = (v: unknown) => {
+      parseCount += 1;
+      return originalParse(v);
+    };
+
+    parseCount = 0;
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        query ($d: Date!) {
+          when(d: $d)
+        }
+      `),
+      variableValues: { d: '2020-01-01T00:00:00.000Z' },
+    });
+    expect(result.errors).toBeUndefined();
+    expect((result.data as any)?.when).toBe('2020-01-01T00:00:00.000Z');
+    // Host coerce once; trampoline mark skips backbone re-coerce.
+    expect(parseCount).toBe(1);
   });
 });
