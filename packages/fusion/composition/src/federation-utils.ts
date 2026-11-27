@@ -58,10 +58,11 @@ export function normalizeDirectiveExtensions(subgraph: GraphQLSchema) {
  * Stamp object-level `@shareable` for value-type / multi-subgraph field merge.
  * Never leave `@shareable` on interfaces. (Entities with `@key` still need
  * type-level `@shareable` when the same fields are resolved from multiple
- * subgraphs - Guild composition errors otherwise.)
- * Skip Subscription roots only: Guild rejects shareable on subscription fields,
- * while Query / Mutation type-level `@shareable` is still required so overlapping
- * root fields (semantic-convention `@merge` entry points) can compose.
+ * subgraphs - Hive Composition errors otherwise.)
+ * Skip Subscription roots only: Hive Composition rejects shareable on
+ * subscription fields, while Query / Mutation type-level `@shareable` is still
+ * required so overlapping root fields (semantic-convention `@merge` entry
+ * points) can compose.
  */
 function ensureObjectTypesShareable(subgraph: GraphQLSchema) {
   const subscriptionTypeName = subgraph.getSubscriptionType()?.name;
