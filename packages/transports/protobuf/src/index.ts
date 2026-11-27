@@ -323,9 +323,9 @@ export class ProtobufTransportHelper extends DisposableStack {
       stream: isStream,
     } = directiveArgs as {
       service?: string;
-      method?: string;
+      method: string;
       args?: string;
-      selection?: string;
+      selection: string;
       stream?: boolean;
     };
     if (method == null || method === '') {
