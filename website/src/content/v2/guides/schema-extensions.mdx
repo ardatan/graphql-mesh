@@ -54,6 +54,30 @@ for gateway-local fields that are not owned by an upstream. Prefer that only whe
 cannot express the field. Keep those defs in a checked-in `.graphql` and list them beside other
 subgraphs so registry publish stays the same UX.
 
+{/* prettier-ignore */}
+```graphql
+# extensions.graphql -- gateway-local field delegation
+extend schema
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@resolveTo"])
+
+extend type Book {
+  # Delegate Book.authorId → Query.authorById on the "authors" subgraph
+  author: Author
+    @resolveTo(
+      sourceName: "authors"
+      sourceTypeName: "Query"
+      sourceFieldName: "authorById"
+      sourceArgs: { id: "{root.authorId}" }
+      requiredSelectionSet: "{ authorId }"
+    )
+}
+```
+
+Wire the file as its own Compose subgraph entry (or merge into an existing hand SDL), compose, then
+serve on [Hive Gateway](/v2/serve/hive-gateway). Full arg table:
+[Directives: @resolveTo](/v2/directives#resolveTo). Stitching migrants:
+[From Schema Stitching](/v2/guides/migration/from-stitching#from-delegatetoschema-to-resolveto).
+
 ## Related
 
 Type merging vs Federation: [Federation](/v2/concepts/federation) /
