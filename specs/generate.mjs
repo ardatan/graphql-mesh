@@ -10,8 +10,8 @@ import { fileURLToPath } from 'node:url';
 const root = dirname(fileURLToPath(import.meta.url));
 const outDir = join(root, 'out');
 const origin = 'https://specs.graphql-mesh.dev';
-const siteTitle = 'GraphQL Mesh Directives Specification';
-const siteBrand = 'Directives Spec';
+const siteTitle = 'GraphQL Mesh Specs';
+const siteBrand = 'GraphQL Mesh Specs';
 
 const families = JSON.parse(readFileSync(join(root, 'families.json'), 'utf8'));
 
@@ -453,7 +453,7 @@ function familyPage(family, sdl, docs) {
 </section>`);
 
   return layout({
-    title: `${family.title} ${version} · ${siteTitle}`,
+    title: `${family.title} ${version} - ${siteTitle}`,
     canonical: url,
     markdownHref: `/${family.name}/${version}.md`,
     body: `
@@ -716,7 +716,7 @@ writeFileSync(
 writeFileSync(
   join(outDir, '404.html'),
   layout({
-    title: `Not found · ${siteTitle}`,
+    title: `Not found - ${siteTitle}`,
     canonical: `${origin}/404.html`,
     body: `
 <article class="spec-page">

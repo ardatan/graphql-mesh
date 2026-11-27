@@ -132,6 +132,15 @@ body {
   color: var(--accent);
 }
 
+/* Match spec-md TOC: section ids read as the navigable cue. */
+.spec-toc a .spec-secid {
+  color: var(--accent);
+}
+
+.spec-toc a:hover .spec-secid {
+  text-decoration: underline;
+}
+
 .spec-secid {
   font-family: var(--mono);
   font-size: 0.78em;
@@ -293,8 +302,23 @@ code {
   }
   .spec-page > section {
     grid-column: 2;
+    /* Room for hanging section ids (spec-md cue) inside the body column. */
+    padding-left: 3.25rem;
   }
   .home .spec-toc {
     grid-row: 3 / span 200;
+  }
+  /* Hang numbered section ids left of headings within the content column. */
+  .spec-page section .spec-definition-head,
+  .spec-page section > h2 {
+    position: relative;
+  }
+  .spec-page section .spec-definition-head > .spec-secid,
+  .spec-page section > h2 > .spec-secid {
+    position: absolute;
+    right: 100%;
+    margin-right: 0.65rem;
+    text-align: right;
+    white-space: nowrap;
   }
 }
