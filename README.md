@@ -20,7 +20,7 @@
 
 <div align="center">
 
-[![npm version](https://badge.fury.io/js/%40graphql-mesh%2Fcli.svg)](https://badge.fury.io/js/%40graphql-mesh%2Fcli)
+[![npm version](https://badge.fury.io/js/%40graphql-mesh%2Fcompose-cli.svg)](https://badge.fury.io/js/%40graphql-mesh%2Fcompose-cli)
 ![CI](https://github.com/ardatan/graphql-mesh/workflows/test/badge.svg)
 [![Discord Chat](https://img.shields.io/discord/625400653321076807)](https://discord.gg/xud7bH9)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
