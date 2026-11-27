@@ -1031,6 +1031,14 @@ function executeFetchNode(
         // so finalizeRootResult can apply nullability bubbling.
         ctx.data[responseKey] = null;
       }
+      // Mutation + non-null root failure: stop later roots (graphql-js parity).
+      if (errors.length && ctx.operation.operation === 'mutation') {
+        const rootType = getDefinedRootType(ctx.schema, ctx.operation.operation);
+        const fieldDef = rootType.getFields()[rootFieldNode.name.value];
+        if (fieldDef && !isNullableType(fieldDef.type)) {
+          ctx.abortRemainingHops = true;
+        }
+      }
     };
 
     // Rename / encapsulate / defer transforms need Transformer - prebuilt
@@ -1428,7 +1436,11 @@ function tryExecuteEntitiesBatch(
       if (result.errors?.length) {
         ctx.errors.push(...result.errors);
       }
-      mergeResults(result.data?.[entry.fieldName]);
+      let payload = result.data?.[entry.fieldName];
+      if (entry.valuesFromResults != null) {
+        payload = entry.valuesFromResults(payload, keys);
+      }
+      mergeResults(payload);
     },
   );
 }
@@ -1801,6 +1813,15 @@ export function executeDataflowPlan(
         // and overlapping entity writes can be batched / serialized.
         const flush = ready.splice(0, ready.length);
 
+        // After a non-null mutation root failure, skip remaining hops without
+        // running them (no further side effects; data will be null anyway).
+        if (ctx.abortRemainingHops) {
+          for (const index of flush) {
+            release(index);
+          }
+          continue;
+        }
+
         const rootGroups = new Map<
           string,
           Array<{
@@ -2141,7 +2162,10 @@ function executeBatchFetchNode(
           if (result.errors?.length) {
             ctx.errors.push(...result.errors);
           }
-          const entities = result.data?.[fieldName];
+          let entities = result.data?.[fieldName];
+          if (mergeEntry.valuesFromResults != null) {
+            entities = mergeEntry.valuesFromResults(entities, allKeys);
+          }
           if (!Array.isArray(entities)) {
             return;
           }
