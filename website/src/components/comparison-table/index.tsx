@@ -4,65 +4,67 @@ import { Table, TableCell, TableHeader, TableRow } from './table';
 type Entry = { text: string; score: number };
 const data: Array<{
   name: string;
-  'Non-GraphQL → subgraph': Entry;
-  Connectors: Entry;
+  Contract: Entry;
+  'Config level': Entry;
   Transforms: Entry;
-  'Gateway / registry': Entry;
+  Gateway: Entry;
 }> = [
   {
     name: 'GraphQL Mesh',
-    'Non-GraphQL → subgraph': {
-      text: 'Generate Federation-ready Mesh subgraph SDL from REST, SOAP, OData, gRPC, SQL, and more, or Hand-write / Generate-then-edit.',
+    Contract: {
+      // Portable subgraph SDL is the product: Mesh directives + Connectors,
+      // generated or authored, then composed like any other Federation peer.
+      text: 'Federation subgraph SDL: Mesh directives for REST, SOAP, OData, gRPC, SQL, and more, plus HTTP/REST Connectors (`@connect` / `@source`). One portable contract for compose and serve.',
       score: 2,
     },
-    Connectors: {
-      text: 'HTTP/REST Connectors (`@connect` / `@source`) emit natively; run on Apollo Router and Hive Gateway. Mesh protocols (SQL, gRPC, …) still work via Serve Subgraph.',
+    'Config level': {
+      text: 'Subgraph-level. Generate, Hand-write, or Generate-then-edit the SDL; the gateway only serves the composed supergraph (or a Mesh Serve Subgraph peer).',
       score: 2,
     },
     Transforms: {
       text: 'Optional Transform Subgraph (Automatic Compose transforms or edit the .graphql by hand) before Compose.',
       score: 2,
     },
-    'Gateway / registry': {
-      text: 'Gateway-independent: compose once, then run with any Federation Gateway (Hive Gateway, Apollo Router, peers).',
+    Gateway: {
+      text: 'Gateway-independent. Compose once; run on Hive Gateway, Apollo Router, or any Federation-compatible gateway / router.',
       score: 2,
     },
   },
   {
     name: 'Apollo Federation',
-    'Non-GraphQL → subgraph': {
-      text: 'Expects Federation-compliant GraphQL subgraphs. Non-GraphQL sources need a separate subgraph process you own.',
-      score: 0,
+    Contract: {
+      text: 'Federation subgraph GraphQL SDL. Connectors are Connect-shaped SDL that the Router executes; non-Connect sources need a subgraph process you own (Mesh can supply that SDL).',
+      score: 1,
     },
-    Connectors: {
-      text: 'Router executes Connectors on Connect-shaped SDL. Mesh can generate that SDL for you and drop it into GraphOS / Router.',
+    'Config level': {
+      text: 'Mixed. Entity/subgraph shape lives in each subgraph; Connector execution is gateway/Router-side.',
       score: 1,
     },
     Transforms: {
-      text: 'Schema shape lives in each subgraph codebase; no Mesh-style Automatic / By-hand transform path on composed SDL.',
+      text: 'Schema shape owned per subgraph codebase; no Mesh-style Automatic / By-hand transform path on composed SDL.',
       score: 1,
     },
-    'Gateway / registry': {
-      text: 'Strong GraphOS / Router story; Mesh drops in as Federation subgraphs beside the stack you already run.',
+    Gateway: {
+      text: 'Strong GraphOS / Router story. Mesh drops in as Federation subgraph peers beside the stack you already run.',
       score: 1,
     },
   },
   {
     name: 'Schema Stitching',
-    'Non-GraphQL → subgraph': {
-      text: 'Typically GraphQL executors + programmatic merge. Non-GraphQL sources need custom gateway-level wiring.',
-      score: 1,
+    Contract: {
+      text: 'No portable Federation subgraph contract. Integration is an executor map and type-merge config at the stitch layer.',
+      score: 0,
     },
-    Connectors: {
-      text: 'No Connectors contract: REST/HTTP usually wired with custom resolvers or DataLoader code at the stitch layer.',
+    'Config level': {
+      text: 'Gateway-level. stitchSchemas / type merge usually lives in-process with the stitched GraphQLSchema.',
       score: 0,
     },
     Transforms: {
-      text: 'In-process stitchSchemas / type merge config, not Federation subgraph SDL + Transform Subgraph.',
+      text: 'Merge and filter config in the gateway, not a Transform Subgraph step on Federation SDL.',
       score: 1,
     },
-    'Gateway / registry': {
-      text: 'Often one stitched GraphQLSchema in-process. Mesh migrates you to subgraph SDL + Compose + any Federation Gateway.',
+    Gateway: {
+      text: 'Typically one in-process schema. Mesh migrates you to subgraph SDL + Compose + any Federation Gateway.',
       score: 0,
     },
   },
@@ -83,8 +85,8 @@ export function ComparisonTable({ children, className, ...rest }: ComparisonTabl
           What Mesh adds
         </Heading>
         <p className="mt-4 mb-8 sm:mb-16 text-green-800">
-          Beside plain Federation and Schema Stitching: non-GraphQL → subgraph, Connectors,
-          transforms, and gateway independence
+          The useful contrast is not “can it talk to REST?”. It is where the contract lives, whether
+          config is subgraph-portable, and whether the gateway is locked in.
         </p>
       </header>
       {/* this is focusable (by default) because a keyboard user will scroll through the overflowing table with arrows */}
