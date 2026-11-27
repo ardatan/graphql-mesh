@@ -4,39 +4,46 @@ export function InfoCardsSection() {
   return (
     <section className="px-4 py-6 sm:py-12 md:px-6 xl:px-[120px] lg:py-24">
       <Heading as="h2" size="md" className="text-balance text-center">
-        Generate, Transform, Serve Subgraph, Compose, Serve Supergraph
+        From any API to a Federated Supergraph
       </Heading>
       <ul className="mt-6 flex flex-row flex-wrap justify-center gap-2 md:mt-16 md:gap-6">
-        <InfoCard
-          as="li"
-          href="/v2/paths/generate"
-          heading="Build your Subgraph"
-          icon={<GitBranchIcon />}
-          className="flex-1 rounded-2xl md:rounded-3xl"
-        >
-          Generate, Hand-write, or Generate-then-edit Federation-ready Mesh subgraph SDL from REST,
-          SOAP, OData, gRPC, SQL, and more.
-        </InfoCard>
-        <InfoCard
-          as="li"
-          href="/v2/faq#already-have-federation-why-mesh"
-          heading="Why Mesh?"
-          icon={<FlowChartIcon />}
-          className="flex-1 basis-full rounded-2xl md:basis-0 md:rounded-3xl"
-        >
-          Already on Federation? Extend with non-GraphQL subgraphs. New to Federation? Generate
-          ready SDL and compose on any Federation gateway.
-        </InfoCard>
-        <InfoCard
-          as="li"
-          href="/v2#enhance-an-existing-federation"
-          heading="Platform independent"
-          icon={<GroupIcon />}
-          className="flex-1 basis-full rounded-2xl md:rounded-3xl lg:basis-0"
-        >
-          Registry and gateway independent -- Hive Gateway and Apollo Router supported. Drop into
-          GraphOS, Hive, Rover, or any Federation-compatible stack without replacing it.
-        </InfoCard>
+        {/*
+          Do not pass as="li" together with href: InfoCard forwards `as` to Next.js Link,
+          which treats `as` as the displayed URL path (so every card linked to "/li").
+        */}
+        <li className="flex-1 list-none">
+          <InfoCard
+            href="/v2/paths/generate"
+            heading="Build your Subgraph"
+            icon={<GitBranchIcon />}
+            className="h-full rounded-2xl md:rounded-3xl"
+          >
+            Generate, Hand-write, or Generate-then-edit Federation-ready Mesh subgraph SDL from REST,
+            SOAP, OData, gRPC, SQL, and more.
+          </InfoCard>
+        </li>
+        <li className="flex-1 basis-full list-none md:basis-0">
+          <InfoCard
+            href="/v2/faq#already-have-federation-why-mesh"
+            heading="Why Mesh?"
+            icon={<FlowChartIcon />}
+            className="h-full rounded-2xl md:rounded-3xl"
+          >
+            Already on Federation? Extend with non-GraphQL subgraphs. New to Federation? Generate
+            ready SDL and compose on any Federation gateway.
+          </InfoCard>
+        </li>
+        <li className="flex-1 basis-full list-none lg:basis-0">
+          <InfoCard
+            href="/v2#enhance-an-existing-federation"
+            heading="Platform independent"
+            icon={<GroupIcon />}
+            className="h-full rounded-2xl md:rounded-3xl"
+          >
+            Registry and gateway independent. Works with Hive Gateway, Apollo Router, GraphOS, Hive,
+            Rover, or any Federation-compatible stack without replacing it.
+          </InfoCard>
+        </li>
       </ul>
     </section>
   );

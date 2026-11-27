@@ -32,12 +32,12 @@ export function ManipulateDataSection({ className }: { className?: string }) {
         />
         <ListItem
           title="Transform"
-          description="Optional reshape -- Automatic Compose transforms or edit the .graphql by hand."
+          description="Optional reshape: Automatic Compose transforms or edit the .graphql by hand."
           href="/v2/transforms"
         />
         <ListItem
           title="Serve Subgraph"
-          description="When a foreign gateway needs a Mesh-backed Federation URL -- Hive subgraph or buildSubgraphSchema."
+          description="When a foreign gateway needs a Mesh-backed Federation URL: Hive subgraph or buildSubgraphSchema."
           href="/v2/serve-subgraph"
         />
         <ListItem
@@ -47,7 +47,7 @@ export function ManipulateDataSection({ className }: { className?: string }) {
         />
         <ListItem
           title="Serve Supergraph"
-          description="Run with any Federation Gateway -- Hive Gateway, Apollo Router, and peers."
+          description="Run with any Federation Gateway: Hive Gateway, Apollo Router, and peers."
           href="/v2/serve"
         />
       </dl>
