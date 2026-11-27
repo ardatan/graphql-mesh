@@ -198,9 +198,9 @@ import { readFileSync } from 'node:fs'
 const schema = buildSubgraphSchema(readFileSync('./reviews.graphql', 'utf8'))
 ```
 
-Prefer Federation `@lookup` for one-object entity entry fields; Mesh `@merge` only for list/batch --
-[Directives](/v2/directives#lookup). Guide: [buildSubgraphSchema](/v2/guides/build-subgraph-schema)
-/ [Serve Subgraph](/v2/serve-subgraph).
+Prefer Federation `@lookup` for one-object entity entry fields; Type Merging `@merge` only for
+list/batch -- [Directives](/v2/directives#lookup). Guide:
+[buildSubgraphSchema](/v2/guides/build-subgraph-schema) / [Serve Subgraph](/v2/serve-subgraph).
 
 <Cards>
   <Cards.Card arrow title="Generate" href="/v2/paths/generate" />

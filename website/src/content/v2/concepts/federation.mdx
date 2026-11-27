@@ -71,16 +71,16 @@ That wires Hive Gateway / Apollo Router `_entities` -> `resolveReference`.
 For **hand-written GraphQL** subgraphs, prefer Federation Spec `@lookup` / `@is` / `@internal` for
 an entity entry field that returns **one object**, imported from
 [graphql-federation-spec/draft](https://graphql.github.io/graphql-federation-spec/draft) -- not from
-`specs.graphql-mesh.dev`. For **list/batch** entry fields use Mesh `@merge` -- see
+`specs.graphql-mesh.dev`. For **list/batch** entry fields use Type Merging `@merge` -- see
 [Directives: @lookup](/v2/directives#lookup) and [Directives: @merge](/v2/directives#merge).
 
-| Pattern                                       | What you get                                                              |
-| --------------------------------------------- | ------------------------------------------------------------------------- |
-| Arg name **matches** key field (`id` -> `id`) | Query field `@connect(entity: true)` (or protocol equivalent) / `@lookup` |
-| Arg name **differs** (`petId` -> `id`)        | Type-level `$this` map, or `@lookup` + `@is(field: "id")` on the arg      |
-| Join-only stub (`resolvable: false`)          | `@key` only -- another subgraph owns the resolver                         |
-| Batch ByIds only                              | Batch Connect / protocol maps, or Mesh `@merge` on a list entry field     |
-| Hide lookup from clients                      | `@lookup` + `@internal` on the field (or internal type)                   |
+| Pattern                                       | What you get                                                                  |
+| --------------------------------------------- | ----------------------------------------------------------------------------- |
+| Arg name **matches** key field (`id` -> `id`) | Query field `@connect(entity: true)` (or protocol equivalent) / `@lookup`     |
+| Arg name **differs** (`petId` -> `id`)        | Type-level `$this` map, or `@lookup` + `@is(field: "id")` on the arg          |
+| Join-only stub (`resolvable: false`)          | `@key` only -- another subgraph owns the resolver                             |
+| Batch ByIds only                              | Batch Connect / protocol maps, or Type Merging `@merge` on a list entry field |
+| Hide lookup from clients                      | `@lookup` + `@internal` on the field (or internal type)                       |
 
 <ProtocolRef name="http-rest" /> Connectors (`getCustomer` matches [ById
 conventions](/v2/compose#semantic-conventions)):
@@ -140,7 +140,7 @@ See [Selection mapping](/v2/guides/selection-mapping) for `$this` / `$batch` bin
 Composition recognizes Query names like `bookById`, `getCustomer`, `customersByIds` (snake_case
 match) when the key arg lines up with a key field. Connect / protobuf get `entity: true` or
 type-level `$this` maps; GraphQL one-object hops use Federation `@lookup` (+ `@is` when needed), and
-list/batch hops may use Mesh `@merge`. Full table and opt-out:
+list/batch hops may use Type Merging `@merge`. Full table and opt-out:
 [Composition semantic conventions](/v2/compose#semantic-conventions).
 
 ### Federation transform
@@ -201,7 +201,7 @@ See [Music Store Example](/v2/examples/music-store) and [FHIR](/v2/examples/fhir
 Semantic ById conventions: [Composition](/v2/compose#semantic-conventions).
 
 Prefer Federation `@lookup` / `@is` / `@internal` (or `@key` + Connect / protocol `entity: true`)
-for one-object entity entry fields -- [Directives: @lookup](/v2/directives#lookup). Use Mesh
+for one-object entity entry fields -- [Directives: @lookup](/v2/directives#lookup). Use Type Merging
 
 <DirectiveRef name="merge" /> for list/batch entry fields. <DirectiveRef name="resolveTo" />
 remains for field delegation when entity stubs are not enough.

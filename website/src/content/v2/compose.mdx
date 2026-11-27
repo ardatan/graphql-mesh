@@ -88,19 +88,19 @@ wiring automatically -- `@key` plus Connect/protocol `entity: true` (or type-lev
 HTTP/REST Connectors and protocol subgraphs (<ProtocolRef name="http-rest" />,
 
 <ProtocolRef name="sql" />, ...). GraphQL one-object hops use Federation `@lookup` (+ `@is` when
-needed); list/batch GraphQL hops may use Mesh `@merge` -- see [Directives:
+needed); list/batch GraphQL hops may use Type Merging `@merge` -- see [Directives:
 @lookup](/v2/directives#lookup) and [Directives: @merge](/v2/directives#merge).
 
 Naming is matched in snake_case. Typical patterns (key field often `id`):
 
-| Field / arg (examples)                                 | Intent                 | Connect / protocol / hop result                                                          |
-| ------------------------------------------------------ | ---------------------- | ---------------------------------------------------------------------------------------- |
-| `Query.bookById` / `Query.bookById(id:)`               | Singular ById          | `entity: true` (or type-level `$this` / Federation `@lookup`)                            |
-| `Query.getCustomer` / `Query.getCustomer(id:)`         | `get_<Type>` + key arg | Same                                                                                     |
-| `Query.getCustomerById` / `Query.getCustomerById(id:)` | Explicit ById suffix   | Same                                                                                     |
-| `Query.customer` / `Query.customer(id:)`               | Type name + key arg    | Same                                                                                     |
-| `Query.customersByIds` / `Query.customersByIds(ids:)`  | Batch ByIds            | Batch Connect / protocol maps, or Mesh `@merge` on list entry (not one-object `@lookup`) |
-| `Query.getFoosByIds` / `Query.getFoosByIds(ids:)`      | Batch with `get_`      | Same                                                                                     |
+| Field / arg (examples)                                 | Intent                 | Connect / protocol / hop result                                                                  |
+| ------------------------------------------------------ | ---------------------- | ------------------------------------------------------------------------------------------------ |
+| `Query.bookById` / `Query.bookById(id:)`               | Singular ById          | `entity: true` (or type-level `$this` / Federation `@lookup`)                                    |
+| `Query.getCustomer` / `Query.getCustomer(id:)`         | `get_<Type>` + key arg | Same                                                                                             |
+| `Query.getCustomerById` / `Query.getCustomerById(id:)` | Explicit ById suffix   | Same                                                                                             |
+| `Query.customer` / `Query.customer(id:)`               | Type name + key arg    | Same                                                                                             |
+| `Query.customersByIds` / `Query.customersByIds(ids:)`  | Batch ByIds            | Batch Connect / protocol maps, or Type Merging `@merge` on list entry (not one-object `@lookup`) |
+| `Query.getFoosByIds` / `Query.getFoosByIds(ids:)`      | Batch with `get_`      | Same                                                                                             |
 
 Examples: `Query.bookById`, OpenAPI Billing `getCustomer` (`Query.getCustomer` + `entity: true`).
 

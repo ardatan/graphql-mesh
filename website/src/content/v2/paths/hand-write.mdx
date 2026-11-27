@@ -134,7 +134,7 @@ Hand-written protobuf SDL follows the same field-number maps as
 
 When the subgraph should run as its own GraphQL process (Yoga, ...), pass the same hand-written file
 into `buildSubgraphSchema`. It wires `@transport` / protocol / `@connect` executors and entity
-resolvers (Federation `@lookup` for one-object entry fields; Mesh `@merge` for list/batch):
+resolvers (Federation `@lookup` for one-object entry fields; Type Merging `@merge` for list/batch):
 
 ```ts
 import { createServer } from 'node:http'

@@ -121,7 +121,7 @@ mesh-compose --subgraph reviews -o reviews.graphql
 ### Resolvers for `@lookup`
 
 Prefer Federation draft `@lookup` / `@is` / `@internal` for **entity entry fields that return one
-object** (not a list). Mesh `@merge` stays for **list / batch** entry fields --
+object** (not a list). Type Merging `@merge` stays for **list / batch** entry fields --
 [Directives: @lookup](/v2/directives#lookup) / [Directives: @merge](/v2/directives#merge).
 
 - If the entry field is fully described by Mesh / Connect / protocol directives,
