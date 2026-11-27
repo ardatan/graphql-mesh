@@ -4,9 +4,9 @@
 directive @protobuf__rpc(
   subgraph: String
   service: String
-  method: String
+  method: String!
   args: String
-  selection: String
+  selection: String!
   stream: Boolean
   entity: Boolean
 ) repeatable on FIELD_DEFINITION | OBJECT

@@ -2,7 +2,7 @@
 
 exports[`gRPC Reflection Example should generate correct schema: grpc-schema 1`] = `
 schema @transport(subgraph:"gRPC Example" kind:"protobuf" location:"localhost:<port>") @link(url:"https://specs.graphql-mesh.dev/protobuf/v0.1" import:["@protobuf__rpc"]) @link(url:"https://specs.apollo.dev/federation/v2.6" import:["@composeDirective"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@transport"]) @composeDirective(name:"@protobuf__rpc") @composeDirective(name:"@transport") {query:Query}
-directive @protobuf__rpc(subgraph:String service:String method:String args:String selection:String stream:Boolean entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT """Directs the executor to stream plural fields when the \`if\` argument is true or undefined."""
+directive @protobuf__rpc(subgraph:String service:String method:String! args:String selection:String! stream:Boolean entity:Boolean) repeatable on FIELD_DEFINITION | OBJECT """Directs the executor to stream plural fields when the \`if\` argument is true or undefined."""
 directive @stream("""Stream when true or undefined.""" if:Boolean! = true """Unique name""" label:String """Number of items to return immediately""" initialCount:Int = 0) on FIELD
 directive @transport(subgraph:String! kind:String! location:String headers:[[String]] options:TransportOptions) repeatable on SCHEMA
 type Query {helloworld_GreetingService_GetGreeting(input:helloworld__GreetingRequest_Input):helloworld__GreetingResult @protobuf__rpc(subgraph:"gRPC Example" service:"helloworld.GreetingService" method:"GetGreeting" args:"# Encode GraphQL field arguments into the protobuf request message.\\n# Each line is fieldId(protoType): graphqlPath (relative to this field args).\\n  1(string):

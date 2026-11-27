@@ -153,9 +153,9 @@ describe('gRPC Handler', () => {
           directive @grpcMethod(serviceName: String, methodName: String) on FIELD_DEFINITION
           directive @protobuf__rpc(
             service: String
-            method: String
+            method: String!
             args: String
-            selection: String
+            selection: String!
           ) on FIELD_DEFINITION
 
           type Query {
@@ -179,9 +179,9 @@ describe('gRPC Handler', () => {
         /* GraphQL */ `
           directive @protobuf__rpc(
             service: String
-            method: String
+            method: String!
             args: String
-            selection: String
+            selection: String!
           ) on FIELD_DEFINITION
 
           type Query {

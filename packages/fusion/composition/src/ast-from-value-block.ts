@@ -8,13 +8,22 @@
  * whitespace: thrift args are line-oriented).
  */
 
-/** Drop empty-string / nullish values (e.g. thrift `args: ""`) from join args. */
+/**
+ * Drop nullish values, and empty-string only for `args` (e.g. thrift / protobuf
+ * `args: ""`). Keep other empty strings such as protobuf `selection: ""` so join
+ * reconstitution can tell "empty mapping" from "argument absent".
+ */
 export function omitEmptyDirectiveArgValues(
   args: Record<string, unknown>,
 ): Record<string, unknown> {
   const out: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(args)) {
-    if (value == null || value === '') {
+    if (value == null) {
+      continue;
+    }
+    // Only `args` uses empty-omit; required compact mappings like `selection: ""`
+    // must survive join so transports do not treat them as missing.
+    if (value === '' && key === 'args') {
       continue;
     }
     if (typeof value === 'object' && !Array.isArray(value)) {
@@ -29,7 +38,7 @@ export function omitEmptyDirectiveArgValues(
   return out;
 }
 
-/** Prepare join args: omit empty only (preserve newlines for thrift/sql parsers). */
+/** Prepare join args: omit empty `args` only (preserve newlines for thrift/sql parsers). */
 export function prepareJoinDirectiveArgs(args: Record<string, unknown>): Record<string, unknown> {
   return omitEmptyDirectiveArgValues(args);
 }

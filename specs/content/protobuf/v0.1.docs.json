@@ -10,7 +10,7 @@
         "loaders": "Schemas that use `@protobuf__rpc` must `@link` this family and import the directive.",
         "compose": "May rewrite mapping binds under renames.",
         "runtime": "On resolve: encode request from `args` -> send to `service`/`method` at `@transport(location:)` -> decode response with `selection`. If `stream`, yield an AsyncIterable of decoded chunks. Transport/RPC failures become GraphQL field errors.",
-        "validation": "Require `method` (and `service` for a real call). `stream: true` is invalid on unary-only HTTP transports. `subgraph`, when present, must match the composition subgraph name."
+        "validation": "Require non-empty `method` and `selection`. `service` is optional when a single-service endpoint needs no path disambiguation. `stream: true` is invalid on unary-only HTTP transports. `subgraph`, when present, must match the composition subgraph name."
       },
       "args": {
         "subgraph": {
@@ -21,29 +21,31 @@
           "example": "subgraph: \"shop\""
         },
         "service": {
-          "defaults": "Optional in SDL; required for a real call.",
+          "defaults": "Optional.",
           "constraints": "Protobuf service name (package-qualified or short).",
-          "authors": "Service hosting the method.",
-          "implementers": "Resolve the gRPC/Connect service path together with `method`. Required to place the call."
+          "authors": "Service hosting the method. Omit only when a single-service endpoint needs no path disambiguation.",
+          "implementers": "Resolve the gRPC/Connect service path together with `method`. When omitted, the RPC path is `/<method>`."
         },
         "method": {
-          "defaults": "Optional in SDL; required for a real call.",
+          "defaults": "Required (`String!`).",
           "constraints": "RPC method name.",
           "authors": "Method to invoke.",
           "implementers": "RPC method name on the wire, combined with `service`.",
-          "validation": "Must be a non-empty string for executable apps."
+          "example": "method: \"GetMovies\"",
+          "validation": "Must be a non-empty string."
         },
         "args": {
-          "defaults": "Optional.",
+          "defaults": "Optional; omit entirely when the RPC takes an empty request (do not emit empty string).",
           "constraints": "Compact GraphQL -> protobuf request mapping with `$args` / `$this`.",
           "authors": "Describe how GraphQL arguments (and `$this` for entity roots) build the protobuf request.",
-          "implementers": "When it runs: Before the RPC is sent, when resolving the annotated field (or entity fill).\n\nInput: GraphQL `args` (and parent/`$this` for entity-style roots) plus the parsed `args` mapping (`fieldId(type): $args...` / `$this...` with nested messages).\n\nOutput: Encoded protobuf request bytes for `service`/`method`.\n\nErrors: Invalid mapping or unbound required fields fail the field with a GraphQL error; do not send a partial request."
+          "implementers": "When it runs: Before the RPC is sent, when resolving the annotated field (or entity fill).\n\nInput: GraphQL `args` (and parent/`$this` for entity-style roots) plus the parsed `args` mapping (`fieldId(type): $args...` / `$this...` with nested messages).\n\nOutput: Encoded protobuf request bytes for `service`/`method`.\n\nErrors: Invalid mapping or unbound required fields fail the field with a GraphQL error; do not send a partial request. Omit `args` entirely when the request message is empty (do not emit an empty string)."
         },
         "selection": {
-          "defaults": "Optional.",
+          "defaults": "Required (`String!`).",
           "constraints": "Compact protobuf -> GraphQL field mapping.",
           "authors": "Describe how each protobuf response field becomes a GraphQL value. Use nested blocks for messages and `repeated` for lists.",
-          "implementers": "When it runs: After a successful RPC response (unary bytes, or each streamed chunk), before the GraphQL field value is returned.\n\nInput: Wire response bytes from the RPC, plus the parsed `selection` mapping (`fieldId(type): graphqlBind` with nested `{ ... }`; optional leading `@TypeName { ... }` reusable defs).\n\nOutput: A GraphQL-shaped value: scalars/enums/messages projected into objects/lists per the mapping. Absent implicit-presence fields materialize wire defaults; explicit/`optional` fields stay unset when absent.\n\nErrors: Malformed mapping text fails schema/resolver setup. Decode/wire errors become GraphQL field errors (do not return a partial object unless the mapping explicitly allows sparse binds)."
+          "implementers": "When it runs: After a successful RPC response (unary bytes, or each streamed chunk), before the GraphQL field value is returned.\n\nInput: Wire response bytes from the RPC, plus the parsed `selection` mapping (`fieldId(type): graphqlBind` with nested `{ ... }`; optional leading `@TypeName { ... }` reusable defs).\n\nOutput: A GraphQL-shaped value: scalars/enums/messages projected into objects/lists per the mapping. Absent implicit-presence fields materialize wire defaults; explicit/`optional` fields stay unset when absent.\n\nErrors: Malformed mapping text fails schema/resolver setup. Decode/wire errors become GraphQL field errors (do not return a partial object unless the mapping explicitly allows sparse binds).",
+          "validation": "Must be present (`String!`). Empty string is only valid for empty response messages."
         },
         "stream": {
           "defaults": "Optional boolean (false).",
