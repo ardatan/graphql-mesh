@@ -8387,6 +8387,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-hive/pubsub@npm:^2.2.1":
+  version: 2.2.1
+  resolution: "@graphql-hive/pubsub@npm:2.2.1"
+  dependencies:
+    "@repeaterjs/repeater": "npm:^3.0.6"
+    "@whatwg-node/disposablestack": "npm:^0.0.6"
+    "@whatwg-node/promise-helpers": "npm:^1.3.2"
+  peerDependencies:
+    "@nats-io/jetstream": ^3
+    "@nats-io/nats-core": ^3
+    ioredis: ^5
+  peerDependenciesMeta:
+    "@nats-io/jetstream":
+      optional: true
+    "@nats-io/nats-core":
+      optional: true
+    ioredis:
+      optional: true
+  checksum: 10c0/596ebd60533cacc3ad67289fea828649be196b238b14933d33e77cab8111d48875ca63794bc6adb260a382197a34f8df50818d27ff2952b2f6959871f13590bb
+  languageName: node
+  linkType: hard
+
 "@graphql-hive/pubsub@npm:^3.0.0":
   version: 3.0.0
   resolution: "@graphql-hive/pubsub@npm:3.0.0"
@@ -17689,7 +17711,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@repeaterjs/repeater@npm:3.1.0, @repeaterjs/repeater@npm:^3.0.4, @repeaterjs/repeater@npm:^3.1.0":
+"@repeaterjs/repeater@npm:3.1.0, @repeaterjs/repeater@npm:^3.0.4, @repeaterjs/repeater@npm:^3.0.6, @repeaterjs/repeater@npm:^3.1.0":
   version: 3.1.0
   resolution: "@repeaterjs/repeater@npm:3.1.0"
   checksum: 10c0/33a41a009c589bebe05bd4a182ffaf47bf9cbf9037729bc5cb0e183f9074e83b0c5f89ce2381bcdc05bb7604771872c5d2f78c5bb7004c562bf64b94821d0abc
