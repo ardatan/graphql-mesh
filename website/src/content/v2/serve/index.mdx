@@ -20,8 +20,14 @@ runtime. To run one Mesh subgraph as its own Federation endpoint (Hive Gateway s
 Compose once, then choose the runtime that matches your directive surface:
 
 ```bash
+# Compose
 mesh-compose -o supergraph.graphql
+
+# Hive Gateway (full Mesh transports)
 hive-gateway supergraph
+
+# Apollo Router (Connect-compatible SDL only) -- dual-run peer
+./router --supergraph supergraph.graphql
 ```
 
 | Your SDL surface                                                | Prefer                                                                 |

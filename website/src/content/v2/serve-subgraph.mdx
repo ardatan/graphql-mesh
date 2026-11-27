@@ -64,10 +64,18 @@ Use this when:
 - Composition / registry still publishes that subgraph's SDL into the supergraph the foreign router
   runs.
 
-Hive Gateway product docs cover the exact subgraph serve flags and URL shape; Mesh docs care that
-the **same** Compose-emitted subgraph SDL and transport map apply. For Connect-only subgraphs you
-can often skip a Mesh subgraph process and let Apollo Router execute `@connect` from the supergraph
-instead.
+```bash
+# Emit subgraph SDL (Generate or owned file via composeConfig)
+mesh-compose --subgraph chinook -o chinook-subgraph.graphql
+
+# Serve that file as a Federation subgraph (foreign router talks here)
+hive-gateway subgraph chinook-subgraph.graphql
+# default http://0.0.0.0:4000 -- point Apollo Router / another gateway at this URL
+```
+
+Register the same Mesh transports in `gatewayConfig` as you would for
+[Serve Supergraph](/v2/serve/hive-gateway). For Connect-only subgraphs you can often skip a Mesh
+subgraph process and let Apollo Router execute `@connect` from the supergraph instead.
 
 ## `buildSubgraphSchema` with other GraphQL servers
 
@@ -96,6 +104,18 @@ const schema = buildSubgraphSchema(typeDefs, {
 })
 
 createServer(createYoga({ schema })).listen(4002)
+```
+
+```bash
+# After saving the server entry (e.g. subgraph-server.ts)
+npx tsx subgraph-server.ts
+# curl / GraphQL IDE against http://localhost:4002/graphql
+```
+
+Emit or refresh the SDL the process loads:
+
+```bash
+mesh-compose --subgraph reviews -o reviews.graphql
 ```
 
 ### Resolvers for `@lookup`
