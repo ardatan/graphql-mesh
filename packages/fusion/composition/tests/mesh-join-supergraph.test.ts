@@ -451,4 +451,43 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     expect(scalarBlock).not.toMatch(/@regexp\(/);
     expect(out).not.toMatch(/directive @regexp\b/);
   });
+
+  it('keeps empty protobuf selection through join but omits empty args', () => {
+    const sdl = /* GraphQL */ `
+      schema
+        @link(url: "https://specs.apollo.dev/join/v0.3", for: EXECUTION)
+        @link(url: "https://specs.graphql-mesh.dev/protobuf/v0.1", import: ["@protobuf__rpc"])
+        @transport(subgraph: "echo", kind: "protobuf", location: "localhost:50051") {
+        query: Query
+      }
+
+      directive @transport(subgraph: String!, kind: String!, location: String) repeatable on SCHEMA
+
+      directive @protobuf__rpc(
+        subgraph: String
+        service: String
+        method: String!
+        args: String
+        selection: String!
+      ) repeatable on FIELD_DEFINITION | OBJECT
+
+      enum join__Graph {
+        ECHO @join__graph(name: "echo", url: "http://localhost/protobuf")
+      }
+
+      type Query @join__type(graph: ECHO) {
+        ping: Boolean
+          @protobuf__rpc(subgraph: "echo", service: "Echo", method: "Ping", args: "", selection: "")
+          @join__field(graph: ECHO)
+      }
+    `;
+    const out = finalizeMeshJoinDirectives(sdl);
+    const compact = compactGql(out);
+    expect(compact).toMatch(
+      /@join__directive\(graphs:\[ECHO\],name:"protobuf__rpc",args:\{[^}]*method:"Ping"/,
+    );
+    // Empty request args are omitted; empty selection must survive for reconstitution.
+    expect(compact).not.toMatch(/name:"protobuf__rpc",args:\{[^}]*\bargs:""/);
+    expect(compact).toMatch(/name:"protobuf__rpc",args:\{[^}]*selection:""/);
+  });
 });

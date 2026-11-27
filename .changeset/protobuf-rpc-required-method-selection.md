@@ -1,6 +1,7 @@
 ---
 '@omnigraph/protobuf': minor
 '@graphql-mesh/transport-protobuf': minor
+'@graphql-mesh/fusion-composition': patch
 ---
 
 Breaking (0.x): `@protobuf__rpc` now requires `method: String!` and `selection: String!` (aligned with the published protobuf family SDL and runtime binding).
@@ -14,6 +15,7 @@ The specs host and loader stamped `method` / `selection` as optional, but every 
 - Loader `protobufRpcDirective` and `specs/content/protobuf/v0.1` mark `method` and `selection` as non-null.
 - Transport rejects apps missing `method` (or with an empty method) and missing `selection`.
 - `args` stays optional so empty request messages can omit it (same empty-omit pattern as Thrift).
+- Join finalize (`prepareJoinDirectiveArgs`) still omits empty `args: ""`, but keeps empty `selection: ""` so an empty-response RPC is not mistaken for a missing selection after reconstitution.
 
 ### Migration
 

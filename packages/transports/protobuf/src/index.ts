@@ -332,13 +332,15 @@ export class ProtobufTransportHelper extends DisposableStack {
       throw new GraphQLError(`@protobuf__rpc on ${typeName} is missing required non-empty method`);
     }
     if (selection == null) {
+      // Join keeps `selection: ""` (empty response mapping); only a truly absent
+      // arg reaches here.
       throw new GraphQLError(`@protobuf__rpc on ${typeName} is missing required selection`);
     }
     return this.createRpcResolver({
       location,
       service,
       method,
-      // Join finalize may drop empty-string `args`; treat missing as empty request.
+      // Join finalize omits empty-string `args`; treat missing as empty request.
       argsFields: parseMapping(argsMapping ?? ''),
       selectionFields: parseMapping(selection),
       isStream: !!isStream,
