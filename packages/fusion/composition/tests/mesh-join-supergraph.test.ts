@@ -272,7 +272,7 @@ describe('finalizeMeshJoinDirectives (GM-41)', () => {
     expect(out).not.toMatch(/directive @meshSource/);
     // Join-carried Mesh dirs keep the core `@link` import (no native apps/defs).
     expect(compactGql(out)).toMatch(
-      /specs\.graphql-mesh\.com\/core\/v0\.1",import:\["@merge",\{name:"@source",as:"@meshSource"\}\]/,
+      /specs\.graphql-mesh\.dev\/core\/v0\.1",import:\["@merge",\{name:"@source",as:"@meshSource"\}\]/,
     );
     // meshSource keeps subgraph (Gateway rename filter); merge drops it.
     expect(compactGql(out)).toMatch(

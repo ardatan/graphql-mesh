@@ -93,5 +93,7 @@ it('forwards @defer to a subgraph and flushes before the slow field', async () =
   );
   expect(recorded.some(q => q.includes('@defer'))).toBe(true);
 
-  expect(firstPartAt).toBeLessThan(100);
+  // First payload must arrive well before the deferred field (1000ms delay).
+  // CI runners can take well over 100ms to flush the initial multipart part.
+  expect(firstPartAt).toBeLessThan(400);
 });

@@ -1,6 +1,10 @@
-import DataLoader from 'dataloader';
+import type DataLoader from 'dataloader';
 import { getLoader } from './getLoader.js';
-import { BatchDelegateFn, BatchDelegateOptionsFn, CreateBatchDelegateFnOptions } from './types.js';
+import {
+  type BatchDelegateFn,
+  type BatchDelegateOptionsFn,
+  type CreateBatchDelegateFnOptions,
+} from './types.js';
 
 export function createBatchDelegateFn<K = any, V = any, C = K>(
   optionsOrArgsFromKeys:
