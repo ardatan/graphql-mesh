@@ -475,9 +475,10 @@ export function createFederationTransform(config: FederationTransformConfig): Su
               !!keyArg &&
               !!fieldConfig.args?.[keyArg] &&
               isListType(getNullableType(fieldConfig.args[keyArg].type));
-            if (returnsList || batchListArg) {
-              // List / batch stay on Mesh `@merge` (Federation Spec draft `@lookup`
-              // must not return a list; do not extend `@lookup` for batch).
+            // Keep Mesh `@merge` when:
+            // - list / batch (draft `@lookup` must not return a list)
+            // - `argsExpr` (nested / composite key mapping; stitching needs Mesh argsExpr)
+            if (returnsList || batchListArg || argsExpr) {
               const mergeDirectiveExtensions = (fieldDirectives.merge ||= []);
               mergeDirectiveExtensions.push({
                 subgraph: subgraphConfig.name,

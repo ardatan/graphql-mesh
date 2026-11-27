@@ -130,7 +130,7 @@ input CreatePlaylistInput @join__type(graph:CHINOOK) {name:String}
 input UpdatePlaylistInput @join__type(graph:CHINOOK) {name:String}
 input CreateTrackInput @join__type(graph:CHINOOK) {name:String! albumId:Int mediaTypeId:Int! genreId:Int composer:String milliseconds:Int! bytes:Int unitPrice:Float!}
 input UpdateTrackInput @join__type(graph:CHINOOK) {name:String albumId:Int mediaTypeId:Int genreId:Int composer:String milliseconds:Int bytes:Int unitPrice:Float}
-directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION | ARGUMENT_DEFINITION
 scalar join__DirectiveArguments
 
 `;

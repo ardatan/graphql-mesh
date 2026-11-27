@@ -21,7 +21,7 @@ scalar TransportOptions @join__type(graph:CALCULATOR)
 type CalcError @join__type(graph:CALCULATOR) {message:String}
 type Query @join__type(graph:CALCULATOR) {add(request:AddRequestInput):Int @join__directive(graphs:[CALCULATOR] name:"thrift__rpc" args:{function:"add" selection:"$(i32)" messageType:"CALL" args:"1(struct): $args.request {\\n  1(i32): left\\n  2(i32): right\\n}"}) subtract(left:Int right:Int):Int @join__directive(graphs:[CALCULATOR] name:"thrift__rpc" args:{function:"subtract" selection:"$(i32)" messageType:"CALL" args:"1(i32): $args.left\\n2(i32): $args.right"}) divide(left:Int right:Int):Int @join__directive(graphs:[CALCULATOR] name:"thrift__rpc" args:{function:"divide" selection:"$(i32)" messageType:"CALL" args:"1(i32): $args.left\\n2(i32): $args.right"}) zip:Void @join__directive(graphs:[CALCULATOR] name:"thrift__rpc" args:{function:"zip" selection:"$(void)" messageType:"ONEWAY"})}
 input AddRequestInput @join__type(graph:CALCULATOR) {left:Int! right:Int!}
-directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION | ARGUMENT_DEFINITION
 scalar join__DirectiveArguments
 
 `;

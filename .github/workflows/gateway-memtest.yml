@@ -101,6 +101,11 @@ jobs:
             '@graphql-mesh/transport-http-callback': 'packages/transports/http-callback',
             '@graphql-mesh/transport-ws': 'packages/transports/ws',
           };
+          // Mesh utils imports newer `@graphql-tools/utils` exports (e.g.
+          // asGetArgumentValuesVariables); Gateway may resolve an older copy.
+          const npmPackages = {
+            '@graphql-tools/utils': 'node_modules/@graphql-tools/utils',
+          };
           const requireFromGateway = createRequire(path.join(process.cwd(), 'package.json'));
           function rmrf(p) {
             fs.rmSync(p, { recursive: true, force: true });
@@ -140,11 +145,7 @@ jobs:
             if (fs.existsSync(path.join(top, 'package.json'))) targets.add(top);
             return [...targets];
           }
-          for (const [name, rel] of Object.entries(packages)) {
-            const dist = path.join(meshRoot, rel, 'dist');
-            if (!fs.existsSync(dist)) {
-              throw new Error(`Missing Mesh build output: ${dist}`);
-            }
+          function overlayIntoTargets(name, src, label) {
             let targets = findInstalls(name);
             if (targets.length === 0) {
               const top = path.join(process.cwd(), 'node_modules', ...name.split('/'));
@@ -156,10 +157,25 @@ jobs:
                 if (ent === 'node_modules') continue;
                 rmrf(path.join(target, ent));
               }
-              copyDir(dist, target);
-              rewriteWorkspaceDeps(path.join(target, 'package.json'));
-              console.log(`Overlaid ${name} <- ${rel}/dist -> ${path.relative(process.cwd(), target)}`);
+              copyDir(src, target);
+              const pkgJsonPath = path.join(target, 'package.json');
+              if (fs.existsSync(pkgJsonPath)) rewriteWorkspaceDeps(pkgJsonPath);
+              console.log(`Overlaid ${name} <- ${label} -> ${path.relative(process.cwd(), target)}`);
             }
+          }
+          for (const [name, rel] of Object.entries(packages)) {
+            const dist = path.join(meshRoot, rel, 'dist');
+            if (!fs.existsSync(dist)) {
+              throw new Error(`Missing Mesh build output: ${dist}`);
+            }
+            overlayIntoTargets(name, dist, `${rel}/dist`);
+          }
+          for (const [name, rel] of Object.entries(npmPackages)) {
+            const src = path.join(meshRoot, rel);
+            if (!fs.existsSync(path.join(src, 'package.json'))) {
+              throw new Error(`Missing Mesh npm package for overlay: ${src}`);
+            }
+            overlayIntoTargets(name, src, rel);
           }
           NODE
       - name: Hash Docker Images

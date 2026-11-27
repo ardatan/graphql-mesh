@@ -7,7 +7,7 @@
 
 Prefer Federation Spec draft `@lookup` / `@is` / `@internal` alongside Mesh `@merge`
 
-Compose semantic conventions and the Federation transform stamp Federation Spec draft `@lookup` (and `@is(field:)` when the argument name differs from the entity field) on **entity entry fields that return one object (not a list)**. List-returning / batch-list-arg entry fields keep Mesh `@merge` — the draft requires that `@lookup` must not return a list, and Mesh does not extend `@lookup` for batch. `@merge` is kept (not deprecated); runtime still accepts hand-authored `@merge` and synthesizes stitching hop config from `@lookup` / `@is`.
+Compose semantic conventions and the Federation transform stamp Federation Spec draft `@lookup` (and `@is(field:)` when the argument name differs from the entity field) on **entity entry fields that return one object (not a list)**. List-returning / batch-list-arg entry fields, and Federation transform `resolveReference` hops that need nested `argsExpr`, keep Mesh `@merge` — the draft requires that `@lookup` must not return a list, and Mesh does not extend `@lookup` for batch. `@merge` is kept (not deprecated); runtime still accepts hand-authored `@merge` and synthesizes stitching hop config from `@lookup` / `@is`.
 
 Imports use the official Federation Spec `@link`:
 

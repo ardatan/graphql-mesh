@@ -1,5 +1,10 @@
 import { buildSchema, print } from 'graphql';
-import { composeSubgraphs, validateFederationLookupDirectives } from '../src/index';
+import { getDirectiveExtensions } from '@graphql-tools/utils';
+import {
+  composeSubgraphs,
+  createFederationTransform,
+  validateFederationLookupDirectives,
+} from '../src/index';
 
 describe('Federation Spec @lookup / @is / @internal', () => {
   it('emits @lookup for ById entity entry fields that return one object (not @merge)', () => {
@@ -152,6 +157,37 @@ describe('Federation Spec @lookup / @is / @internal', () => {
           e.message.includes('chain of fields with no arguments'),
       ),
     ).toBe(true);
+  });
+
+  it('keeps @merge (not @lookup) when resolveReference uses nested argsExpr', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      type Query {
+        productBySkuAndVariationId(sku: String!, variationId: ID!): Product
+      }
+      type Product {
+        sku: String!
+        variation: ProductVariation
+      }
+      type ProductVariation {
+        id: ID!
+      }
+    `);
+    const transform = createFederationTransform({
+      Product: {
+        key: {
+          fields: 'sku variation { id }',
+          resolveReference: {
+            fieldName: 'productBySkuAndVariationId',
+            argsExpr: 'sku: $key.sku, variationId: $key.variation.id',
+          },
+        },
+      },
+    });
+    const result = transform(schema, { name: 'products', schema });
+    const field = result.getQueryType()!.getFields().productBySkuAndVariationId!;
+    const dirs = getDirectiveExtensions(field);
+    expect(dirs.merge?.length).toBeGreaterThan(0);
+    expect(dirs.lookup?.length || 0).toBe(0);
   });
 
   it('stamps @merge for list/batch entity entry fields (not @lookup)', () => {

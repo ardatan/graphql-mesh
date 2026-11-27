@@ -71,7 +71,7 @@ input MovieRequest_Input @join__type(graph:MOVIES) {movie:Movie_Input} """movie 
 input Movie_Input @join__type(graph:MOVIES) {name:String year:BigInt rating:Float """list of cast""" cast:[String] time:google__protobuf__Timestamp_Input genre:Genre}
 input google__protobuf__Timestamp_Input @join__type(graph:MOVIES) {seconds:BigInt nanos:Int}
 input SearchByCastRequest_Input @join__type(graph:MOVIES) {castName:String}
-directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION | ARGUMENT_DEFINITION
 scalar join__DirectiveArguments
 
 `;

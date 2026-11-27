@@ -313,7 +313,7 @@ input ReviewedPropertiesWhere @join__type(graph:MOVIES) {rating:StringScalarFilt
 input StringScalarAggregationFilters @join__type(graph:MOVIES) {averageLength:FloatScalarFilters shortestLength:IntScalarFilters longestLength:IntScalarFilters} """String filters"""
 input StringScalarFilters @join__type(graph:MOVIES) {eq:String in:[String!] contains:String endsWith:String startsWith:String} """String mutations"""
 input StringScalarMutations @join__type(graph:MOVIES) {set:String}
-directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION | ARGUMENT_DEFINITION
 scalar join__DirectiveArguments
 
 `;

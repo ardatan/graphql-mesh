@@ -24,7 +24,7 @@ type:"Weather" subgraph:"weather"})}
 type Test_Weather @join__directive(graphs:[WEATHER] name:"source" args:{name:"Weather" subgraph:"weather"}) @join__type(graph:WEATHER) {rain:Test_Rain! @join__directive(graphs:[WEATHER] name:"source" args:{name:"rain"
 type:"Rain!" subgraph:"weather"}) chanceOfRain:Float! @join__directive(graphs:[WEATHER] name:"hoist" args:{pathConfig:["rain" "chance"]})}
 type Test_Rain @join__directive(graphs:[WEATHER] name:"source" args:{name:"Rain" subgraph:"weather"}) @join__type(graph:WEATHER) {chance:Float!}
-directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION | ARGUMENT_DEFINITION
 scalar join__DirectiveArguments
 
 `;
