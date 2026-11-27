@@ -42,7 +42,7 @@ export function ManipulateDataSection({ className }: { className?: string }) {
         />
         <ListItem
           title="Serve Supergraph"
-          description="Compose and run on Hive Gateway; Apollo Router for Connect-compatible graphs."
+          description="Compose once and run with any Federation Gateway."
           href="/v2/serve"
         />
       </dl>

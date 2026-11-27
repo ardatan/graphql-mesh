@@ -31,15 +31,12 @@ export function MeshHero(props: HeroContainerProps) {
         </li>
         <li>
           <CheckIcon className="text-green-800" />
-          Serve on Hive Gateway or Apollo Router
+          Runs with any Federation Gateway
         </li>
       </HeroFeatures>
       <HeroLinks>
-        <CallToAction variant="primary-inverted" href="/v2/paths/generate">
-          Build Subgraph
-        </CallToAction>
-        <CallToAction variant="secondary" href="/v2/serve">
-          Serve Supergraph
+        <CallToAction variant="primary-inverted" href="/v2">
+          Documentation
         </CallToAction>
         <CallToAction
           variant="secondary"
