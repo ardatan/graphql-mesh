@@ -21,6 +21,7 @@ export type BatchedMergeEntry = {
   fieldName: string;
   key: (originalResult: any) => any;
   argsFromKeys: (keys: ReadonlyArray<any>) => Record<string, any>;
+  valuesFromResults?: (results: any, keys?: ReadonlyArray<any>) => any;
   dataLoaderOptions?: { cacheKeyFn?: (key: any) => any };
 };
 
@@ -77,6 +78,7 @@ export function getBatchedMergeEntry(
       fieldName: mergeConfig.fieldName,
       key: mergeConfig.key,
       argsFromKeys: mergeConfig.argsFromKeys,
+      valuesFromResults: mergeConfig.valuesFromResults,
       dataLoaderOptions: mergeConfig.dataLoaderOptions,
     };
   }
@@ -92,6 +94,9 @@ export function getBatchedMergeEntry(
       fieldName: ep.fieldName!,
       key: ep.key!,
       argsFromKeys: ep.argsFromKeys!,
+      // Parent merge defaults overlay onto entryPoints in stitchingInfo; honor
+      // per-entry valuesFromResults when set, else the type-level default.
+      valuesFromResults: ep.valuesFromResults ?? mergeConfig.valuesFromResults,
       dataLoaderOptions: ep.dataLoaderOptions,
     };
   }
@@ -115,6 +120,16 @@ export function getBatchedMergeEntry(
     }
     return null;
   };
+  // Prefer a shared valuesFromResults when every entry agrees (or only the
+  // type-level default is set). Conflicting callbacks must not use the
+  // positional raw-batch/merge path (undefined would look like "no unwrap"
+  // and mis-assign reordered results) - fall back to classic multi-entry.
+  const valuesFns = eps.map(e => e.valuesFromResults ?? mergeConfig.valuesFromResults);
+  const valuesAgree = valuesFns.every(fn => fn === valuesFns[0]);
+  if (!valuesAgree) {
+    return null;
+  }
+  const sharedValuesFromResults = valuesFns[0];
   if (!sameField) {
     return {
       fieldName: first.fieldName!,
@@ -122,6 +137,7 @@ export function getBatchedMergeEntry(
       // argsFromKeys may differ per fieldName; callers with mixed fieldNames
       // should not use the raw batch path - classic multi-entry resolve does.
       argsFromKeys: first.argsFromKeys!,
+      valuesFromResults: sharedValuesFromResults,
       dataLoaderOptions: {
         ...first.dataLoaderOptions,
         cacheKeyFn: sharedCacheKeyFn,
@@ -132,6 +148,7 @@ export function getBatchedMergeEntry(
     fieldName: first.fieldName!,
     key: compositeKey,
     argsFromKeys: first.argsFromKeys!,
+    valuesFromResults: sharedValuesFromResults,
     dataLoaderOptions: {
       ...first.dataLoaderOptions,
       cacheKeyFn: sharedCacheKeyFn,

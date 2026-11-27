@@ -546,6 +546,32 @@ function errorFromFetchThrow(
   });
 }
 
+/**
+ * Mutation serial parity: after a root completed as null, skip later hops when
+ * the root field is non-null (Fetch + root Island). Includes completed null
+ * without downstream errors (nullable subgraph field under NonNull gateway).
+ * Missing keys (root not written yet) must not abort.
+ */
+function maybeAbortMutationAfterNullifiedRoot(
+  ctx: BackboneExecutionContext,
+  responseKey: string,
+  fieldName: string,
+): void {
+  if (ctx.operation.operation !== 'mutation') {
+    return;
+  }
+  // Present-and-null only. `key in data` distinguishes completed null from
+  // an unwritten root (undefined), which must not stop later mutation roots.
+  if (!(responseKey in ctx.data) || ctx.data[responseKey] != null) {
+    return;
+  }
+  const rootType = getDefinedRootType(ctx.schema, ctx.operation.operation);
+  const fieldDef = rootType.getFields()[fieldName];
+  if (fieldDef && !isNullableType(fieldDef.type)) {
+    ctx.abortRemainingHops = true;
+  }
+}
+
 /** Local Island resolver throw → GraphQLError on the field path (no serviceName). */
 function errorFromIslandThrow(
   err: unknown,
@@ -1031,6 +1057,15 @@ function executeFetchNode(
         // so finalizeRootResult can apply nullability bubbling.
         ctx.data[responseKey] = null;
       }
+      maybeAbortMutationAfterNullifiedRoot(ctx, responseKey, rootFieldNode.name.value);
+    };
+
+    const writeRootThrowFailure = (err: unknown) => {
+      ctx.errors.push(errorFromFetchThrow(err, node.subschema, responseKey, rootFieldNode));
+      if (!(responseKey in ctx.data)) {
+        ctx.data[responseKey] = null;
+      }
+      maybeAbortMutationAfterNullifiedRoot(ctx, responseKey, rootFieldNode.name.value);
     };
 
     // Rename / encapsulate / defer transforms need Transformer - prebuilt
@@ -1072,12 +1107,7 @@ function executeFetchNode(
             skipTypeMerging: true,
           }),
         value => writeRootResult(value),
-        err => {
-          ctx.errors.push(errorFromFetchThrow(err, node.subschema, responseKey, rootFieldNode));
-          if (!(responseKey in ctx.data)) {
-            ctx.data[responseKey] = null;
-          }
-        },
+        writeRootThrowFailure,
       );
     }
 
@@ -1124,12 +1154,7 @@ function executeFetchNode(
           writeRootResult(undefined, located);
         }
       },
-      err => {
-        ctx.errors.push(errorFromFetchThrow(err, node.subschema, responseKey, rootFieldNode));
-        if (!(responseKey in ctx.data)) {
-          ctx.data[responseKey] = null;
-        }
-      },
+      writeRootThrowFailure,
     );
   }
 
@@ -1428,7 +1453,13 @@ function tryExecuteEntitiesBatch(
       if (result.errors?.length) {
         ctx.errors.push(...result.errors);
       }
-      mergeResults(result.data?.[entry.fieldName]);
+      let payload = result.data?.[entry.fieldName];
+      // Errors-only responses leave payload undefined; do not call unwrap
+      // callbacks that assume an array (mergeResults already no-ops on absent).
+      if (entry.valuesFromResults != null && payload != null) {
+        payload = entry.valuesFromResults(payload, keys);
+      }
+      mergeResults(payload);
     },
   );
 }
@@ -1533,13 +1564,17 @@ function executeIslandNode(
     () => resolve!(ctx.rootValue, args, ctx.contextValue, info),
     result => {
       ctx.data[responseKey] = result;
+      // Resolver returned null for a NonNull mutation root (no throw): same
+      // abort as Fetch writeRootResult / Island rejection path.
+      maybeAbortMutationAfterNullifiedRoot(ctx, responseKey, fieldName);
       // continue: dataflow hop, not tree execute
     },
     err => {
       // Local/gateway Island throws must become GraphQL errors (classic parity),
-      // not reject the whole plan — otherwise result.errors is empty.
+      // not reject the whole plan - otherwise result.errors is empty.
       ctx.errors.push(errorFromIslandThrow(err, responseKey, node.fieldNode));
       ctx.data[responseKey] = null;
+      maybeAbortMutationAfterNullifiedRoot(ctx, responseKey, fieldName);
     },
   );
 }
@@ -1800,6 +1835,15 @@ export function executeDataflowPlan(
         // Snapshot current ready set as one flush so same-key root merges
         // and overlapping entity writes can be batched / serialized.
         const flush = ready.splice(0, ready.length);
+
+        // After a non-null mutation root failure, skip remaining hops without
+        // running them (no further side effects; data will be null anyway).
+        if (ctx.abortRemainingHops) {
+          for (const index of flush) {
+            release(index);
+          }
+          continue;
+        }
 
         const rootGroups = new Map<
           string,
@@ -2104,7 +2148,18 @@ function executeBatchFetchNode(
         canRawBatch = false;
         break;
       }
-      mergeEntry ??= getBatchedMergeEntry(node.subschema, a.entityTypeName);
+      const nextEntry = getBatchedMergeEntry(node.subschema, a.entityTypeName);
+      if (!nextEntry) {
+        canRawBatch = false;
+        break;
+      }
+      // Raw BatchFetch applies one valuesFromResults to the combined payload.
+      // Mixed callbacks across aliases would reorder/reshape the wrong slice.
+      if (mergeEntry != null && mergeEntry.valuesFromResults !== nextEntry.valuesFromResults) {
+        canRawBatch = false;
+        break;
+      }
+      mergeEntry = nextEntry;
       const keyOffset = allKeys.length;
       for (const key of projected.keys) {
         allKeys.push(key);
@@ -2141,7 +2196,10 @@ function executeBatchFetchNode(
           if (result.errors?.length) {
             ctx.errors.push(...result.errors);
           }
-          const entities = result.data?.[fieldName];
+          let entities = result.data?.[fieldName];
+          if (mergeEntry.valuesFromResults != null && entities != null) {
+            entities = mergeEntry.valuesFromResults(entities, allKeys);
+          }
           if (!Array.isArray(entities)) {
             return;
           }
