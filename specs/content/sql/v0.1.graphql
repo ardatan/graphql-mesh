@@ -1,0 +1,27 @@
+# sql v0.1
+# @link(url: "https://specs.graphql-mesh.dev/sql/v0.1", import: ["@sql"])
+
+enum SqlKind {
+  ROW
+  ROWS
+  CONNECTION
+  COUNT
+  INSERT
+  UPDATE
+  DELETE
+}
+
+directive @sql(
+  subgraph: String
+  table: String!
+  kind: SqlKind!
+  where: String
+  orderBy: String
+  limit: String
+  offset: String
+  first: String
+  after: String
+  set: String
+  selection: String
+  through: String
+) repeatable on FIELD_DEFINITION | OBJECT

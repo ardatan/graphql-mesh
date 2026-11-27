@@ -1,0 +1,298 @@
+:root {
+  color: #333;
+  background: #faf9f6;
+  font-family:
+    Cambria, 'Palatino Linotype', Palatino, 'Liberation Serif', 'Book Antiqua', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.5;
+  --mono: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --mono-size: 0.82rem;
+  --indent: 1.25rem;
+  --accent: #1a4d3e;
+  --rule: #d5d0c4;
+  --highlight: #fbf8d0;
+  --sidebar: min(280px, calc(100vw - 48px));
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scrollbar-gutter: stable;
+  scroll-padding-top: 1rem;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f3f1ea 0%, #faf9f6 180px);
+}
+
+.site-bar {
+  width: min(960px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 1.25rem 0 0.75rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.site-bar.foot {
+  display: block;
+  border-bottom: 0;
+  border-top: 1px solid var(--rule);
+  padding: 1.25rem 0 2.5rem;
+  color: #666;
+  font-size: 0.92rem;
+}
+
+.brand {
+  color: var(--accent);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.origin {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.spec-page {
+  width: min(960px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 1.5rem 0 3rem;
+}
+
+.page-title {
+  font-size: clamp(1.85rem, 3vw, 2.35rem);
+  margin: 0.35rem 0 0.6rem;
+  font-weight: 700;
+}
+
+.page-title .ver {
+  font-family: var(--mono);
+  font-size: 0.5em;
+  color: #666;
+  font-weight: 500;
+}
+
+.lede {
+  max-width: 68ch;
+  color: #2c2c2c;
+}
+.crumb {
+  color: #666;
+  font-size: 0.92rem;
+}
+.crumb a {
+  color: var(--accent);
+}
+.url,
+.stamp {
+  font-size: 0.95rem;
+}
+.url a {
+  color: var(--accent);
+}
+
+.spec-toc {
+  margin: 1.5rem 0 2rem;
+  padding: 0.85rem 1rem 1rem;
+  border: 1px solid var(--rule);
+  background: #fff;
+  border-radius: 2px;
+  max-width: 36rem;
+}
+
+.spec-toc .title {
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.spec-toc ol {
+  margin: 0.25rem 0 0;
+  padding-left: 1.2rem;
+}
+
+.spec-toc ol ol {
+  margin-top: 0.15rem;
+  padding-left: 1.1rem;
+}
+
+.spec-toc a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.spec-toc a:hover {
+  color: var(--accent);
+}
+
+.spec-secid {
+  font-family: var(--mono);
+  font-size: 0.78em;
+  color: #888;
+  margin-right: 0.4rem;
+}
+
+.spec-definition-head {
+  font-size: 1.25rem;
+  margin: 2rem 0 0.75rem;
+  scroll-margin-top: 1rem;
+}
+
+h2.spec-definition-head {
+  font-size: 1.1rem;
+}
+h3.spec-definition-head {
+  font-size: 1rem;
+  color: #444;
+}
+
+.spec-definition-head .spec-secid a {
+  color: #888;
+  text-decoration: none;
+}
+
+.spec-definition,
+.spec-example {
+  margin: 0.75rem 0 1rem;
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  overflow: auto;
+}
+
+.spec-example figcaption {
+  padding: 0.45rem 0.85rem;
+  border-bottom: 1px solid var(--rule);
+  background: var(--highlight);
+  font-size: 0.88rem;
+}
+
+pre.graphql {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  font-family: var(--mono);
+  font-size: var(--mono-size);
+  line-height: 1.45;
+  white-space: pre;
+}
+
+.notes {
+  padding-left: 1.2rem;
+}
+
+.all-schemas {
+  padding-left: 1.2rem;
+}
+
+.all-schemas a,
+.foot a {
+  color: var(--accent);
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.88em;
+}
+
+.spec-subhead {
+  font-size: 0.95rem;
+  margin: 1rem 0 0.35rem;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.spec-audience {
+  margin: 1rem 0 1.25rem;
+}
+
+.spec-audience-pair {
+  display: grid;
+  gap: 1rem;
+  margin: 0.75rem 0 1rem;
+}
+
+@media (min-width: 720px) {
+  .spec-audience-pair {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.spec-audience-col {
+  padding: 0.75rem 0.9rem;
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+}
+
+.spec-audience-col > p:first-of-type {
+  margin-top: 0.35rem;
+}
+
+.spec-arg {
+  margin: 1.25rem 0 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.spec-arg-meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 0.85rem;
+  margin: 0.5rem 0 0.75rem;
+  font-size: 0.92rem;
+}
+
+.spec-arg-meta dt {
+  font-weight: 700;
+  color: #555;
+}
+
+.spec-arg-meta dd {
+  margin: 0;
+}
+
+@media (min-width: 1100px) {
+  .spec-page {
+    display: grid;
+    grid-template-columns: var(--sidebar) minmax(0, 1fr);
+    column-gap: 2rem;
+    align-items: start;
+  }
+  .crumb,
+  .page-title,
+  .lede {
+    grid-column: 1 / -1;
+  }
+  /* TOC at row 4, column 1; span into implicit rows (not -1: with no
+     grid-template-rows, -1 is explicit end/line 1 and collapses 4/-1). */
+  .spec-toc {
+    position: sticky;
+    top: 1rem;
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    grid-column: 1;
+    grid-row: 4 / span 200;
+    align-self: start;
+    max-height: calc(100vh - 2rem);
+    overflow: auto;
+  }
+  .spec-page > section {
+    grid-column: 2;
+  }
+  .home .spec-toc {
+    grid-row: auto;
+    max-height: none;
+    overflow: visible;
+  }
+  .home > section {
+    grid-column: 1 / -1;
+  }
+}

@@ -1,0 +1,18 @@
+# thrift v0.1
+# @link(url: "https://specs.graphql-mesh.dev/thrift/v0.1", import: ["@thrift__rpc"])
+
+enum ThriftMessageType {
+  CALL
+  ONEWAY
+}
+
+directive @thrift__rpc(
+  subgraph: String
+  service: String
+  function: String!
+  args: String
+  selection: String!
+  throws: String
+  messageType: ThriftMessageType = CALL
+  entity: Boolean
+) repeatable on FIELD_DEFINITION

@@ -1,0 +1,24 @@
+# neo4j v0.1
+# @link(url: "https://specs.graphql-mesh.dev/neo4j/v0.1", import: [...])
+
+enum _RelationDirections {
+  IN
+  OUT
+}
+
+directive @node(subgraph: String, labels: [String!]) on OBJECT
+
+directive @relationshipProperties(subgraph: String) on OBJECT
+
+directive @relationship(
+  subgraph: String
+  type: String
+  direction: _RelationDirections
+  properties: String
+) on FIELD_DEFINITION
+
+directive @alias(subgraph: String, property: String!) on FIELD_DEFINITION
+
+directive @cypher(subgraph: String, statement: String!, columnName: String!) on FIELD_DEFINITION
+
+directive @plural(subgraph: String, value: String!) on OBJECT | INTERFACE | UNION

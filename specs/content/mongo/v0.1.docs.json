@@ -1,0 +1,607 @@
+{
+  "directives": {
+    "@mongo__findOne": {
+      "summary": "Find a single document. Runtime kind `FIND_ONE`.",
+      "authors": {
+        "intro": "Find a single document. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "user(id: ID!): User\n  @mongo__findOne(\n    collection: \"users\"\n    query: \"_id: $args.id\"\n    selection: \"\"\"\nid: _id\nname\n\"\"\"\n  )"
+      },
+      "implementers": {
+        "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
+        "runtime": "On resolve: build the Mongo operation for this directive, run it against `collection`, then project the result with `selection`. Store/operation errors become GraphQL field errors.",
+        "validation": "Require non-empty `collection` for executable apps. `subgraph`, when present, must match the composition subgraph name. Binder strings must parse; reject unknown args for this directive."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Target collection for the operation.",
+          "example": "collection: \"users\"",
+          "validation": "Must be a non-empty string."
+        },
+        "query": {
+          "defaults": "Optional.",
+          "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
+          "authors": "How to build the Mongo filter from args/parent.",
+          "implementers": "Compile binder -> filter document.",
+          "example": "query: \"$args.filter\""
+        },
+        "sort": {
+          "defaults": "Optional.",
+          "constraints": "Sort binder (e.g. `$args.sort`).",
+          "authors": "Sort input binding.",
+          "implementers": "Mongo sort document."
+        },
+        "skip": {
+          "defaults": "Optional.",
+          "constraints": "Binder e.g. `$args.skip`.",
+          "authors": "Skip offset.",
+          "implementers": "Mongo `skip`."
+        },
+        "selection": {
+          "defaults": "Optional.",
+          "constraints": "Projection / field map (`id: _id`, nested blocks).",
+          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: _id`). Nested blocks shape connection payloads.",
+          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: _id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
+          "example": "selection: \"\"\"\\n id: _id\\n name\\n\"\"\""
+        }
+      }
+    },
+    "@mongo__find": {
+      "summary": "Find many documents. Runtime kind `FIND_MANY`.",
+      "authors": {
+        "intro": "Find many documents. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "users(filter: UserFilterInput): [User!]!\n  @mongo__find(\n    collection: \"users\"\n    query: \"$args.filter\"\n    selection: \"\"\"\nid: _id\nname\n\"\"\"\n  )"
+      },
+      "implementers": {
+        "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
+        "runtime": "On resolve: build the Mongo operation for this directive, run it against `collection`, then project the result with `selection`. Store/operation errors become GraphQL field errors.",
+        "validation": "Require non-empty `collection` for executable apps. `subgraph`, when present, must match the composition subgraph name. Binder strings must parse; reject unknown args for this directive."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Target collection for the operation.",
+          "example": "collection: \"users\"",
+          "validation": "Must be a non-empty string."
+        },
+        "query": {
+          "defaults": "Optional.",
+          "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
+          "authors": "How to build the Mongo filter from args/parent.",
+          "implementers": "Compile binder -> filter document.",
+          "example": "query: \"$args.filter\""
+        },
+        "sort": {
+          "defaults": "Optional.",
+          "constraints": "Sort binder (e.g. `$args.sort`).",
+          "authors": "Sort input binding.",
+          "implementers": "Mongo sort document."
+        },
+        "limit": {
+          "defaults": "Optional.",
+          "constraints": "Binder e.g. `$args.limit`.",
+          "authors": "Max documents.",
+          "implementers": "Mongo `limit`."
+        },
+        "skip": {
+          "defaults": "Optional.",
+          "constraints": "Binder e.g. `$args.skip`.",
+          "authors": "Skip offset.",
+          "implementers": "Mongo `skip`."
+        },
+        "selection": {
+          "defaults": "Optional.",
+          "constraints": "Projection / field map (`id: _id`, nested blocks).",
+          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: _id`). Nested blocks shape connection payloads.",
+          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: _id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
+          "example": "selection: \"\"\"\\n id: _id\\n name\\n\"\"\""
+        }
+      }
+    },
+    "@mongo__count": {
+      "summary": "Count matching documents. Runtime kind `COUNT`.",
+      "authors": {
+        "intro": "Count matching documents. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "userCount(filter: UserFilterInput): Int!\n  @mongo__count(collection: \"users\", query: \"$args.filter\")"
+      },
+      "implementers": {
+        "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
+        "runtime": "On resolve: build the Mongo count for this directive, run it against `collection`, and return the count as a GraphQL scalar (`Int!`). `selection` does not apply to `@mongo__count` (the runtime returns the numeric count directly). Store/operation errors become GraphQL field errors.",
+        "validation": "Require non-empty `collection` for executable apps. `subgraph`, when present, must match the composition subgraph name. Binder strings must parse; reject unknown args for this directive."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Target collection for the operation.",
+          "example": "collection: \"users\"",
+          "validation": "Must be a non-empty string."
+        },
+        "query": {
+          "defaults": "Optional.",
+          "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
+          "authors": "How to build the Mongo filter from args/parent.",
+          "implementers": "Compile binder -> filter document.",
+          "example": "query: \"$args.filter\""
+        },
+        "selection": {
+          "defaults": "Optional; unused for `@mongo__count`.",
+          "constraints": "Does not apply to count. The field result is the numeric count (`Int!`), not a document projection.",
+          "authors": "Omit on `@mongo__count`. Count fields return a scalar `Int!`; there is no document to project.",
+          "implementers": "When it runs: Does not run for `@mongo__count`. After `countDocuments` (or equivalent), return the count number as the field value.\n\nInput: Not applicable (no document bag).\n\nOutput: Scalar `Int!` (the count).\n\nErrors: Store/operation errors become GraphQL field errors. Do not treat `selection` as document-in / object-out for this directive."
+        }
+      }
+    },
+    "@mongo__connection": {
+      "summary": "Relay-style connection read. Runtime kind `CONNECTION`.",
+      "authors": {
+        "intro": "Relay-style connection read. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "allUsers(first: Int, after: String): UserConnection!\n  @mongo__connection(\n    collection: \"users\"\n    first: \"$args.first\"\n    after: \"$args.after\"\n    selection: \"\"\"\nnodes {\n  id: _id\n  name\n}\nedges {\n  node {\n    id: _id\n    name\n  }\n}\n\"\"\"\n  )"
+      },
+      "implementers": {
+        "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
+        "runtime": "On resolve: build the Mongo operation for this directive, run it against `collection`, then project the result with `selection`. Store/operation errors become GraphQL field errors.",
+        "validation": "Require non-empty `collection` for executable apps. `subgraph`, when present, must match the composition subgraph name. Binder strings must parse; reject unknown args for this directive."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Target collection for the operation.",
+          "example": "collection: \"users\"",
+          "validation": "Must be a non-empty string."
+        },
+        "query": {
+          "defaults": "Optional.",
+          "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
+          "authors": "How to build the Mongo filter from args/parent.",
+          "implementers": "Compile binder -> filter document.",
+          "example": "query: \"$args.filter\""
+        },
+        "sort": {
+          "defaults": "Optional.",
+          "constraints": "Sort binder (e.g. `$args.sort`).",
+          "authors": "Sort input binding.",
+          "implementers": "Mongo sort document."
+        },
+        "first": {
+          "defaults": "Optional.",
+          "constraints": "Binder e.g. `$args.first`.",
+          "authors": "Connection page size.",
+          "implementers": "Cursor page size."
+        },
+        "after": {
+          "defaults": "Optional.",
+          "constraints": "Binder e.g. `$args.after`.",
+          "authors": "Connection cursor.",
+          "implementers": "Decode cursor bound."
+        },
+        "selection": {
+          "defaults": "Optional.",
+          "constraints": "Connection payload map. Nest document fields under `nodes { ... }` (and optionally `edges { node { ... } }`). Flat `id: _id` at the root maps the connection object, not each node.",
+          "authors": "Shape the connection: put entity fields under `nodes { ... }`. Also map `edges { node { ... } }` when clients may query edges (runtime maps edge nodes from that nested selection separately).",
+          "implementers": "When it runs: After the page of documents is loaded.\n\nInput: Connection selection; runtime reads nested `nodes` and `edges.node` via nestedSelection, then mapDocumentToGraphql per document.\n\nOutput: `{ nodes, edges, pageInfo, totalCount }` with mapped node objects.\n\nErrors: Flat document maps at the root produce empty nodes; nest under `nodes { ... }`. Omitting `edges.node` leaves edge nodes empty if clients query them. Mapping parse errors fail setup.",
+          "example": "selection: \"\"\"\nnodes {\n  id: _id\n  name\n}\nedges {\n  node {\n    id: _id\n    name\n  }\n}\n\"\"\""
+        }
+      }
+    },
+    "@mongo__pagination": {
+      "summary": "Page/perPage pagination read. Runtime kind `PAGINATION`.",
+      "authors": {
+        "intro": "Page/perPage pagination read. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "usersPage(page: Int, perPage: Int): UserPage!\n  @mongo__pagination(\n    collection: \"users\"\n    page: \"$args.page\"\n    perPage: \"$args.perPage\"\n    selection: \"\"\"\nitems {\n  id: _id\n  name\n}\n\"\"\"\n  )"
+      },
+      "implementers": {
+        "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
+        "runtime": "On resolve: build the Mongo operation for this directive, run it against `collection`, then project the result with `selection`. Store/operation errors become GraphQL field errors.",
+        "validation": "Require non-empty `collection` for executable apps. `subgraph`, when present, must match the composition subgraph name. Binder strings must parse; reject unknown args for this directive."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Target collection for the operation.",
+          "example": "collection: \"users\"",
+          "validation": "Must be a non-empty string."
+        },
+        "query": {
+          "defaults": "Optional.",
+          "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
+          "authors": "How to build the Mongo filter from args/parent.",
+          "implementers": "Compile binder -> filter document.",
+          "example": "query: \"$args.filter\""
+        },
+        "sort": {
+          "defaults": "Optional.",
+          "constraints": "Sort binder (e.g. `$args.sort`).",
+          "authors": "Sort input binding.",
+          "implementers": "Mongo sort document."
+        },
+        "page": {
+          "defaults": "Optional.",
+          "constraints": "Binder e.g. `$args.page`.",
+          "authors": "1-based page number.",
+          "implementers": "Compute skip/limit."
+        },
+        "perPage": {
+          "defaults": "Optional.",
+          "constraints": "Binder e.g. `$args.perPage`.",
+          "authors": "Page size.",
+          "implementers": "Compute skip/limit."
+        },
+        "selection": {
+          "defaults": "Optional.",
+          "constraints": "Pagination payload map. Nest document fields under `items { ... }`. Flat `id: _id` at the root maps the page object, not each item.",
+          "authors": "Shape the page: put entity fields under `items { ... }`.",
+          "implementers": "When it runs: After the page of documents is loaded.\n\nInput: Pagination selection; runtime reads nested `items` via nestedSelection, then mapDocumentToGraphql per document.\n\nOutput: `{ items, pageInfo, ... }` with mapped item objects.\n\nErrors: Flat document maps at the root produce empty items; nest under `items { ... }`. Mapping parse errors fail setup.",
+          "example": "selection: \"\"\"\nitems {\n  id: _id\n  name\n}\n\"\"\""
+        }
+      }
+    },
+    "@mongo__aggregate": {
+      "summary": "Run an aggregation pipeline. Runtime kind `AGGREGATE`.",
+      "authors": {
+        "intro": "Run an aggregation pipeline. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "userStats(pipeline: [ObjMap!]!): [Stats!]!\n  @mongo__aggregate(collection: \"users\", pipeline: \"$args.pipeline\")"
+      },
+      "implementers": {
+        "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
+        "runtime": "On resolve: build the Mongo operation for this directive, run it against `collection`, then project the result with `selection`. Store/operation errors become GraphQL field errors.",
+        "validation": "Require non-empty `collection` for executable apps. `subgraph`, when present, must match the composition subgraph name. Binder strings must parse; reject unknown args for this directive."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Target collection for the operation.",
+          "example": "collection: \"users\"",
+          "validation": "Must be a non-empty string."
+        },
+        "query": {
+          "defaults": "Optional.",
+          "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
+          "authors": "How to build the Mongo filter from args/parent.",
+          "implementers": "Compile binder -> filter document.",
+          "example": "query: \"$args.filter\""
+        },
+        "pipeline": {
+          "defaults": "Optional.",
+          "constraints": "Aggregation pipeline binder.",
+          "authors": "Pipeline stages from args or literal binder.",
+          "implementers": "Pass to `aggregate`."
+        },
+        "selection": {
+          "defaults": "Optional.",
+          "constraints": "Projection / field map (`id: _id`, nested blocks).",
+          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: _id`). Nested blocks shape connection payloads.",
+          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: _id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
+          "example": "selection: \"\"\"\\n id: _id\\n name\\n\"\"\""
+        }
+      }
+    },
+    "@mongo__insertOne": {
+      "summary": "Insert one document. Runtime kind `INSERT_ONE`.",
+      "authors": {
+        "intro": "Insert one document. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "createUser(document: CreateUserInput!): User!\n  @mongo__insertOne(\n    collection: \"users\"\n    set: \"name: $args.document.name\"\n    selection: \"\"\"\nid: _id\nname\n\"\"\"\n  )"
+      },
+      "implementers": {
+        "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
+        "runtime": "On resolve: build the Mongo operation for this directive, run it against `collection`, then project the result with `selection`. Store/operation errors become GraphQL field errors.",
+        "validation": "Require non-empty `collection` for executable apps. `subgraph`, when present, must match the composition subgraph name. Binder strings must parse; reject unknown args for this directive."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Target collection for the operation.",
+          "example": "collection: \"users\"",
+          "validation": "Must be a non-empty string."
+        },
+        "set": {
+          "defaults": "Optional.",
+          "constraints": "Document / update binder.",
+          "authors": "Values to insert or update.",
+          "implementers": "Build insert docs or update operators (`$set`, ...)."
+        },
+        "selection": {
+          "defaults": "Optional.",
+          "constraints": "Projection / field map (`id: _id`, nested blocks).",
+          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: _id`). Nested blocks shape connection payloads.",
+          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: _id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
+          "example": "selection: \"\"\"\\n id: _id\\n name\\n\"\"\""
+        }
+      }
+    },
+    "@mongo__insertMany": {
+      "summary": "Insert many documents. Runtime kind `INSERT_MANY`.",
+      "authors": {
+        "intro": "Insert many documents. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "createUsers(documents: [CreateUserInput!]!): [User!]!\n  @mongo__insertMany(collection: \"users\", set: \"$args.documents\", graphqlDocumentInputs: true)"
+      },
+      "implementers": {
+        "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
+        "runtime": "On resolve: build the Mongo operation for this directive, run it against `collection`, then project the result with `selection`. Store/operation errors become GraphQL field errors.",
+        "validation": "Require non-empty `collection` for executable apps. `subgraph`, when present, must match the composition subgraph name. Binder strings must parse; reject unknown args for this directive."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Target collection for the operation.",
+          "example": "collection: \"users\"",
+          "validation": "Must be a non-empty string."
+        },
+        "set": {
+          "defaults": "Optional.",
+          "constraints": "Document / update binder.",
+          "authors": "Values to insert or update.",
+          "implementers": "Build insert docs or update operators (`$set`, ...)."
+        },
+        "selection": {
+          "defaults": "Optional.",
+          "constraints": "Projection / field map (`id: _id`, nested blocks).",
+          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: _id`). Nested blocks shape connection payloads.",
+          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: _id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
+          "example": "selection: \"\"\"\\n id: _id\\n name\\n\"\"\""
+        },
+        "graphqlDocumentInputs": {
+          "defaults": "Optional boolean.",
+          "constraints": "When true, map generated DocumentInput aliases (`id`->`_id`, `storedId`->`id`) for String-`_id` collections.",
+          "authors": "Enable when bulk inserts use GraphQL field names that must be rewritten to BSON names; omit when binders already use BSON names.",
+          "implementers": "Apply alias rewrite before insertMany."
+        }
+      }
+    },
+    "@mongo__updateOne": {
+      "summary": "Update one document. Runtime kind `UPDATE_ONE`.",
+      "authors": {
+        "intro": "Update one document. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "updateUser(id: ID!, update: UpdateUserInput!): User\n  @mongo__updateOne(collection: \"users\", query: \"_id: $args.id\", set: \"$args.update\")"
+      },
+      "implementers": {
+        "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
+        "runtime": "On resolve: build the Mongo operation for this directive, run it against `collection`, then project the result with `selection`. Store/operation errors become GraphQL field errors.",
+        "validation": "Require non-empty `collection` for executable apps. `subgraph`, when present, must match the composition subgraph name. Binder strings must parse; reject unknown args for this directive."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Target collection for the operation.",
+          "example": "collection: \"users\"",
+          "validation": "Must be a non-empty string."
+        },
+        "query": {
+          "defaults": "Optional.",
+          "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
+          "authors": "How to build the Mongo filter from args/parent.",
+          "implementers": "Compile binder -> filter document.",
+          "example": "query: \"$args.filter\""
+        },
+        "set": {
+          "defaults": "Optional.",
+          "constraints": "Document / update binder.",
+          "authors": "Values to insert or update.",
+          "implementers": "Build insert docs or update operators (`$set`, ...)."
+        },
+        "selection": {
+          "defaults": "Optional.",
+          "constraints": "Projection / field map (`id: _id`, nested blocks).",
+          "authors": "Project Mongo fields into GraphQL fields (e.g. `id: _id`). Nested blocks shape connection payloads.",
+          "implementers": "When it runs: After the operation returns document(s) (or a mutation payload), before the GraphQL field completes.\n\nInput: Returned document(s) and the `selection` mapping lines (`graphqlField: mongoPath` / `_id`, nested blocks).\n\nOutput: GraphQL object(s) with only the selected fields, renamed as mapped (e.g. `id: _id`).\n\nErrors: Missing paths yield null/omit per GraphQL nullability; mapping parse errors fail setup.",
+          "example": "selection: \"\"\"\\n id: _id\\n name\\n\"\"\""
+        }
+      }
+    },
+    "@mongo__updateMany": {
+      "summary": "Update many documents. Runtime kind `UPDATE_MANY`.",
+      "authors": {
+        "intro": "Update many documents. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "updateUsers(filter: UserFilterInput!, update: UpdateUserInput!): UpdateUsersPayload!\n  @mongo__updateMany(\n    collection: \"users\"\n    query: \"$args.filter\"\n    set: \"$args.update\"\n    selection: \"\"\"\nmatchedCount: $matchedCount\nmodifiedCount: $modifiedCount\n\"\"\"\n  )"
+      },
+      "implementers": {
+        "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
+        "runtime": "On resolve: build the Mongo operation for this directive, run it against `collection`, then project the result with `selection`. Store/operation errors become GraphQL field errors.",
+        "validation": "Require non-empty `collection` for executable apps. `subgraph`, when present, must match the composition subgraph name. Binder strings must parse; reject unknown args for this directive."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Target collection for the operation.",
+          "example": "collection: \"users\"",
+          "validation": "Must be a non-empty string."
+        },
+        "query": {
+          "defaults": "Optional.",
+          "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
+          "authors": "How to build the Mongo filter from args/parent.",
+          "implementers": "Compile binder -> filter document.",
+          "example": "query: \"$args.filter\""
+        },
+        "set": {
+          "defaults": "Optional.",
+          "constraints": "Document / update binder.",
+          "authors": "Values to insert or update.",
+          "implementers": "Build insert docs or update operators (`$set`, ...)."
+        },
+        "selection": {
+          "defaults": "Optional; maps the count envelope (not document fields).",
+          "constraints": "Mutation envelope binders such as `matchedCount: $matchedCount` / `modifiedCount: $modifiedCount`.",
+          "authors": "Project updateMany counts into the GraphQL payload. Do not use document field maps here; updateMany has no returned documents.",
+          "implementers": "When it runs: After `updateMany`, against `{ matchedCount, modifiedCount }`.\n\nInput: Count bag + envelope `selection` (`matchedCount: $matchedCount`, `modifiedCount: $modifiedCount`).\n\nOutput: GraphQL payload object with those fields.\n\nErrors: Mapping parse errors fail setup. Unlike `@mongo__count`, selection does apply (envelope), but it does not map stored documents.",
+          "example": "selection: \"\"\"\nmatchedCount: $matchedCount\nmodifiedCount: $modifiedCount\n\"\"\""
+        }
+      }
+    },
+    "@mongo__deleteOne": {
+      "summary": "Delete one document. Runtime kind `DELETE_ONE`.",
+      "authors": {
+        "intro": "Delete one document. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "deleteUser(id: ID!): User\n  @mongo__deleteOne(\n    collection: \"users\"\n    query: \"_id: $args.id\"\n    selection: \"\"\"\nid: _id\nname\n\"\"\"\n  )"
+      },
+      "implementers": {
+        "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
+        "runtime": "On resolve: build the Mongo operation for this directive, run it against `collection`, then project the result with `selection`. Store/operation errors become GraphQL field errors.",
+        "validation": "Require non-empty `collection` for executable apps. `subgraph`, when present, must match the composition subgraph name. Binder strings must parse; reject unknown args for this directive."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Target collection for the operation.",
+          "example": "collection: \"users\"",
+          "validation": "Must be a non-empty string."
+        },
+        "query": {
+          "defaults": "Optional.",
+          "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
+          "authors": "How to build the Mongo filter from args/parent.",
+          "implementers": "Compile binder -> filter document.",
+          "example": "query: \"$args.filter\""
+        },
+        "selection": {
+          "defaults": "Optional.",
+          "constraints": "Document map of the deleted record, or envelope keys (`record: $record { ... }`, `recordId: $_id`).",
+          "authors": "Project the deleted document (document-only mode) or a Connectors-style payload. Not a bare Boolean scalar.",
+          "implementers": "When it runs: After findOneAndDelete, against `{ record, _id }`.\n\nInput: Deleted document bag + `selection`.\n\nOutput: Mapped GraphQL object (or envelope payload).\n\nErrors: Missing paths follow GraphQL nullability; mapping parse errors fail setup. Selection applies (unlike `@mongo__count`).",
+          "example": "selection: \"\"\"\nid: _id\nname\n\"\"\""
+        }
+      }
+    },
+    "@mongo__deleteMany": {
+      "summary": "Delete many documents. Runtime kind `DELETE_MANY`.",
+      "authors": {
+        "intro": "Delete many documents. Pair with `@transport(kind: \"mongo\")`.",
+        "example": "deleteUsers(filter: UserFilterInput!): DeleteUsersPayload!\n  @mongo__deleteMany(\n    collection: \"users\"\n    query: \"$args.filter\"\n    selection: \"\"\"\ndeletedCount: $deletedCount\n\"\"\"\n  )"
+      },
+      "implementers": {
+        "loaders": "Schemas that use `@mongo__*` must `@link` this family and import the directive names used.",
+        "runtime": "On resolve: build the Mongo operation for this directive, run it against `collection`, then project the result with `selection`. Store/operation errors become GraphQL field errors.",
+        "validation": "Require non-empty `collection` for executable apps. `subgraph`, when present, must match the composition subgraph name. Binder strings must parse; reject unknown args for this directive."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute the directive to that composition subgraph name. Use the same string as on `@transport(subgraph:)` and other directives for the source. Never invent a second name for the same source.",
+          "example": "subgraph: \"shop\""
+        },
+        "collection": {
+          "defaults": "Required (`String!`).",
+          "constraints": "MongoDB collection name.",
+          "authors": "Target collection for the operation.",
+          "implementers": "Target collection for the operation.",
+          "example": "collection: \"users\"",
+          "validation": "Must be a non-empty string."
+        },
+        "query": {
+          "defaults": "Optional.",
+          "constraints": "Filter binder (`$args.filter`, `_id: $args.id`, merge blocks). Client GraphQL often uses `filter` while binders keep Mongo-style `query`.",
+          "authors": "How to build the Mongo filter from args/parent.",
+          "implementers": "Compile binder -> filter document.",
+          "example": "query: \"$args.filter\""
+        },
+        "selection": {
+          "defaults": "Optional; maps the count envelope (not document fields).",
+          "constraints": "Envelope binder such as `deletedCount: $deletedCount`.",
+          "authors": "Project deleteMany's deletedCount into the GraphQL payload. Do not use document field maps; deleteMany has no returned documents.",
+          "implementers": "When it runs: After `deleteMany`, against `{ deletedCount }`.\n\nInput: Count bag + envelope `selection` (`deletedCount: $deletedCount`).\n\nOutput: GraphQL payload object.\n\nErrors: Mapping parse errors fail setup. Selection applies for the envelope (unlike `@mongo__count`), but does not map stored documents.",
+          "example": "selection: \"\"\"\ndeletedCount: $deletedCount\n\"\"\""
+        }
+      }
+    }
+  }
+}

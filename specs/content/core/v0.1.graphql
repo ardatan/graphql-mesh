@@ -1,0 +1,48 @@
+# core v0.1
+# @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: [...])
+
+scalar TransportOptions
+scalar _HoistConfig
+scalar ResolveToSourceArgs
+
+directive @transport(
+  subgraph: String!
+  kind: String!
+  location: String
+  headers: [[String]]
+  options: TransportOptions
+) repeatable on SCHEMA
+
+directive @source(
+  name: String!
+  type: String
+  subgraph: String!
+) repeatable on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+
+directive @merge(
+  subgraph: String
+  keyField: String
+  keyArg: String
+  key: [String!]
+  argsExpr: String
+  additionalArgs: String
+) repeatable on FIELD_DEFINITION
+
+directive @resolveTo(
+  requiredSelectionSet: String
+  sourceName: String
+  sourceTypeName: String
+  sourceFieldName: String
+  sourceSelectionSet: String
+  sourceArgs: ResolveToSourceArgs
+  keyField: String
+  keysArg: String
+  valueKeyField: String
+  pubsubTopic: String
+  filterBy: String
+  additionalArgs: ResolveToSourceArgs
+  result: String
+  resultType: String
+) on FIELD_DEFINITION
+
+directive @hoist(subgraph: String, pathConfig: _HoistConfig) repeatable on FIELD_DEFINITION

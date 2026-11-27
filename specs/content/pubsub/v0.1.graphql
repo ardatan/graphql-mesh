@@ -1,0 +1,6 @@
+# pubsub v0.1
+# @link(url: "https://specs.graphql-mesh.dev/pubsub/v0.1", import: ["@pubsubOperation", "@pubsubPublish"])
+
+directive @pubsubOperation(subgraph: String, pubsubTopic: String) on FIELD_DEFINITION
+
+directive @pubsubPublish(subgraph: String, pubsubTopic: String) on FIELD_DEFINITION

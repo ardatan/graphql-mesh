@@ -34,3 +34,4 @@ docker/supergraph.graphql
 eslint_report.json
 .cache
 bench/results.json
+.wrangler/

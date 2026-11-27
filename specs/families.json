@@ -1,0 +1,116 @@
+[
+  {
+    "name": "core",
+    "title": "core",
+    "version": "v0.1",
+    "summary": "Shared compose and runtime directives for Mesh `@link` family core/v0.1.",
+    "imports": ["@transport", "@source", "@merge", "@resolveTo", "@hoist"],
+    "stamp": "Import with `@link(url: \"https://specs.graphql-mesh.dev/core/v0.1\", import: [...])`. Import `@transport` from this same URL whenever a schema needs it (you can `@link` other family URLs alongside it).",
+    "notes": [
+      "Mesh stitching `@source` uses `subgraph:` (and optional `type:`). HTTP/REST Connectors `@source` uses `http:` and lives under specs.apollo.dev/connect.",
+      "PubSub directives are published under https://specs.graphql-mesh.dev/pubsub/v0.1 (not on this core page).",
+      "Mesh `@merge` is supported on this family for type-merging entry points (especially list/batch). For single-object entity resolution, prefer Federation Spec `@lookup` / `@is` / `@internal`.",
+      "Validation: Mesh `@link` family URLs must use supported versions (`v0.1`). `@transport` is SCHEMA-only; `kind` required; `@hoist.pathConfig` must be an array when present."
+    ]
+  },
+  {
+    "name": "pubsub",
+    "title": "pubsub",
+    "version": "v0.1",
+    "summary": "Event-driven federated subscription (EDFS) field directives for topic and webhook bindings (@pubsubOperation, @pubsubPublish).",
+    "imports": ["@pubsubOperation", "@pubsubPublish"],
+    "stamp": "Import with `@link(url: \"https://specs.graphql-mesh.dev/pubsub/v0.1\", import: [\"@pubsubOperation\", \"@pubsubPublish\"])`.",
+    "notes": ["Import `@pubsubOperation` and `@pubsubPublish` from this family URL."]
+  },
+  {
+    "name": "sql",
+    "title": "sql",
+    "version": "v0.1",
+    "summary": "SQL table mapping directive for GraphQL fields and types backed by SQL.",
+    "imports": ["@sql"],
+    "stamp": "Import with `@link(url: \"https://specs.graphql-mesh.dev/sql/v0.1\", import: [\"@sql\"])`.",
+    "notes": ["Pair with `@transport` from core/v0.1."]
+  },
+  {
+    "name": "thrift",
+    "title": "thrift",
+    "version": "v0.1",
+    "summary": "Binary Thrift RPC field mapping directive.",
+    "imports": ["@thrift__rpc"],
+    "stamp": "Import with `@link(url: \"https://specs.graphql-mesh.dev/thrift/v0.1\", import: [\"@thrift__rpc\"])`.",
+    "notes": [
+      "Pair with `@transport` from core/v0.1. JSON Thrift uses Connectors `@connect` instead."
+    ]
+  },
+  {
+    "name": "mongo",
+    "title": "mongo",
+    "version": "v0.1",
+    "summary": "MongoDB operation binders for GraphQL fields.",
+    "imports": [
+      "@mongo__findOne",
+      "@mongo__find",
+      "@mongo__count",
+      "@mongo__connection",
+      "@mongo__pagination",
+      "@mongo__aggregate",
+      "@mongo__insertOne",
+      "@mongo__insertMany",
+      "@mongo__updateOne",
+      "@mongo__updateMany",
+      "@mongo__deleteOne",
+      "@mongo__deleteMany"
+    ],
+    "stamp": "Import with `@link(url: \"https://specs.graphql-mesh.dev/mongo/v0.1\", import: [...])`.",
+    "notes": ["Pair with `@transport` from core/v0.1."]
+  },
+  {
+    "name": "neo4j",
+    "title": "neo4j",
+    "version": "v0.1",
+    "summary": "Neo4j graph model directives with optional subgraph attribution.",
+    "imports": [
+      "@node",
+      "@relationship",
+      "@relationshipProperties",
+      "@alias",
+      "@cypher",
+      "@plural"
+    ],
+    "stamp": "Import with `@link(url: \"https://specs.graphql-mesh.dev/neo4j/v0.1\", import: [...])`.",
+    "notes": [
+      "Optional `subgraph:` attributes multi-source ownership in composition; it is not a graph-store label."
+    ]
+  },
+  {
+    "name": "protobuf",
+    "title": "protobuf",
+    "version": "v0.1",
+    "summary": "Protobuf / gRPC RPC mapping directive.",
+    "imports": ["@protobuf__rpc"],
+    "stamp": "Import with `@link(url: \"https://specs.graphql-mesh.dev/protobuf/v0.1\", import: [\"@protobuf__rpc\"])`.",
+    "notes": ["Pair with `@transport` from core/v0.1."]
+  },
+  {
+    "name": "auth",
+    "title": "auth",
+    "version": "v0.1",
+    "summary": "Auth exemption directive used with complete-protection auth policies.",
+    "imports": ["@skipAuth"],
+    "stamp": "Import with `@link(url: \"https://specs.graphql-mesh.dev/auth/v0.1\", import: [\"@skipAuth\"])`.",
+    "notes": [
+      "Use alongside Federation `@authenticated` / `@requiresScopes` / `@policy` as needed."
+    ]
+  },
+  {
+    "name": "rate-limit",
+    "title": "rate-limit",
+    "version": "v0.1",
+    "summary": "Field-level rate limit annotations.",
+    "imports": ["@rateLimit"],
+    "stamp": "Import with `@link(url: \"https://specs.graphql-mesh.dev/rate-limit/v0.1\", import: [\"@rateLimit\"])`.",
+    "notes": [
+      "A conforming gateway must enforce these annotations; without an enforcer they have no effect."
+    ]
+  }
+]

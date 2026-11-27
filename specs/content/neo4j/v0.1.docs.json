@@ -1,0 +1,196 @@
+{
+  "enums": {
+    "_RelationDirections": {
+      "summary": "Direction of a relationship relative to the annotated field.",
+      "authors": "`IN` means the relationship points into this node; `OUT` means it points out from this node.",
+      "implementers": "Treat as the edge direction when planning traversals for `@relationship`. Reject values other than `IN` / `OUT`."
+    }
+  },
+  "directives": {
+    "@node": {
+      "summary": "Marks a GraphQL object type as a graph node. Optional `subgraph` attributes multi-source ownership; optional `labels` name the node labels in the graph store.",
+      "authors": {
+        "intro": "Put `@node` on object types that represent graph nodes. Queries and mutations over that type then treat it as a node (labels default to the GraphQL type name unless you set `labels`). When several Neo4j sources are composed, set `subgraph` to the same composition name used elsewhere for that source.",
+        "example": "type Movie @node(labels: [\"Film\"]) { title: String! }"
+      },
+      "implementers": {
+        "intro": "`subgraph` is composition metadata only - it does not change graph labels. Use `labels` (or the type name) as the node's store identity. Do not require a particular library API.",
+        "loaders": "Schemas that use `@node` must `@link` this family and import the directive. Preserve apps through Supergraph composition.",
+        "runtime": "Resolve the type as a node with the given labels. Ignore `subgraph` for store I/O; use it only to attribute ownership in a multi-source Supergraph.",
+        "validation": "Reject unknown args. When `labels` is present it must be a list of strings. When `subgraph` is present it must be a string matching the composition subgraph name for that source."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "validation": "If present, must be a non-empty string equal to the composition subgraph name for this source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute the directive to that composition subgraph name. Never invent a second name for the same source. Do not send `subgraph` to the graph store.",
+          "example": "subgraph: \"movies\""
+        },
+        "labels": {
+          "defaults": "Optional; default label is the GraphQL type name.",
+          "constraints": "List of node label strings in the graph store.",
+          "validation": "If present, must be a list of strings (may be empty only if the runtime documents that case; prefer at least one label).",
+          "authors": "Override the default label when the store uses different label names than the GraphQL type.",
+          "implementers": "Use these labels for node identity and Cypher/MATCH planning. If omitted, use the GraphQL type name as the sole label.",
+          "example": "labels: [\"Film\"]"
+        }
+      }
+    },
+    "@relationshipProperties": {
+      "summary": "Marks an object type as the property bag carried on a relationship (not a node).",
+      "authors": {
+        "intro": "Put `@relationshipProperties` on the object type that holds edge properties. Reference that type name from `@relationship(properties:)`."
+      },
+      "implementers": {
+        "runtime": "Treat the type as relationship properties, not as a node. `subgraph` is composition metadata only.",
+        "validation": "Reject unknown args. `subgraph`, when present, must be a string matching the composition subgraph name."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "validation": "If present, must be a non-empty string equal to the composition subgraph name for this source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute ownership only; do not send `subgraph` to the graph store.",
+          "example": "subgraph: \"movies\""
+        }
+      }
+    },
+    "@relationship": {
+      "summary": "Declares that a field is a graph relationship to another node type, with a relationship type name and direction.",
+      "authors": {
+        "intro": "Annotate fields that traverse to related nodes. `type` is the relationship type in the store; `direction` is relative to this field's node; `properties` names an optional `@relationshipProperties` type.",
+        "example": "actors: [Person!]! @relationship(type: \"ACTED_IN\", direction: IN)"
+      },
+      "implementers": {
+        "runtime": "Plan traversals using `type` + `direction` (+ `properties` when set). `subgraph` is composition metadata only.",
+        "validation": "Require `type` for an executable relationship. `direction`, when present, must be `IN` or `OUT`. `properties`, when present, must name a type marked `@relationshipProperties`."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "validation": "If present, must be a non-empty string equal to the composition subgraph name for this source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute ownership only; do not send `subgraph` to the graph store.",
+          "example": "subgraph: \"movies\""
+        },
+        "type": {
+          "defaults": "Required for a usable relationship.",
+          "constraints": "Relationship type name in the graph store.",
+          "validation": "Reject empty or missing `type` for executable apps.",
+          "authors": "The relationship type stored on the edge.",
+          "implementers": "Use as the relationship type in traversal planning."
+        },
+        "direction": {
+          "defaults": "Optional.",
+          "constraints": "`IN` | `OUT`.",
+          "validation": "If present, must be exactly `IN` or `OUT`.",
+          "authors": "Edge direction relative to this field's node.",
+          "implementers": "Orient MATCH/expand accordingly."
+        },
+        "properties": {
+          "defaults": "Optional.",
+          "constraints": "Name of a type marked `@relationshipProperties`.",
+          "validation": "If present, must refer to a type that carries `@relationshipProperties`.",
+          "authors": "Attach a properties type to this relationship.",
+          "implementers": "Bind edge properties to that type's fields."
+        }
+      }
+    },
+    "@alias": {
+      "summary": "Maps a GraphQL field to a different property key in the graph store.",
+      "authors": {
+        "intro": "Use when the GraphQL field name differs from the stored property key (including after renames). Queries still use the GraphQL name; persistence uses `property`.",
+        "example": "title: String! @alias(property: \"movie_title\")"
+      },
+      "implementers": {
+        "runtime": "Read/write the store property named by `property` for this GraphQL field. `subgraph` is composition metadata only.",
+        "validation": "Require non-empty `property`. `subgraph`, when present, must match the composition subgraph name."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "validation": "If present, must be a non-empty string equal to the composition subgraph name for this source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute ownership only; do not send `subgraph` to the graph store.",
+          "example": "subgraph: \"movies\""
+        },
+        "property": {
+          "defaults": "Required (`String!`).",
+          "constraints": "Property key in the graph store.",
+          "validation": "Must be a non-empty string.",
+          "authors": "Stored property name for this field.",
+          "implementers": "Map GraphQL field <-> this property key on read/write.",
+          "example": "property: \"movie_title\""
+        }
+      }
+    },
+    "@cypher": {
+      "summary": "Resolves a field with a custom Cypher statement, taking the named return column as the field value.",
+      "authors": {
+        "intro": "Provide `statement` (Cypher) and `columnName` (the return alias used as the field result). `this` refers to the current node when the field is on a node type.",
+        "example": "friends: [Person!]! @cypher(statement: \"MATCH (this)-[:KNOWS]->(p) RETURN p\", columnName: \"p\")"
+      },
+      "implementers": {
+        "runtime": "Run `statement` in the field's context; take the value of `columnName` from the result as the GraphQL field value. `subgraph` is composition metadata only.",
+        "validation": "Require non-empty `statement` and `columnName`. Reject unknown args."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "validation": "If present, must be a non-empty string equal to the composition subgraph name for this source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute ownership only; do not send `subgraph` to the graph store.",
+          "example": "subgraph: \"movies\""
+        },
+        "statement": {
+          "defaults": "Required (`String!`).",
+          "constraints": "Cypher query string.",
+          "validation": "Must be a non-empty string.",
+          "authors": "Query body; use `this` for the current node when applicable.",
+          "implementers": "Execute as the field's Cypher body."
+        },
+        "columnName": {
+          "defaults": "Required (`String!`).",
+          "constraints": "Return column alias from the Cypher result.",
+          "validation": "Must be a non-empty string naming a returned column.",
+          "authors": "Which returned column becomes the GraphQL field value.",
+          "implementers": "Project that column as the field result."
+        }
+      }
+    },
+    "@plural": {
+      "summary": "Overrides the plural name used for generated list/connection field names for this type.",
+      "authors": {
+        "intro": "Set `value` when the default pluralization of the type name is wrong (e.g. `people` instead of `persons`).",
+        "example": "type Person @node @plural(value: \"people\") { name: String! }"
+      },
+      "implementers": {
+        "runtime": "Use `value` wherever plural field names are generated for this type. `subgraph` is composition metadata only.",
+        "validation": "Require non-empty `value`."
+      },
+      "args": {
+        "subgraph": {
+          "defaults": "Optional.",
+          "constraints": "A subgraph name string. When set, it must be the same identifier used for that source in composition - the same name as on `@transport(subgraph:)` and elsewhere for this subgraph. Do not invent a second name for the same source.",
+          "validation": "If present, must be a non-empty string equal to the composition subgraph name for this source.",
+          "authors": "Name which composed subgraph owns this annotation. Use the same subgraph name you use everywhere else for that source. Omit when a single-source schema does not need attribution.",
+          "implementers": "Attribute ownership only; do not send `subgraph` to the graph store.",
+          "example": "subgraph: \"movies\""
+        },
+        "value": {
+          "defaults": "Required (`String!`).",
+          "constraints": "Plural name string.",
+          "validation": "Must be a non-empty string.",
+          "authors": "Plural form for generated list/connection fields.",
+          "implementers": "Substitute this string for default pluralization."
+        }
+      }
+    }
+  }
+}
