@@ -45,9 +45,15 @@ function mdProse(text) {
     .join('\n\n');
 }
 
+/** Fence code for Markdown. Does not decode escapes; SDL must keep GraphQL `\n` etc. */
 function mdFence(code, lang = 'graphql') {
-  const text = decodeExample(code).trim();
+  const text = String(code).trim();
   return `\`\`\`${lang}\n${text}\n\`\`\``;
+}
+
+/** Fence a docs.json example after expanding JSON-escaped whitespace for readability. */
+function mdExampleFence(code, lang = 'graphql') {
+  return mdFence(decodeExample(code), lang);
 }
 
 /** Expand JSON-escaped newlines/tabs so <pre> examples wrap instead of showing literal \n. */
@@ -154,19 +160,36 @@ function parseDirectiveArgs(text) {
   if (!m) return [];
   const body = m[1].trim();
   if (!body) return [];
-  // Newline-separated args (common) and comma-separated single-line arg lists.
-  const parts = body
-    .split('\n')
-    .map(l => l.trim())
-    .filter(Boolean)
-    .flatMap(splitArgsAtCommas);
-  return parts
-    .map(part => {
-      const am = part.match(/^(\w+)\s*:\s*(.+)$/);
-      if (!am) return null;
-      return { name: am[1], type: am[2].replace(/,$/, '').trim() };
-    })
-    .filter(Boolean);
+  // GraphQL commas are optional: support newline-, comma-, and whitespace-separated
+  // `name: Type` pairs without pulling in the graphql package (CI runs generate with no install).
+  const starts = [];
+  const re = /(\w+)\s*:/g;
+  let match;
+  while ((match = re.exec(body)) !== null) {
+    starts.push({
+      name: match[1],
+      typeStart: match.index + match[0].length,
+      nameIndex: match.index,
+    });
+  }
+  if (!starts.length) {
+    return body
+      .split('\n')
+      .map(l => l.trim())
+      .filter(Boolean)
+      .flatMap(splitArgsAtCommas)
+      .map(part => {
+        const am = part.match(/^(\w+)\s*:\s*(.+)$/);
+        if (!am) return null;
+        return { name: am[1], type: am[2].replace(/,$/, '').trim() };
+      })
+      .filter(Boolean);
+  }
+  return starts.map((s, i) => {
+    const end = i + 1 < starts.length ? starts[i + 1].nameIndex : body.length;
+    const type = body.slice(s.typeStart, end).trim().replace(/,\s*$/, '');
+    return { name: s.name, type };
+  });
 }
 
 function audienceBlock({
@@ -264,7 +287,11 @@ function companionDocBlock({ def, secid, docs }) {
 }
 
 function layout({ title, body, canonical, markdownHref }) {
-  const md = markdownHref || (canonical.endsWith('/') ? `${origin}/index.md` : `${canonical}.md`);
+  // Root-relative discovery so preview hosts resolve to preview content;
+  // canonical stays on the production @link origin.
+  const alternate = markdownHref
+    ? `<link rel="alternate" type="text/markdown" href="${esc(markdownHref)}">\n`
+    : '';
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -272,8 +299,7 @@ function layout({ title, body, canonical, markdownHref }) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
 <link rel="canonical" href="${esc(canonical)}">
-<link rel="alternate" type="text/markdown" href="${esc(md)}">
-<link rel="describedby" href="${esc(origin)}/llms.txt">
+${alternate}<link rel="describedby" href="/llms.txt">
 <link rel="stylesheet" href="/assets/spec.css">
 </head>
 <body>
@@ -429,7 +455,7 @@ function familyPage(family, sdl, docs) {
   return layout({
     title: `${family.title} ${version} · ${siteTitle}`,
     canonical: url,
-    markdownHref: `${url}.md`,
+    markdownHref: `/${family.name}/${version}.md`,
     body: `
 <article class="spec-page">
   <p class="crumb"><a href="/">${esc(siteBrand)}</a> / ${esc(family.name)} / ${esc(version)}</p>
@@ -490,7 +516,7 @@ function familyPageMd(family, sdl, docs) {
       if (d.summary) parts.push(mdProse(d.summary), '');
       if (d.authors) parts.push('#### For schema authors', '', mdProse(d.authors), '');
       if (d.implementers) parts.push('#### For implementers', '', mdProse(d.implementers), '');
-      if (d.example) parts.push(mdFence(d.example), '');
+      if (d.example) parts.push(mdExampleFence(d.example), '');
     }
   }
 
@@ -503,7 +529,7 @@ function familyPageMd(family, sdl, docs) {
 
     parts.push('#### For schema authors', '');
     if (dd.authors?.intro) parts.push(mdProse(dd.authors.intro), '');
-    if (dd.authors?.example) parts.push(mdFence(dd.authors.example), '');
+    if (dd.authors?.example) parts.push(mdExampleFence(dd.authors.example), '');
 
     parts.push('#### For implementers', '');
     if (dd.implementers?.intro) parts.push(mdProse(dd.implementers.intro), '');
@@ -519,7 +545,7 @@ function familyPageMd(family, sdl, docs) {
     if (dd.implementers?.validation) {
       parts.push('**Validation**', '', mdProse(dd.implementers.validation), '');
     }
-    if (dd.implementers?.example) parts.push(mdFence(dd.implementers.example), '');
+    if (dd.implementers?.example) parts.push(mdExampleFence(dd.implementers.example), '');
 
     const args = parseDirectiveArgs(d.text);
     for (const a of args) {
@@ -532,7 +558,7 @@ function familyPageMd(family, sdl, docs) {
       if (ad.authors) {
         parts.push('##### For schema authors', '', mdProse(ad.authors), '');
       }
-      if (ad.example) parts.push(mdFence(ad.example), '');
+      if (ad.example) parts.push(mdExampleFence(ad.example), '');
       if (ad.implementers) {
         parts.push('##### For implementers', '', mdProse(ad.implementers), '');
       }
@@ -588,15 +614,15 @@ function llmsTxt(families) {
     const version = f.version || 'v0.1';
     const imports = f.imports.join(', ');
     lines.push(
-      `- [${f.title} ${version}](${origin}/${f.name}/${version}.md): ${f.summary} Imports: ${imports}.`,
+      `- [${f.title} ${version}](/${f.name}/${version}.md): ${f.summary} Imports: ${imports}.`,
     );
   }
   lines.push(
     '',
     '## Optional',
     '',
-    `- [Site index](${origin}/index.md): Current Specs list and external pointers`,
-    `- [Raw GraphQL index](${origin}/): HTML home (sibling \`.graphql\` per family)`,
+    '- [Site index](/index.md): Current Specs list and external pointers',
+    '- [Raw GraphQL index](/): HTML home (sibling `.graphql` per family)',
     '- HTTP/REST Connectors: https://specs.apollo.dev/connect/v0.2',
     '- Federation Spec draft (`@lookup` / `@is` / `@internal`): https://graphql.github.io/graphql-federation-spec/draft',
     '',
@@ -644,7 +670,7 @@ writeFileSync(
   layout({
     title: siteTitle,
     canonical: `${origin}/`,
-    markdownHref: `${origin}/index.md`,
+    markdownHref: `/index.md`,
     body: `
 <article class="spec-page home">
   <h1 class="page-title">${esc(siteTitle)}</h1>

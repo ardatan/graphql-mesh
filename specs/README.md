@@ -46,8 +46,10 @@ npx --yes serve specs/out
 
 GitHub Actions workflow `.github/workflows/specs.yml` runs only when `specs/**` or the workflow file
 changes (not on every PR). It deploys `specs/out` to the Cloudflare Pages project
-`graphql-mesh-specs` (same account secrets as the main website). On pull requests it posts a sticky
-preview comment with the Pages alias URL (same pattern as the website workflow). Production URLs:
+`graphql-mesh-specs` (same account secrets as the main website). On pull requests from this
+repository it posts a sticky preview comment with the Pages alias URL (same pattern as the website
+workflow). Fork PRs do not get a preview deploy or comment (the deploy job requires
+`pull_request.head.repo` to match `github.repository`). Production URLs:
 
 - https://specs.graphql-mesh.dev
 - https://graphql-mesh-specs.pages.dev
