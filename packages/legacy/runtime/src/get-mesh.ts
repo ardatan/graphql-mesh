@@ -36,7 +36,7 @@ import {
 import type { CreateProxyingResolverFn, SubschemaConfig } from '@graphql-tools/delegate';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import type { ExecutionResult } from '@graphql-tools/utils';
-import { getRootTypeMap, isAsyncIterable, memoize1 } from '@graphql-tools/utils';
+import { asArray, getRootTypeMap, isAsyncIterable, memoize1 } from '@graphql-tools/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 import { AsyncDisposableStack, DisposableSymbols } from '@whatwg-node/disposablestack';
 import { fetch as defaultFetchFn } from '@whatwg-node/fetch';
@@ -281,10 +281,15 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     schema = wrapSchema(unifiedSubschema);
   }
 
-  // Root transforms run after underthehood compose. Keep `supergraphSdl` for
-  // artifacts, but mark the live schema so HTTP falls back to Yoga and serves
-  // the transformed field set (Gateway would otherwise use the pre-transform SDL).
-  if (transforms.length > 0) {
+  // Root transforms / additionalTypeDefs / additionalResolvers run after
+  // underthehood compose (or only land on the executable schema). Keep
+  // `supergraphSdl` for artifacts, but mark the live schema so HTTP falls back
+  // to Yoga — Gateway would otherwise serve the pre-augmentation Supergraph SDL.
+  if (
+    transforms.length > 0 ||
+    asArray(additionalTypeDefs).length > 0 ||
+    asArray(additionalResolvers).length > 0
+  ) {
     schema.extensions = {
       ...(schema.extensions || {}),
       skipUnderthehoodGateway: true,
