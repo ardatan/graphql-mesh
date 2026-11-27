@@ -48,6 +48,7 @@ Do not mix up these “merge” / hop ideas:
 | Batch `users(ids:)` merge           | Mesh Type Merging `@merge` on the list entry field -- [Directives: @merge](/v2/directives#merge) |
 | `stitchSchemas` as the gateway      | [Serve Supergraph](/v2/serve) (Hive Gateway preferred; Apollo Router for Connect-compatible SDL) |
 | Keep a foreign router               | [Serve Subgraph](/v2/serve-subgraph) so Router / GraphOS can call Mesh-backed Federation URLs    |
+| Programmatic `delegateToSchema`     | Mesh `@resolveTo` on SDL (field delegation / additional resolvers)                              |
 
 ## Before: programmatic stitch
 
@@ -205,6 +206,121 @@ const schema = buildSubgraphSchema(readFileSync('./users.graphql', 'utf8'))
 // serve with Yoga / Apollo Server / …
 ```
 
+## From `delegateToSchema` to `@resolveTo`
+
+Stitching gateways often hop across subschemas with programmatic `delegateToSchema` (or a custom
+field `resolve` that calls it). In Mesh that hop becomes SDL
+[`@resolveTo`](/v2/directives#resolveTo) -- the directive form of **additional resolvers** / field
+delegation.
+
+Prefer Federation `@key` + `@lookup` / Connect / protocol joins for **entity** hops when you can.
+Use `@resolveTo` when you still need an explicit field-level delegation (gateway
+`additionalTypeDefs`, or a join that is not a clean entity entry).
+
+| Stitching (`delegateToSchema`)                         | Mesh (`@resolveTo`)                                              |
+| ------------------------------------------------------ | ---------------------------------------------------------------- |
+| `schema` / subschema config                            | `sourceName` (Compose subgraph name)                             |
+| `operation: 'query'` + parent type                     | `sourceTypeName` (usually `Query`)                               |
+| `fieldName`                                            | `sourceFieldName`                                                |
+| `args: { id: parent.authorId }`                        | `sourceArgs: { id: "{root.authorId}" }`                          |
+| `selectionSet: '{ authorId }'` on the stitching field  | `requiredSelectionSet: "{ authorId }"`                           |
+| Batch `argsFromKeys` / list arg + DataLoader           | `keyField` + `keysArg` (optional `valueKeyField`)                |
+
+### Single-id hop
+
+Before -- field resolver delegates into the authors subschema:
+
+```ts
+import { delegateToSchema } from '@graphql-tools/delegate'
+
+const resolvers = {
+  Book: {
+    author: {
+      selectionSet: '{ authorId }',
+      resolve(book, _args, context, info) {
+        return delegateToSchema({
+          schema: authorsSubschema,
+          operation: 'query',
+          fieldName: 'authorById',
+          args: { id: book.authorId },
+          context,
+          info
+        })
+      }
+    }
+  }
+}
+```
+
+After -- same hop as Mesh core `@resolveTo`:
+
+{/* prettier-ignore */}
+```graphql
+extend schema
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@resolveTo"])
+
+extend type Book {
+  author: Author
+    @resolveTo(
+      sourceName: "authors"
+      sourceTypeName: "Query"
+      sourceFieldName: "authorById"
+      sourceArgs: { id: "{root.authorId}" }
+      requiredSelectionSet: "{ authorId }"
+    )
+}
+```
+
+### Batch hop (N+1 → list arg)
+
+Before -- stitching / DataLoader style that fans many parent keys into one list query:
+
+```ts
+// Conceptual: argsFromKeys / batch delegate into Query.authors(ids: …)
+delegateToSchema({
+  schema: authorsSubschema,
+  operation: 'query',
+  fieldName: 'authors',
+  args: { ids: keys }, // keys collected from book.authorId
+  context,
+  info
+})
+```
+
+After -- `keyField` + `keysArg` (Compose validates names at compose time):
+
+{/* prettier-ignore */}
+```graphql
+extend type Book {
+  author: Author
+    @resolveTo(
+      sourceName: "authors"
+      sourceTypeName: "Query"
+      sourceFieldName: "authors"
+      keyField: "authorId"
+      keysArg: "ids"
+    )
+}
+```
+
+When the upstream returns rows out of key order (or keyed by a different field), set
+`valueKeyField` as well -- see [Directives: @resolveTo](/v2/directives#resolveTo).
+
+{/* prettier-ignore */}
+```diff
+- return delegateToSchema({
+-   schema: authorsSubschema,
+-   fieldName: 'authorById',
+-   args: { id: book.authorId },
+-   …
+- })
++ author: Author @resolveTo(
++   sourceName: "authors"
++   sourceFieldName: "authorById"
++   sourceArgs: { id: "{root.authorId}" }
++ )
+```
+
 ## Diff mindset: merge config → SDL
 
 {/* prettier-ignore */}
@@ -231,11 +347,14 @@ const schema = buildSubgraphSchema(readFileSync('./users.graphql', 'utf8'))
 ## Checklist
 
 1. Inventory each stitched subschema and its `merge` / stitching-directive annotations.
-2. Emit or Hand-write Federation-ready Mesh subgraph SDL per source
+2. Map programmatic `delegateToSchema` (or custom field `resolve` hops) to `@resolveTo`, or to
+   Federation `@key` / `@lookup` / Connect when the hop is an entity join
+   ([Directives: @resolveTo](/v2/directives#resolveTo)).
+3. Emit or Hand-write Federation-ready Mesh subgraph SDL per source
    ([Build your Subgraph](/v2/paths/generate)).
-3. Replace `stitchSchemas` with `composeConfig` + `mesh-compose`.
-4. Serve Supergraph on your Federation gateway, **or** Serve Subgraph for Mesh-backed peers.
-5. Drop in-process stitch / legacy Mesh merger once the supergraph path is green.
+4. Replace `stitchSchemas` with `composeConfig` + `mesh-compose`.
+5. Serve Supergraph on your Federation gateway, **or** Serve Subgraph for Mesh-backed peers.
+6. Drop in-process stitch / legacy Mesh merger once the supergraph path is green.
 
 ## Related
 
@@ -247,6 +366,7 @@ const schema = buildSubgraphSchema(readFileSync('./users.graphql', 'utf8'))
   <Cards.Card arrow title="Serve Subgraph" href="/v2/serve-subgraph" />
   <Cards.Card arrow title="Serve Supergraph" href="/v2/serve" />
   <Cards.Card arrow title="buildSubgraphSchema" href="/v2/guides/build-subgraph-schema" />
+  <Cards.Card arrow title="Directives: @resolveTo" href="/v2/directives#resolveTo" />
   <Cards.Card arrow title="Migration overview" href="/v2/guides/migration" />
   <Cards.Card arrow title="From Mesh v0 / v1" href="/v2/guides/migration/from-v0-v1" />
 </Cards>
