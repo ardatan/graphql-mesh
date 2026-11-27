@@ -300,6 +300,65 @@ describe('backbone correctness: mutation serial semantics', () => {
     expect(result.errors?.some(e => e.message.includes('boom'))).toBe(true);
   });
 
+  it('aborts later mutation roots when a non-null root completes as null without errors', async () => {
+    const order: string[] = [];
+    const remote = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Mutation {
+          first: String!
+          second: String!
+        }
+        type Query {
+          _empty: String
+        }
+      `,
+      resolvers: {
+        Mutation: {
+          first: () => {
+            order.push('first');
+            return 'unused';
+          },
+          second: () => {
+            order.push('second');
+            return 'ok';
+          },
+        },
+      },
+    });
+    // Downstream returns completed null with no errors (e.g. nullable subgraph
+    // under a NonNull gateway field). writeRootResult must still abort.
+    const schema = stitchSchemas({
+      subschemas: [
+        {
+          schema: remote,
+          executor: async req => {
+            const printed = JSON.stringify(req.document);
+            if (printed.includes('first') && !printed.includes('second')) {
+              order.push('first');
+              return { data: { first: null } };
+            }
+            if (printed.includes('second')) {
+              order.push('second');
+              return { data: { second: 'ok' } };
+            }
+            return { data: null };
+          },
+        },
+      ],
+    });
+    const backbone = createBackboneExecutor(schema);
+    const result = await exec(backbone, {
+      document: parse(/* GraphQL */ `
+        mutation {
+          first
+          second
+        }
+      `),
+    });
+    expect(order).toEqual(['first']);
+    expect(result.data).toBeNull();
+  });
+
   it('continues later mutation roots when only a nullable descendant fails', async () => {
     const order: string[] = [];
     const remote = makeExecutableSchema({

@@ -547,19 +547,22 @@ function errorFromFetchThrow(
 }
 
 /**
- * Mutation serial parity: after a root was nullified with errors, skip later
- * hops when the root field is non-null (Fetch + root Island).
+ * Mutation serial parity: after a root completed as null, skip later hops when
+ * the root field is non-null (Fetch + root Island). Includes completed null
+ * without downstream errors (nullable subgraph field under NonNull gateway).
+ * Missing keys (root not written yet) must not abort.
  */
 function maybeAbortMutationAfterNullifiedRoot(
   ctx: BackboneExecutionContext,
   responseKey: string,
   fieldName: string,
-  hadErrors: boolean,
 ): void {
-  if (!hadErrors || ctx.operation.operation !== 'mutation') {
+  if (ctx.operation.operation !== 'mutation') {
     return;
   }
-  if (ctx.data[responseKey] != null) {
+  // Present-and-null only. `key in data` distinguishes completed null from
+  // an unwritten root (undefined), which must not stop later mutation roots.
+  if (!(responseKey in ctx.data) || ctx.data[responseKey] != null) {
     return;
   }
   const rootType = getDefinedRootType(ctx.schema, ctx.operation.operation);
@@ -1054,12 +1057,7 @@ function executeFetchNode(
         // so finalizeRootResult can apply nullability bubbling.
         ctx.data[responseKey] = null;
       }
-      maybeAbortMutationAfterNullifiedRoot(
-        ctx,
-        responseKey,
-        rootFieldNode.name.value,
-        errors.length > 0,
-      );
+      maybeAbortMutationAfterNullifiedRoot(ctx, responseKey, rootFieldNode.name.value);
     };
 
     const writeRootThrowFailure = (err: unknown) => {
@@ -1067,7 +1065,7 @@ function executeFetchNode(
       if (!(responseKey in ctx.data)) {
         ctx.data[responseKey] = null;
       }
-      maybeAbortMutationAfterNullifiedRoot(ctx, responseKey, rootFieldNode.name.value, true);
+      maybeAbortMutationAfterNullifiedRoot(ctx, responseKey, rootFieldNode.name.value);
     };
 
     // Rename / encapsulate / defer transforms need Transformer - prebuilt
@@ -1573,7 +1571,7 @@ function executeIslandNode(
       // not reject the whole plan - otherwise result.errors is empty.
       ctx.errors.push(errorFromIslandThrow(err, responseKey, node.fieldNode));
       ctx.data[responseKey] = null;
-      maybeAbortMutationAfterNullifiedRoot(ctx, responseKey, fieldName, true);
+      maybeAbortMutationAfterNullifiedRoot(ctx, responseKey, fieldName);
     },
   );
 }
