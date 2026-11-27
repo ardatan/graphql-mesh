@@ -18,16 +18,16 @@ export function MeshHero(props: HeroContainerProps) {
         GraphQL Mesh
       </Heading>
       <p className="mx-auto w-[512px] max-w-[80%] text-balance text-center leading-6 text-green-800">
-        Federation Framework for any API
+        Federation Framework for REST, SOAP, OData, gRPC, SQL, and more
       </p>
       <HeroFeatures>
         <li>
           <CheckIcon className="text-green-800" />
-          Build subgraphs from any API
+          Build subgraphs from REST, SOAP, OData, gRPC, SQL, and more
         </li>
         <li>
           <CheckIcon className="text-green-800" />
-          Platform, registry, gateway independent
+          Platform, registry, gateway independent -- Hive Gateway and Apollo Router supported
         </li>
         <li>
           <CheckIcon className="text-green-800" />
