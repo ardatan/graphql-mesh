@@ -1,6 +1,6 @@
 export default {
   index: 'Introduction',
-  paths: 'Choose your path',
+  paths: 'Build your Subgraph',
   concepts: 'Concepts',
   architecture: 'Architecture',
   compose: 'Composition',
