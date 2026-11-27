@@ -191,11 +191,15 @@ jobs:
               targets = [top];
             }
             for (const target of targets) {
+              // Drop nested node_modules too — otherwise an old nested
+              // `@graphql-tools/wrap` (etc.) under e.g. `@graphql-mesh/utils`
+              // keeps resolving against a mismatched utils copy.
               for (const ent of fs.readdirSync(target)) {
-                if (ent === 'node_modules') continue;
                 rmrf(path.join(target, ent));
               }
               copyDir(src, target);
+              const nestedNm = path.join(target, 'node_modules');
+              if (fs.existsSync(nestedNm)) rmrf(nestedNm);
               const pkgJsonPath = path.join(target, 'package.json');
               if (fs.existsSync(pkgJsonPath)) rewriteWorkspaceDeps(pkgJsonPath);
               console.log(`Overlaid ${name} <- ${label} -> ${path.relative(process.cwd(), target)}`);
