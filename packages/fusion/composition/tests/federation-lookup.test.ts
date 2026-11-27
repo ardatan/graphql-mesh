@@ -355,6 +355,39 @@ describe('Federation Spec @lookup / @is / @internal', () => {
     expect(dirs.lookup?.length || 0).toBe(0);
   });
 
+  it('keeps @merge for input-object keyArg when keyField is unset', () => {
+    // Explicit keyField: undefined overrides @key.fields via spread — without this
+    // guard, @lookup would stamp with no @is and validation would reject `input`.
+    const schema = buildSchema(/* GraphQL */ `
+      type Query {
+        product(input: ProductKey!): Product
+      }
+      input ProductKey {
+        id: ID!
+      }
+      type Product {
+        id: ID!
+      }
+    `);
+    const transform = createFederationTransform({
+      Product: {
+        key: {
+          fields: 'id',
+          resolveReference: {
+            fieldName: 'product',
+            keyArg: 'input',
+            keyField: undefined,
+          },
+        },
+      },
+    });
+    const result = transform(schema, { name: 'products', schema });
+    const field = result.getQueryType()!.getFields().product!;
+    const dirs = getDirectiveExtensions(field);
+    expect(dirs.merge?.length).toBeGreaterThan(0);
+    expect(dirs.lookup?.length || 0).toBe(0);
+  });
+
   it('preserves inferred sku↔sku binding when @key fields is id (no @is remap)', () => {
     // productBySku(sku) with Product.sku: inferred argsExpr was `sku: $key.sku`.
     // Do not stamp `@is(field: "id")` just because @key.fields is id.

@@ -7,6 +7,7 @@ import {
   GraphQLNonNull,
   GraphQLSchema,
   GraphQLString,
+  isInputObjectType,
   isListType,
   isObjectType,
   Kind,
@@ -490,19 +491,29 @@ export function createFederationTransform(config: FederationTransformConfig): Su
             // `@is` can only target a direct field argument; dotted keyArg (e.g.
             // `input.id`) stays on Mesh `@merge`.
             const keyArgIsDirect = !keyArg || !!fieldConfig.args?.[keyArg];
+            // Whole input-object keyArg with no keyField cannot map to an entity
+            // field via `@lookup`/`@is` — keep Mesh `@merge` (merge-base behavior).
+            const keyArgNamedType =
+              effectiveKeyArg && fieldConfig.args?.[effectiveKeyArg]
+                ? getNamedType(fieldConfig.args[effectiveKeyArg].type)
+                : undefined;
+            const inputObjectKeyWithoutField =
+              !!effectiveKeyArg && !keyField && isInputObjectType(keyArgNamedType);
             // Keep Mesh `@merge` when:
             // - list / batch (draft `@lookup` must not return a list)
             // - explicit `argsExpr` (nested / composite key mapping)
             // - more than one argument (multi-key / requires-related args)
             // - non-Query operation
             // - keyArg is not a direct field argument
+            // - input-object keyArg with unset keyField
             if (
               returnsList ||
               batchListArg ||
               explicitArgsExpr ||
               multiArg ||
               !isQueryOperation ||
-              !keyArgIsDirect
+              !keyArgIsDirect ||
+              inputObjectKeyWithoutField
             ) {
               const mergeDirectiveExtensions = (fieldDirectives.merge ||= []);
               mergeDirectiveExtensions.push({
