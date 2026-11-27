@@ -121,12 +121,15 @@ export function getBatchedMergeEntry(
     return null;
   };
   // Prefer a shared valuesFromResults when every entry agrees (or only the
-  // type-level default is set); otherwise leave undefined so callers that need
-  // per-entry unwrap fall back to classic multi-entry resolve.
+  // type-level default is set). Conflicting callbacks must not use the
+  // positional raw-batch/merge path (undefined would look like "no unwrap"
+  // and mis-assign reordered results) - fall back to classic multi-entry.
   const valuesFns = eps.map(e => e.valuesFromResults ?? mergeConfig.valuesFromResults);
-  const sharedValuesFromResults = valuesFns.every(fn => fn === valuesFns[0])
-    ? valuesFns[0]
-    : undefined;
+  const valuesAgree = valuesFns.every(fn => fn === valuesFns[0]);
+  if (!valuesAgree) {
+    return null;
+  }
+  const sharedValuesFromResults = valuesFns[0];
   if (!sameField) {
     return {
       fieldName: first.fieldName!,

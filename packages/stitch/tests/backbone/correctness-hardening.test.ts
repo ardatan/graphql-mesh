@@ -117,14 +117,23 @@ describe('backbone correctness: percentage progressive-override cache', () => {
       subschemas: [{ schema: remote, executor: createDefaultExecutor(remote) }],
     });
 
-    // Instrument Map.set: random percent cache keys would grow one entry per request.
-    const setCounts: number[] = [];
+    // Count plan-cache writes by StitchPlan value shape, not key spelling.
+    // Production no longer emits `::pct:` keys; a constant-key regression would
+    // still write one plan entry and pass a `::pct:`-only assertion.
+    let planCacheWrites = 0;
     const OriginalMap = Map;
     let active = false;
     (globalThis as any).Map = class extends OriginalMap<any, any> {
       set(key: any, value: any) {
-        if (active && typeof key === 'string' && key.includes('::pct:')) {
-          setCounts.push(1);
+        if (
+          active &&
+          value != null &&
+          typeof value === 'object' &&
+          'root' in value &&
+          'operation' in value &&
+          'fragments' in value
+        ) {
+          planCacheWrites += 1;
         }
         return super.set(key, value);
       }
@@ -138,11 +147,13 @@ describe('backbone correctness: percentage progressive-override cache', () => {
       const document = parse(`{ hello }`);
       active = true;
       for (let i = 0; i < 40; i++) {
-        await exec(backbone, { document, context: {} });
+        const result = await exec(backbone, { document, context: {} });
+        expect(result.errors).toBeUndefined();
+        expect(result.data).toEqual({ hello: 'hi' });
       }
       active = false;
-      // Random cache keys would record ~40 ::pct: sets; skip-cache should be 0.
-      expect(setCounts.length).toBe(0);
+      // Skip-cache: zero StitchPlan entries stored across 40 requests.
+      expect(planCacheWrites).toBe(0);
     } finally {
       (globalThis as any).Map = OriginalMap;
     }
@@ -214,6 +225,109 @@ describe('backbone correctness: mutation serial semantics', () => {
     expect(order).toEqual(['first']);
     expect(result.data).toBeNull();
     expect(result.errors?.some(e => e.message.includes('boom'))).toBe(true);
+  });
+
+  it('continues later mutation roots when only a nullable descendant fails', async () => {
+    const order: string[] = [];
+    const remote = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Payload {
+          optional: String
+        }
+        type Mutation {
+          first: Payload!
+          second: String!
+        }
+        type Query {
+          _empty: String
+        }
+      `,
+      resolvers: {
+        Mutation: {
+          first: () => {
+            order.push('first');
+            return { optional: null };
+          },
+          second: () => {
+            order.push('second');
+            return 'ok';
+          },
+        },
+        Payload: {
+          optional: () => {
+            throw new Error('optional boom');
+          },
+        },
+      },
+    });
+    const schema = stitchSchemas({
+      subschemas: [{ schema: remote, executor: createDefaultExecutor(remote) }],
+    });
+    const backbone = createBackboneExecutor(schema);
+    const result = await exec(backbone, {
+      document: parse(/* GraphQL */ `
+        mutation {
+          first {
+            optional
+          }
+          second
+        }
+      `),
+    });
+    // Error is confined to nullable Payload.optional; first root stays an object
+    // so second must still run (do not abortRemainingHops).
+    expect(order).toEqual(['first', 'second']);
+    expect(result.data).toEqual({
+      first: { optional: null },
+      second: 'ok',
+    });
+    expect(result.errors?.some(e => e.message.includes('optional boom'))).toBe(true);
+  });
+
+  it('aborts later mutation roots when the executor throws on a non-null root', async () => {
+    const order: string[] = [];
+    const remote = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Mutation {
+          first: String!
+          second: String!
+        }
+        type Query {
+          _empty: String
+        }
+      `,
+      resolvers: {
+        Mutation: {
+          first: () => {
+            order.push('first');
+            return 'never';
+          },
+          second: () => {
+            order.push('second');
+            return 'ok';
+          },
+        },
+      },
+    });
+    const throwingExecutor: ReturnType<typeof createDefaultExecutor> = async () => {
+      order.push('throw');
+      throw new Error('transport down');
+    };
+    const schema = stitchSchemas({
+      subschemas: [{ schema: remote, executor: throwingExecutor }],
+    });
+    const backbone = createBackboneExecutor(schema);
+    const result = await exec(backbone, {
+      document: parse(/* GraphQL */ `
+        mutation {
+          first
+          second
+        }
+      `),
+    });
+    expect(order).toEqual(['throw']);
+    expect(result.data).toBeNull();
+    expect(result.errors?.some(e => e.message.includes('transport down'))).toBe(true);
   });
 
   it('dedupes identical mutation response keys (alias collision)', async () => {

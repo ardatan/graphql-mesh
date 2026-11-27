@@ -1006,6 +1006,23 @@ function executeFetchNode(
   if (node.rootField) {
     const responseKey = node.rootField.alias?.value ?? node.rootField.name.value;
     const rootFieldNode = node.rootField;
+    const maybeAbortMutationAfterRoot = (hadErrors: boolean) => {
+      // Only abort when a non-null mutation root was nullified. Errors confined
+      // to nullable descendants leave a non-null root object and must not skip
+      // later mutation roots (graphql-js / GraphQL spec serial mutation parity).
+      if (!hadErrors || ctx.operation.operation !== 'mutation') {
+        return;
+      }
+      if (ctx.data[responseKey] != null) {
+        return;
+      }
+      const rootType = getDefinedRootType(ctx.schema, ctx.operation.operation);
+      const fieldDef = rootType.getFields()[rootFieldNode.name.value];
+      if (fieldDef && !isNullableType(fieldDef.type)) {
+        ctx.abortRemainingHops = true;
+      }
+    };
+
     const writeRootResult = (value: any, errors: readonly GraphQLError[] = []) => {
       if (errors.length) {
         ctx.errors.push(
@@ -1031,14 +1048,15 @@ function executeFetchNode(
         // so finalizeRootResult can apply nullability bubbling.
         ctx.data[responseKey] = null;
       }
-      // Mutation + non-null root failure: stop later roots (graphql-js parity).
-      if (errors.length && ctx.operation.operation === 'mutation') {
-        const rootType = getDefinedRootType(ctx.schema, ctx.operation.operation);
-        const fieldDef = rootType.getFields()[rootFieldNode.name.value];
-        if (fieldDef && !isNullableType(fieldDef.type)) {
-          ctx.abortRemainingHops = true;
-        }
+      maybeAbortMutationAfterRoot(errors.length > 0);
+    };
+
+    const writeRootThrowFailure = (err: unknown) => {
+      ctx.errors.push(errorFromFetchThrow(err, node.subschema, responseKey, rootFieldNode));
+      if (!(responseKey in ctx.data)) {
+        ctx.data[responseKey] = null;
       }
+      maybeAbortMutationAfterRoot(true);
     };
 
     // Rename / encapsulate / defer transforms need Transformer - prebuilt
@@ -1080,12 +1098,7 @@ function executeFetchNode(
             skipTypeMerging: true,
           }),
         value => writeRootResult(value),
-        err => {
-          ctx.errors.push(errorFromFetchThrow(err, node.subschema, responseKey, rootFieldNode));
-          if (!(responseKey in ctx.data)) {
-            ctx.data[responseKey] = null;
-          }
-        },
+        writeRootThrowFailure,
       );
     }
 
@@ -1132,12 +1145,7 @@ function executeFetchNode(
           writeRootResult(undefined, located);
         }
       },
-      err => {
-        ctx.errors.push(errorFromFetchThrow(err, node.subschema, responseKey, rootFieldNode));
-        if (!(responseKey in ctx.data)) {
-          ctx.data[responseKey] = null;
-        }
-      },
+      writeRootThrowFailure,
     );
   }
 
@@ -2125,7 +2133,18 @@ function executeBatchFetchNode(
         canRawBatch = false;
         break;
       }
-      mergeEntry ??= getBatchedMergeEntry(node.subschema, a.entityTypeName);
+      const nextEntry = getBatchedMergeEntry(node.subschema, a.entityTypeName);
+      if (!nextEntry) {
+        canRawBatch = false;
+        break;
+      }
+      // Raw BatchFetch applies one valuesFromResults to the combined payload.
+      // Mixed callbacks across aliases would reorder/reshape the wrong slice.
+      if (mergeEntry != null && mergeEntry.valuesFromResults !== nextEntry.valuesFromResults) {
+        canRawBatch = false;
+        break;
+      }
+      mergeEntry = nextEntry;
       const keyOffset = allKeys.length;
       for (const key of projected.keys) {
         allKeys.push(key);
