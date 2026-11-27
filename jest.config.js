@@ -40,6 +40,9 @@ if (process.env.LEAK_TEST) {
   // Imports grafast / @dataplan/pg (process-lifetime handles).
   testMatch.push('!**/packages/transports/sql/test/pg-registry.test.ts');
   testMatch.push('!**/packages/transports/sql/test/pg-plans.test.ts');
+  // Large compose suites retain Apollo/federation process-lifetime handles.
+  testMatch.push('!**/packages/fusion/composition/tests/mesh-join-supergraph.test.ts');
+  testMatch.push('!**/packages/fusion/composition/tests/connectors.spec.ts');
 }
 
 testMatch.push(process.env.INTEGRATION_TEST ? '!**/packages/**' : '!**/examples/**');

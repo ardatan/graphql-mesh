@@ -1,22 +1,22 @@
 // adapted from https://github.com/gatsbyjs/gatsby/blob/master/packages/gatsby-source-graphql/src/batching/merge-queries.js
 
 import {
-  DefinitionNode,
-  DocumentNode,
-  FieldNode,
-  FragmentDefinitionNode,
-  FragmentSpreadNode,
-  InlineFragmentNode,
   Kind,
-  OperationDefinitionNode,
-  OperationTypeNode,
-  SelectionNode,
-  VariableDefinitionNode,
-  VariableNode,
   visit,
+  type DefinitionNode,
+  type DocumentNode,
+  type FieldNode,
+  type FragmentDefinitionNode,
+  type FragmentSpreadNode,
+  type InlineFragmentNode,
+  type OperationDefinitionNode,
+  type OperationTypeNode,
+  type SelectionNode,
+  type VariableDefinitionNode,
+  type VariableNode,
 } from 'graphql';
 import { abortSignalAll } from '@graphql-hive/signal';
-import { ExecutionRequest } from '@graphql-tools/utils';
+import { type ExecutionRequest } from '@graphql-tools/utils';
 import { createPrefix } from './prefix.js';
 
 /**

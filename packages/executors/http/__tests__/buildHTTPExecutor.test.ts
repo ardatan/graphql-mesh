@@ -180,4 +180,61 @@ describe('buildHTTPExecutor', () => {
     const result: any = await executor({ document: queryDoc });
     expect(result.errors?.[0]?.message).toBeTruthy();
   });
+
+  it('gives every consumer of a shared inflight request its own data', async () => {
+    let finish!: (response: Response) => void;
+    const response = new Promise<Response>(resolve => {
+      finish = resolve;
+    });
+    const fetch = jest.fn(() => response);
+    await using executor = buildHTTPExecutor({
+      endpoint: 'http://shared-copy-test/graphql',
+      fetch,
+    });
+    const document = parse('{ node { value list } }');
+    const pending = [executor({ document }), executor({ document }), executor({ document })];
+    finish(
+      new Response(JSON.stringify({ data: { node: { value: 'original', list: [1] } } }), {
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    const results = await Promise.all(pending);
+    for (const result of results) {
+      expect(result).toEqual({
+        data: { node: { value: 'original', list: [1] } },
+      });
+    }
+    const datas = results.map((result: any) => result.data);
+    expect(new Set(datas).size).toBe(3);
+    datas[2].node.value = 'changed';
+    datas[2].node.list.push(2);
+    for (const data of datas.slice(0, 2)) {
+      expect(data).toEqual({ node: { value: 'original', list: [1] } });
+    }
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps an own __proto__ key of the response as data in the copies', async () => {
+    let finish!: (response: Response) => void;
+    const response = new Promise<Response>(resolve => {
+      finish = resolve;
+    });
+    await using executor = buildHTTPExecutor({
+      endpoint: 'http://shared-proto-test/graphql',
+      fetch: () => response,
+    });
+    const document = parse('{ node { value } }');
+    const pending = [executor({ document }), executor({ document })];
+    finish(
+      new Response('{"data":{"node":{"__proto__":{"polluted":true},"value":"original"}}}', {
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    for (const result of await Promise.all(pending)) {
+      const node = (result as any).data.node;
+      expect(Object.getPrototypeOf(node)).toBe(Object.prototype);
+      expect(Object.hasOwn(node, '__proto__')).toBe(true);
+      expect(node.polluted).toBeUndefined();
+    }
+  });
 });

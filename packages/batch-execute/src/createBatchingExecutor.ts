@@ -1,11 +1,11 @@
 import DataLoader from 'dataloader';
 import {
-  ExecutionRequest,
-  ExecutionResult,
-  Executor,
   getOperationASTFromRequest,
   isAsyncIterable,
-  MaybeAsyncIterable,
+  type ExecutionRequest,
+  type ExecutionResult,
+  type Executor,
+  type MaybeAsyncIterable,
 } from '@graphql-tools/utils';
 import { fakePromise } from '@whatwg-node/promise-helpers';
 import { mergeRequests } from './mergeRequests.js';
