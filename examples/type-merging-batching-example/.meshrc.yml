@@ -19,7 +19,7 @@ sources:
       graphql:
         source: ./book-service-schema.ts
     transforms:
-      # Rename type names and field names to let stitching merger merges them
+      # Rename type names and field names so federation composition can merge them
       - rename:
           renames:
             - from:
@@ -34,15 +34,13 @@ sources:
                 field: author
       - typeMerging:
           queryFields:
-            # This doesn't use batching
-            # It does regular stitching
+            # This doesn't use batching (single-key lookup)
             - queryFieldName: book
               keyField: id
             - queryFieldName: author
               keyField: id
 
-# Create a stitching resolver with batching
-# to solve N+1 problem
+# Batching resolveTo to solve N+1
 additionalTypeDefs: |
   extend type Book {
     author: Author @resolveTo(
