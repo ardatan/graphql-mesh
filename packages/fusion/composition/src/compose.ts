@@ -1025,14 +1025,15 @@ function addAnnotationsForSemanticConventions({
               ...(opts?.resolvable === false ? { resolvable: false } : {}),
             });
           } else if (opts?.resolvable !== false && existing.resolvable === false) {
-            // Singular entity resolver exists - upgrade a previously batch-stamped non-resolvable key.
+            // Non-list entity entry field exists - upgrade a previously batch-stamped non-resolvable key.
             delete existing.resolvable;
           }
           const typeExtensions: Record<string, unknown> = (type.extensions ||= {});
           typeExtensions.directives = typeDirectives;
         };
-        // Non-resolvable @key is only for Connectors/protobuf batch RPCs that lack a singular
-        // entity resolver. Non-connect batch fields that stay unstamped keep the default key.
+        // Non-resolvable @key is only for Connectors/protobuf batch RPCs that lack an
+        // entity entry field that returns one object (not a list). Non-connect batch
+        // fields that stay unstamped keep the default key.
         const isConnectOrProtobufField = !!(
           directiveExtensions.connect?.length ||
           directiveExtensions.protobuf__rpc?.length ||
@@ -1151,11 +1152,12 @@ function addAnnotationsForSemanticConventions({
             typeExtensions.directives = typeDirectives;
             return true;
           }
-          // Non-Connectors / non-protobuf: Federation Spec `@lookup` (+ `@is`
-          // when the arg name differs from the entity field). Do not stamp Mesh
+          // Non-Connectors / non-protobuf: Federation Spec draft `@lookup` (+
+          // `@is` when the arg name differs from the entity field) on entity
+          // entry fields that return one object (not a list). Do not stamp Mesh
           // `@merge` here — runtime still accepts hand-authored / legacy `@merge`.
-          // List-returning / batch-arg fields cannot use `@lookup` (spec: lookup
-          // must not return a list), so leave them unstamped for hop planning.
+          // List returns / batch list key args cannot be `@lookup` (draft: lookup
+          // fields must not return a list), so leave them unstamped.
           const nullableReturn = getNullableType(queryFieldConfig.type);
           const returnsList = isListType(nullableReturn);
           if (batchListArg || returnsList) {
@@ -1187,7 +1189,8 @@ function addAnnotationsForSemanticConventions({
             if (isNonNullType(arg.type)) {
               const batchListArg = isBatchListArgType(arg.type);
               const hasSingularEntity = markConnectEntityOrMerge();
-              // Only advertise a resolvable @key when a singular entity resolver exists.
+              // Only advertise a resolvable @key when an entity entry field that
+              // returns one object (not a list) exists for recall.
               // Batch keys and protobuf/Connect fields that could not become entity stay
               // non-resolvable so `_entities` is not claimed without a usable resolver.
               ensureKey(
@@ -1207,8 +1210,8 @@ function addAnnotationsForSemanticConventions({
             const batchListArg = isBatchListArgType(arg.type);
             const hasSingularEntity = markConnectEntityOrMerge();
             // Batch Connectors/protobuf Query fields keep field-level RPC only; a resolvable
-            // @key would claim a missing singular entity resolver for `_entities`. Plain
-            // GraphQL batch fields stay unstamped (no `@lookup` on lists) with default keys.
+            // @key would claim `_entities` without a non-list lookup field. Plain GraphQL
+            // list/batch fields stay unstamped (`@lookup` must not return a list).
             ensureKey(
               isConnectOrProtobufField && (batchListArg || !hasSingularEntity)
                 ? { resolvable: false }

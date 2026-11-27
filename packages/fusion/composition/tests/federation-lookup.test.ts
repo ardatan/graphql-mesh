@@ -2,7 +2,7 @@ import { buildSchema, print } from 'graphql';
 import { composeSubgraphs, validateFederationLookupDirectives } from '../src/index';
 
 describe('Federation Spec @lookup / @is / @internal', () => {
-  it('emits @lookup for singular ById semantic conventions (not @merge)', () => {
+  it('emits @lookup for ById entity entry fields that return one object (not @merge)', () => {
     const foo = buildSchema(/* GraphQL */ `
       type Query {
         fooById(id: ID!): Foo!

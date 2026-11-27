@@ -44,7 +44,8 @@ export const FieldSelectionMapScalar = new GraphQLScalarType({
 });
 
 /**
- * Marks a Query-reachable field as an entity lookup resolver (stable-key recall).
+ * Marks a Query-reachable entity entry field that returns one object (not a
+ * list) for stable-key recall (Federation Spec draft `@lookup`).
  * @see https://graphql.github.io/graphql-federation-spec/draft
  */
 export const LookupDirective = new GraphQLDirective({

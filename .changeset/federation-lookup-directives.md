@@ -5,11 +5,11 @@
 '@graphql-mesh/compose-cli': patch
 ---
 
-Prefer Federation Spec draft `@lookup` / `@is` / `@internal` for entity entry points
+Prefer Federation Spec draft `@lookup` / `@is` / `@internal` for entity recall
 
-Compose semantic conventions and the Federation transform now stamp `@lookup` (and `@is(field:)` when the argument name differs from the entity field) instead of Mesh `@merge` for singular entity resolvers. Compose no longer emits `@merge`; runtime still accepts hand-authored / legacy `@merge` as a fallback and synthesizes stitching hop config from `@lookup` / `@is`.
+Compose semantic conventions and the Federation transform now stamp `@lookup` (and `@is(field:)` when the argument name differs from the entity field) instead of Mesh `@merge` on **entity entry fields that return one object (not a list)** — Federation Spec draft lookup fields used to recall an entity by a stable key. Compose no longer emits `@merge`; runtime still accepts hand-authored / legacy `@merge` as a fallback and synthesizes stitching hop config from `@lookup` / `@is`.
 
-List-returning / batch-arg fields are not auto-stamped (`@lookup` must not return a list per the Federation Spec draft). Use Connectors/`entity: true`, an explicit singular lookup field, or hand-authored `@merge` when batch hops are required.
+Fields that return a list (or take a batch list key arg) are not auto-stamped: the draft requires that `@lookup` must not return a list. Use Connectors/`entity: true`, an explicit non-list `@lookup` field, or hand-authored `@merge` when batch recall is required.
 
 Imports use the official Federation Spec `@link`:
 

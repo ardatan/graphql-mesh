@@ -440,9 +440,10 @@ export function createFederationTransform(config: FederationTransformConfig): Su
               }));
             }
           } else if (!isListType(getNullableType(fieldConfig.type))) {
-            // Federation Spec `@lookup` (+ `@is` when arg name ≠ key field).
-            // List-returning fields cannot use `@lookup` (spec); leave unstamped —
-            // hand-authored `@merge` remains a runtime fallback only.
+            // Federation Spec draft `@lookup` (+ `@is` when arg name ≠ key field)
+            // on entity entry fields that return one object (not a list). List
+            // returns cannot use `@lookup` (draft); leave unstamped — hand-authored
+            // `@merge` remains a runtime fallback only.
             fieldDirectives.lookup ||= [];
             if (!fieldDirectives.lookup.length) {
               fieldDirectives.lookup.push({});

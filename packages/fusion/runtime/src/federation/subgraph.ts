@@ -171,7 +171,7 @@ export function handleFederationSubschema({
   interface FieldDirectives {
     additionalField: {};
     merge: {};
-    /** Federation Spec draft entity lookup (preferred over `@merge`). */
+    /** Federation Spec draft `@lookup` entity entry (preferred over `@merge`). */
     lookup: Array<Record<string, unknown>>;
     resolveTo: YamlConfig.AdditionalStitchingResolverObject;
     source: SourceDirective;
@@ -670,8 +670,9 @@ function renameSelectionSetFieldNames(
 }
 
 /**
- * Build stitching `@merge` hop args from Federation Spec `@lookup` + `@is`.
- * Keeps the existing stitching transformer path while preferring `@lookup` on SDL.
+ * Build stitching `@merge` hop args from Federation Spec draft `@lookup` + `@is`
+ * on entity entry fields that return one object (not a list). Keeps the existing
+ * stitching transformer path while preferring `@lookup` on SDL.
  */
 function synthesizeMergeFromLookup(
   fieldConfig: GraphQLFieldConfig<any, any>,
@@ -694,8 +695,7 @@ function synthesizeMergeFromLookup(
     // `@join__directive(name: "is")` left on ARGUMENT_DEFINITION by extract.
     const isFromJoin = (
       (argDirs?.join__directive as
-        | Array<{ name?: string; args?: { field?: string } }>
-        | undefined) || []
+        Array<{ name?: string; args?: { field?: string } }> | undefined) || []
     )
       .filter(d => d?.name === 'is')
       .map(d => ({ field: d.args?.field }));
