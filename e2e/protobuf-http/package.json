@@ -9,7 +9,7 @@
     "@bufbuild/protobuf": "2.17.0",
     "@connectrpc/connect": "2.3.0",
     "@connectrpc/connect-node": "2.3.0",
-    "@graphql-hive/gateway": "^2.15.12",
+    "@graphql-hive/gateway": "^3.0.0",
     "@graphql-mesh/compose-cli": "workspace:*",
     "@graphql-mesh/transport-protobuf": "workspace:*",
     "@protobuf-ts/runtime": "2.11.1",

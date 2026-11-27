@@ -2,7 +2,7 @@
   "name": "@e2e/mongoose-users",
   "private": true,
   "dependencies": {
-    "@graphql-hive/gateway": "^2.15.12",
+    "@graphql-hive/gateway": "^3.0.0",
     "@graphql-mesh/transport-mongo": "0.1.0",
     "@omnigraph/mongo": "0.1.0",
     "graphql": "^16.14.0",

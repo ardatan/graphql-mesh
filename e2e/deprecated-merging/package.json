@@ -2,8 +2,8 @@
   "name": "@e2e/deprecated-merging",
   "private": true,
   "devDependencies": {
-    "@graphql-hive/gateway": "^2.15.12",
+    "@graphql-hive/gateway": "^3.0.0",
     "graphql": "^16.14.0",
-    "graphql-yoga": "^6.1.0"
+    "graphql-yoga": "^6.1.1"
   }
 }

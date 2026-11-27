@@ -36,8 +36,8 @@
   },
   "dependencies": {
     "@apollo/subgraph": "^2.16.0",
-    "@graphql-hive/logger": "^1.2.0",
-    "@graphql-hive/pubsub": "^2.2.1",
+    "@graphql-hive/logger": "^2.0.0",
+    "@graphql-hive/pubsub": "^3.0.0",
     "@graphql-mesh/cross-helpers": "^0.4.18",
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/transport-common": "^2.0.0",

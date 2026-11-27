@@ -35,7 +35,7 @@
     "graphql": "^16.0.0 || ^17.0.0"
   },
   "dependencies": {
-    "@graphql-hive/logger": "^1.2.0",
+    "@graphql-hive/logger": "^2.0.0",
     "@graphql-mesh/cross-helpers": "^0.4.18",
     "@graphql-mesh/fusion-composition": "^0.11.4",
     "@graphql-mesh/string-interpolation": "^0.5.18",
@@ -52,7 +52,7 @@
     "@whatwg-node/fetch": "^0.12.1",
     "fets": "0.8.14",
     "graphql": "17.1.0",
-    "graphql-yoga": "^6.1.0",
+    "graphql-yoga": "^6.1.1",
     "json-bigint-patch": "0.0.9"
   },
   "publishConfig": {

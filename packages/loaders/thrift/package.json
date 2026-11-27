@@ -37,7 +37,7 @@
   "dependencies": {
     "@creditkarma/thrift-parser": "^2.0.0",
     "@creditkarma/thrift-server-core": "^1.0.4",
-    "@graphql-hive/logger": "^1.2.0",
+    "@graphql-hive/logger": "^2.0.0",
     "@graphql-mesh/cross-helpers": "^0.4.18",
     "@graphql-mesh/transport-connect": "^0.12.4",
     "@graphql-mesh/transport-thrift": "^0.12.3",
