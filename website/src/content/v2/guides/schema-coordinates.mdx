@@ -43,12 +43,28 @@ Nested field paths (`Query.user.name`), wildcards, union members (`Meal.Breakfas
 
 ## How Mesh uses them today
 
-| Surface                              | Spec forms accepted today  | Notes                                                                    |
-| ------------------------------------ | -------------------------- | ------------------------------------------------------------------------ |
-| Federation transform config keys     | `Type`, `Type.field`       | Args still use nested config objects, not `Type.field(arg:)` strings yet |
-| Response-cache TTL keys              | `Type`, `Type.field`       | Exact match only -- not `Query.*`                                        |
-| Mock / resolvers composition (exact) | `Type.field`               | Globs like `Mutation.*` are **schema selectors**, not Spec               |
-| Docs / examples in `/v2`             | Forms from the table above | e.g. `Query.track(id:)` for an argument                                  |
+| Surface                              | Spec forms accepted today  | Notes                                                           |
+| ------------------------------------ | -------------------------- | --------------------------------------------------------------- |
+| Federation transform config keys     | `Type`, `Type.field`       | Args use nested config objects (not `Type.field(arg:)` strings) |
+| Response-cache TTL keys              | `Type`, `Type.field`       | Exact match only -- not `Query.*`                               |
+| Mock / resolvers composition (exact) | `Type.field`               | Globs like `Mutation.*` are **schema selectors**, not Spec      |
+| Docs / examples in `/v2`             | Forms from the table above | e.g. `Query.track(id:)` for an argument                         |
+
+Federation transform args stay nested on the type / field entry (not Spec argument coordinates):
+
+```ts
+createFederationTransform({
+  Product: {
+    key: {
+      fields: 'id',
+      resolveReference: { fieldName: 'productById' }
+    }
+  },
+  'Query.productById': {
+    // field-level Fed options when needed
+  }
+})
+```
 
 Legacy **schema selectors** (Minimatch / globs on filter-schema and some plugins) stay supported for
 wildcards and negation; they are not Schema Coordinates.

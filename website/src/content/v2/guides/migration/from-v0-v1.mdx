@@ -26,6 +26,47 @@ start at [Migration overview](/v2/guides/migration).
 4. Prefer [Generate](/v2/paths/generate) / [Generate-then-edit](/v2/paths/generate-then-edit) /
    [Hand-write](/v2/paths/hand-write) over a single YAML black box.
 
+### Worked cutover: OpenAPI source
+
+Before (v0 sketch):
+
+```yaml
+# .meshrc.yaml
+sources:
+  - name: reviews
+    handler:
+      openapi:
+        source: http://localhost:4001/openapi.json
+```
+
+After (Compose + Hive Gateway):
+
+```ts filename="mesh.config.ts"
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway'
+import { loadOpenAPISubgraph } from '@omnigraph/openapi'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadOpenAPISubgraph('reviews', {
+        source: 'http://localhost:4001/openapi.json',
+        endpoint: 'http://localhost:4001'
+      })
+    }
+  ]
+})
+
+export const gatewayConfig = defineGatewayConfig({
+  // Connect often ships built-in; add other transports as needed
+})
+```
+
+```bash
+npx mesh-compose -o supergraph.graphql
+hive-gateway supergraph
+```
+
 ## From Mesh v1 docs
 
 1. Keep Compose + Hive Gateway -- v2 still uses them.

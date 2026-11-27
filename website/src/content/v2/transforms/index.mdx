@@ -32,10 +32,22 @@ Skip Transform Subgraph when Generate-then-edit or Hand-write already owns the p
 want. Prefer **Automatic** for small, repeatable rewrites that should stay in config. Prefer **By
 hand** when the edit is the source of truth -- worked SDL diffs live on that page.
 
-Apply transforms on the **subgraph that owns the names** (`subgraphs[].transforms`). That keeps
-binder rewrites (`$args` / `$this` / protocol maps) local to the SDL Hive Gateway and Apollo Router
-will execute. Catalog of helpers:
+Apply transforms on the **subgraph that owns the names** (`subgraphs[].transforms`). Supergraph-wide
+root transforms are **not supported** -- reshape where the field / type lives so binder rewrites
+(`$args` / `$this` / protocol maps) stay local to the SDL Hive Gateway and Apollo Router will
+execute. Catalog of helpers:
 [Automatic -- Transform catalog](/v2/transforms/automatic#transform-catalog).
+
+Quick Automatic sketch:
+
+```ts
+transforms: [
+  createNamingConventionTransform({ fieldNames: 'camelCase' }),
+  createFilterTransform({
+    rootFieldFilter: (_typeName, fieldName) => !fieldName.startsWith('internal')
+  })
+]
+```
 
 <Cards>
   <Cards.Card arrow title="Automatic" href="/v2/transforms/automatic" />

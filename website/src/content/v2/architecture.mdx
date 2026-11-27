@@ -45,6 +45,42 @@ treat both the same.
 | Hive Gateway subgraph proxy | Non-Connect Mesh subgraphs served by Hive Gateway; a foreign router talks GraphQL to that subgraph -- [Serve Subgraph](/v2/serve-subgraph).          |
 | Registry                    | Publish Mesh subgraphs (generated or hand-written); gateway pulls the supergraph.                                                                    |
 
+## Full-stack sketch
+
+```ts filename="mesh.config.ts"
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway'
+import { loadOpenAPISubgraph } from '@omnigraph/openapi'
+import { loadSqlSubgraph } from '@omnigraph/sql'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadSqlSubgraph('catalog', { endpoint: 'file:chinook.db' })
+    },
+    {
+      sourceHandler: loadOpenAPISubgraph('reviews', {
+        source: 'http://localhost:4001/openapi.json',
+        endpoint: 'http://localhost:4001'
+      })
+    }
+    // Hand-written gRPC / join SDL uses schema: './….graphql'
+  ]
+})
+
+export const gatewayConfig = defineGatewayConfig({
+  transports: {
+    sql: import('@graphql-mesh/transport-sql')
+    // protobuf: import('@graphql-mesh/transport-protobuf'), …
+  }
+})
+```
+
+```bash
+npx mesh-compose -o supergraph.graphql
+hive-gateway supergraph
+```
+
 See also: [Introduction: Enhance an existing Federation](/v2#enhance-an-existing-federation) |
 [Concepts](/v2/concepts) | [Composition](/v2/compose) | [Serve Subgraph](/v2/serve-subgraph) |
 [Serve Supergraph](/v2/serve/hive-gateway).

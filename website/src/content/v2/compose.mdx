@@ -196,10 +196,10 @@ recommendations, then compose all). Serve the composed graph: [Serve Supergraph]
 one subgraph as a Federation endpoint: [Serve Subgraph](/v2/serve-subgraph).
 
 <Callout type="info">
-  First-class hand-written SDL Compose + registry helpers continue to land in Mesh releases; the
-  `--subgraph` emit + registry CLI pattern above is the stable consumer UX. To **execute** Mesh
-  subgraph SDL in your own GraphQL server (Yoga, ...), use `buildSubgraphSchema` from
-  `@graphql-mesh/subgraph` -- same input for Generate, Generate-then-edit, and Hand-write
+  Stable consumer UX: `mesh-compose` / `mesh-compose --subgraph` emit, then publish or serve. Hand
+  SDL uses `schema:` the same as loader emit. To **execute** Mesh subgraph SDL in your own GraphQL
+  server (Yoga, ...), use `buildSubgraphSchema` from `@graphql-mesh/subgraph` -- same input for
+  Generate, Generate-then-edit, and Hand-write
   ([buildSubgraphSchema](/v2/guides/build-subgraph-schema) / [Serve Subgraph](/v2/serve-subgraph)).
 </Callout>
 

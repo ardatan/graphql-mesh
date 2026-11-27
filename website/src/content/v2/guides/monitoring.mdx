@@ -43,6 +43,37 @@ Initialize OpenTelemetry **before** other imports (Hive docs recommend a `teleme
 first from `gateway.config.ts`), then enable the gateway OTEL plugin. Mesh transports participate as
 upstream spans when the gateway instruments outbound calls -- no separate Mesh monitoring package.
 
+```ts filename="telemetry.ts"
+import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api'
+import { NodeSDK } from '@opentelemetry/sdk-node'
+import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node'
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'
+
+diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.INFO)
+
+const sdk = new NodeSDK({
+  traceExporter: new OTLPTraceExporter(),
+  instrumentations: [getNodeAutoInstrumentations()]
+})
+
+sdk.start()
+```
+
+```ts filename="gateway.config.ts"
+import './telemetry'
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway'
+
+export const gatewayConfig = defineGatewayConfig({
+  openTelemetry: {
+    // See Hive Gateway monitoring docs for exporters / sampler options
+  }
+})
+```
+
+Exact Hive Gateway OTEL option keys evolve with the gateway package -- use the
+[Hive Gateway monitoring docs](https://the-guild.dev/graphql/hive/docs/gateway/monitoring-tracing)
+for the current shape after you import `telemetry.ts` first.
+
 ## Gateway product docs
 
 Logging detail, custom spans, Hive Console export, and Apollo Router's own telemetry live on the

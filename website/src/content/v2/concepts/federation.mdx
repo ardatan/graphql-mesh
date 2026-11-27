@@ -52,7 +52,7 @@ Federation is **not** Schema Stitching, **not** Schema Stitching Directives, **n
 | Typical config            | Federation directives on subgraphs                                      | Programmatic `SubschemaConfig.merge`                                               |
 | Optional directive config | Core of the Federation contract                                         | **Schema Stitching Directives** (Fed-directives alternative; not Schema Stitching) |
 | Runtime peers             | Hive Gateway / Apollo Router (Schema Stitching can also execute merges) | Stitched `GraphQLSchema` + delegation                                              |
-| Mesh v2 story             | Default path                                                            | Orient / legacy; still a type-merging engine                                       |
+| Mesh v2 story             | Default path                                                            | Migrating off `stitchSchemas` only; still a type-merging engine                    |
 
 <a id="entity-resolution" />
 
@@ -166,9 +166,11 @@ transforms: [
 ]
 ```
 
-Full shape: [v1 Federation transform](/v1/transforms/federation) (same Compose API). Prefer
-loader/composition `entity: true` when Connect / protocol SDL already owns the lookup; use the
-Federation transform when you need to **annotate** an existing GraphQL schema into a subgraph.
+API shape and more options:
+[Automatic -- Federation stamp](/v2/transforms/automatic#federation-stamp). Prefer
+loader/composition `entity: true` when Connect / protocol SDL already owns the lookup; use
+`createFederationTransform` when you need to **annotate** an existing GraphQL schema into a
+subgraph.
 
 ## Short example
 

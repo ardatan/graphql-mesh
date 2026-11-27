@@ -38,7 +38,16 @@ mesh-compose -o supergraph.graphql
 hive-gateway supergraph
 
 # Apollo Router (Connectors native)
-./router --supergraph supergraph.graphql
+./router --config ./router.yaml --supergraph supergraph.graphql
+```
+
+Minimal Router config (Connect-compatible Music Store Reviews / FHIR / Graph slice):
+
+```yaml filename="router.yaml"
+supergraph:
+  listen: 0.0.0.0:4000
+# Enable Connectors per your Router / GraphOS version -- see Apollo Router Connectors docs.
+# Keep non-Connect Mesh subgraphs (SQL, gRPC, …) on Hive Gateway or Serve Subgraph peers.
 ```
 
 ### What runs on Apollo Router

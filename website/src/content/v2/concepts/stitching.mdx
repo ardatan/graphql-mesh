@@ -103,7 +103,7 @@ Docs:
 | Typical config            | Programmatic `SubschemaConfig.merge`                                               | Federation directives (`@key`, ...) on subgraphs                  |
 | Optional directive config | **Schema Stitching Directives** (Fed-directives alternative; not Schema Stitching) | Core of the Federation subgraph contract                          |
 | Artifact                  | One executable stitched `GraphQLSchema`                                            | Composed **supergraph** (Hive Gateway / Apollo Router, ...)       |
-| Mesh v2 default           | Orient / legacy mergers; still a type-merging engine                               | Default path: Federation-ready SDL + Hive Gateway / Apollo Router |
+| Mesh v2 default           | Use when migrating off `stitchSchemas`; still a type-merging engine                | Default path: Federation-ready SDL + Hive Gateway / Apollo Router |
 
 <Callout type="info">
   Mesh v2 docs default to [Federation](/v2/concepts/federation) + [Composition](/v2/compose) + [Hive

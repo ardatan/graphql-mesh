@@ -37,13 +37,22 @@ SDL), and **not** a loader. It **consumes** composed or registry-sourced supergr
 
 ## Short example
 
-Compose once to a GraphQL supergraph file, then:
+Compose once to a GraphQL supergraph file, then serve:
 
-- Run the **full** multi-protocol graph on Hive Gateway (<ProtocolRef name="sql" /> + Connect +
-  <ProtocolRef name="protobuf" />, ...).
-- Run a **Connect-only** slice on Apollo Router when demonstrating Connect compatibility.
+```bash
+mesh-compose -o supergraph.graphql
 
-See [Music Store Example](/v2/examples/music-store) gateway matrix and
+# Full multi-protocol graph (SQL + Connect + gRPC, ...) -- preferred
+hive-gateway supergraph
+
+# Connect-compatible slice only
+./router --supergraph supergraph.graphql
+```
+
+Run the **full** multi-protocol graph on Hive Gateway (<ProtocolRef name="sql" /> + Connect +
+
+<ProtocolRef name="protobuf" />, ...). Use Apollo Router when the composed SDL stays
+Connect-compatible. See [Music Store Example](/v2/examples/music-store) and
 [Architecture](/v2/architecture).
 
 <Cards>
