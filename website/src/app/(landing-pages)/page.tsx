@@ -6,7 +6,7 @@ import MeshFAQ from './faq.mdx';
 export const metadata = {
   title: 'GraphQL Mesh',
   description:
-    'Federation Framework for any API. Generate, Transform, Serve, Compose, and run on Hive Gateway or Apollo Router.',
+    'Federation Framework for any API. Build subgraphs, compose, and serve on any Federation-compatible gateway -- Hive Gateway, Apollo Router, and more.',
   alternates: {
     canonical: '.',
   },

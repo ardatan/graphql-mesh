@@ -2,19 +2,9 @@
 
 - What is GraphQL Mesh?
 
-  GraphQL Mesh is a **Federation Framework for any API**. It turns GraphQL and non-GraphQL sources
-  into Federation-ready subgraphs (and optionally a composed supergraph). Mesh is platform /
-  registry / gateway independent -- it works in any Federation environment and with any
-  Federation-compatible gateway. Start with the [Mesh v2 introduction](/v2) (draft), or keep
-  [Mesh v1](/v1) for production docs until v2 ships.
-
-- How do I go from a source to a running graph?
-
-  **Generate** subgraph SDL, optionally **Transform**, **Serve** a subgraph when you need a
-  Federation URL, **Compose** the supergraph, then run it on a **Gateway**. Details:
-  [Build your Subgraph](/v2/paths/generate), [Transform Subgraph](/v2/transforms),
-  [Serve Subgraph](/v2/serve-subgraph), [Composition](/v2/compose), [Serve Supergraph](/v2/serve).
-  Short answers: [FAQ](/v2/faq).
+  A **Federation Framework for any API**. It turns GraphQL and non-GraphQL sources into
+  Federation-ready subgraphs. Platform / registry / gateway independent.
+  [Mesh v2 introduction](/v2).
 
 - Already have Federation: why Mesh?
 
@@ -24,35 +14,15 @@
 - New to Federation: why Mesh?
 
   Generate Federation-ready subgraphs from OpenAPI / SQL / etc., then compose and serve on any
-  Federation gateway -- lower barrier than hand-writing every subgraph.
-  [FAQ](/v2/faq#new-to-federation-why-mesh).
+  Federation gateway. [FAQ](/v2/faq#new-to-federation-why-mesh).
+
+- How do I go from a source to a running graph?
+
+  Generate → optional Transform → Serve Subgraph when needed → Compose → Gateway.
+  [Build your Subgraph](/v2/paths/generate), [Serve Supergraph](/v2/serve), [FAQ](/v2/faq).
 
 - Can Mesh enhance an existing Federation setup?
 
-  Yes. Keep Apollo GraphOS / Router, Hive Gateway / Registry, or any Federation-compatible stack.
-  Add Mesh subgraphs for REST, SQL, gRPC, and more -- publish SDL or Serve Subgraph; recompose on
-  the composer you already use. You do not replace the whole platform. Details:
-  [FAQ](/v2/faq#can-mesh-drop-into-an-existing-federation-setup) /
-  [Introduction](/v2#enhance-an-existing-federation).
-
-- Hive Gateway vs Apollo Router?
-
-  Hive Gateway is preferred for the full Mesh transport surface. Apollo Router is a peer for
-  Connect-compatible supergraphs (including dual-run). Protocol subgraphs (SQL, protobuf, ...) with
-  Router: Serve Subgraph on Hive or `buildSubgraphSchema`, then point Router at that URL. See
-  [FAQ](/v2/faq).
-
-- What is the difference between Compose and Gateway?
-
-  [Composition](/v2/compose) builds the supergraph from subgraph SDL. The Gateway
-  ([Hive Gateway](/v2/serve/hive-gateway) or [Apollo Router](/v2/serve/apollo-router)) serves it.
-
-- Can I expose REST or OpenAPI as GraphQL?
-
-  Yes. Generate or Hand-write subgraph SDL with HTTP/REST Connectors, then Compose and Serve. See
-  [HTTP / REST](/v2/protocols/http-rest).
-
-- Should I use Mesh v0, v1, or v2 docs?
-
-  Prefer [Mesh v2](/v2) for the new IA (draft). Use [Mesh v1](/v1) for production docs today.
-  [Mesh v0](/docs) is legacy. Cutover: [Migration](/v2/guides/migration).
+  Yes. Keep GraphOS / Router, Hive Gateway / Registry, or any Federation stack; add Mesh subgraphs.
+  [Introduction](/v2#enhance-an-existing-federation) /
+  [FAQ](/v2/faq#can-mesh-drop-into-an-existing-federation-setup).
