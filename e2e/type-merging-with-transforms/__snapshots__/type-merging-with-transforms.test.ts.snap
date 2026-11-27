@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should compose the appropriate schema 1`] = `
-schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@merge" "@source"]) {query:Query}
+schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://graphql.github.io/graphql-federation-spec/draft" import:["@lookup"]) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@source"]) {query:Query}
 directive @join__enumValue(graph:join__Graph!) repeatable on ENUM_VALUE
 directive @join__graph(name:String! url:String!) on ENUM_VALUE
 directive @join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet
@@ -11,17 +11,16 @@ interface:String!) repeatable on OBJECT | INTERFACE
 directive @join__type(graph:join__Graph! key:join__FieldSet extension:Boolean! = false resolvable:Boolean! = true isInterfaceObject:Boolean! = false) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 directive @join__unionMember(graph:join__Graph! member:String!) repeatable on UNION
 directive @link(url:String as:String for:link__Purpose import:[link__Import]) repeatable on SCHEMA
-directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION | ARGUMENT_DEFINITION
 directive @additionalField on FIELD_DEFINITION
 scalar join__FieldSet
 scalar link__Import
 enum link__Purpose {"""\`SECURITY\` features provide metadata necessary to securely resolve fields.""" SECURITY """\`EXECUTION\` features provide metadata necessary for operation execution.""" EXECUTION}
 enum join__Graph {AUTHORS @join__graph(name:"authors" url:"http://localhost:<authors_port>/graphql") BOOKS @join__graph(name:"books" url:"http://localhost:<books_port>/graphql")}
-type Query @join__type(graph:AUTHORS) @join__type(graph:BOOKS) {author(id:ID!):Author @join__directive(graphs:[AUTHORS] name:"merge" args:{keyField:"id" keyArg:"id"}) @join__directive(graphs:[AUTHORS] name:"source" args:{name:"authorWithBooks"
-type:"AuthorWithBooks" subgraph:"books"}) @join__directive(graphs:[BOOKS] name:"source" args:{name:"authorWithBooks"
-type:"AuthorWithBooks" subgraph:"books"}) @join__directive(graphs:[BOOKS] name:"merge" args:{keyField:"id" keyArg:"id"}) writers(ids:[ID]):[Author] @join__directive(graphs:[AUTHORS] name:"source" args:{name:"authors"
-type:"[Author]" subgraph:"authors"}) @join__field(graph:AUTHORS) book(id:ID!):Book @join__directive(graphs:[BOOKS] name:"merge" args:{keyField:"id" keyArg:"id"}) @join__field(graph:BOOKS) books(ids:[ID]):[Book!]! @join__directive(graphs:[BOOKS] name:"merge" args:{keyField:"id" keyArg:"ids"}) @join__field(graph:BOOKS)}
-type Author @join__directive(graphs:[AUTHORS] name:"source" args:{name:"AuthorWithBooks" subgraph:"books"}) @join__directive(graphs:[BOOKS] name:"source" args:{name:"AuthorWithBooks" subgraph:"books"}) @join__type(graph:AUTHORS key:"id") @join__type(graph:BOOKS key:"id") {id:ID! name:String! @join__field(graph:AUTHORS) books:[Book!]! @join__field(graph:BOOKS)}
+type Query @join__type(graph:AUTHORS) @join__type(graph:BOOKS) {author(id:ID!):Author @join__directive(graphs:[AUTHORS] name:"lookup" args:{}) @join__directive(graphs:[BOOKS] name:"lookup" args:{}) @join__directive(graphs:[BOOKS] name:"source" args:{name:"authorWithBooks"
+type:"AuthorWithBooks" subgraph:"books"}) writers(ids:[ID]):[Author] @join__directive(graphs:[AUTHORS] name:"source" args:{name:"authors"
+type:"[Author]" subgraph:"authors"}) @join__field(graph:AUTHORS) book(id:ID!):Book @join__directive(graphs:[BOOKS] name:"lookup" args:{}) @join__field(graph:BOOKS) books(ids:[ID]):[Book!]! @join__field(graph:BOOKS)}
+type Author @join__directive(graphs:[BOOKS] name:"source" args:{name:"AuthorWithBooks" subgraph:"books"}) @join__type(graph:AUTHORS key:"id") @join__type(graph:BOOKS key:"id") {id:ID! name:String! @join__field(graph:AUTHORS) books:[Book!]! @join__field(graph:BOOKS)}
 type Book @join__type(graph:BOOKS key:"id") {id:ID! title:String! authorId:ID! author:Author @resolveTo(sourceName:"authors" sourceTypeName:"Query" sourceFieldName:"writers" keyField:"authorId" keysArg:"ids") @additionalField}
 scalar join__DirectiveArguments
 

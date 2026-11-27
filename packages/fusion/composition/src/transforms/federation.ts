@@ -1,11 +1,8 @@
 import {
-  DirectiveLocation,
   getNamedType,
-  GraphQLDirective,
-  GraphQLList,
-  GraphQLNonNull,
+  getNullableType,
   GraphQLSchema,
-  GraphQLString,
+  isListType,
   isObjectType,
   Kind,
   OperationTypeNode,
@@ -25,7 +22,6 @@ import { hasEquivalentTypeConnect, toTypeLevelEntityConnect } from '../connect-e
 import {
   addFederation2DirectivesToSubgraph,
   importFederationDirectives,
-  importMeshDirectives,
 } from '../federation-utils.js';
 import { suggestionList } from '../suggestionList/index.js';
 import { TransformValidationError } from './utils.js';
@@ -290,7 +286,6 @@ export function createFederationTransform(config: FederationTransformConfig): Su
       ]),
     );
     const usedFederationDirectives = new Set<string>();
-    let mergeDirectiveUsed = false;
     let lookupDirectiveUsed = false;
     let isDirectiveUsed = false;
     subgraphSchema = mapSchema(subgraphSchema, {
@@ -416,31 +411,11 @@ export function createFederationTransform(config: FederationTransformConfig): Su
           }
         }
         if (mergeDirectiveConfig) {
-          let argsExpr = mergeDirectiveConfig.argsExpr;
-          if (!argsExpr && fieldConfig.args && !mergeDirectiveConfig.keyArg) {
-            const argsExprElems: string[] = [];
-            const returnNamedType = getNamedType(fieldConfig.type);
-            if ('getFields' in returnNamedType) {
-              const returnFields = returnNamedType.getFields();
-              for (const argName in fieldConfig.args) {
-                const arg = fieldConfig.args[argName];
-                const argType = getNamedType(arg.type);
-                const returnField = returnFields[argName];
-                if (returnField) {
-                  const returnFieldType = getNamedType(returnField.type);
-                  if (argType.name === returnFieldType.name) {
-                    argsExprElems.push(`${argName}: $key.${argName}`);
-                  }
-                }
-              }
-              argsExpr = argsExprElems.join(', ');
-            }
-          }
           // Federation Connectors entity patterns:
           // - keyArg === keyField → Query `@connect(entity: true)`
           // - keyArg !== keyField → type-level `@connect` with `$this.<keyField>`
           //   (see https://www.apollographql.com/docs/graphos/connectors/entities/patterns)
-          // Hive uses REST transport `Query._entities` — skip Mesh `@merge` when Connectors cover it.
+          // Hive uses REST transport `Query._entities` — no Mesh `@merge` when Connectors cover it.
           if (fieldDirectives.connect?.length) {
             const keyArg = mergeDirectiveConfig.keyArg;
             const keyField = mergeDirectiveConfig.keyField;
@@ -464,20 +439,10 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                 entity: true,
               }));
             }
-            // Connectors entity covered — no `@merge`.
-          } else if (argsExpr) {
-            // Complex `argsExpr` stays on legacy `@merge` (no direct `@lookup` mapping).
-            const mergeDirectiveExtensions = (fieldDirectives.merge ||= []);
-            mergeDirectiveExtensions.push({
-              subgraph: subgraphConfig.name,
-              key: mergeDirectiveConfig.key,
-              keyField: mergeDirectiveConfig.keyField,
-              keyArg: mergeDirectiveConfig.keyArg,
-              argsExpr,
-            });
-            mergeDirectiveUsed = true;
-          } else {
-            // Prefer federation-spec `@lookup` (+ `@is` when arg name ≠ key field).
+          } else if (!isListType(getNullableType(fieldConfig.type))) {
+            // Federation Spec `@lookup` (+ `@is` when arg name ≠ key field).
+            // List-returning fields cannot use `@lookup` (spec); leave unstamped —
+            // hand-authored `@merge` remains a runtime fallback only.
             fieldDirectives.lookup ||= [];
             if (!fieldDirectives.lookup.length) {
               fieldDirectives.lookup.push({});
@@ -552,40 +517,6 @@ export function createFederationTransform(config: FederationTransformConfig): Su
         ...(lookupDirectiveUsed ? (['@lookup'] as const) : []),
         ...(isDirectiveUsed ? (['@is'] as const) : []),
       ]);
-    }
-    if (mergeDirectiveUsed) {
-      subgraphSchema = importMeshDirectives(subgraphSchema, ['@merge']);
-      const schemaConfig = subgraphSchema.toConfig();
-      subgraphSchema = new GraphQLSchema({
-        ...schemaConfig,
-        directives: [
-          ...schemaConfig.directives,
-          new GraphQLDirective({
-            name: 'merge',
-            locations: [DirectiveLocation.FIELD_DEFINITION],
-            args: {
-              subgraph: {
-                type: new GraphQLNonNull(GraphQLString),
-              },
-              argsExpr: {
-                type: GraphQLString,
-              },
-              keyArg: {
-                type: GraphQLString,
-              },
-              keyField: {
-                type: GraphQLString,
-              },
-              key: {
-                type: new GraphQLList(GraphQLString),
-              },
-              additionalArgs: {
-                type: GraphQLString,
-              },
-            },
-          }),
-        ],
-      });
     }
     return subgraphSchema;
   };

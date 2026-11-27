@@ -1032,7 +1032,7 @@ function addAnnotationsForSemanticConventions({
           typeExtensions.directives = typeDirectives;
         };
         // Non-resolvable @key is only for Connectors/protobuf batch RPCs that lack a singular
-        // entity resolver. Ordinary Mesh `@merge` batch fields keep the default resolvable key.
+        // entity resolver. Non-connect batch fields that stay unstamped keep the default key.
         const isConnectOrProtobufField = !!(
           directiveExtensions.connect?.length ||
           directiveExtensions.protobuf__rpc?.length ||
@@ -1151,20 +1151,15 @@ function addAnnotationsForSemanticConventions({
             typeExtensions.directives = typeDirectives;
             return true;
           }
-          // Non-Connectors / non-protobuf: federation-spec `@lookup` for singular
-          // entity entry points. Emit `@is(field:)` when the arg name differs from
-          // the entity field. List-returning batch fields still use legacy `@merge`
-          // for stitching hops (Federation Spec `@lookup` is not list-shaped).
+          // Non-Connectors / non-protobuf: Federation Spec `@lookup` (+ `@is`
+          // when the arg name differs from the entity field). Do not stamp Mesh
+          // `@merge` here — runtime still accepts hand-authored / legacy `@merge`.
+          // List-returning / batch-arg fields cannot use `@lookup` (spec: lookup
+          // must not return a list), so leave them unstamped for hop planning.
           const nullableReturn = getNullableType(queryFieldConfig.type);
           const returnsList = isListType(nullableReturn);
           if (batchListArg || returnsList) {
-            directiveExtensions.merge ||= [];
-            directiveExtensions.merge.push({
-              subgraph: subgraphName,
-              keyField: fieldName,
-              keyArg: argName,
-            });
-            return true;
+            return false;
           }
           directiveExtensions.lookup ||= [];
           if (!directiveExtensions.lookup.length) {
@@ -1212,8 +1207,8 @@ function addAnnotationsForSemanticConventions({
             const batchListArg = isBatchListArgType(arg.type);
             const hasSingularEntity = markConnectEntityOrMerge();
             // Batch Connectors/protobuf Query fields keep field-level RPC only; a resolvable
-            // @key would claim a missing singular entity resolver for `_entities`. Mesh `@merge`
-            // batch fields still use the default resolvable key.
+            // @key would claim a missing singular entity resolver for `_entities`. Plain
+            // GraphQL batch fields stay unstamped (no `@lookup` on lists) with default keys.
             ensureKey(
               isConnectOrProtobufField && (batchListArg || !hasSingularEntity)
                 ? { resolvable: false }

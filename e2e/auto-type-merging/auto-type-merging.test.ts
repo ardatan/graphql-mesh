@@ -30,7 +30,7 @@ it('should compose the appropriate schema', async () => {
   const getPetByIdField = matchPrintedFieldBlock(result, /getPetById\([\s\S]*?\):\s*Pet/);
   expect(getPetByIdField).toContain('$args.petId');
   expect(getPetByIdField).not.toContain('@merge');
-  // GraphQL vaccination subgraph still uses Mesh `@merge` (auto-type-merging intent),
+  // GraphQL vaccination subgraph uses Federation Spec `@lookup` (auto-type-merging),
   // carried on the final SG as `@join__directive` (graphs: owns attribution).
   const doc = parse(result, { noLocation: true });
   const queryType = doc.definitions.find(
@@ -42,13 +42,13 @@ it('should compose the appropriate schema', async () => {
       ? queryType.fields?.find(f => f.name.value === 'petById')
       : undefined;
   expect(petById).toBeTruthy();
-  const mergeJoin = (petById?.directives || []).find(dir => {
+  const lookupJoin = (petById?.directives || []).find(dir => {
     if (dir.name.value !== 'join__directive') return false;
     const nameArg = dir.arguments?.find(a => a.name.value === 'name');
-    return nameArg?.value.kind === Kind.STRING && nameArg.value.value === 'merge';
+    return nameArg?.value.kind === Kind.STRING && nameArg.value.value === 'lookup';
   });
-  expect(mergeJoin).toBeTruthy();
-  const graphsArg = mergeJoin?.arguments?.find(a => a.name.value === 'graphs');
+  expect(lookupJoin).toBeTruthy();
+  const graphsArg = lookupJoin?.arguments?.find(a => a.name.value === 'graphs');
   expect(graphsArg?.value.kind).toBe(Kind.LIST);
   if (graphsArg?.value.kind === Kind.LIST) {
     const graphNames = graphsArg.value.values
@@ -58,10 +58,10 @@ it('should compose the appropriate schema', async () => {
   }
 });
 
-// Hive-only: vaccination is a plain GraphQL schema merged via Mesh `@merge`.
+// Hive-only: vaccination is a plain GraphQL schema merged via Federation Spec `@lookup`.
 // Apollo Router plans Federation `_entities` against it and fails validation
 // (`Unknown type "_Any"` / `Cannot query field "_entities"`). Making vaccination
-// a Federation subgraph would dual-run, but would abandon the `@merge` test intent.
+// a Federation subgraph would dual-run, but would abandon the `@lookup` test intent.
 it('should execute GetPet on hive', async () => {
   const { output } = await compose({
     output: 'graphql',
