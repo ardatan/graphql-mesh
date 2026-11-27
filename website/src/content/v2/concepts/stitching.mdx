@@ -70,10 +70,16 @@ merges and executes.
 ## Schema Stitching Directives (optional, separate)
 
 **Schema Stitching Directives** (`@graphql-tools/stitching-directives`) are a **different** piece:
-an optional **directive spec** to configure Schema Stitching via SDL (Stitching `@merge`, `@key`,
-`@computed`, `@canonical`). They compile into the same programmatic `SubschemaConfig.merge` maps.
-Think of them as a **Federation-directives alternative** for stitching config -- not as Schema
-Stitching itself, and not as Apollo Federation directives.
+an optional **directive spec** from **GraphQL Tools** to configure Schema Stitching via SDL
+(Stitching `@merge`, `@key`, `@computed`, `@canonical`). They compile into the same programmatic
+`SubschemaConfig.merge` maps. Think of them as a **Federation-directives alternative** for stitching
+config -- not as Schema Stitching itself, and not as Apollo Federation directives.
+
+<Callout type="info">
+  Stitching `@merge` below is from `@graphql-tools/stitching-directives` -- **not** Mesh core
+  (`specs.graphql-mesh.dev/core`). Mesh v2 docs do not document Mesh core `@merge`; for entity hops
+  use Federation `@lookup` / `@is` / `@internal` -- [Directives: @lookup](/v2/directives#lookup).
+</Callout>
 
 ```graphql
 type Query {

@@ -21,22 +21,22 @@ not just arg lists. Binders: [Selection mapping](/v2/guides/selection-mapping). 
 
 ## Table of contents
 
-| Family                 | Directives                                                   | Scenarios on this page                                      |
-| ---------------------- | ------------------------------------------------------------ | ----------------------------------------------------------- |
-| HTTP/REST Connectors   | `@connect`, `@source`                                        | Entity ById, type-level `$this`, nested `$this`, SOAP/OData |
-| Mesh core              | `@transport`                                                 | Kind / location stamp                                       |
-| Federation entity hops | `@lookup`, `@is`, `@internal`                                | Singular ById recall; arg rename; hide lookup from clients  |
-| Mesh field delegation  | `@resolveTo`                                                 | Batch keysArg / valueKeyField / pubsubTopic                 |
-| Mesh pubsub / EDFS     | `@pubsubOperation`, `@pubsubPublish`                         | Subgraph subscribe / publish; webhooks                      |
-| SQL                    | `@sql`                                                       | ROW/entity, ROWS, through, INSERT/DELETE                    |
-| Mongo                  | `@mongo__*`                                                  | findOne/entity, find filter, insert/update                  |
-| Protobuf / gRPC        | `@protobuf__rpc`                                             | Unary hand SDL, streaming SearchMoviesByCast                |
-| Thrift                 | `@thrift__rpc`                                               | Binary CALL/ONEWAY, TJSON `@connect`                        |
-| Neo4j                  | `@node`, `@relationship`, `@relationshipProperties` (native) | Mesh stamp vs Neo4j GraphQL natives                         |
-| Federation / join      | `@key`, `@composeDirective`                                  | Join stubs + composeDirective                               |
-| Gateway auth           | `@authenticated`, `@requiresScopes`, `@policy`, `@skipAuth`  | Field protect / complete-protection opt-out                 |
-| Gateway rate limit     | `@rateLimit`                                                 | Field budgets on subgraph SDL                               |
-| Spec imports           | `@link`                                                      | Spec URL table                                              |
+| Family                 | Directives                                                   | Scenarios on this page                                       |
+| ---------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| HTTP/REST Connectors   | `@connect`, `@source`                                        | Entity ById, type-level `$this`, nested `$this`, SOAP/OData  |
+| Mesh core              | `@transport`                                                 | Kind / location stamp                                        |
+| Federation entity hops | `@lookup`, `@is`, `@internal`                                | One-object entry field; arg rename; hide lookup from clients |
+| Mesh field delegation  | `@resolveTo`                                                 | Batch keysArg / valueKeyField / pubsubTopic                  |
+| Event-driven (EDFS)    | `@pubsubOperation`, `@pubsubPublish`                         | Subgraph subscribe / publish; webhooks                       |
+| SQL                    | `@sql`                                                       | ROW/entity, ROWS, through, INSERT/DELETE                     |
+| Mongo                  | `@mongo__*`                                                  | findOne/entity, find filter, insert/update                   |
+| Protobuf / gRPC        | `@protobuf__rpc`                                             | Unary hand SDL, streaming SearchMoviesByCast                 |
+| Thrift                 | `@thrift__rpc`                                               | Binary CALL/ONEWAY, TJSON `@connect`                         |
+| Neo4j                  | `@node`, `@relationship`, `@relationshipProperties` (native) | Mesh stamp vs Neo4j GraphQL natives                          |
+| Federation / join      | `@key`, `@composeDirective`                                  | Join stubs + composeDirective                                |
+| Gateway auth           | `@authenticated`, `@requiresScopes`, `@policy`, `@skipAuth`  | Field protect / complete-protection opt-out                  |
+| Gateway rate limit     | `@rateLimit`                                                 | Field budgets on subgraph SDL                                |
+| Spec imports           | `@link`                                                      | Spec URL table                                               |
 
 ---
 
@@ -256,8 +256,9 @@ schema
 
 `@lookup` / `@is` / `@internal`
 
-**Recommended** singular entity hops for Mesh subgraphs. These are **Federation Spec** directives --
-import them from the official draft URL, **not** from `specs.graphql-mesh.dev`. Full normative text:
+**Recommended** for entity entry fields that return one object (not a list). These are **Federation
+Spec** directives -- import them from the official draft URL, **not** from `specs.graphql-mesh.dev`.
+Full normative text:
 [GraphQL Federation Spec draft](https://graphql.github.io/graphql-federation-spec/draft) (`@lookup`,
 `@is`, `@internal`).
 
@@ -282,7 +283,7 @@ extend schema
 | `@is`       | On a lookup **argument** when the arg name does not match the entity field (selection map)       |
 | `@internal` | Hide a lookup field / type from the client-facing composite schema                               |
 
-### Scenario: singular ById lookup
+### Scenario: ById entry field that returns one object
 
 ```graphql
 type Query {
@@ -320,12 +321,12 @@ type Query {
 
 Connect / protocol `entity: true` and type-level `$this` maps remain the Mesh-native path for
 loader-emitted entity fill -- see [Entity resolution](/v2/concepts/federation#entity-resolution).
-Hand-written GraphQL subgraphs that need an entity hop should stamp `@lookup` (with `@is` /
+Hand-written GraphQL subgraphs that need an entity entry field should stamp `@lookup` (with `@is` /
 `@internal` as needed).
 
 <Callout type="info">
-  Spec `@lookup` is **singular** (non-list). For batch joins across subgraphs prefer batched Connect
-  / protocol fields or <DirectiveRef name="resolveTo" />.
+  Spec `@lookup` marks an entity entry field that returns one object (not a list). For batch joins
+  across subgraphs prefer batched Connect / protocol fields or <DirectiveRef name="resolveTo" />.
 </Callout>
 
 ---
@@ -338,8 +339,9 @@ Hand-written GraphQL subgraphs that need an entity hop should stamp `@lookup` (w
 
 Mesh field-level **delegation / join**: resolve this field by calling another subgraph's Query (or
 type) field, optionally with batched args. Still valid Mesh core; for new entity joins prefer
-Federation `@key` stubs plus Connect / protocol directives, or singular `@lookup` hops (Music Store
-/ FHIR). Compose validates `sourceName` / field / arg names at compose time.
+Federation `@key` stubs plus Connect / protocol directives, or `@lookup` on an entry field that
+returns one object (Music Store / FHIR). Compose validates `sourceName` / field / arg names at
+compose time.
 
 **Import**
 
@@ -415,7 +417,7 @@ Guide: [Subscriptions and pubsub](/v2/guides/subscriptions-pubsub).
 
 <a id="pubsub" />
 
-## Mesh `@pubsubOperation` / `@pubsubPublish`
+## Event-driven Subscription (EDFS) Directives
 
 `@pubsubOperation` · `@pubsubPublish`
 
