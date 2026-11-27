@@ -59,12 +59,25 @@ Gateway-owned plugins (auth, rate limit, metrics) move with Hive Gateway -- see
 [Authentication](/v2/guides/auth), [Rate limiting](/v2/guides/rate-limit), and
 [Monitoring](/v2/guides/monitoring).
 
+## From programmatic Schema Stitching
+
+If the gateway today is `stitchSchemas` (or legacy Mesh stitching / mergers), migrate to Federation
+subgraphs + Compose + Serve -- do not keep an in-process stitch as the long-term Mesh v2 path.
+
+Guide: [Migrate from Schema Stitching](/v2/guides/migrate-from-stitching).
+
 ## Related
 
 <Cards>
   <Cards.Card arrow title="Mesh journey" href="/v2/guides/mesh-journey" />
+  <Cards.Card
+    arrow
+    title="Migrate from Schema Stitching"
+    href="/v2/guides/migrate-from-stitching"
+  />
   <Cards.Card arrow title="Introduction" href="/v2" />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
   <Cards.Card arrow title="Composition" href="/v2/compose" />
   <Cards.Card arrow title="Protocols" href="/v2/protocols" />
+  <Cards.Card arrow title="FAQ" href="/v2/faq" />
 </Cards>
