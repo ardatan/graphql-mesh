@@ -1,4 +1,10 @@
-import { DirectiveLocation, GraphQLBoolean, GraphQLDirective, GraphQLString } from 'graphql';
+import {
+  DirectiveLocation,
+  GraphQLBoolean,
+  GraphQLDirective,
+  GraphQLNonNull,
+  GraphQLString,
+} from 'graphql';
 
 /**
  * Arguments for the `@protobuf__rpc` field / object directive (loader emit or hand-authored SDL).
@@ -64,9 +70,10 @@ export interface ProtobufRpcDirectiveArgs {
    *
    * @example 'GetMovies'
    */
-  method?: string;
+  method: string;
   /**
    * Compact GraphQL → protobuf request mapping (`id(protoType): $args...` / `$this...`).
+   * Omit when the RPC takes an empty request (do not emit `args: ""`).
    *
    * @example '1(message): $args {\n  2(int64): $args.year\n}'
    */
@@ -76,7 +83,7 @@ export interface ProtobufRpcDirectiveArgs {
    *
    * @example '1(string): name\n2(int64): year'
    */
-  selection?: string;
+  selection: string;
   /**
    * When true, the field is a server-streaming RPC (Subscription `subscribe` or
    * Query/Mutation AsyncIterable for `@stream`).
@@ -99,11 +106,11 @@ export const protobufRpcDirective = new GraphQLDirective({
     /** Protobuf service name. */
     service: { type: GraphQLString },
     /** RPC method name on the service. */
-    method: { type: GraphQLString },
-    /** Compact GraphQL -> protobuf request mapping (`id(protoType): $args...` / `$this...`). */
+    method: { type: new GraphQLNonNull(GraphQLString) },
+    /** Compact GraphQL -> protobuf request mapping; omit when the request is empty. */
     args: { type: GraphQLString },
     /** Compact protobuf response -> GraphQL field mapping. */
-    selection: { type: GraphQLString },
+    selection: { type: new GraphQLNonNull(GraphQLString) },
     /** Server-streaming RPC (Subscription or Query/Mutation AsyncIterable). */
     stream: { type: GraphQLBoolean },
     /** Mark this Query field as an entity resolver for Mesh `_entities`. */

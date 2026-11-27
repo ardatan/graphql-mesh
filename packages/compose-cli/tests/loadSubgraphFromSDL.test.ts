@@ -69,7 +69,7 @@ describe('loadSubgraphFromSDL', () => {
 
         directive @link(url: String!, import: [String]) repeatable on SCHEMA
         directive @composeDirective(name: String!) repeatable on SCHEMA
-        directive @protobuf__rpc(method: String) on FIELD_DEFINITION
+        directive @protobuf__rpc(method: String!) on FIELD_DEFINITION
         type Query {
           movies: String @protobuf__rpc(method: "List")
         }

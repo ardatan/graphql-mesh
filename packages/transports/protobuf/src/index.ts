@@ -323,16 +323,23 @@ export class ProtobufTransportHelper extends DisposableStack {
       stream: isStream,
     } = directiveArgs as {
       service?: string;
-      method: string;
-      args: string;
-      selection: string;
+      method?: string;
+      args?: string;
+      selection?: string;
       stream?: boolean;
     };
+    if (method == null || method === '') {
+      throw new GraphQLError(`@protobuf__rpc on ${typeName} is missing required non-empty method`);
+    }
+    if (selection == null) {
+      throw new GraphQLError(`@protobuf__rpc on ${typeName} is missing required selection`);
+    }
     return this.createRpcResolver({
       location,
       service,
       method,
-      argsFields: parseMapping(argsMapping),
+      // Join finalize may drop empty-string `args`; treat missing as empty request.
+      argsFields: parseMapping(argsMapping ?? ''),
       selectionFields: parseMapping(selection),
       isStream: !!isStream,
       channelOptions,

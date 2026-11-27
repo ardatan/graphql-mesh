@@ -21,9 +21,9 @@ const protobufRpcSchema = () =>
       directive @protobuf__rpc(
         subgraph: String
         service: String
-        method: String
+        method: String!
         args: String
-        selection: String
+        selection: String!
         stream: Boolean
         entity: Boolean
       ) on FIELD_DEFINITION | OBJECT
@@ -101,9 +101,9 @@ describe('protobuf RPC semantic conventions (entity: true)', () => {
         directive @protobuf__rpc(
           subgraph: String
           service: String
-          method: String
+          method: String!
           args: String
-          selection: String
+          selection: String!
           stream: Boolean
           entity: Boolean
         ) on FIELD_DEFINITION | OBJECT
@@ -154,9 +154,9 @@ describe('protobuf RPC semantic conventions (entity: true)', () => {
         directive @protobuf__rpc(
           subgraph: String
           service: String
-          method: String
+          method: String!
           args: String
-          selection: String
+          selection: String!
           stream: Boolean
           entity: Boolean
         ) on FIELD_DEFINITION | OBJECT
@@ -207,9 +207,9 @@ describe('protobuf RPC semantic conventions (entity: true)', () => {
         directive @protobuf__rpc(
           subgraph: String
           service: String
-          method: String
+          method: String!
           args: String
-          selection: String
+          selection: String!
           stream: Boolean
           entity: Boolean
         ) on FIELD_DEFINITION | OBJECT
@@ -261,9 +261,9 @@ describe('protobuf RPC semantic conventions (entity: true)', () => {
         directive @protobuf__rpc(
           subgraph: String
           service: String
-          method: String
+          method: String!
           args: String
-          selection: String
+          selection: String!
           stream: Boolean
           entity: Boolean
         ) on FIELD_DEFINITION | OBJECT
@@ -371,9 +371,9 @@ describe('protobuf RPC semantic conventions (entity: true)', () => {
         directive @protobuf__rpc(
           subgraph: String
           service: String
-          method: String
+          method: String!
           args: String
-          selection: String
+          selection: String!
           stream: Boolean
           entity: Boolean
         ) on FIELD_DEFINITION | OBJECT
@@ -638,9 +638,9 @@ describe('rewriteProtobufMappingBinds', () => {
         directive @protobuf__rpc(
           subgraph: String
           service: String
-          method: String
+          method: String!
           args: String
-          selection: String
+          selection: String!
           stream: Boolean
           entity: Boolean
         ) on FIELD_DEFINITION | OBJECT
@@ -835,9 +835,9 @@ describe('rewriteProtobufMappingBinds', () => {
         directive @protobuf__rpc(
           subgraph: String
           service: String
-          method: String
+          method: String!
           args: String
-          selection: String
+          selection: String!
           stream: Boolean
           entity: Boolean
         ) on FIELD_DEFINITION | OBJECT
@@ -914,9 +914,9 @@ describe('rewriteProtobufMappingBinds', () => {
         directive @protobuf__rpc(
           subgraph: String
           service: String
-          method: String
+          method: String!
           args: String
-          selection: String
+          selection: String!
           stream: Boolean
           entity: Boolean
         ) on FIELD_DEFINITION | OBJECT
@@ -987,9 +987,9 @@ describe('rewriteProtobufMappingBinds', () => {
         directive @protobuf__rpc(
           subgraph: String
           service: String
-          method: String
+          method: String!
           args: String
-          selection: String
+          selection: String!
           stream: Boolean
           entity: Boolean
         ) on FIELD_DEFINITION | OBJECT
@@ -1052,9 +1052,9 @@ describe('$this parent vs args-fallback renames', () => {
         directive @protobuf__rpc(
           subgraph: String
           service: String
-          method: String
+          method: String!
           args: String
-          selection: String
+          selection: String!
           stream: Boolean
           entity: Boolean
         ) on FIELD_DEFINITION | OBJECT
@@ -1110,9 +1110,9 @@ describe('$this parent vs args-fallback renames', () => {
         directive @protobuf__rpc(
           subgraph: String
           service: String
-          method: String
+          method: String!
           args: String
-          selection: String
+          selection: String!
           stream: Boolean
           entity: Boolean
         ) on FIELD_DEFINITION | OBJECT
@@ -1178,9 +1178,9 @@ describe('$this parent vs args-fallback renames', () => {
         directive @protobuf__rpc(
           subgraph: String
           service: String
-          method: String
+          method: String!
           args: String
-          selection: String
+          selection: String!
           stream: Boolean
           entity: Boolean
         ) on FIELD_DEFINITION | OBJECT
@@ -1239,9 +1239,9 @@ describe('type-scoped protobuf field renames (overlapping names)', () => {
         directive @protobuf__rpc(
           subgraph: String
           service: String
-          method: String
+          method: String!
           args: String
-          selection: String
+          selection: String!
           stream: Boolean
           entity: Boolean
         ) on FIELD_DEFINITION | OBJECT
@@ -1339,9 +1339,9 @@ describe('type-scoped $args.input nested renames', () => {
         directive @protobuf__rpc(
           subgraph: String
           service: String
-          method: String
+          method: String!
           args: String
-          selection: String
+          selection: String!
           stream: Boolean
           entity: Boolean
         ) on FIELD_DEFINITION | OBJECT
@@ -1428,9 +1428,9 @@ describe('object-level @protobuf__rpc rename', () => {
         directive @protobuf__rpc(
           subgraph: String
           service: String
-          method: String
+          method: String!
           args: String
-          selection: String
+          selection: String!
           stream: Boolean
           entity: Boolean
         ) on FIELD_DEFINITION | OBJECT
@@ -1491,9 +1491,9 @@ describe('object-level @protobuf__rpc rename', () => {
         directive @protobuf__rpc(
           subgraph: String
           service: String
-          method: String
+          method: String!
           args: String
-          selection: String
+          selection: String!
           stream: Boolean
           entity: Boolean
         ) on FIELD_DEFINITION | OBJECT
@@ -1582,9 +1582,9 @@ describe('object-level @protobuf__rpc rename', () => {
         directive @protobuf__rpc(
           subgraph: String
           service: String
-          method: String
+          method: String!
           args: String
-          selection: String
+          selection: String!
           stream: Boolean
           entity: Boolean
         ) on FIELD_DEFINITION | OBJECT
@@ -1915,9 +1915,9 @@ describe('rewriteProtobufMappingBindsTypeScoped ownership', () => {
         directive @protobuf__rpc(
           subgraph: String
           service: String
-          method: String
+          method: String!
           args: String
-          selection: String
+          selection: String!
           stream: Boolean
           entity: Boolean
         ) on FIELD_DEFINITION | OBJECT
@@ -1993,9 +1993,9 @@ describe('naming-convention type-scoped protobuf field renames', () => {
         directive @protobuf__rpc(
           subgraph: String
           service: String
-          method: String
+          method: String!
           args: String
-          selection: String
+          selection: String!
           stream: Boolean
           entity: Boolean
         ) on FIELD_DEFINITION | OBJECT
