@@ -1,17 +1,16 @@
 ---
 description:
-  Mesh product journey -- v0 YAML gateway, v1 generate-first Mesh Composition + Hive Gateway, v2
-  SDL-first / HTTP/REST Connectors-adapted
+  Migration hub -- Mesh journey v0 to v2, then paths from Mesh v0/v1 or Schema Stitching into /v2
 ---
 
 import { Callout, Cards } from '@theguild/components'
-import { ConceptRef, ProtocolRef } from '../../../components/v2-directive-ref'
-import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
+import { ConceptRef, ProtocolRef } from '../../../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../../../components/v2-flow-diagram'
 
-# Mesh journey (v0 -> v1 -> v2)
+# Migration
 
-How Mesh's product and docs story evolved. Use this to orient if you know an older Mesh, then jump
-into [v2](/v2).
+One place for **where Mesh came from** and **how to land on `/v2`**. Pick the path that matches your
+starting point.
 
 <V2FlowDiagram
   ariaLabel="Mesh product journey from v0 to v2"
@@ -36,17 +35,13 @@ v0 was one process: configure sources in YAML, Mesh merged and **served** GraphQ
 
 v1 split that into the Federation shape the ecosystem already used:
 
-- **Mesh-specific Composition** (Mesh Compose) -- not a bare "compose + hive" slogan. Loaders and
-  Mesh directives turn non-GraphQL (and GraphQL) sources into **Federation-ready subgraph SDL** (and
-  optionally a supergraph). The composition step is Mesh's own pipeline (`mesh.config.ts`, Omnigraph
-  loaders, Mesh `@link` specs), aimed at Federation entities / supergraphs.
-- **Hive Gateway** -- a separate federation gateway runtime that executes the composed graph
-  (transports, Mesh protocol directives).
+- **Mesh-specific Composition** (Mesh Compose) -- loaders and Mesh directives turn sources into
+  **Federation-ready subgraph SDL** (and optionally a supergraph).
+- **Hive Gateway** -- a separate federation gateway runtime that executes the composed graph.
 
-The default story stayed **generate-first**: point Mesh at OpenAPI / SQL / gRPC / ..., emit SDL,
-compose, serve. Hand-authored SDL existed but was not the equal path.
+The default story stayed **generate-first**. Hand-authored SDL existed but was not an equal path.
 
-### v1 -> v2: From generate-first to ecosystem-adapted authoring
+### v1 -> v2: SDL-first authoring
 
 v2 keeps Composition + Hive Gateway, and keeps generate. What shifts is the **authoring contract**:
 
@@ -55,29 +50,28 @@ v2 keeps Composition + Hive Gateway, and keeps generate. What shifts is the **au
   [Serve Supergraph](/v2/serve/hive-gateway).
 - **HTTP/REST Connectors-adapted:** HTTP mapping follows
   <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef>
-  (`@connect` / `@source`) so the same Connect slice can dual-run on Hive Gateway and Apollo Router;
-  Mesh protocols (<ProtocolRef name="sql" />, <ProtocolRef name="protobuf" />, ...) stay first-class
-  for Hive Gateway (not branded as Connectors).
+  (`@connect` / `@source`) so Connect slices can dual-run on Hive Gateway and Apollo Router; Mesh
+  protocols (<ProtocolRef name="sql" />, <ProtocolRef name="protobuf" />, ...) stay first-class for
+  Hive Gateway.
 - **Hand-authored API as a first-class skill:** humans and AI write (or edit) the same directive
-  surface loaders emit -- see [Hand-write](/v2/paths/hand-write),
-  [Reading generated SDL](/v2/guides/reading-generated-sdl), and
-  [Selection mapping](/v2/guides/selection-mapping). Generate remains one equal journey, not the
-  only funnel.
+  surface loaders emit -- [Hand-write](/v2/paths/hand-write),
+  [Reading generated SDL](/v2/guides/reading-generated-sdl).
 
 In short: v1 brought Mesh into **Federation composition + gateway**; v2 adapts that stack to an
 **ecosystem SDL / HTTP/REST Connectors** authoring model without dropping Mesh-specific transports.
 
 <Callout type="info">
-  Production docs remain on [Mesh v1](/v1) until v2 ships. Legacy v0 stays under `/docs`.
+  Production docs remain on [Mesh v1](/v1) until v2 ships. Legacy v0 stays under `/docs`. Soft
+  banners on those trees point here; hard redirects are a separate site-ops decision.
 </Callout>
 
-## Where to go next
+## Choose a migration path
 
 <Cards>
+  <Cards.Card arrow title="From Mesh v0 / v1" href="/v2/guides/migration/from-v0-v1" />
+  <Cards.Card arrow title="From Schema Stitching" href="/v2/guides/migration/from-stitching" />
   <Cards.Card arrow title="Mesh v2 intro" href="/v2" />
-  <Cards.Card arrow title="Concepts" href="/v2/concepts" />
-  <Cards.Card arrow title="Architecture" href="/v2/architecture" />
+  <Cards.Card arrow title="FAQ" href="/v2/faq" />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
-  <Cards.Card arrow title="Migration" href="/v2/guides/migration" />
-  <Cards.Card arrow title="Mesh v1 docs" href="/v1" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
 </Cards>

@@ -6,7 +6,7 @@ description:
 
 import { Callout, Cards } from '@theguild/components'
 
-# Migrate from Schema Stitching
+# From Schema Stitching
 
 Leave a programmatic **`stitchSchemas`** (or legacy Mesh stitching / merger) gateway and land on
 **Federation-ready Mesh subgraphs** + [Composition](/v2/compose) +
@@ -16,8 +16,8 @@ You do **not** have to replace Apollo GraphOS, Hive Registry, or your gateway. M
 Federation subgraphs (or Compose output) beside the stack you already run -- see the
 [FAQ](/v2/faq#can-mesh-drop-into-an-existing-federation-setup).
 
-Concept background: [Schema Stitching](/v2/concepts/stitching) vs
-[Federation](/v2/concepts/federation).
+Product eras and Mesh v0/v1 cutovers live under [Migration](/v2/guides/migration). Concept
+background: [Schema Stitching](/v2/concepts/stitching) vs [Federation](/v2/concepts/federation).
 
 ## What changes
 
@@ -237,5 +237,6 @@ const schema = buildSubgraphSchema(readFileSync('./users.graphql', 'utf8'))
   <Cards.Card arrow title="Serve Subgraph" href="/v2/serve-subgraph" />
   <Cards.Card arrow title="Serve Supergraph" href="/v2/serve" />
   <Cards.Card arrow title="buildSubgraphSchema" href="/v2/guides/build-subgraph-schema" />
-  <Cards.Card arrow title="Migration (v0 / v1 → v2)" href="/v2/guides/migration" />
+  <Cards.Card arrow title="Migration overview" href="/v2/guides/migration" />
+  <Cards.Card arrow title="From Mesh v0 / v1" href="/v2/guides/migration/from-v0-v1" />
 </Cards>

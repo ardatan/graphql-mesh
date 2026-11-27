@@ -1,7 +1,5 @@
 export default {
-  'mesh-journey': 'Mesh journey (v0 -> v2)',
-  migration: 'Migration (v0 / v1 → v2)',
-  'migrate-from-stitching': 'Migrate from Schema Stitching',
+  migration: 'Migration',
   'ai-assisted-authoring': 'AI-assisted authoring',
   'reading-generated-sdl': 'Reading generated SDL',
   'build-subgraph-schema': 'buildSubgraphSchema',

@@ -1,24 +1,19 @@
 ---
-description: Migrate toward Mesh v2 /v2 docs -- v0 YAML and v1 Compose generate-first
+description: Practical steps to migrate from Mesh v0 YAML or Mesh v1 Compose into Mesh v2 /v2 docs
 ---
 
-import { Callout, Cards } from '@theguild/components'
+import { Cards } from '@theguild/components'
 
-# Migration (v0 / v1 → v2)
+# From Mesh v0 / v1
 
-Mesh v2 docs live under **`/v2`**. Older trees stay available while you migrate:
+Actionable cutover into **`/v2`**. For the product story (why SDL-first), start at
+[Migration overview](/v2/guides/migration).
 
 | Path    | Era                         | What to keep in mind                                         |
 | ------- | --------------------------- | ------------------------------------------------------------ |
 | `/docs` | Mesh v0                     | YAML `.meshrc`, built-in serve, handlers/plugins             |
 | `/v1`   | Mesh v1                     | Compose CLI + Hive Gateway, still mostly generate-first      |
 | `/v2`   | Mesh today (this docs tree) | SDL + directives; Generate / Hand-write / Generate-then-edit |
-
-<Callout type="info">
-  Soft banners now sit on the `/docs` and `/v1` intro pages pointing here and to `/v2`. Hard
-  redirects (replace the old trees) remain a separate site-ops decision -- prefer `/v2` for new work
-  until then.
-</Callout>
 
 ## From Mesh v0 (YAML)
 
@@ -28,8 +23,8 @@ Mesh v2 docs live under **`/v2`**. Older trees stay available while you migrate:
    [Composition](/v2/compose)).
 3. Serve on [Hive Gateway](/v2/serve/hive-gateway) (JS/TS). Use
    [Apollo Router](/v2/serve/apollo-router) only for Connect-compatible slices.
-4. Walk the [Mesh journey](/v2/guides/mesh-journey) for the positioning shift (YAML black box →
-   SDL).
+4. Prefer [Generate](/v2/paths/generate) / [Generate-then-edit](/v2/paths/generate-then-edit) /
+   [Hand-write](/v2/paths/hand-write) over a single YAML black box.
 
 ## From Mesh v1 docs
 
@@ -59,22 +54,16 @@ Gateway-owned plugins (auth, rate limit, metrics) move with Hive Gateway -- see
 [Authentication](/v2/guides/auth), [Rate limiting](/v2/guides/rate-limit), and
 [Monitoring](/v2/guides/monitoring).
 
-## From programmatic Schema Stitching
+## Coming from Schema Stitching instead?
 
-If the gateway today is `stitchSchemas` (or legacy Mesh stitching / mergers), migrate to Federation
-subgraphs + Compose + Serve -- do not keep an in-process stitch as the long-term Mesh v2 path.
-
-Guide: [Migrate from Schema Stitching](/v2/guides/migrate-from-stitching).
+That is a different starting point (programmatic `stitchSchemas`, not Mesh YAML/v1 docs):
+[From Schema Stitching](/v2/guides/migration/from-stitching).
 
 ## Related
 
 <Cards>
-  <Cards.Card arrow title="Mesh journey" href="/v2/guides/mesh-journey" />
-  <Cards.Card
-    arrow
-    title="Migrate from Schema Stitching"
-    href="/v2/guides/migrate-from-stitching"
-  />
+  <Cards.Card arrow title="Migration overview" href="/v2/guides/migration" />
+  <Cards.Card arrow title="From Schema Stitching" href="/v2/guides/migration/from-stitching" />
   <Cards.Card arrow title="Introduction" href="/v2" />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
   <Cards.Card arrow title="Composition" href="/v2/compose" />

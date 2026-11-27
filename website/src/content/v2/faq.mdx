@@ -172,7 +172,7 @@ Gateway + Registry, or any other Federation-compatible stack. Add Mesh where it 
 You do **not** need to replace the whole gateway, registry, or CI. Hive Gateway remains preferred
 when Mesh protocol transports must run inside the supergraph process; otherwise Mesh peers as normal
 Federation subgraphs. See [Serve Supergraph](/v2/serve),
-[Migrate from Schema Stitching](/v2/guides/migrate-from-stitching).
+[From Schema Stitching](/v2/guides/migration/from-stitching).
 
 ## How is `@graphql-mesh/subgraph` different from `@apollo/subgraph`?
 
@@ -189,24 +189,21 @@ executable. Not drop-in replacements.
 
 ## Coming from Mesh v1?
 
-Read [Mesh journey (v0 → v1 → v2)](/v2/guides/mesh-journey) and [Migration](/v2/guides/migration).
-v2 docs are draft; prefer [Mesh v1](/v1) for production until this section ships.
+Read [Migration](/v2/guides/migration) (journey +
+[From Mesh v0 / v1](/v2/guides/migration/from-v0-v1)). v2 docs are draft; prefer [Mesh v1](/v1) for
+production until this section ships.
 
 ## Coming from programmatic Schema Stitching?
 
 Replace `stitchSchemas` / legacy Mesh stitching with Federation subgraph SDL + Compose + Serve.
-Guide: [Migrate from Schema Stitching](/v2/guides/migrate-from-stitching).
+Guide: [From Schema Stitching](/v2/guides/migration/from-stitching).
 
 <Cards>
   <Cards.Card arrow title="Build your Subgraph" href="/v2/paths/generate" />
   <Cards.Card arrow title="Transform Subgraph" href="/v2/transforms" />
   <Cards.Card arrow title="Serve Subgraph" href="/v2/serve-subgraph" />
   <Cards.Card arrow title="Serve Supergraph" href="/v2/serve" />
-  <Cards.Card
-    arrow
-    title="Migrate from Schema Stitching"
-    href="/v2/guides/migrate-from-stitching"
-  />
+  <Cards.Card arrow title="Migration" href="/v2/guides/migration" />
   <Cards.Card arrow title="Architecture" href="/v2/architecture" />
   <Cards.Card arrow title="buildSubgraphSchema" href="/v2/guides/build-subgraph-schema" />
   <Cards.Card arrow title="Directives" href="/v2/directives" />
