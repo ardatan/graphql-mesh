@@ -1,17 +1,19 @@
 ---
 description:
-  Convert existing sources into Federation-ready Mesh subgraphs, then read the emitted SDL
+  Convert existing sources into Federation-ready Mesh subgraphs -- mesh.config.ts composeConfig and
+  mesh-compose CLI
 ---
 
-import { Cards } from '@theguild/components'
+import { Callout, Cards } from '@theguild/components'
 import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Generate
 
-Turn the APIs and databases you already have into **Federation-ready subgraphs**. Mesh Compose emits
-GraphQL SDL stamped with directives; you query it on **Hive Gateway** (and on **Apollo Router** when
-the SDL is Connect-compatible). You do not have to write directive args by hand to get a first
-working query.
+Turn the APIs and databases you already have into **Federation-ready subgraphs**. Point a Mesh
+loader at a source in `composeConfig`, run **`mesh-compose`**, and read the emitted GraphQL SDL
+(stamped with Mesh / Connect / Federation directives). Query it on **Hive Gateway** (and on **Apollo
+Router** when the SDL is Connect-compatible). You do not have to write directive args by hand to get
+a first working query.
 
 Emitted SDL is yours. You can always edit it and feed the file back into Compose, a schema registry,
 and the gateway -- that path is [Generate-then-edit](/v2/paths/generate-then-edit). The **same**
@@ -30,6 +32,107 @@ serve the subgraph on Yoga (or any GraphQL server) yourself -- see
   ]}
 />
 
+<Callout type="info">
+  v2 Generate uses **`mesh.config.ts`** + `export const composeConfig` + the **`mesh-compose`** CLI.
+  YAML **`.meshrc`** is the Mesh v0 gateway config -- migrate it rather than authoring new Generate
+  flows there ([Migration](/v2/guides/migration) / [Mesh journey](/v2/guides/mesh-journey)).
+</Callout>
+
+## Config: `composeConfig` in `mesh.config.ts`
+
+Install `@graphql-mesh/compose-cli` and the loader for your source (e.g. `@omnigraph/sql`,
+`@omnigraph/openapi`). Export **`composeConfig`** with `defineConfig` (docs often alias it as
+`defineComposeConfig`):
+
+### SQL catalog
+
+```ts filename="mesh.config.ts" {7-13}
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { loadSqlSubgraph } from '@omnigraph/sql'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      // First argument becomes the subgraph name (use with --subgraph)
+      sourceHandler: loadSqlSubgraph('chinook', {
+        endpoint: 'file:chinook.db'
+      })
+    }
+  ]
+})
+```
+
+### OpenAPI / REST (Connect emit)
+
+```ts filename="mesh.config.ts" {7-14}
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { loadOpenAPISubgraph } from '@omnigraph/openapi'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadOpenAPISubgraph('reviews', {
+        source: 'http://localhost:4001/openapi.json',
+        endpoint: 'http://localhost:4001'
+      })
+    }
+  ]
+})
+```
+
+Optional [Automatic](/v2/transforms/automatic) transforms hang on the same subgraph entry
+(`transforms: [createRenameTransform(...)]`). Hand-written `.graphql` uses `schema:` instead of
+`sourceHandler` -- [Hand-write](/v2/paths/hand-write) / [Composition](/v2/compose).
+
+## CLI: `mesh-compose`
+
+The Generate **emit** surface today is Compose CLI flags -- there is no separate `mesh generate`
+binary. Default config discovery looks for `mesh.config.ts` (also `.mts` / `.cts` / `.js` / `.mjs` /
+`.cjs`) in the cwd, or pass `-c` / `--config-path`.
+
+### Emit one subgraph SDL (Generate)
+
+`--subgraph <name>` prints (or writes) **that** subgraph's annotated SDL -- Federation-ready, with
+`@transport` always stamped. `<name>` matches the loader name (`'chinook'`, `'reviews'`) or an
+explicit `name:` on a `schema:` entry:
+
+```bash
+# stdout
+mesh-compose --subgraph chinook
+
+# file (typical Generate → read / commit / registry publish)
+mesh-compose --subgraph chinook -o chinook-subgraph.graphql
+mesh-compose --subgraph reviews -o reviews-subgraph.graphql
+
+# custom config path
+mesh-compose -c ./configs/mesh.config.ts --subgraph chinook -o chinook-subgraph.graphql
+```
+
+Open the file and practice [Reading generated SDL](/v2/guides/reading-generated-sdl).
+
+### Compose the supergraph (serve next)
+
+When every subgraph is listed in `composeConfig`, compose them together for
+[Serve Supergraph](/v2/serve):
+
+```bash
+mesh-compose -o supergraph.graphql
+hive-gateway supergraph
+```
+
+Registry publish uses the same `--subgraph` files --
+[Composition: registry](/v2/compose#registry-publish) /
+[Schema registry](/v2/concepts/schema-registry).
+
+<Callout type="info">
+  **CLI gap / follow-up:** Generate already has a clean emit path (`mesh-compose --subgraph` +
+  `composeConfig`). What it lacks is Generate-*named* DX -- e.g. a `mesh-compose generate` alias,
+  `--subgraph-all` / directory emit for every loader in one shot, or packaging docs that say
+  "generate" on the bin help string. Those are optional polish; this page documents the stable
+  surface. Prefer a small follow-up PR on `@graphql-mesh/compose-cli` rather than inventing a second
+  config format.
+</Callout>
+
 ## In the Music Store Example
 
 Stage 1 of the [Music Store Example](/v2/examples/music-store) generates the **Chinook SQL catalog**
@@ -40,23 +143,12 @@ before anything else is authored.
 | ------------------- | ------------------------------------------------------------ |
 | Chinook SQL catalog | Domain starts with catalog; generate-first lesson stays true |
 
-```ts
-import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
-import { loadSqlSubgraph } from '@omnigraph/sql'
-
-export const composeConfig = defineComposeConfig({
-  subgraphs: [
-    {
-      sourceHandler: loadSqlSubgraph('chinook', {
-        endpoint: 'file:chinook.db'
-      })
-    }
-  ]
-})
+```bash
+mesh-compose --subgraph chinook -o chinook-subgraph.graphql
 ```
 
-After compose, query a Track (`Query.track` / `Query.track(id:)`), then open the emitted SDL and
-find `@transport`, `@sql`, and `Track @key(fields: "id")`. Shape to expect:
+After emit (or full compose), query a Track (`Query.track` / `Query.track(id:)`), then open the SDL
+and find `@transport`, `@sql`, and `Track @key(fields: "id")`. Shape to expect:
 [SQL protocol](/v2/protocols/sql) / [Music Store Example](/v2/examples/music-store) stage 1.
 
 ## What to look for after generate
@@ -73,9 +165,9 @@ Reading guide: [Reading generated SDL](/v2/guides/reading-generated-sdl).
 
 Compose + Hive Gateway / Apollo Router is the default Mesh story. When you need a **subgraph
 process** that executes Mesh transports from the generated SDL (for example Yoga beside other
-services), pass that SDL into `buildSubgraphSchema`:
+services), pass the `--subgraph` file into `buildSubgraphSchema`:
 
-```ts
+```ts {3}
 import { buildSubgraphSchema } from '@graphql-mesh/subgraph'
 import { readFileSync } from 'node:fs'
 
@@ -86,7 +178,7 @@ const schema = buildSubgraphSchema(readFileSync('./chinook-subgraph.graphql', 'u
 
 Same helper for [Generate-then-edit](/v2/paths/generate-then-edit) and
 [Hand-write](/v2/paths/hand-write). Full guide:
-[buildSubgraphSchema](/v2/guides/build-subgraph-schema).
+[buildSubgraphSchema](/v2/guides/build-subgraph-schema) / [Serve Subgraph](/v2/serve-subgraph).
 
 ## Loaders (reference)
 
@@ -105,9 +197,12 @@ Point a Mesh loader at a source; the product story is the emitted subgraph SDL.
 FHIR how-we-built (JSON Schema generate + join SDL): [FHIR](/v2/examples/fhir).
 
 <Cards>
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
   <Cards.Card arrow title="Generate-then-edit" href="/v2/paths/generate-then-edit" />
   <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
   <Cards.Card arrow title="buildSubgraphSchema" href="/v2/guides/build-subgraph-schema" />
+  <Cards.Card arrow title="Serve Subgraph" href="/v2/serve-subgraph" />
+  <Cards.Card arrow title="FAQ" href="/v2/faq" />
   <Cards.Card arrow title="Protocols" href="/v2/protocols" />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
 </Cards>
