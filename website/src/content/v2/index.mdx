@@ -28,6 +28,27 @@ supergraph). Authors work in GraphQL SDL with Mesh
   preferred runtime for the full Mesh transport surface; **Apollo Router** is a first-class peer for
   **Connect-compatible** supergraphs.
 
+## Enhance an existing Federation
+
+Already on Apollo GraphOS + Router, Hive Gateway + Registry, or another Federation stack? Mesh
+**extends** that graph -- it does not replace it.
+
+Typical pattern:
+
+1. Keep your current subgraphs, composer, registry, and gateway.
+2. [Build your Subgraph](/v2/paths/generate) for the new surface (REST, SQL, gRPC, …) as Federation
+   SDL -- Generate, Hand-write, or Generate-then-edit.
+3. Publish that SDL to the same registry, **or** [Serve Subgraph](/v2/serve-subgraph) so the
+   existing gateway can call a Mesh-backed Federation URL (`buildSubgraphSchema` / Hive subgraph
+   mode).
+4. Recompose (Rover, Hive composition, or Mesh Compose) and keep [Serve Supergraph](/v2/serve) on
+   the gateway you already run.
+
+Connect-only Mesh slices can dual-run on Apollo Router beside your GraphQL subgraphs. Mesh protocol
+transports (`@sql`, `@protobuf__rpc`, …) need Hive Gateway on the supergraph **or** a served Mesh
+subgraph peer. Short answers:
+[FAQ: existing Federation](/v2/faq#can-mesh-drop-into-an-existing-federation-setup).
+
 <V2FlowDiagram
   ariaLabel="Mesh v2 stack from sources through Composition to gateway transports"
   caption="Same path for generated or authored SDL."
@@ -65,9 +86,8 @@ composed graph, see [Serve Supergraph](/v2/serve).
 ## Where to go next
 
 <Cards>
+  <Cards.Card arrow title="FAQ" href="/v2/faq" />
   <Cards.Card arrow title="Migration" href="/v2/guides/migration" />
-  <Cards.Card arrow title="Concepts" href="/v2/concepts" />
-  <Cards.Card arrow title="Architecture" href="/v2/architecture" />
   <Cards.Card arrow title="Composition" href="/v2/compose" />
   <Cards.Card arrow title="Transform Subgraph" href="/v2/transforms" />
   <Cards.Card arrow title="Serve Subgraph" href="/v2/serve-subgraph" />
@@ -76,6 +96,7 @@ composed graph, see [Serve Supergraph](/v2/serve).
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
   <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
   <Cards.Card arrow title="Directives" href="/v2/directives" />
-  <Cards.Card arrow title="FAQ" href="/v2/faq" />
+  <Cards.Card arrow title="Architecture" href="/v2/architecture" />
+  <Cards.Card arrow title="Concepts" href="/v2/concepts" />
   <Cards.Card arrow title="Authentication" href="/v2/guides/auth" />
 </Cards>

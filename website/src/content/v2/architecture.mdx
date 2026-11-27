@@ -38,14 +38,16 @@ treat both the same.
 
 ## Patterns
 
-| Pattern                     | When                                                                                                                                        |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| Dual-run same SDL           | Hive Gateway and Apollo Router both execute the same Connect supergraph.                                                                    |
-| Hive Gateway subgraph proxy | Non-Connect Mesh subgraphs served by Hive Gateway; a foreign router talks GraphQL to that subgraph -- [Serve Subgraph](/v2/serve-subgraph). |
-| Registry                    | Publish Mesh subgraphs (generated or hand-written); gateway pulls the supergraph.                                                           |
+| Pattern                     | When                                                                                                                                                 |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Enhance existing Federation | Keep GraphOS / Hive / Rover; add Mesh Federation subgraphs for REST, SQL, gRPC, … -- [FAQ](/v2/faq#can-mesh-drop-into-an-existing-federation-setup). |
+| Dual-run same SDL           | Hive Gateway and Apollo Router both execute the same Connect supergraph.                                                                             |
+| Hive Gateway subgraph proxy | Non-Connect Mesh subgraphs served by Hive Gateway; a foreign router talks GraphQL to that subgraph -- [Serve Subgraph](/v2/serve-subgraph).          |
+| Registry                    | Publish Mesh subgraphs (generated or hand-written); gateway pulls the supergraph.                                                                    |
 
-See also: [Concepts](/v2/concepts) | [Composition](/v2/compose) |
-[Serve Subgraph](/v2/serve-subgraph) | [Serve Supergraph](/v2/serve/hive-gateway).
+See also: [Introduction: Enhance an existing Federation](/v2#enhance-an-existing-federation) |
+[Concepts](/v2/concepts) | [Composition](/v2/compose) | [Serve Subgraph](/v2/serve-subgraph) |
+[Serve Supergraph](/v2/serve/hive-gateway).
 
 <Cards>
   <Cards.Card arrow title="Concepts" href="/v2/concepts" />
