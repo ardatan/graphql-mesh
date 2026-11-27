@@ -124,7 +124,8 @@ SDL came from a loader or a hand-written file. See [Schema registry](/v2/concept
 
 Use `--subgraph` with the subgraph name from your Compose config (loader name or `name:` for a
 file). Output is Federation-compatible subgraph SDL -- same shape for SQL emit, Connect emit, or
-authored `.graphql`:
+authored `.graphql`. This flag is also the **Generate** emit path -- see
+[Generate: CLI](/v2/paths/generate#cli-mesh-compose):
 
 ```bash
 mesh-compose --subgraph catalog -o catalog-subgraph.graphql
