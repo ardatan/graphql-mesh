@@ -68,12 +68,18 @@ On Connect / protocol Query fields that look up one entity by its key, compositi
 stamp `entity: true` (or a type-level `@connect` / `@sql` / `@protobuf__rpc` with `$this.<key>`).
 That wires Hive Gateway / Apollo Router `_entities` -> `resolveReference` without Mesh `@merge`.
 
-| Pattern                                       | What you get                                                                     |
-| --------------------------------------------- | -------------------------------------------------------------------------------- |
-| Arg name **matches** key field (`id` -> `id`) | Query field `@connect(entity: true)` (or protocol equivalent)                    |
-| Arg name **differs** (`petId` -> `id`)        | Type-level entity directive with `$this.id` (field-level `entity: true` invalid) |
-| Join-only stub (`resolvable: false`)          | `@key` only -- another subgraph owns the resolver                                |
-| Batch ByIds only                              | Batch field kept; singular `_entities` not claimed without a singular resolver   |
+For **hand-written GraphQL** subgraphs that need a singular entity hop, prefer Federation Spec
+`@lookup` / `@is` / `@internal` imported from
+[graphql-federation-spec/draft](https://graphql.github.io/graphql-federation-spec/draft) -- not from
+`specs.graphql-mesh.dev`. See [Directives: @lookup](/v2/directives#lookup).
+
+| Pattern                                       | What you get                                                                   |
+| --------------------------------------------- | ------------------------------------------------------------------------------ |
+| Arg name **matches** key field (`id` -> `id`) | Query field `@connect(entity: true)` (or protocol equivalent) / `@lookup`      |
+| Arg name **differs** (`petId` -> `id`)        | Type-level `$this` map, or `@lookup` + `@is(field: "id")` on the arg           |
+| Join-only stub (`resolvable: false`)          | `@key` only -- another subgraph owns the resolver                              |
+| Batch ByIds only                              | Batch field kept; singular `_entities` not claimed without a singular resolver |
+| Hide lookup from clients                      | `@lookup` + `@internal` on the field (or internal type)                        |
 
 <ProtocolRef name="http-rest" /> Connectors (`getCustomer` matches [ById
 conventions](/v2/compose#semantic-conventions)):
@@ -130,7 +136,8 @@ See [Selection mapping](/v2/guides/selection-mapping) for `$this` / `$batch` bin
 
 Composition recognizes Query names like `bookById`, `getCustomer`, `customersByIds` (snake_case
 match) when the key arg lines up with a key field. Connect / protobuf get `entity: true` or
-type-level `$this` maps; other Mesh subgraphs may get `@merge`. Full table and opt-out:
+type-level `$this` maps; singular GraphQL hops prefer Federation `@lookup` (+ `@is` when needed).
+Legacy Mesh `@merge` remains for **batch / list** back-compat only. Full table and opt-out:
 [Composition semantic conventions](/v2/compose#semantic-conventions).
 
 ### Federation transform
@@ -189,10 +196,11 @@ type Track @key(fields: "id", resolvable: false) {
 See [Music Store Example](/v2/examples/music-store) and [FHIR](/v2/examples/fhir) for entity joins.
 Semantic ById conventions: [Composition](/v2/compose#semantic-conventions).
 
-Mesh still documents <DirectiveRef name="merge" /> (type-merging on Hive Gateway). It also documents
+Prefer Federation `@lookup` / `@is` / `@internal` (or `@key` + Connect / protocol `entity: true`)
+for new entity hops -- [Directives: @lookup](/v2/directives#lookup). Mesh
 
-<DirectiveRef name="resolveTo" /> (field delegation) under [Directives](/v2/directives#merge) --
-prefer `@key` + HTTP/REST Connect or protocol `entity: true` maps for new joins.
+<DirectiveRef name="merge" /> is **runtime back-compat only** (especially batch/list).
+<DirectiveRef name="resolveTo" /> remains for field delegation when entity stubs are not enough.
 
 <Cards>
   <Cards.Card arrow title="Schema Stitching" href="/v2/concepts/stitching" />

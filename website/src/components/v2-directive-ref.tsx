@@ -19,7 +19,24 @@ const DIRECTIVES = {
   merge: {
     label: '@merge',
     anchor: 'merge',
-    description: 'Mesh type-merging helper (keyField / keyArg) on Query or entity fields.',
+    description:
+      'Legacy Mesh entity hop (keyField / keyArg); runtime back-compat -- prefer Federation @lookup.',
+  },
+  lookup: {
+    label: '@lookup',
+    anchor: 'lookup',
+    description:
+      'Federation Spec entity recall on a Query field (import from graphql-federation-spec/draft).',
+  },
+  is: {
+    label: '@is',
+    anchor: 'lookup',
+    description: 'Federation Spec: map a @lookup argument onto an entity field selection.',
+  },
+  internal: {
+    label: '@internal',
+    anchor: 'lookup',
+    description: 'Federation Spec: hide a lookup field/type from the client-facing schema.',
   },
   transport: {
     label: '@transport',

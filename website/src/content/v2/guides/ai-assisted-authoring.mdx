@@ -23,24 +23,24 @@ optional registry, Hive Gateway / Apollo Router. There is no `/v2/paths/ai-write
 Valid Mesh SDL the assistant (or you) can drop into Compose without custom one-off handlers:
 
 - Spec `@link` imports for every directive family you use
-- Local `directive @…` **definitions** for each `@composeDirective` name
+- Local `directive @...` **definitions** for each `@composeDirective` name
   ([why](/v2/directives#federation))
 - Binders (`$args`, `$this`, `selection`, protocol `args`) that match
   [Selection mapping](/v2/guides/selection-mapping)
-- Honest gateway matrix: Connect → dual-run; `@sql` / `@protobuf__rpc` / … → Hive Gateway only
+- Honest gateway matrix: Connect → dual-run; `@sql` / `@protobuf__rpc` / ... → Hive Gateway only
 
 ## Context to paste
 
 Give the model **Mesh truth**, not a generic GraphQL tutorial:
 
-| Paste                                                                                       | Why                                                       |
-| ------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| [Hand-write](/v2/paths/hand-write) (or this page + Hand-write)                              | Authoring contract and Compose entry                      |
-| [Reading generated SDL](/v2/guides/reading-generated-sdl)                                   | How to interpret stamps before editing                    |
-| Emitted subgraph SDL (when you have one)                                                    | Concrete `@connect` / `@sql` / … shapes to mirror or trim |
-| [Directives reference](/v2/directives) excerpt                                              | Arg names and scenario samples                            |
-| Protocol page for the upstream ([Protocols](/v2/protocols))                                 | Dual-run limits and loader vs hand-write notes            |
-| Target gateway ([Hive Gateway](/v2/serve/hive-gateway) / [Router](/v2/serve/apollo-router)) | Avoid inventing Router support for Mesh-only dirs         |
+| Paste                                                                                       | Why                                                         |
+| ------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| [Hand-write](/v2/paths/hand-write) (or this page + Hand-write)                              | Authoring contract and Compose entry                        |
+| [Reading generated SDL](/v2/guides/reading-generated-sdl)                                   | How to interpret stamps before editing                      |
+| Emitted subgraph SDL (when you have one)                                                    | Concrete `@connect` / `@sql` / ... shapes to mirror or trim |
+| [Directives reference](/v2/directives) excerpt                                              | Arg names and scenario samples                              |
+| Protocol page for the upstream ([Protocols](/v2/protocols))                                 | Dual-run limits and loader vs hand-write notes              |
+| Target gateway ([Hive Gateway](/v2/serve/hive-gateway) / [Router](/v2/serve/apollo-router)) | Avoid inventing Router support for Mesh-only dirs           |
 
 Optional: one working query you already run against generated SDL, so the model preserves field
 names clients depend on.
@@ -55,7 +55,7 @@ Keep prompts boring and checkable:
 3. **Constraints:** list required `@link` URLs, `@composeDirective` names, and that every composed
    directive needs a local `directive` definition.
 4. **Output:** a single `.graphql` document -- no YAML `.meshrc`, no ad-hoc `sourceHandler`.
-5. **Verify:** "List every `@composeDirective` and confirm a matching `directive @…` exists."
+5. **Verify:** "List every `@composeDirective` and confirm a matching `directive @...` exists."
 
 Example constraint block you can paste:
 
