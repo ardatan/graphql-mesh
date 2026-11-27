@@ -111,7 +111,7 @@ describe('runtime', () => {
       expect(builtMesh).not.toMatch(/@graphql-yoga\/render-graphiql/);
     });
 
-    it('writes under-the-hood supergraph.graphql and supergraph.ts for multi-source builds', async () => {
+    it('writes under-the-hood supergraph.graphql.ts (and .graphql) for multi-source builds', async () => {
       const configFolder = 'multi-source-config';
       await graphqlMesh(DEFAULT_CLI_PARAMS, [
         'build',
@@ -123,15 +123,15 @@ describe('runtime', () => {
         pathModule.join(artifactsDir, 'supergraph.graphql'),
         'utf8',
       );
-      const supergraphTs = await fs.promises.readFile(
-        pathModule.join(artifactsDir, 'supergraph.ts'),
+      const supergraphGraphqlTs = await fs.promises.readFile(
+        pathModule.join(artifactsDir, 'supergraph.graphql.ts'),
         'utf8',
       );
 
       expect(supergraphGraphql).toContain('join__Graph');
       expect(supergraphGraphql).toContain('mesh://legacy/');
-      expect(supergraphTs).toContain('export const supergraphSdl');
-      expect(supergraphTs).toContain('join__Graph');
+      expect(supergraphGraphqlTs).toContain('export const supergraphSdl');
+      expect(supergraphGraphqlTs).toContain('join__Graph');
     });
   });
 });

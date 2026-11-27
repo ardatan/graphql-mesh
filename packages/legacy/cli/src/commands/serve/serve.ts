@@ -172,21 +172,24 @@ export async function serveMesh(
         .catch(e => eventLogger.error(e));
     });
 
-    const supergraphPath = pathModule.join(baseDir, cliParams.artifactsDir, 'supergraph.graphql');
-    const hasSupergraph = await pathExists(supergraphPath);
+    // Under the hood: when underthehood compose wrote a join SG, serve via Hive
+    // Gateway + federation. User-facing APIs (`createMeshHTTPHandler`, generated
+    // `createBuiltMeshHTTPHandler`, `getBuiltMesh`) stay unchanged.
+    const artifactsDir = pathModule.join(baseDir, cliParams.artifactsDir);
+    const supergraphGraphqlPath = pathModule.join(artifactsDir, 'supergraph.graphql');
+    const hasSupergraph = await pathExists(supergraphGraphqlPath);
 
     let meshHTTPHandler: MeshOrGatewayHTTPHandler;
     let graphqlWsOptions: object | undefined;
     let gateway: GatewayRuntime | undefined;
 
     if (hasSupergraph) {
-      // Under-the-hood compose wrote a join SG. Serve it with Hive Gateway and
-      // bridge mesh://legacy/* subgraphs to in-process Mesh source executors —
-      // same execution model as handleFederationSupergraph inside getMesh.
-      log.info(`Starting Hive Gateway with under-the-hood supergraph (${supergraphPath})`);
+      log.info(
+        `Starting Hive Gateway with under-the-hood supergraph (${supergraphGraphqlPath})`,
+      );
       const mesh = await getBuiltMesh();
       gateway = createGatewayRuntime({
-        supergraph: supergraphPath,
+        supergraph: supergraphGraphqlPath,
         graphqlEndpoint: graphqlPath,
         landingPage: false,
         graphiql: playgroundTitle ? { title: playgroundTitle } : true,

@@ -5,8 +5,11 @@ import { writeFile } from '@graphql-mesh/utils';
 
 /**
  * When underthehood compose succeeded, `schema.extensions.supergraphSdl` holds the
- * join-style SDL. Write it next to the client `schema.graphql` so `mesh start` /
- * `mesh dev` can feed Hive Gateway, and so consumers can run `hive-gateway` manually.
+ * join-style SDL. Write under-the-hood artifacts next to the client `schema.graphql`
+ * so `mesh start` / `mesh dev` can feed Hive Gateway.
+ *
+ * Canonical module artifact: `supergraph.graphql.ts`.
+ * Plain `supergraph.graphql` is also written so Gateway / `hive-gateway` can take a path.
  */
 export async function writeSupergraphArtifacts(opts: {
   outputDir: string;
@@ -20,18 +23,18 @@ export async function writeSupergraphArtifacts(opts: {
   }
 
   const graphqlPath = pathModule.join(opts.outputDir, 'supergraph.graphql');
-  const tsPath = pathModule.join(opts.outputDir, 'supergraph.ts');
+  const graphqlTsPath = pathModule.join(opts.outputDir, 'supergraph.graphql.ts');
 
   await Promise.all([
     writeFile(graphqlPath, supergraphSdl),
     writeFile(
-      tsPath,
+      graphqlTsPath,
       `/* This file was automatically generated. DO NOT UPDATE MANUALLY. */\n` +
         `export const supergraphSdl = ${JSON.stringify(supergraphSdl)};\n` +
         `export default supergraphSdl;\n`,
     ),
   ]);
 
-  opts.log.info(`Under-the-hood supergraph written to ${graphqlPath}`);
+  opts.log.info(`Under-the-hood supergraph written to ${graphqlTsPath}`);
   return graphqlPath;
 }
