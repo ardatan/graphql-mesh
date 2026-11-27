@@ -204,7 +204,7 @@ After you check in the edited `.graphql`, you can serve it with Yoga (or any Gra
 import { buildSubgraphSchema } from '@graphql-mesh/subgraph'
 import { readFileSync } from 'node:fs'
 
-const schema = buildSubgraphSchema(readFileSync('./reviews.graphql', 'utf8'))
+const schema = await buildSubgraphSchema({ typeDefs: readFileSync('./reviews.graphql', 'utf8') })
 ```
 
 Prefer Federation `@lookup` for one-object entity entry fields; Type Merging `@merge` only for

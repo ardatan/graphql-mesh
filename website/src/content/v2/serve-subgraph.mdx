@@ -96,7 +96,7 @@ Mesh subgraph SDL into an executable `GraphQLSchema` and host it on **Yoga**, Ap
 Mercurius, or any GraphQL HTTP stack. It does **what Apollo's** `@apollo/subgraph`
 `buildSubgraphSchema` does for Federation wiring, **plus** Mesh directive / Mesh specification
 execution (protocol transports, Connect in-process, entity hops). Transports and entity hops come
-from the SDL; you optionally pass `resolvers` for fields you own in code.
+from the SDL; you optionally pass `resolvers` on the schema module (`{ typeDefs, resolvers }`) for fields you own in code. Mesh opts (`fetch`, …) stay in the second argument.
 
 ```sh npm2yarn
 npm i graphql graphql-yoga @graphql-mesh/subgraph
@@ -116,16 +116,21 @@ import { readFileSync } from 'node:fs'
 
 const typeDefs = readFileSync('./reviews.graphql', 'utf8')
 
-const schema = buildSubgraphSchema(typeDefs, {
-  // Optional: code resolvers for fields the SDL does not drive via directives
-  resolvers: {
-    Query: {
-      // Example: hand-owned @lookup entry beside directive-driven fields
-      reviewById: (_root, { id }, ctx) => ctx.reviews.load(id)
+const schema = await buildSubgraphSchema(
+  {
+    typeDefs,
+    // Optional: code resolvers for fields the SDL does not drive via directives
+    resolvers: {
+      Query: {
+        // Example: hand-owned @lookup entry beside directive-driven fields
+        reviewById: (_root, { id }, ctx) => ctx.reviews.load(id)
+      }
     }
+  },
+  {
+    // fetch / transport context as supported by the package
   }
-  // fetch / transport context as supported by the package
-})
+)
 
 createServer(createYoga({ schema })).listen(4002)
 ```

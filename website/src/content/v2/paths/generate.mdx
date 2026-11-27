@@ -195,9 +195,12 @@ npm i @graphql-mesh/transport-sql
 import { buildSubgraphSchema } from '@graphql-mesh/subgraph'
 import { readFileSync } from 'node:fs'
 
-const schema = buildSubgraphSchema(readFileSync('./chinook-subgraph.graphql', 'utf8'), {
-  // fetch / transport context as needed
-})
+const schema = await buildSubgraphSchema(
+  { typeDefs: readFileSync('./chinook-subgraph.graphql', 'utf8') },
+  {
+    // fetch / transport context as needed
+  }
+)
 ```
 
 Same helper for [Generate-then-edit](/v2/paths/generate-then-edit) and

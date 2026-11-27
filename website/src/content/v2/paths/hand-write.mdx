@@ -102,6 +102,7 @@ directive @protobuf__rpc(
 
 scalar TransportOptions
 
+# location = upstream gRPC (not the Yoga / Router URL)
 schema
   @transport(subgraph: "recommendations", kind: "protobuf", location: "http://localhost:50051") {
   query: Query
@@ -148,9 +149,15 @@ import { createYoga } from 'graphql-yoga'
 import { buildSubgraphSchema } from '@graphql-mesh/subgraph'
 import { readFileSync } from 'node:fs'
 
-const schema = buildSubgraphSchema(readFileSync('./recommendations.graphql', 'utf8'), {
-  // resolvers?, fetch?, ...transport context
-})
+const schema = await buildSubgraphSchema(
+  {
+    typeDefs: readFileSync('./recommendations.graphql', 'utf8'),
+    // resolvers: { ... } for fields you own in code
+  },
+  {
+    // fetch / pubsub / transport context
+  }
+)
 
 createServer(createYoga({ schema })).listen(4002)
 ```

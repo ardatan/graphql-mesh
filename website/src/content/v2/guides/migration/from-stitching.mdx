@@ -202,7 +202,7 @@ hive-gateway subgraph users-subgraph.graphql
 import { buildSubgraphSchema } from '@graphql-mesh/subgraph'
 import { readFileSync } from 'node:fs'
 
-const schema = buildSubgraphSchema(readFileSync('./users.graphql', 'utf8'))
+const schema = await buildSubgraphSchema({ typeDefs: readFileSync('./users.graphql', 'utf8') })
 // serve with Yoga / Apollo Server / …
 ```
 

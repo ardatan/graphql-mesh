@@ -120,7 +120,7 @@ SDL file into an existing Federation fleet:
 ## How do I add a custom `@lookup` resolver?
 
 Stamp Federation draft `@lookup` on an entity entry field that returns **one object**, then pass a
-matching resolver into `buildSubgraphSchema({ resolvers: { ... } })`. Directive-driven fields still
+matching resolver into `buildSubgraphSchema({ typeDefs, resolvers })` (Mesh opts like `fetch` stay in the second argument). Directive-driven fields still
 come from the SDL. Use Type Merging `@merge` only for **list / batch** entry fields.
 
 - [Serve Subgraph: resolvers for `@lookup`](/v2/serve-subgraph#resolvers-for-lookup)

@@ -48,8 +48,8 @@ Connect in-process, entity hops). The jobs differ in what each package executes:
 |                     | **`@apollo/subgraph`**                                                                                    | **`@graphql-mesh/subgraph`**                                                                                                                        |
 | ------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Job                 | Make a **hand-coded** GraphQL schema Federation-compatible                                                | Same Federation wiring job, **plus** execute Mesh directives / Mesh spec on **Mesh subgraph SDL**                                                   |
-| Typical input       | `[{ typeDefs, resolvers }]` or SDL + your resolver map                                                    | Generated / edited / hand Mesh SDL (`string` / `DocumentNode` / `GraphQLSchema`)                                                                    |
-| What you write      | Field resolvers + `__resolveReference` for entities                                                       | Mostly directives on SDL; optional `resolvers` for fields you own in code                                                                           |
+| Typical input       | `[{ typeDefs, resolvers }]` or SDL + your resolver map                                                    | Same module shape (`{ typeDefs, resolvers }` / array) **or** bare Mesh SDL (`string` / `DocumentNode` / `GraphQLSchema`); Mesh opts in 2nd arg       |
+| What you write      | Field resolvers + `__resolveReference` for entities                                                       | Mostly directives on SDL; optional `resolvers` on the schema module for fields you own in code                                                      |
 | Federation plumbing | Adds Fed types / directives (`_Entity`, `_Any`, ...) and wires `_entities` from your `__resolveReference` | Wires entity entry from Fed `@lookup` / `@is` / `@internal` (one-object) and Type Merging `@merge` (list/batch)                                     |
 | HTTP/REST Connect   | `@connect` / `@source` may appear in SDL; **Router executes** Connectors, not this library                | `@connect` / `@source` run via Mesh transports in **this** subgraph process; Connectors are also native on Apollo Router when the SDL is compatible |
 | Mesh protocols      | Not in scope (`@sql`, `@protobuf__rpc`, `@transport`, ...)                                                | First-class: `@transport` + protocol / Connect directive executors                                                                                  |
@@ -152,7 +152,7 @@ extend schema
   @composeDirective(name: "@transport")
   @composeDirective(name: "@protobuf__rpc")
 
-# Schema-level dial: kind "protobuf" + gRPC host:port (Hive Gateway / this Yoga peer)
+# Schema-level dial: kind "protobuf" + upstream gRPC host:port (not the Yoga / Router URL)
 schema
   @transport(
     subgraph: "recommendations"
@@ -217,12 +217,18 @@ import { readFileSync } from 'node:fs'
 
 const typeDefs = readFileSync('./subgraph.graphql', 'utf8')
 
-const schema = buildSubgraphSchema(typeDefs, {
-  // optional GraphQL resolvers for fields you own in code
-  // resolvers: { ... },
-  // optional fetch / transport context for @transport and protocol directives
-  // fetch: globalThis.fetch,
-})
+// Prefer await: return is MaybePromise when transports wire async
+const schema = await buildSubgraphSchema(
+  {
+    typeDefs,
+    // optional GraphQL resolvers for fields you own in code
+    // resolvers: { ... },
+  },
+  {
+    // Mesh runtime: fetch / transport context for @transport and protocol directives
+    // fetch: globalThis.fetch,
+  }
+)
 
 createServer(createYoga({ schema })).listen(4002)
 console.log('Subgraph ready on http://localhost:4002/graphql')
@@ -236,18 +242,26 @@ npx tsx subgraph-server.ts
 **Signature (shape):**
 
 ```ts
-buildSubgraphSchema(
-  typeDefs: string | DocumentNode | GraphQLSchema,
+await buildSubgraphSchema(
+  // Apollo-compatible first arg: object, array of modules, or bare SDL
+  { typeDefs: string | DocumentNode | GraphQLSchema, resolvers?: IResolvers }
+    | Array<{ typeDefs, resolvers? } | typeDefs>
+    | string | DocumentNode | GraphQLSchema,
   options?: {
-    resolvers?: IResolvers
     fetch?: typeof fetch
+    pubsub?: PubSub
     // ...transport context as supported by the package
   }
-): GraphQLSchema
+): MaybePromise<GraphQLSchema>
 ```
 
 `typeDefs` may be generated Mesh subgraph SDL, hand-written / edited `.graphql`, or an existing
-`GraphQLSchema` that already carries Mesh / Federation directives.
+`GraphQLSchema` that already carries Mesh / Federation directives. Resolvers live on the schema
+module (first argument), not in Mesh options.
+
+**URL split:** `@transport(location:)` / Connect `@source` / protocol endpoints are the **upstream
+API**. The URL you register with Apollo Router, Hive Gateway, or Rover (`routing_url`) is the
+**served subgraph** (Yoga / this process), not that upstream.
 
 ### 4. Compose with Mesh, Rover, or Hive
 
