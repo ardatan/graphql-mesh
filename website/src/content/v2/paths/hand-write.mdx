@@ -18,7 +18,9 @@ entities -- then drop that file into **Compose** and a
 Humans and AI assistants share **one** authoring contract; there is no separate "AI write" path.
 
 Prefer starting from a [read of generated SDL](/v2/guides/reading-generated-sdl) when one exists.
-Edited generate output and scratch-authored SDL use the same Compose input.
+Edited generate output and scratch-authored SDL use the same Compose input -- and the same
+`buildSubgraphSchema` call from `@graphql-mesh/subgraph` when you serve the subgraph yourself
+([buildSubgraphSchema](/v2/guides/build-subgraph-schema)).
 
 <Callout type="info">
   **Using an AI assistant:** same Hand-write contract -- no separate AI journey. For context
@@ -128,10 +130,33 @@ Hand-written protobuf SDL follows the same field-number maps as
 [Protobuf / gRPC](/v2/protocols/protobuf). Full Music Store Example stage storyboard:
 [Music Store Example](/v2/examples/music-store).
 
+## Optional: `buildSubgraphSchema` for a subgraph server
+
+When the subgraph should run as its own GraphQL process (Yoga, ...), pass the same hand-written file
+into `buildSubgraphSchema`. It wires `@transport` / protocol / `@connect` executors and entity
+resolvers (Federation `@lookup` for one-object entry fields; Mesh `@merge` for list/batch):
+
+```ts
+import { createServer } from 'node:http'
+import { createYoga } from 'graphql-yoga'
+import { buildSubgraphSchema } from '@graphql-mesh/subgraph'
+import { readFileSync } from 'node:fs'
+
+const schema = buildSubgraphSchema(readFileSync('./recommendations.graphql', 'utf8'), {
+  // resolvers?, fetch?, ...transport context
+})
+
+createServer(createYoga({ schema })).listen(4002)
+```
+
+Generate and Generate-then-edit SDL use this **same** export --
+[buildSubgraphSchema](/v2/guides/build-subgraph-schema).
+
 Optional naming / filter passes after authorship live under [Transforms](/v2/transforms) -- not a
 required Hand-write step.
 
 <Cards>
+  <Cards.Card arrow title="buildSubgraphSchema" href="/v2/guides/build-subgraph-schema" />
   <Cards.Card arrow title="AI-assisted authoring" href="/v2/guides/ai-assisted-authoring" />
   <Cards.Card arrow title="Selection mapping" href="/v2/guides/selection-mapping" />
   <Cards.Card arrow title="Directives reference" href="/v2/directives" />

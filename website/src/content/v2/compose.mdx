@@ -170,11 +170,15 @@ recommendations, then compose all). Serve: [Serve Supergraph](/v2/serve).
 
 <Callout type="info">
   First-class hand-written SDL Compose + registry helpers continue to land in Mesh releases; the
-  `--subgraph` emit + registry CLI pattern above is the stable consumer UX.
+  `--subgraph` emit + registry CLI pattern above is the stable consumer UX. To **execute** Mesh
+  subgraph SDL in your own GraphQL server (Yoga, ...), use `buildSubgraphSchema` from
+  `@graphql-mesh/subgraph` -- same input for Generate, Generate-then-edit, and Hand-write
+  ([buildSubgraphSchema](/v2/guides/build-subgraph-schema)).
 </Callout>
 
 <Cards>
   <Cards.Card arrow title="Composition (concept)" href="/v2/concepts/composition" />
+  <Cards.Card arrow title="buildSubgraphSchema" href="/v2/guides/build-subgraph-schema" />
   <Cards.Card arrow title="Schema registry" href="/v2/concepts/schema-registry" />
   <Cards.Card arrow title="Architecture" href="/v2/architecture" />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />

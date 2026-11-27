@@ -14,7 +14,10 @@ the SDL is Connect-compatible). You do not have to write directive args by hand 
 working query.
 
 Emitted SDL is yours. You can always edit it and feed the file back into Compose, a schema registry,
-and the gateway -- that path is [Generate-then-edit](/v2/paths/generate-then-edit).
+and the gateway -- that path is [Generate-then-edit](/v2/paths/generate-then-edit). The **same**
+subgraph SDL is valid input to `buildSubgraphSchema` from `@graphql-mesh/subgraph` when you want to
+serve the subgraph on Yoga (or any GraphQL server) yourself -- see
+[buildSubgraphSchema](/v2/guides/build-subgraph-schema).
 
 <V2FlowDiagram
   ariaLabel="Generate path from source to reading emitted SDL"
@@ -66,6 +69,25 @@ find `@transport`, `@sql`, and `Track @key(fields: "id")`. Shape to expect:
 
 Reading guide: [Reading generated SDL](/v2/guides/reading-generated-sdl).
 
+## Optional: run the subgraph yourself
+
+Compose + Hive Gateway / Apollo Router is the default Mesh story. When you need a **subgraph
+process** that executes Mesh transports from the generated SDL (for example Yoga beside other
+services), pass that SDL into `buildSubgraphSchema`:
+
+```ts
+import { buildSubgraphSchema } from '@graphql-mesh/subgraph'
+import { readFileSync } from 'node:fs'
+
+const schema = buildSubgraphSchema(readFileSync('./chinook-subgraph.graphql', 'utf8'), {
+  // fetch / transport context as needed
+})
+```
+
+Same helper for [Generate-then-edit](/v2/paths/generate-then-edit) and
+[Hand-write](/v2/paths/hand-write). Full guide:
+[buildSubgraphSchema](/v2/guides/build-subgraph-schema).
+
 ## Loaders (reference)
 
 Point a Mesh loader at a source; the product story is the emitted subgraph SDL.
@@ -85,6 +107,7 @@ FHIR how-we-built (JSON Schema generate + join SDL): [FHIR](/v2/examples/fhir).
 <Cards>
   <Cards.Card arrow title="Generate-then-edit" href="/v2/paths/generate-then-edit" />
   <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
+  <Cards.Card arrow title="buildSubgraphSchema" href="/v2/guides/build-subgraph-schema" />
   <Cards.Card arrow title="Protocols" href="/v2/protocols" />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
 </Cards>
