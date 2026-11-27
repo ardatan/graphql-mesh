@@ -1,12 +1,13 @@
 /**
  * `@lookup` / `@is` entity subgraph via `buildSubgraphSchema`.
- * Apollo Router `_entities` for Product.reviews goes through Mesh `@lookup`.
+ * SDL: `subgraphs/reviews.graphql` (same source Rover reads via `_service`).
  */
 import { createServer } from 'node:http';
 import { createYoga } from 'graphql-yoga';
 import { Opts } from '@e2e/opts';
 import { buildSubgraphSchema } from '@graphql-mesh/subgraph';
 import { createHitCounter } from './hits.js';
+import { loadSubgraphSdl } from './load-subgraph-sdl.js';
 
 const opts = Opts(process.argv);
 const port = opts.getServicePort('reviews', true);
@@ -23,43 +24,8 @@ const reviewsByProduct: Record<string, (typeof reviewsById)[string][]> = {
   '1': [reviewsById.r1],
 };
 
-const typeDefs = /* GraphQL */ `
-  directive @link(url: String!, import: [String]) repeatable on SCHEMA
-  directive @key(fields: String!, resolvable: Boolean = true) repeatable on OBJECT | INTERFACE
-  directive @lookup on FIELD_DEFINITION
-  directive @is(field: String!) on ARGUMENT_DEFINITION
-
-  extend schema
-    @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])
-    @link(
-      url: "https://graphql.github.io/graphql-federation-spec/draft"
-      import: ["@lookup", "@is"]
-    )
-
-  type Query {
-    review(id: ID!): Review
-    product(id: ID! @is(field: "id")): Product @lookup
-  }
-
-  type Review {
-    id: ID!
-    body: String!
-    product: Product!
-    author: User!
-  }
-
-  type Product @key(fields: "id") {
-    id: ID!
-    reviews: [Review!]!
-  }
-
-  type User @key(fields: "id") {
-    id: ID!
-  }
-`;
-
 async function main() {
-  const schema = await buildSubgraphSchema(typeDefs, {
+  const schema = await buildSubgraphSchema(loadSubgraphSdl('reviews'), {
     skipTransports: true,
     resolvers: {
       Query: {

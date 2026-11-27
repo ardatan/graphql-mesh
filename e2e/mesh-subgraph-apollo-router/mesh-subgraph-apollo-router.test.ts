@@ -8,11 +8,11 @@ import { composeSupergraphWithRover } from '../utils/apolloRover.js';
 
 /**
  * Four Mesh subgraphs via `buildSubgraphSchema`, composed with **Apollo Rover**,
- * served by **Apollo Router**:
- * 1. users — non-Connect Mesh (resolvers only)
- * 2. products — HTTP Mesh (`@transport(kind: "http")`) wrapping an upstream GraphQL
- * 3. inventory — Mesh `@source` rename transforms
- * 4. reviews — Federation Spec `@lookup` / `@is` entity resolution
+ * served by **Apollo Router**.
+ *
+ * Each subgraph SDL lives once under `subgraphs/<name>.graphql` — services load
+ * it for `buildSubgraphSchema`; Rover discovers the same files by convention and
+ * composes from each running subgraph's Federation-facing `_service { sdl }`.
  *
  * Run: `yarn test:e2e e2e/mesh-subgraph-apollo-router`
  */
@@ -42,30 +42,14 @@ describe('buildSubgraphSchema + Apollo Rover + Apollo Router', () => {
     reviews = await service('reviews');
 
     workDir = await mkdtemp(join(tmpdir(), 'mesh-subgraph-rover-'));
-    const fed = (name: string) => join(__dirname, 'federation', `${name}.graphql`);
     const composed = await composeSupergraphWithRover({
       workDir,
+      schemasDir: join(__dirname, 'subgraphs'),
       subgraphs: [
-        {
-          name: 'users',
-          routingUrl: `http://127.0.0.1:${users.port}/graphql`,
-          schemaFile: fed('users'),
-        },
-        {
-          name: 'products',
-          routingUrl: `http://127.0.0.1:${products.port}/graphql`,
-          schemaFile: fed('products'),
-        },
-        {
-          name: 'inventory',
-          routingUrl: `http://127.0.0.1:${inventory.port}/graphql`,
-          schemaFile: fed('inventory'),
-        },
-        {
-          name: 'reviews',
-          routingUrl: `http://127.0.0.1:${reviews.port}/graphql`,
-          schemaFile: fed('reviews'),
-        },
+        { name: 'users', routingUrl: `http://127.0.0.1:${users.port}/graphql` },
+        { name: 'products', routingUrl: `http://127.0.0.1:${products.port}/graphql` },
+        { name: 'inventory', routingUrl: `http://127.0.0.1:${inventory.port}/graphql` },
+        { name: 'reviews', routingUrl: `http://127.0.0.1:${reviews.port}/graphql` },
       ],
     });
     supergraphPath = composed.supergraphPath;
@@ -148,7 +132,6 @@ describe('buildSubgraphSchema + Apollo Rover + Apollo Router', () => {
       user: { id: 'u1', name: 'Ada' },
     });
 
-    // Prove Router delegated GraphQL to each Mesh subgraph (not native Connectors).
     expect(await hits(users)).toBeGreaterThan(before.users);
     expect(await hits(products)).toBeGreaterThan(before.products);
     expect(await hits(productsUpstream)).toBeGreaterThan(before.productsUpstream);

@@ -1,39 +1,24 @@
 /**
  * Non-Connect Mesh subgraph: `buildSubgraphSchema` with hand resolvers
- * (no `@connect` / Apollo Connectors).
+ * (no `@connect` / Apollo Connectors). SDL: `subgraphs/users.graphql`.
  */
 import { createServer } from 'node:http';
 import { createYoga } from 'graphql-yoga';
 import { Opts } from '@e2e/opts';
 import { buildSubgraphSchema } from '@graphql-mesh/subgraph';
 import { createHitCounter } from './hits.js';
+import { loadSubgraphSdl } from './load-subgraph-sdl.js';
 
 const opts = Opts(process.argv);
 const port = opts.getServicePort('users', true);
 const hits = createHitCounter();
-
-const typeDefs = /* GraphQL */ `
-  directive @link(url: String!, import: [String]) repeatable on SCHEMA
-  directive @key(fields: String!, resolvable: Boolean = true) repeatable on OBJECT | INTERFACE
-
-  extend schema @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])
-
-  type Query {
-    user(id: ID!): User
-  }
-
-  type User @key(fields: "id") {
-    id: ID!
-    name: String!
-  }
-`;
 
 const users: Record<string, { id: string; name: string }> = {
   u1: { id: 'u1', name: 'Ada' },
 };
 
 async function main() {
-  const schema = await buildSubgraphSchema(typeDefs, {
+  const schema = await buildSubgraphSchema(loadSubgraphSdl('users'), {
     skipTransports: true,
     resolvers: {
       Query: {

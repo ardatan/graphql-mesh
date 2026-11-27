@@ -1,5 +1,5 @@
 import { execFile } from 'node:child_process';
-import { access, chmod, mkdir, writeFile } from 'node:fs/promises';
+import { access, chmod, mkdir, readdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
@@ -25,7 +25,6 @@ export async function ensureApolloRoverBinary(
   } catch {
     // fall through
   }
-  // Prefer a prior local npm install (dev / cloud agent scratch).
   const localNpmBin = join(tmpdir(), 'apollo-rover-cli/node_modules/.bin/rover');
   try {
     await execFileAsync(localNpmBin, ['--version']);
@@ -69,19 +68,55 @@ export async function ensureApolloRoverBinary(
   return resolved;
 }
 
-export interface RoverSubgraphInput {
+export interface RoverSubgraphEndpoint {
   name: string;
   routingUrl: string;
-  /** Absolute path to Federation-facing subgraph SDL (no Mesh-only directives). */
-  schemaFile: string;
 }
 
 /**
- * Compose a supergraph with Apollo Rover from local subgraph SDL files.
- * Returns the path to the written supergraph SDL.
+ * List subgraph names that have a shared SDL at `schemasDir/<name>.graphql`.
+ */
+export async function listSharedSubgraphSchemaNames(schemasDir: string): Promise<string[]> {
+  const entries = await readdir(schemasDir);
+  return entries
+    .filter(name => name.endsWith('.graphql'))
+    .map(name => name.replace(/\.graphql$/, ''))
+    .sort();
+}
+
+async function fetchFederationFacingSdl(routingUrl: string): Promise<string> {
+  const res = await fetch(routingUrl, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', accept: 'application/json' },
+    body: JSON.stringify({ query: '{ _service { sdl } }' }),
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch _service SDL from ${routingUrl}: ${res.status}`);
+  }
+  const body = (await res.json()) as {
+    data?: { _service?: { sdl?: string } };
+    errors?: unknown;
+  };
+  const sdl = body.data?._service?.sdl;
+  if (!sdl) {
+    throw new Error(`No _service.sdl from ${routingUrl}: ${JSON.stringify(body.errors || body)}`);
+  }
+  return sdl;
+}
+
+/**
+ * Compose a supergraph with Apollo Rover.
+ *
+ * Schema files are discovered by convention: `schemasDir/<subgraph.name>.graphql`
+ * must exist (the same shared SDL `buildSubgraphSchema` loads). Rover receives the
+ * Federation-facing `_service { sdl }` from each running subgraph (Mesh runtime
+ * directives stripped), so there is no parallel hand-maintained federation SDL.
  */
 export async function composeSupergraphWithRover(opts: {
-  subgraphs: RoverSubgraphInput[];
+  /** Directory of shared subgraph SDLs (`<name>.graphql`). */
+  schemasDir: string;
+  /** Running subgraphs to compose (name must match a file in `schemasDir`). */
+  subgraphs: RoverSubgraphEndpoint[];
   /** Directory for supergraph.yaml + output (created if missing). */
   workDir: string;
   federationVersion?: string;
@@ -91,12 +126,24 @@ export async function composeSupergraphWithRover(opts: {
   const configPath = join(opts.workDir, 'supergraph.yaml');
   const supergraphPath = join(opts.workDir, 'supergraph.graphql');
 
+  const available = new Set(await listSharedSubgraphSchemaNames(opts.schemasDir));
   const lines = [`federation_version: '${federationVersion}'`, 'subgraphs:'];
+
   for (const sg of opts.subgraphs) {
+    if (!available.has(sg.name)) {
+      throw new Error(
+        `No shared SDL at ${join(opts.schemasDir, `${sg.name}.graphql`)} (convention: schemasDir/<name>.graphql)`,
+      );
+    }
+    // Federation-facing SDL from the live subgraph built from that shared file.
+    const fedSdl = await fetchFederationFacingSdl(sg.routingUrl);
+    const schemaFile = join(opts.workDir, `${sg.name}.graphql`);
+    await writeFile(schemaFile, fedSdl, 'utf8');
+
     lines.push(`  ${sg.name}:`);
     lines.push(`    routing_url: ${sg.routingUrl}`);
     lines.push(`    schema:`);
-    lines.push(`      file: ${sg.schemaFile}`);
+    lines.push(`      file: ${schemaFile}`);
   }
   await writeFile(configPath, lines.join('\n') + '\n', 'utf8');
 

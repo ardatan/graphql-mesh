@@ -1,0 +1,29 @@
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+directive @key(fields: String!, resolvable: Boolean = true) repeatable on OBJECT | INTERFACE
+directive @lookup on FIELD_DEFINITION
+directive @is(field: String!) on ARGUMENT_DEFINITION
+
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])
+  @link(url: "https://graphql.github.io/graphql-federation-spec/draft", import: ["@lookup", "@is"])
+
+type Query {
+  review(id: ID!): Review
+  product(id: ID! @is(field: "id")): Product @lookup
+}
+
+type Review {
+  id: ID!
+  body: String!
+  product: Product!
+  author: User!
+}
+
+type Product @key(fields: "id") {
+  id: ID!
+  reviews: [Review!]!
+}
+
+type User @key(fields: "id") {
+  id: ID!
+}

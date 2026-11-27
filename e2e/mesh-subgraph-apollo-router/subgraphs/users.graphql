@@ -1,0 +1,13 @@
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+directive @key(fields: String!, resolvable: Boolean = true) repeatable on OBJECT | INTERFACE
+
+extend schema @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])
+
+type Query {
+  user(id: ID!): User
+}
+
+type User @key(fields: "id") {
+  id: ID!
+  name: String!
+}

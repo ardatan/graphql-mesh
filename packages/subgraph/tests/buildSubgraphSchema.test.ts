@@ -138,6 +138,63 @@ describe('buildSubgraphSchema', () => {
     expect(sdl).not.toContain('_service');
   });
 
+  it('omits Mesh @transport / draft @lookup from Federation-facing _service SDL', async () => {
+    const typeDefs = /* GraphQL */ `
+      ${FEDERATION_AND_LOOKUP_DIRECTIVES}
+      directive @transport(subgraph: String, kind: String, location: String) repeatable on SCHEMA
+
+      extend schema
+        @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])
+        @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
+        @link(
+          url: "https://graphql.github.io/graphql-federation-spec/draft"
+          import: ["@lookup", "@is"]
+        )
+        @transport(subgraph: "products", kind: "http", location: "http://example.com")
+
+      type Query {
+        product(id: ID! @is(field: "id")): Product @lookup
+        catalog: String!
+      }
+
+      type Product @key(fields: "id") {
+        id: ID!
+        name: String!
+      }
+    `;
+
+    const schema = await buildSubgraphSchema(typeDefs, {
+      skipTransports: true,
+      resolvers: {
+        Query: {
+          product: (_: unknown, { id }: { id: string }) => ({ id, name: `P-${id}` }),
+          catalog: () => 'ok',
+        },
+      },
+    });
+
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          _service {
+            sdl
+          }
+        }
+      `),
+    });
+    expect(result.errors).toBeUndefined();
+    const sdl = (result.data as any)._service.sdl as string;
+    expect(sdl).toContain('catalog');
+    expect(sdl).toContain('@key');
+    expect(sdl).not.toMatch(/@transport/);
+    expect(sdl).not.toMatch(/specs\.graphql-mesh\.dev/);
+    expect(sdl).not.toMatch(/graphql-federation-spec\/draft/);
+    expect(sdl).not.toMatch(/@lookup/);
+    // `@lookup` Query entry is wired to `_entities`; omit from Rover SDL.
+    expect(sdl).not.toMatch(/product\(/);
+  });
+
   it('accepts generated-style Connectors SDL and executes @connect via transport', async () => {
     const typeDefs = /* GraphQL */ `
       ${FEDERATION_AND_LOOKUP_DIRECTIVES}

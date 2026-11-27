@@ -1,0 +1,30 @@
+directive @link(url: String!, import: [String]) repeatable on SCHEMA
+directive @key(fields: String!, resolvable: Boolean = true) repeatable on OBJECT | INTERFACE
+directive @internal on FIELD_DEFINITION | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+directive @source(
+  name: String!
+  type: String
+  subgraph: String!
+) repeatable on FIELD_DEFINITION | OBJECT | INTERFACE | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION | ENUM_VALUE
+directive @transport(
+  subgraph: String
+  kind: String
+  location: String
+  headers: [[String!]!]
+  options: String
+) repeatable on SCHEMA
+
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@source", "@transport"])
+  @transport(subgraph: "inventory", kind: "http", location: "{{INVENTORY_UPSTREAM_URL}}")
+
+type Query {
+  # Mesh HTTP wrap entry only — not part of the Federation graph (products owns Query.product).
+  product(id: ID!): Product @internal
+}
+
+type Product @key(fields: "id") {
+  id: ID!
+  inStock: Boolean! @source(name: "in_stock", type: "Boolean!", subgraph: "inventory")
+}
