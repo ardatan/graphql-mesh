@@ -34,9 +34,11 @@ export const FEDERATION_LOOKUP_DIRECTIVES_SDL = /* GraphQL */ `
 /**
  * Official GraphQL Federation Spec `@link` URL for `@lookup` / `@is` / `@internal`.
  * Do not use `specs.graphql-mesh.dev` for these (not Mesh-owned).
+ * Rover requires the last path segment to start with `v`; content matches the
+ * draft at https://graphql.github.io/graphql-federation-spec/draft
  */
 export const FEDERATION_SPEC_LOOKUP_LINK_URL =
-  'https://graphql.github.io/graphql-federation-spec/draft';
+  'https://graphql.github.io/graphql-federation-spec/v0.0';
 
 /** Federation Spec draft `FieldSelectionMap` scalar (selection-map strings). */
 export const FieldSelectionMapScalar = new GraphQLScalarType({

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Composition with Auth @authenticated 1`] = `
-schema@link(url:"https://specs.apollo.dev/link/v1.0")@link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION)@link(url:"https://specs.apollo.dev/requiresScopes/v0.1" for:SECURITY)@link(url:"https://specs.apollo.dev/authenticated/v0.1" for:SECURITY)@link(url:"https://graphql.github.io/graphql-federation-spec/draft" import:["@lookup"]){query:Query}
+schema@link(url:"https://specs.apollo.dev/link/v1.0")@link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION)@link(url:"https://specs.apollo.dev/requiresScopes/v0.1" for:SECURITY)@link(url:"https://specs.apollo.dev/authenticated/v0.1" for:SECURITY)@link(url:"https://graphql.github.io/graphql-federation-spec/v0.0" import:["@lookup"]){query:Query}
 directive@join__enumValue(graph:join__Graph!)repeatable on ENUM_VALUE
 directive@join__graph(name:String!url:String!)on ENUM_VALUE
 directive@join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet
@@ -26,7 +26,7 @@ scalar join__DirectiveArguments
 `;
 
 exports[`Composition with Auth @requiresScopes 1`] = `
-schema@link(url:"https://specs.apollo.dev/link/v1.0")@link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION)@link(url:"https://specs.apollo.dev/requiresScopes/v0.1" for:SECURITY)@link(url:"https://graphql.github.io/graphql-federation-spec/draft" import:["@lookup"]){query:Query}
+schema@link(url:"https://specs.apollo.dev/link/v1.0")@link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION)@link(url:"https://specs.apollo.dev/requiresScopes/v0.1" for:SECURITY)@link(url:"https://graphql.github.io/graphql-federation-spec/v0.0" import:["@lookup"]){query:Query}
 directive@join__enumValue(graph:join__Graph!)repeatable on ENUM_VALUE
 directive@join__graph(name:String!url:String!)on ENUM_VALUE
 directive@join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet

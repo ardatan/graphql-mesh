@@ -14,7 +14,7 @@ Imports use the official Federation Spec `@link`:
 ```graphql
 extend schema
   @link(
-    url: "https://graphql.github.io/graphql-federation-spec/draft"
+    url: "https://graphql.github.io/graphql-federation-spec/v0.0"
     import: ["@lookup", "@is", "@internal"]
   )
 ```

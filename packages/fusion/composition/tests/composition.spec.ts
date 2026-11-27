@@ -186,7 +186,7 @@ describe('Composition', () => {
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://graphql.github.io/graphql-federation-spec/draft" import:["@lookup"]) {query:Query}
+schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://graphql.github.io/graphql-federation-spec/v0.0" import:["@lookup"]) {query:Query}
 directive @join__enumValue(graph:join__Graph!) repeatable on ENUM_VALUE
 directive @join__graph(name:String! url:String!) on ENUM_VALUE
 directive @join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet
@@ -247,7 +247,7 @@ scalar join__DirectiveArguments
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://graphql.github.io/graphql-federation-spec/draft" import:["@lookup"]) {query:Query}
+schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://graphql.github.io/graphql-federation-spec/v0.0" import:["@lookup"]) {query:Query}
 directive @join__enumValue(graph:join__Graph!) repeatable on ENUM_VALUE
 directive @join__graph(name:String! url:String!) on ENUM_VALUE
 directive @join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet
@@ -308,7 +308,7 @@ scalar join__DirectiveArguments
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://graphql.github.io/graphql-federation-spec/draft" import:["@lookup"]) {query:Query}
+schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://graphql.github.io/graphql-federation-spec/v0.0" import:["@lookup"]) {query:Query}
 directive @join__enumValue(graph:join__Graph!) repeatable on ENUM_VALUE
 directive @join__graph(name:String! url:String!) on ENUM_VALUE
 directive @join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet

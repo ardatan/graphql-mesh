@@ -418,7 +418,10 @@ export function createFederationTransform(config: FederationTransformConfig): Su
           }
         }
         if (mergeDirectiveConfig) {
-          let argsExpr = mergeDirectiveConfig.argsExpr;
+          // Only author-supplied argsExpr forces Mesh `@merge` (nested/composite keys).
+          // Auto-inferred `id: $key.id` must not block Federation Spec `@lookup`.
+          const explicitArgsExpr = mergeDirectiveConfig.argsExpr;
+          let argsExpr = explicitArgsExpr;
           if (!argsExpr && fieldConfig.args && !mergeDirectiveConfig.keyArg) {
             const argsExprElems: string[] = [];
             const returnNamedType = getNamedType(fieldConfig.type);
@@ -477,8 +480,8 @@ export function createFederationTransform(config: FederationTransformConfig): Su
               isListType(getNullableType(fieldConfig.args[keyArg].type));
             // Keep Mesh `@merge` when:
             // - list / batch (draft `@lookup` must not return a list)
-            // - `argsExpr` (nested / composite key mapping; stitching needs Mesh argsExpr)
-            if (returnsList || batchListArg || argsExpr) {
+            // - explicit `argsExpr` (nested / composite key mapping)
+            if (returnsList || batchListArg || explicitArgsExpr) {
               const mergeDirectiveExtensions = (fieldDirectives.merge ||= []);
               mergeDirectiveExtensions.push({
                 subgraph: subgraphConfig.name,
