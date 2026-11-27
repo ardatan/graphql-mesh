@@ -49,11 +49,7 @@ export const graphqlHandler = ({
       (mesh.schema.extensions as { skipUnderthehoodGateway?: boolean } | undefined)
         ?.skipUnderthehoodGateway,
     );
-    if (
-      typeof supergraphSdl === 'string' &&
-      supergraphSdl.length > 0 &&
-      !skipUnderthehoodGateway
-    ) {
+    if (typeof supergraphSdl === 'string' && supergraphSdl.length > 0 && !skipUnderthehoodGateway) {
       const gateway = createGatewayRuntime({
         supergraph: supergraphSdl,
         logging: mesh.log,
