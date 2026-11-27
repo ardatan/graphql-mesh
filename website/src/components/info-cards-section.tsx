@@ -76,13 +76,14 @@ export function InfoCardsSection() {
 
       <div className="mx-auto mt-10 max-w-3xl rounded-2xl bg-beige-100 px-6 py-6 text-center md:mt-14 md:px-10 md:py-8">
         <Heading as="h3" size="sm" className="text-balance">
-          Hive Gateway and Apollo Router
+          Platform, registry, and gateway independent
         </Heading>
         <p className="mt-3 text-balance text-green-800">
-          Hive Gateway is preferred when Mesh protocol transports are in the graph. Apollo Router
-          runs Connect-compatible supergraphs as a peer -- including dual-run beside Hive. For SQL
-          or other protocol subgraphs with Router, Serve Subgraph on Hive (or{' '}
-          <code>buildSubgraphSchema</code>) and point Router at that Federation URL.
+          Mesh works in any Federation environment. Compose with the tool you already use, publish
+          to any schema registry (or none), and run on any Federation-compatible gateway -- Hive
+          Gateway, Apollo Router, and others. Hive Gateway remains preferred for the full Mesh
+          transport surface; Serve Subgraph (or <code>buildSubgraphSchema</code>) when another
+          gateway must call a Mesh-backed subgraph URL.
         </p>
         <p className="mt-4">
           <Anchor
@@ -92,7 +93,7 @@ export function InfoCardsSection() {
             FAQ
           </Anchor>
           {' -- '}
-          Router with SQL, Serve Subgraph vs Supergraph, transforms, and more.
+          Router with SQL, Serve Subgraph vs Supergraph, and more.
         </p>
       </div>
     </section>
