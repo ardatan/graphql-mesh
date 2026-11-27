@@ -7371,6 +7371,7 @@ __metadata:
     "@graphql-mesh/graphql": "npm:0.107.3"
     "@graphql-mesh/postgraphile": "workspace:*"
     "@graphql-mesh/runtime": "npm:0.109.3"
+    "@graphql-mesh/transform-filter-schema": "npm:0.107.3"
     "@graphql-mesh/transform-prefix": "npm:0.108.3"
     "@types/node": "npm:^26.2.0"
     cross-env: "npm:10.1.0"

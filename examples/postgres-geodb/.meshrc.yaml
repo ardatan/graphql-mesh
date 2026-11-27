@@ -16,11 +16,16 @@ sources:
           User-Agent: GraphQL Mesh
         batch: false
     transforms:
+      # GitHub Query implements Node and exposes relay: Query!. Under federation
+      # that allows Node/Query entrypoints → Geo Query fields without a Query @key.
+      - ./strip-query-node-interface: {}
+      - filterSchema:
+          filters:
+            - Query.!{node, nodes, relay}
       - prefix:
           value: Github
           includeRootOperations: true
-          # GitHub `Query implements Node` requires `id`; do not rename it to Githubid
-          # (federation compose rejects Query without interface field `id`).
+          # Keep Query.id unprefixed if present; strip-query-node-interface removes implements Node.
           ignore:
             - Query.id
 

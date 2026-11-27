@@ -14,6 +14,7 @@
     "@graphql-mesh/graphql": "0.107.3",
     "@graphql-mesh/postgraphile": "workspace:*",
     "@graphql-mesh/runtime": "0.109.3",
+    "@graphql-mesh/transform-filter-schema": "0.107.3",
     "@graphql-mesh/transform-prefix": "0.108.3",
     "graphql": "17.1.0"
   },
