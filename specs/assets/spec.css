@@ -259,6 +259,11 @@ code {
 }
 
 @media (min-width: 1100px) {
+  /* Wider shell so the sticky TOC column does not squeeze body text. */
+  .site-bar,
+  .spec-page {
+    width: min(1120px, calc(100% - 2rem));
+  }
   .spec-page {
     display: grid;
     grid-template-columns: var(--sidebar) minmax(0, 1fr);
@@ -270,8 +275,10 @@ code {
   .lede {
     grid-column: 1 / -1;
   }
-  /* TOC at row 4, column 1; span into implicit rows (not -1: with no
-     grid-template-rows, -1 is explicit end/line 1 and collapses 4/-1). */
+  /* Sticky TOC in column 1; span implicit rows (not -1: with no
+     grid-template-rows, -1 is explicit end/line 1 and collapses 4/-1).
+     Family pages: crumb / title / lede → TOC starts at row 4.
+     Home has no crumb → TOC starts at row 3. */
   .spec-toc {
     position: sticky;
     top: 1rem;
@@ -288,11 +295,6 @@ code {
     grid-column: 2;
   }
   .home .spec-toc {
-    grid-row: auto;
-    max-height: none;
-    overflow: visible;
-  }
-  .home > section {
-    grid-column: 1 / -1;
+    grid-row: 3 / span 200;
   }
 }
