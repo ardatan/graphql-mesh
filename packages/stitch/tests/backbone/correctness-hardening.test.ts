@@ -1,7 +1,7 @@
 import { parse } from 'graphql';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import type { ExecutionResult } from '@graphql-tools/utils';
+import type { ExecutionResult, Executor } from '@graphql-tools/utils';
 import { BACKBONE_EXECUTING, createBackboneExecutor } from '../../src/backbone/index';
 import { stitchSchemas } from '../../src/stitchSchemas';
 
@@ -327,22 +327,23 @@ describe('backbone correctness: mutation serial semantics', () => {
     });
     // Downstream returns completed null with no errors (e.g. nullable subgraph
     // under a NonNull gateway field). writeRootResult must still abort.
+    const mockExecutor = (async req => {
+      const printed = JSON.stringify(req.document);
+      if (printed.includes('first') && !printed.includes('second')) {
+        order.push('first');
+        return { data: { first: null } };
+      }
+      if (printed.includes('second')) {
+        order.push('second');
+        return { data: { second: 'ok' } };
+      }
+      return { data: null };
+    }) as Executor;
     const schema = stitchSchemas({
       subschemas: [
         {
           schema: remote,
-          executor: async req => {
-            const printed = JSON.stringify(req.document);
-            if (printed.includes('first') && !printed.includes('second')) {
-              order.push('first');
-              return { data: { first: null } };
-            }
-            if (printed.includes('second')) {
-              order.push('second');
-              return { data: { second: 'ok' } };
-            }
-            return { data: null };
-          },
+          executor: mockExecutor,
         },
       ],
     });
