@@ -20,7 +20,6 @@ import {
   visit,
 } from 'graphql';
 import { type YamlConfig } from '@graphql-mesh/types';
-import { resolveLookupKeyField } from '@graphql-mesh/utils';
 import type { MergedTypeConfig, SubschemaConfig, Transform } from '@graphql-tools/delegate';
 import {
   astFromField,
@@ -667,6 +666,23 @@ function renameSelectionSetFieldNames(
   } catch {
     return selectionSet;
   }
+}
+
+/**
+ * Prefer `@is(field:)`; otherwise the argument name is the entity key field.
+ * Inlined here so Gateway memtests can overlay fusion-runtime without also
+ * overlaying unpublished `@graphql-mesh/utils` (which pulls a mismatched
+ * `@graphql-tools/utils` into Gateway's install).
+ */
+function resolveLookupKeyField(
+  argName: string,
+  isDirectives: Array<{ field?: string }> | undefined,
+): string {
+  const fromIs = isDirectives?.find(d => typeof d?.field === 'string')?.field;
+  if (typeof fromIs === 'string' && fromIs.trim()) {
+    return fromIs.trim();
+  }
+  return argName;
 }
 
 /**

@@ -81,6 +81,9 @@ jobs:
           const path = require('node:path');
           const { createRequire } = require('node:module');
           const meshRoot = path.resolve('..');
+          // Do not overlay `@graphql-mesh/utils` / `@graphql-tools/utils` — Mesh's
+          // utils pulls a newer tools/utils that drops exports Gateway plugins still
+          // need. fusion-runtime inlines lookup helpers so it can overlay alone.
           const packages = {
             '@graphql-tools/stitch': 'packages/stitch',
             '@graphql-tools/stitching-directives': 'packages/stitching-directives',
@@ -93,18 +96,10 @@ jobs:
             '@graphql-tools/executor-http': 'packages/executors/http',
             '@graphql-tools/executor-graphql-ws': 'packages/executors/graphql-ws',
             '@graphql-mesh/fusion-runtime': 'packages/fusion/runtime',
-            // fusion-runtime imports new utils helpers (e.g. resolveLookupKeyField);
-            // overlay utils so Gateway node_modules is not stuck on an older publish.
-            '@graphql-mesh/utils': 'packages/legacy/utils',
             '@graphql-mesh/transport-common': 'packages/transports/common',
             '@graphql-mesh/transport-http': 'packages/transports/http',
             '@graphql-mesh/transport-http-callback': 'packages/transports/http-callback',
             '@graphql-mesh/transport-ws': 'packages/transports/ws',
-          };
-          // Mesh utils imports newer `@graphql-tools/utils` exports (e.g.
-          // asGetArgumentValuesVariables); Gateway may resolve an older copy.
-          const npmPackages = {
-            '@graphql-tools/utils': 'node_modules/@graphql-tools/utils',
           };
           const requireFromGateway = createRequire(path.join(process.cwd(), 'package.json'));
           function rmrf(p) {
@@ -145,55 +140,14 @@ jobs:
             if (fs.existsSync(path.join(top, 'package.json'))) targets.add(top);
             return [...targets];
           }
-          /** Walk nested node_modules for every install of a package (scoped OK). */
-          function findAllInstalls(root, name) {
-            const targets = [];
-            const parts = name.split('/');
-            function walk(dir, depth) {
-              if (depth > 10) return;
-              let entries;
-              try {
-                entries = fs.readdirSync(dir, { withFileTypes: true });
-              } catch {
-                return;
-              }
-              for (const ent of entries) {
-                if (!ent.isDirectory() || ent.name === '.bin') continue;
-                const full = path.join(dir, ent.name);
-                if (ent.name === 'node_modules') {
-                  if (parts.length === 2 && parts[0].startsWith('@')) {
-                    const scoped = path.join(full, parts[0], parts[1]);
-                    if (fs.existsSync(path.join(scoped, 'package.json'))) targets.push(scoped);
-                  } else if (parts.length === 1) {
-                    const pkg = path.join(full, parts[0]);
-                    if (fs.existsSync(path.join(pkg, 'package.json'))) targets.push(pkg);
-                  }
-                  walk(full, depth + 1);
-                  continue;
-                }
-                if (ent.name.startsWith('@')) {
-                  walk(full, depth + 1);
-                } else {
-                  walk(full, depth + 1);
-                }
-              }
-            }
-            walk(root, 0);
-            return [...new Set(targets)];
-          }
-          function overlayIntoTargets(name, src, label, { allNested = false } = {}) {
-            let targets = allNested
-              ? findAllInstalls(process.cwd(), name)
-              : findInstalls(name);
+          function overlayIntoTargets(name, src, label) {
+            let targets = findInstalls(name);
             if (targets.length === 0) {
               const top = path.join(process.cwd(), 'node_modules', ...name.split('/'));
               fs.mkdirSync(top, { recursive: true });
               targets = [top];
             }
             for (const target of targets) {
-              // Drop nested node_modules too — otherwise an old nested
-              // `@graphql-tools/wrap` (etc.) under e.g. `@graphql-mesh/utils`
-              // keeps resolving against a mismatched utils copy.
               for (const ent of fs.readdirSync(target)) {
                 rmrf(path.join(target, ent));
               }
@@ -211,14 +165,6 @@ jobs:
               throw new Error(`Missing Mesh build output: ${dist}`);
             }
             overlayIntoTargets(name, dist, `${rel}/dist`);
-          }
-          for (const [name, rel] of Object.entries(npmPackages)) {
-            const src = path.join(meshRoot, rel);
-            if (!fs.existsSync(path.join(src, 'package.json'))) {
-              throw new Error(`Missing Mesh npm package for overlay: ${src}`);
-            }
-            // Replace every nested copy — Mesh utils resolves nested installs first.
-            overlayIntoTargets(name, src, rel, { allNested: true });
           }
           NODE
       - name: Hash Docker Images
