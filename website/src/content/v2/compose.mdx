@@ -51,11 +51,14 @@ export const composeConfig = defineComposeConfig({
 
 Compose to a file, then serve:
 
-```bash
-# Packages (example mix): @graphql-mesh/compose-cli @omnigraph/sql @omnigraph/openapi
-#   @graphql-hive/gateway @graphql-mesh/transport-sql @graphql-mesh/transport-connect
-# pnpm add … / npm i … (same names)
+Packages (example mix):
 
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @omnigraph/sql @omnigraph/openapi \
+  @graphql-hive/gateway @graphql-mesh/transport-sql @graphql-mesh/transport-connect
+```
+
+```bash
 # Supergraph for local Serve Supergraph
 pnpm exec mesh-compose -o supergraph.graphql
 pnpm exec hive-gateway supergraph

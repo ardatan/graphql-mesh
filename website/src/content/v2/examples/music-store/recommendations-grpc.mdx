@@ -1,0 +1,251 @@
+---
+description:
+  Stage 3 of Music Store -- hand-write protobuf + gRPC server + Mesh subgraph SDL for
+  recommendations
+---
+
+import { Callout, Cards } from '@theguild/components'
+import { DirectiveRef } from '../../../../components/v2-directive-ref'
+
+# Recommendations gRPC (Hand-write)
+
+Stage 3 of the [Music Store Example](/v2/examples/music-store) authors a **gRPC / Protobuf**
+recommendations slice from scratch: `.proto` → Node gRPC server → hand-written Mesh subgraph SDL →
+Compose → Hive Gateway.
+
+Skill: [Hand-write](/v2/paths/hand-write) | Protocol: [Protobuf / gRPC](/v2/protocols/protobuf)
+
+<Callout type="info">
+  Stock Apollo Router does **not** execute <DirectiveRef name="protobuf__rpc" />. Serve this slice
+  on **Hive Gateway**, or expose it as a Federation peer via [Serve Subgraph](/v2/serve-subgraph)
+  (optional [buildSubgraphSchema](/v2/guides/build-subgraph-schema)).
+</Callout>
+
+## 1. Create the folder
+
+```bash
+mkdir recommendations-grpc
+cd recommendations-grpc
+```
+
+## 2. Write `recommendations.proto`
+
+Proto3 service with field numbers that match the Music Store hand SDL (`track_id` request field 1;
+response `id` = 1, `track_id` = 2):
+
+```protobuf filename="recommendations-grpc/recommendations.proto"
+syntax = "proto3";
+
+package recommendations;
+
+service Recommendations {
+  rpc GetRecommendation(GetRecommendationRequest) returns (Recommendation);
+}
+
+message GetRecommendationRequest {
+  string track_id = 1;
+}
+
+message Recommendation {
+  string id = 1;
+  string track_id = 2;
+}
+```
+
+## 3. Install gRPC packages
+
+```sh npm2yarn
+npm i @grpc/grpc-js @grpc/proto-loader
+```
+
+```sh npm2yarn
+npm i -D typescript tsx @types/node
+```
+
+## 4. Implement the gRPC server
+
+Load the proto, register `GetRecommendation`, and listen on **50051**. Return a stub recommendation
+for the requested track:
+
+```ts filename="recommendations-grpc/server.ts"
+import { join } from 'node:path'
+import {
+  loadPackageDefinition,
+  Server,
+  ServerCredentials,
+  type ServiceClientConstructor
+} from '@grpc/grpc-js'
+import { load } from '@grpc/proto-loader'
+
+async function main() {
+  const packageDefinition = await load(join(__dirname, 'recommendations.proto'), {
+    keepCase: true,
+    longs: String,
+    enums: String,
+    defaults: true,
+    oneofs: true
+  })
+  const grpcObject = loadPackageDefinition(packageDefinition)
+  const svc = (
+    grpcObject.recommendations as {
+      Recommendations: ServiceClientConstructor
+    }
+  ).Recommendations
+
+  const server = new Server()
+  server.addService(svc.service, {
+    GetRecommendation(
+      call: { request: { track_id: string } },
+      callback: (err: Error | null, response: { id: string; track_id: string } | null) => void
+    ) {
+      const trackId = call.request.track_id
+      callback(null, {
+        id: `rec-${trackId}`,
+        track_id: trackId
+      })
+    }
+  })
+
+  server.bindAsync('0.0.0.0:50051', ServerCredentials.createInsecure(), (error, port) => {
+    if (error) {
+      console.error(error)
+      process.exit(1)
+    }
+    console.log(`Recommendations gRPC listening on 0.0.0.0:${port}`)
+  })
+}
+
+main().catch(err => {
+  console.error(err)
+  process.exit(1)
+})
+```
+
+## 5. Run the server
+
+```bash
+npx tsx server.ts
+```
+
+Leave it running while you compose and serve Mesh.
+
+## 6. Install Mesh packages
+
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @graphql-hive/gateway @graphql-mesh/transport-protobuf
+```
+
+## 7. Hand-write `recommendations.graphql`
+
+Import Mesh / Federation directives with `@link`. For **non-Connect** Mesh names (`@transport`,
+`@protobuf__rpc`), `@composeDirective` each name **and** include matching `directive` definitions
+(composition requires the defs). Map GraphQL args/fields to protobuf field numbers with
+`@protobuf__rpc`:
+
+```graphql filename="recommendations.graphql"
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"])
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
+  @link(url: "https://specs.graphql-mesh.dev/protobuf/v0.1", import: ["@protobuf__rpc"])
+  @composeDirective(name: "@transport")
+  @composeDirective(name: "@protobuf__rpc")
+
+directive @transport(
+  subgraph: String!
+  kind: String!
+  location: String
+  headers: [[String]]
+  options: TransportOptions
+) repeatable on SCHEMA
+
+directive @protobuf__rpc(
+  service: String
+  method: String
+  args: String
+  selection: String
+  stream: Boolean
+  entity: Boolean
+) on FIELD_DEFINITION
+
+scalar TransportOptions
+
+schema
+  @transport(subgraph: "recommendations", kind: "protobuf", location: "http://localhost:50051") {
+  query: Query
+}
+
+type Query {
+  recommendation(trackId: ID!): Recommendation!
+    @protobuf__rpc(
+      service: "Recommendations"
+      method: "GetRecommendation"
+      args: """
+      1(string): $args.trackId
+      """
+      selection: """
+      1(string): id
+      2(string): trackId
+      """
+    )
+}
+
+type Recommendation @key(fields: "id") {
+  id: ID!
+  trackId: ID!
+}
+```
+
+Field-number dialect details: [Protobuf Hand SDL](/v2/protocols/protobuf#hand-sdl) /
+[Selection mapping](/v2/guides/selection-mapping).
+
+## 8. `mesh.config.ts` -- schema subgraph + protobuf transport
+
+```ts filename="mesh.config.ts"
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      name: 'recommendations',
+      schema: './recommendations.graphql'
+    }
+  ]
+})
+
+export const gatewayConfig = defineGatewayConfig({
+  transports: {
+    protobuf: import('@graphql-mesh/transport-protobuf')
+  }
+})
+```
+
+When combining with Chinook + Reviews, list all three subgraphs as on the
+[Music Store Composition section](/v2/examples/music-store#composition-all-three-then-serve).
+
+## 9. Compose and serve
+
+```bash
+pnpm exec mesh-compose -o supergraph.graphql
+pnpm exec hive-gateway supergraph
+```
+
+Query `recommendation(trackId:)` against Hive Gateway while the gRPC server is up on `50051`.
+
+## 10. Apollo Router note
+
+Apollo Router does **not** run `@protobuf__rpc` natively. For a Router-based supergraph, run this
+slice as a Hive Gateway / Yoga Federation **subgraph peer** via [Serve Subgraph](/v2/serve-subgraph)
+(optional [buildSubgraphSchema](/v2/guides/build-subgraph-schema)). Connect Reviews can still stay
+native on Router; gRPC stays on the Mesh peer.
+
+Full Music Store stage storyboard:
+[Music Store Example -- Stage 3](/v2/examples/music-store#stage-3----hand-write-grpc--protobuf).
+
+<Cards>
+  <Cards.Card arrow title="Music Store Overview" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
+  <Cards.Card arrow title="Protobuf / gRPC" href="/v2/protocols/protobuf" />
+  <Cards.Card arrow title="Serve Subgraph" href="/v2/serve-subgraph" />
+  <Cards.Card arrow title="buildSubgraphSchema" href="/v2/guides/build-subgraph-schema" />
+</Cards>

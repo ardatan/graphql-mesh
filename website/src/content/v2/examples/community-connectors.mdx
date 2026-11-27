@@ -46,10 +46,14 @@ gateway must call that URL.
 
 ## Compose community SDL
 
-```bash
-pnpm add @graphql-mesh/compose-cli @graphql-hive/gateway @graphql-mesh/transport-connect
-# Optional Yoga Fed peer: pnpm add graphql graphql-yoga @graphql-mesh/subgraph
-# npm i … (same package names)
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @graphql-hive/gateway @graphql-mesh/transport-connect
+```
+
+Optional Yoga Federation subgraph peer:
+
+```sh npm2yarn
+npm i graphql graphql-yoga @graphql-mesh/subgraph
 ```
 
 Point a subgraph at the `.graphql` file (same hand-write Compose path as Music Store stage 3):

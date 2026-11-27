@@ -42,12 +42,16 @@ serve the subgraph on Yoga (or any GraphQL server) yourself -- see
 
 Install Compose CLI, the loader for your source, Hive Gateway, and the matching transport(s):
 
-```bash
-# SQL example
-pnpm add @graphql-mesh/compose-cli @omnigraph/sql @graphql-hive/gateway @graphql-mesh/transport-sql
-# OpenAPI / Connect example
-pnpm add @graphql-mesh/compose-cli @omnigraph/openapi @graphql-hive/gateway @graphql-mesh/transport-connect
-# npm i … (same package names)
+SQL example:
+
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @omnigraph/sql @graphql-hive/gateway @graphql-mesh/transport-sql
+```
+
+OpenAPI / Connect example:
+
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @omnigraph/openapi @graphql-hive/gateway @graphql-mesh/transport-connect
 ```
 
 Export **`composeConfig`** with `defineConfig` (docs often alias it as `defineComposeConfig`):
@@ -105,7 +109,7 @@ binary. Default config discovery looks for `mesh.config.ts` (also `.mts` / `.cts
 explicit `name:` on a `schema:` entry:
 
 ```bash
-# Packages: @graphql-mesh/compose-cli + loader (e.g. @omnigraph/sql) -- see install above
+# Assumes install above (compose-cli + loader)
 
 # stdout
 pnpm exec mesh-compose --subgraph chinook
@@ -131,7 +135,7 @@ When every subgraph is listed in `composeConfig`, compose them together for
 [Serve Supergraph](/v2/serve):
 
 ```bash
-# Also: @graphql-hive/gateway + matching @graphql-mesh/transport-* packages
+# Assumes install above (hive-gateway + matching transport packages)
 pnpm exec mesh-compose -o supergraph.graphql
 pnpm exec hive-gateway supergraph
 
@@ -177,9 +181,14 @@ Compose + Hive Gateway / Apollo Router is the default Mesh story. When you need 
 process** that executes Mesh transports from the generated SDL (for example Yoga beside other
 services), pass the `--subgraph` file into `buildSubgraphSchema`:
 
-```bash
-pnpm add graphql graphql-yoga @graphql-mesh/subgraph
-# plus the transport(s) your SDL uses, e.g. @graphql-mesh/transport-sql
+```sh npm2yarn
+npm i graphql graphql-yoga @graphql-mesh/subgraph
+```
+
+Plus the transport(s) your SDL uses, for example:
+
+```sh npm2yarn
+npm i @graphql-mesh/transport-sql
 ```
 
 ```ts {1,4}

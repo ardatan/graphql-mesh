@@ -68,7 +68,8 @@ Mesh protocol map: [Protocols](/v2/protocols).
 ## Protocol directives (not only join)
 
 Join-only subgraphs (keys + `Reference.resource`) are one hand-write pattern. Stage 3 of Music Store
-Example is the other: **author the RPC surface** with a Mesh protocol directive.
+Example is the other: **author the RPC surface** with a Mesh protocol directive. Full proto +
+server + SDL walkthrough: [Recommendations gRPC](/v2/examples/music-store/recommendations-grpc).
 
 Sketch -- Music Store Example gRPC / Protobuf slice (field-level `@protobuf__rpc`, not only `@key`):
 
@@ -132,7 +133,8 @@ Gateway** (JS/TS); **Apollo Router** only for Connect-compatible slices.
 
 Hand-written protobuf SDL follows the same field-number maps as
 [Protobuf / gRPC](/v2/protocols/protobuf). Full Music Store Example stage storyboard:
-[Music Store Example](/v2/examples/music-store).
+[Music Store Example](/v2/examples/music-store). Nested gRPC tutorial:
+[Recommendations gRPC](/v2/examples/music-store/recommendations-grpc).
 
 ## Optional: `buildSubgraphSchema` for a subgraph server
 
@@ -167,5 +169,10 @@ Optional naming / filter passes after authorship live under [Transform Subgraph]
   <Cards.Card arrow title="Composition" href="/v2/compose" />
   <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
   <Cards.Card arrow title="Protocols" href="/v2/protocols" />
+  <Cards.Card
+    arrow
+    title="Recommendations gRPC"
+    href="/v2/examples/music-store/recommendations-grpc"
+  />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
 </Cards>

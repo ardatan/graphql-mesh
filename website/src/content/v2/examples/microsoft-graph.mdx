@@ -185,12 +185,12 @@ transport options stay Mesh-side.
 
 ## 3. Compose and serve on both gateways
 
-```bash
-# Packages:
-pnpm add @graphql-mesh/compose-cli @omnigraph/odata @graphql-hive/gateway \
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @omnigraph/odata @graphql-hive/gateway \
   @graphql-mesh/transport-connect
-# npm i … (same package names)
+```
 
+```bash
 pnpm exec mesh-compose -o supergraph.graphql
 # Hive Gateway (JS/TS)
 pnpm exec hive-gateway supergraph

@@ -264,11 +264,12 @@ loader to invent all Resource types.
 Skill: [Composition](/v2/compose) | [Hive Gateway](/v2/serve/hive-gateway) |
 [Apollo Router](/v2/serve/apollo-router)
 
-```bash
-pnpm add @graphql-mesh/compose-cli @omnigraph/json-schema @graphql-hive/gateway \
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @omnigraph/json-schema @graphql-hive/gateway \
   @graphql-mesh/transport-connect
-# npm i … (same package names)
+```
 
+```bash
 pnpm exec mesh-compose -o supergraph.graphql
 pnpm exec hive-gateway supergraph
 ./router --supergraph supergraph.graphql # Apollo Router (Connectors native)

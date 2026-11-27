@@ -24,13 +24,13 @@ full Mesh transport surface (HTTP/REST Connectors, SQL, Mongo, Protobuf, Thrift,
 
 Install Compose CLI, Hive Gateway, loaders, and the transports your SDL needs:
 
-```bash
-pnpm add @graphql-mesh/compose-cli @graphql-hive/gateway @omnigraph/sql @graphql-mesh/transport-sql
-# Add more loaders/transports as needed, e.g.:
-#   @omnigraph/openapi @graphql-mesh/transport-connect
-#   @graphql-mesh/transport-protobuf @graphql-mesh/transport-mongo
-# npm i … (same package names)
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @graphql-hive/gateway @omnigraph/sql @graphql-mesh/transport-sql
 ```
+
+Add more loaders/transports as needed (for example `@omnigraph/openapi`,
+`@graphql-mesh/transport-connect`, `@graphql-mesh/transport-protobuf`,
+`@graphql-mesh/transport-mongo`).
 
 Same `mesh.config.ts` can export compose + gateway config. Register Mesh transports the supergraph
 needs:

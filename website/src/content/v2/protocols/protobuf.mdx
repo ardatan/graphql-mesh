@@ -21,12 +21,29 @@ Stock Apollo Router does **not** execute `@protobuf__rpc`.
 
 ## Packages
 
-```bash
-pnpm add @graphql-mesh/compose-cli @graphql-hive/gateway @graphql-mesh/transport-protobuf
-# Hand SDL needs no loader package; Yoga peer optional:
-# pnpm add graphql graphql-yoga @graphql-mesh/subgraph
-# npm i … (same package names)
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @graphql-hive/gateway @graphql-mesh/transport-protobuf
 ```
+
+Hand SDL needs no loader package. Optional Yoga Federation subgraph peer:
+
+```sh npm2yarn
+npm i graphql graphql-yoga @graphql-mesh/subgraph
+```
+
+## Tutorial
+
+End-to-end Music Store stage 3: `.proto` → Node gRPC server → hand `@protobuf__rpc` SDL → Compose →
+Hive Gateway.
+
+<Cards>
+  <Cards.Card
+    arrow
+    title="Recommendations gRPC (Hand-write)"
+    href="/v2/examples/music-store/recommendations-grpc"
+  />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+</Cards>
 
 ## Hand SDL
 
@@ -322,11 +339,17 @@ type Query {
 ```
 
 Dialect: [Selection mapping](/v2/guides/selection-mapping). Music Store stage 3 uses unary
-`@protobuf__rpc` for recommendations over gRPC.
+`@protobuf__rpc` for recommendations over gRPC -- full walkthrough:
+[Recommendations gRPC](/v2/examples/music-store/recommendations-grpc).
 
 <Cards>
   <Cards.Card arrow title="Directives: @protobuf__rpc" href="/v2/directives#protobuf" />
   <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
+  <Cards.Card
+    arrow
+    title="Recommendations gRPC"
+    href="/v2/examples/music-store/recommendations-grpc"
+  />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
   <Cards.Card arrow title="Transform Subgraph" href="/v2/transforms" />
   <Cards.Card arrow title="Protocols overview" href="/v2/protocols" />
