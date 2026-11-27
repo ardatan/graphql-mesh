@@ -1,8 +1,9 @@
 ---
-description: Edit Mesh-generated subgraph SDL and re-compose -- own the schema
+description:
+  Edit Mesh-generated subgraph SDL and re-compose -- two composeConfig setups (emit then consume)
 ---
 
-import { Cards } from '@theguild/components'
+import { Callout, Cards } from '@theguild/components'
 import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
 
 # Generate-then-edit
@@ -24,24 +25,98 @@ call as [Generate](/v2/paths/generate) and [Hand-write](/v2/paths/hand-write)
   ]}
 />
 
+## Two configs
+
+Treat Generate-then-edit as **two** `composeConfig` setups (often two checkouts of `mesh.config.ts`,
+or one file you flip after the emit lands in git):
+
+| Step  | Config job                                    | Subgraph entry                           | CLI                                                                 |
+| ----- | --------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------- |
+| **1** | **Generate emit** -- loader produces SDL      | `sourceHandler: load…Subgraph(...)`      | `mesh-compose --subgraph <name> -o <name>-subgraph.graphql`         |
+| **2** | **Consume / edit** -- Compose reads your file | `schema: './reviews.graphql'` (+ `name`) | `mesh-compose -o supergraph.graphql` (or `--subgraph` for registry) |
+
+You do **not** keep pointing Compose at the OpenAPI / SQL loader after you own the file -- that
+would regenerate over your edits. Step 2 matches [Hand-write](/v2/paths/hand-write) input shape.
+
+### 1. Generate emit
+
+Same as [Generate](/v2/paths/generate): loader in `composeConfig`, emit one subgraph file.
+
+```ts filename="mesh.config.ts" {6-12}
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { loadOpenAPISubgraph } from '@omnigraph/openapi'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadOpenAPISubgraph('reviews', {
+        source: 'http://localhost:4001/openapi.json',
+        endpoint: 'http://localhost:4001'
+      })
+    }
+  ]
+})
+```
+
+```bash
+mesh-compose --subgraph reviews -o reviews-subgraph.graphql
+```
+
+Read the emit ([Reading generated SDL](/v2/guides/reading-generated-sdl)), then **copy / rename**
+into the path you will commit (e.g. `reviews.graphql`) and edit.
+
+### 2. Consume the edited subgraph for compose
+
+Switch the subgraph entry from `sourceHandler` to **`schema:`** pointing at your edited file. Other
+subgraphs (still generated or already authored) stay beside it:
+
+```ts filename="mesh.config.ts" {7-10,12-16}
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { loadSqlSubgraph } from '@omnigraph/sql'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      // Still generated (or already owned)
+      sourceHandler: loadSqlSubgraph('chinook', {
+        endpoint: 'file:chinook.db'
+      })
+    },
+    {
+      // Generate-then-edit: Compose loads your checked-in SDL
+      name: 'reviews',
+      schema: './reviews.graphql'
+    }
+  ]
+})
+```
+
+```bash
+mesh-compose -o supergraph.graphql
+```
+
+Optional: re-emit only the edited subgraph for registry publish with
+`mesh-compose --subgraph reviews -o reviews-subgraph.graphql` -- Compose prints the **file** SDL
+(with annotations), not a fresh OpenAPI generate.
+
+<Callout type="info">
+  When the dislike is mostly naming and you still want the loader as the base, optional
+  [Automatic](/v2/transforms/automatic) transforms can stay on the **emit** config -- they are not
+  required once step 2 owns the `.graphql` ([By hand](/v2/transforms/by-hand)).
+</Callout>
+
 ## In the Music Store Example
 
 Stage 2 of the [Music Store Example](/v2/examples/music-store) generates **Reviews** from a REST /
 OpenAPI source (HTTP/REST Connectors emit), then edits the `@connect` SDL before it joins the
 catalog.
 
-| Step       | Music Store Example move                                                                        |
-| ---------- | ----------------------------------------------------------------------------------------------- |
-| Generate   | Reviews OpenAPI -> Connect subgraph beside Chinook                                              |
-| Dislike    | Naming, selection, or entity wiring that does not match the catalog keys                        |
-| Edit       | Checked-in `.graphql` with the fixes you want                                                   |
-| Re-compose | Same Compose pipeline as hand-write; dual-run Hive Gateway + Apollo Router on the Connect slice |
-
-You practice [Reading generated SDL](/v2/guides/reading-generated-sdl) on stage 1 output before this
-edit. When the dislike is mostly naming and you still want the loader emit as the base, optional
-Compose [Automatic](/v2/transforms/automatic) transforms can help when the dislike is mostly naming
--- they are not required once you are editing the SDL yourself ([By hand](/v2/transforms/by-hand)
-under Transform Subgraph).
+| Step       | Music Store Example move                                                                       |
+| ---------- | ---------------------------------------------------------------------------------------------- |
+| Generate   | Reviews OpenAPI -> Connect subgraph beside Chinook (config **1**)                              |
+| Dislike    | Naming, selection, or entity wiring that does not match the catalog keys                       |
+| Edit       | Checked-in `.graphql` with the fixes you want                                                  |
+| Re-compose | Config **2** (`schema: './reviews.graphql'`); dual-run Hive Gateway + Apollo Router on Connect |
 
 ## What edits usually look like
 
@@ -102,11 +177,13 @@ const schema = buildSubgraphSchema(readFileSync('./reviews.graphql', 'utf8'))
 ```
 
 Prefer Federation `@lookup` for one-object entity entry fields; Mesh `@merge` only for list/batch --
-[Directives](/v2/directives#lookup). Guide: [buildSubgraphSchema](/v2/guides/build-subgraph-schema).
+[Directives](/v2/directives#lookup). Guide: [buildSubgraphSchema](/v2/guides/build-subgraph-schema)
+/ [Serve Subgraph](/v2/serve-subgraph).
 
 <Cards>
   <Cards.Card arrow title="Generate" href="/v2/paths/generate" />
   <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
   <Cards.Card arrow title="buildSubgraphSchema" href="/v2/guides/build-subgraph-schema" />
   <Cards.Card arrow title="AI-assisted authoring" href="/v2/guides/ai-assisted-authoring" />
   <Cards.Card arrow title="Transform Subgraph" href="/v2/transforms" />
