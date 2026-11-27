@@ -37,7 +37,7 @@
   "dependencies": {
     "@envelop/core": "^6.0.1",
     "@envelop/live-query": "^11.0.1",
-    "@graphql-hive/pubsub": "^2.2.1",
+    "@graphql-hive/pubsub": "^3.0.0",
     "@graphql-mesh/cross-helpers": "^0.4.18",
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/types": "^0.107.3",

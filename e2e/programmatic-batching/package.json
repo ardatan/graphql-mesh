@@ -2,7 +2,7 @@
   "name": "@e2e/programmatic-batching-example",
   "private": true,
   "dependencies": {
-    "@graphql-hive/gateway": "^2.15.12",
+    "@graphql-hive/gateway": "^3.0.0",
     "fets": "^0.8.14",
     "graphql": "17.1.0"
   }

@@ -35,7 +35,7 @@
     "graphql": "^16.0.0 || ^17.0.0"
   },
   "dependencies": {
-    "@graphql-hive/logger": "^1.2.0",
+    "@graphql-hive/logger": "^2.0.0",
     "@graphql-mesh/store": "^0.107.3",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",

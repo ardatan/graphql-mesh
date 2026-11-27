@@ -37,7 +37,7 @@
   "dependencies": {
     "@envelop/core": "^6.0.1",
     "@envelop/statsd": "^9.0.1",
-    "@graphql-hive/logger": "^1.2.0",
+    "@graphql-hive/logger": "^2.0.0",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
     "@whatwg-node/disposablestack": "^0.1.0",

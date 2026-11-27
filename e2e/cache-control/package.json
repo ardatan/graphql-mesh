@@ -4,14 +4,14 @@
   "dependencies": {
     "@apollo/server": "^5.5.2",
     "@apollo/subgraph": "^2.16.0",
-    "@graphql-hive/gateway": "^2.15.12",
+    "@graphql-hive/gateway": "^3.0.0",
     "@graphql-mesh/cache-upstash-redis": "^0.4.3",
     "@graphql-mesh/compose-cli": "^1.8.4",
     "@graphql-mesh/plugin-http-cache": "^0.108.3",
-    "@graphql-yoga/plugin-response-cache": "^4.1.0",
+    "@graphql-yoga/plugin-response-cache": "^4.1.1",
     "@whatwg-node/disposablestack": "^0.1.0",
     "graphql": "^16.14.0",
-    "graphql-yoga": "^6.1.0",
+    "graphql-yoga": "^6.1.1",
     "tslib": "^2.8.1"
   }
 }

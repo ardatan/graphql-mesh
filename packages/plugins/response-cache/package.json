@@ -37,20 +37,20 @@
   "dependencies": {
     "@envelop/core": "^6.0.1",
     "@envelop/response-cache": "^10.0.1",
-    "@graphql-hive/logger": "^1.2.0",
+    "@graphql-hive/logger": "^2.0.0",
     "@graphql-mesh/cross-helpers": "^0.4.18",
     "@graphql-mesh/string-interpolation": "^0.5.18",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
     "@graphql-tools/utils": "^13.2.3",
-    "@graphql-yoga/plugin-response-cache": "^4.1.0",
+    "@graphql-yoga/plugin-response-cache": "^4.1.1",
     "@whatwg-node/promise-helpers": "^2.0.2",
     "cache-control-parser": "^2.2.0",
-    "graphql-yoga": "^6.1.0",
+    "graphql-yoga": "^6.1.1",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@graphql-hive/gateway-runtime": "^2.14.3",
+    "@graphql-hive/gateway-runtime": "^3.0.0",
     "@graphql-mesh/fusion-composition": "^0.11.4",
     "graphql": "17.1.0"
   },
