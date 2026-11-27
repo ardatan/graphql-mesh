@@ -106,9 +106,14 @@ mesh-compose --subgraph reviews -o reviews-subgraph.graphql
 
 # custom config path
 mesh-compose -c ./configs/mesh.config.ts --subgraph chinook -o chinook-subgraph.graphql
+
+# skim the emit
+less chinook-subgraph.graphql
+# or: $EDITOR chinook-subgraph.graphql
 ```
 
-Open the file and practice [Reading generated SDL](/v2/guides/reading-generated-sdl).
+Open the file and practice [Reading generated SDL](/v2/guides/reading-generated-sdl). Next path if
+you own the file: [Generate-then-edit](/v2/paths/generate-then-edit).
 
 ### Compose the supergraph (serve next)
 
@@ -118,6 +123,9 @@ When every subgraph is listed in `composeConfig`, compose them together for
 ```bash
 mesh-compose -o supergraph.graphql
 hive-gateway supergraph
+
+# Connect-only dual-run peer
+./router --supergraph supergraph.graphql
 ```
 
 Registry publish uses the same `--subgraph` files --

@@ -25,12 +25,30 @@ Pick one:
 
 1. **Hive Gateway as the supergraph** for the full graph (SQL + anything else) --
    [Serve Supergraph: Hive Gateway](/v2/serve/hive-gateway).
+
+```bash
+mesh-compose -o supergraph.graphql
+hive-gateway supergraph
+```
+
 2. **Hive Gateway subgraph proxy**: run the SQL subgraph on Hive Gateway; point Apollo Router (or
    another gateway) at that subgraph URL for Federation --
    [Serve Subgraph](/v2/serve-subgraph#hive-gateway-as-a-subgraph) /
    [Architecture: patterns](/v2/architecture#patterns).
+
+```bash
+mesh-compose --subgraph chinook -o chinook-subgraph.graphql
+hive-gateway subgraph chinook-subgraph.graphql
+# Apollo Router (or another gateway) uses this subgraph URL in its supergraph
+```
+
 3. **`buildSubgraphSchema`**: host the SQL subgraph SDL on Yoga (or any GraphQL server) as a
    Federation peer -- [buildSubgraphSchema](/v2/guides/build-subgraph-schema).
+
+```bash
+mesh-compose --subgraph chinook -o chinook-subgraph.graphql
+npx tsx subgraph-server.ts # Yoga + buildSubgraphSchema loading that file
+```
 
 Same answer for other non-Connect protocols (Protobuf, Mongo, Neo4j, binary Thrift, ...).
 Connect-only slices can still dual-run on Apollo Router beside a Hive-served Mesh surface --
@@ -40,14 +58,32 @@ Connect-only slices can still dual-run on Apollo Router beside a Hive-served Mes
 
 No. For Connect-compatible supergraphs you can serve on **Apollo Router**, **Hive Gateway**, or both
 (dual-run). Hive Gateway remains preferred when any Mesh protocol transport is in the supergraph.
+
+```bash
+mesh-compose -o supergraph.graphql
+hive-gateway supergraph
+./router --supergraph supergraph.graphql
+```
+
 See [Serve Supergraph](/v2/serve) / [Apollo Router](/v2/serve/apollo-router).
 
 ## When should I Serve Subgraph instead of Serve Supergraph?
 
 **Serve Supergraph** = one gateway process runs the composed graph. That is the default.
 
+```bash
+mesh-compose -o supergraph.graphql
+hive-gateway supergraph
+```
+
 **Serve Subgraph** when you need a **standalone Federation subgraph URL**: foreign router / mixed
 fleet, independent deploy, subgraph smoke tests, or code resolvers mixed with Mesh directives.
+
+```bash
+mesh-compose --subgraph chinook -o chinook-subgraph.graphql
+hive-gateway subgraph chinook-subgraph.graphql
+```
+
 Details: [Serve Subgraph](/v2/serve-subgraph).
 
 ## Hive Gateway subgraph vs `buildSubgraphSchema` -- which?
@@ -88,8 +124,16 @@ Put loaders in `mesh.config.ts` as `export const composeConfig`, then:
 mesh-compose --subgraph chinook -o chinook-subgraph.graphql
 ```
 
-That **is** the Generate emit surface (not `.meshrc`). Full compose:
-`mesh-compose -o supergraph.graphql`. Concrete configs: [Generate](/v2/paths/generate).
+That **is** the Generate emit surface (not `.meshrc`). Full compose + serve:
+
+```bash
+mesh-compose -o supergraph.graphql
+hive-gateway supergraph
+```
+
+Concrete configs: [Generate](/v2/paths/generate). After you edit the file, switch that subgraph to
+`schema: './….graphql'` and re-compose -- shell walkthrough:
+[Generate-then-edit: two configs](/v2/paths/generate-then-edit#two-configs).
 
 ## Automatic transform or edit the SDL by hand?
 

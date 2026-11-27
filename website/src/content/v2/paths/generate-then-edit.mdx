@@ -30,17 +30,41 @@ call as [Generate](/v2/paths/generate) and [Hand-write](/v2/paths/hand-write)
 Treat Generate-then-edit as **two** `composeConfig` setups (often two checkouts of `mesh.config.ts`,
 or one file you flip after the emit lands in git):
 
-| Step  | Config job                                    | Subgraph entry                           | CLI                                                                 |
-| ----- | --------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------- |
-| **1** | **Generate emit** -- loader produces SDL      | `sourceHandler: load…Subgraph(...)`      | `mesh-compose --subgraph <name> -o <name>-subgraph.graphql`         |
-| **2** | **Consume / edit** -- Compose reads your file | `schema: './reviews.graphql'` (+ `name`) | `mesh-compose -o supergraph.graphql` (or `--subgraph` for registry) |
+| Step  | Config job                                    | Subgraph entry                           | Shell (below) |
+| ----- | --------------------------------------------- | ---------------------------------------- | ------------- |
+| **1** | **Generate emit** -- loader produces SDL      | `sourceHandler: load…Subgraph(...)`      | Emit          |
+| **2** | **Consume / edit** -- Compose reads your file | `schema: './reviews.graphql'` (+ `name`) | Re-compose    |
 
 You do **not** keep pointing Compose at the OpenAPI / SQL loader after you own the file -- that
 would regenerate over your edits. Step 2 matches [Hand-write](/v2/paths/hand-write) input shape.
 
-### 1. Generate emit
+### Shell walkthrough (Generate → edit → consume)
 
-Same as [Generate](/v2/paths/generate): loader in `composeConfig`, emit one subgraph file.
+```bash
+# --- Config 1 in place: sourceHandler loadOpenAPISubgraph('reviews', ...) ---
+
+# 1. Generate emit
+mesh-compose --subgraph reviews -o reviews-subgraph.graphql
+
+# 2. Own the file (copy, then edit what you dislike)
+cp reviews-subgraph.graphql reviews.graphql
+# $EDITOR reviews.graphql
+
+# --- Flip mesh.config.ts to Config 2: name + schema: './reviews.graphql' ---
+
+# 3. Consume / re-compose the supergraph
+mesh-compose -o supergraph.graphql
+
+# 4. Serve Supergraph (optional next)
+hive-gateway supergraph
+
+# Optional: subgraph SDL for registry (reads the file, does not re-hit OpenAPI)
+mesh-compose --subgraph reviews -o reviews-subgraph.graphql
+```
+
+### 1. Generate emit (config)
+
+Same as [Generate](/v2/paths/generate): loader in `composeConfig`, then the emit command above.
 
 ```ts filename="mesh.config.ts" {6-12}
 import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
@@ -60,12 +84,13 @@ export const composeConfig = defineComposeConfig({
 
 ```bash
 mesh-compose --subgraph reviews -o reviews-subgraph.graphql
+cp reviews-subgraph.graphql reviews.graphql
 ```
 
-Read the emit ([Reading generated SDL](/v2/guides/reading-generated-sdl)), then **copy / rename**
-into the path you will commit (e.g. `reviews.graphql`) and edit.
+Read the emit ([Reading generated SDL](/v2/guides/reading-generated-sdl)), edit `reviews.graphql`,
+then switch config.
 
-### 2. Consume the edited subgraph for compose
+### 2. Consume the edited subgraph for compose (config)
 
 Switch the subgraph entry from `sourceHandler` to **`schema:`** pointing at your edited file. Other
 subgraphs (still generated or already authored) stay beside it:
@@ -93,11 +118,8 @@ export const composeConfig = defineComposeConfig({
 
 ```bash
 mesh-compose -o supergraph.graphql
+hive-gateway supergraph
 ```
-
-Optional: re-emit only the edited subgraph for registry publish with
-`mesh-compose --subgraph reviews -o reviews-subgraph.graphql` -- Compose prints the **file** SDL
-(with annotations), not a fresh OpenAPI generate.
 
 <Callout type="info">
   When the dislike is mostly naming and you still want the loader as the base, optional

@@ -51,13 +51,18 @@ export const gatewayConfig = defineGatewayConfig({
 ```
 
 ```bash
+# Serve Supergraph
 mesh-compose -o supergraph.graphql
 hive-gateway supergraph
+
+# Serve Subgraph (foreign router talks GraphQL to this process)
+mesh-compose --subgraph chinook -o chinook-subgraph.graphql
+hive-gateway subgraph chinook-subgraph.graphql
 ```
 
 HTTP/REST Connectors often need no extra transport entry (Connect is built in). Register
 `transport-protobuf` (and other Mesh protocol transports) only when the supergraph stamps those
-kinds.
+kinds. Subgraph mode details: [Serve Subgraph](/v2/serve-subgraph).
 
 ## Use cases
 

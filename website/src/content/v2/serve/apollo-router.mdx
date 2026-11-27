@@ -32,11 +32,11 @@ schema stays on Connect:
 
 ```bash
 mesh-compose -o supergraph.graphql
+
 # Hive Gateway
-
 hive-gateway supergraph
-# Apollo Router (Connect-compatible SDL only)
 
+# Apollo Router (Connect-compatible SDL only)
 ./router --supergraph supergraph.graphql
 ```
 

@@ -160,6 +160,20 @@ Skill: [Generate-then-edit](/v2/paths/generate-then-edit) | Protocol:
    [Automatic](/v2/transforms/automatic) transforms for rename-only cases.
 6. Re-compose. Dual-run the Connect slice on **Hive Gateway** and **Apollo Router**.
 
+Two-config shell (details: [Generate-then-edit](/v2/paths/generate-then-edit#two-configs)):
+
+```bash
+# Config 1: sourceHandler reviews
+mesh-compose --subgraph reviews -o reviews-subgraph.graphql
+cp reviews-subgraph.graphql reviews.graphql
+# edit reviews.graphql
+
+# Config 2: schema: './reviews.graphql' (+ chinook still loaded or owned)
+mesh-compose -o supergraph.graphql
+hive-gateway supergraph
+./router --supergraph supergraph.graphql # Connect Reviews slice dual-run
+```
+
 ```ts
 import { loadOpenAPISubgraph } from '@omnigraph/openapi'
 
