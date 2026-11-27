@@ -111,16 +111,20 @@ type Review @key(fields: "id") {
 
 ### 2. Install packages
 
-```bash
-npm install graphql graphql-yoga @graphql-mesh/subgraph
-# TypeScript runner (pick one)
-npm install -D tsx typescript @types/node
+```sh npm2yarn
+npm i graphql graphql-yoga @graphql-mesh/subgraph
+```
+
+TypeScript runner (pick one):
+
+```sh npm2yarn
+npm i -D tsx typescript @types/node
 ```
 
 Add transports your SDL needs (example for Connect):
 
-```bash
-npm install @graphql-mesh/transport-connect
+```sh npm2yarn
+npm i @graphql-mesh/transport-connect
 ```
 
 Protocol subgraphs add the matching transport (`@graphql-mesh/transport-sql`, `transport-protobuf`,
@@ -189,8 +193,11 @@ export const composeConfig = defineComposeConfig({
 })
 ```
 
+```sh npm2yarn
+npm i -D @graphql-mesh/compose-cli
+```
+
 ```bash
-npm install -D @graphql-mesh/compose-cli
 npx mesh-compose -o supergraph.graphql
 # or refresh only this subgraph's emit:
 npx mesh-compose --subgraph reviews -o subgraph.graphql

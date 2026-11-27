@@ -15,16 +15,16 @@ and Protobuf are separate families. **SOAP / WSDL** lives under HTTP/REST (same 
 `@source` author API + Mesh XML codec); serve SOAP on **Hive Gateway** (or
 [Serve Subgraph](/v2/serve-subgraph)), not stock Apollo Router.
 
-| Family                                      | When to open it                                  | Transport                            | On Apollo Router?                                                                   |
-| ------------------------------------------- | ------------------------------------------------ | ------------------------------------ | ----------------------------------------------------------------------------------- |
-| REST / OpenAPI / JSON Schema / RAML / OData | HTTP JSON APIs, entity lookups, FHIR             | `transport-connect`                  | Yes (Connect-compatible)                                                            |
-| SOAP / WSDL                                 | WSDL ops as Connect + XML body (under HTTP/REST) | `transport-connect` (+ XML codec)    | No -- Hive Gateway / [Serve Subgraph](/v2/serve-subgraph)                           |
-| GraphQL HTTP / Federation                   | Existing GraphQL / Federation subgraphs          | `http` / federation                  | N/A                                                                                 |
-| SQL                                         | Tables, FKs, CRUD, Federation entity fill        | `transport-sql`                      | No -- [Serve Subgraph](/v2/serve-subgraph) (Hive subgraph or `buildSubgraphSchema`) |
-| Mongo                                       | Collections, find/filter/CRUD, ObjectId entities | `transport-mongo`                    | No -- [Serve Subgraph](/v2/serve-subgraph)                                          |
-| Neo4j                                       | Nodes / relationships via Neo4j GraphQL natives  | `transport-neo4j`                    | No -- [Serve Subgraph](/v2/serve-subgraph)                                          |
-| Thrift                                      | `.thrift` IDL -- binary RPC or TJSON Connect     | `transport-thrift` / Connect (TJSON) | TJSON `@connect` only; binary via [Serve Subgraph](/v2/serve-subgraph)              |
-| Protobuf / gRPC                             | RPC field-number maps (`@protobuf__rpc`)         | `transport-protobuf`                 | No -- [Serve Subgraph](/v2/serve-subgraph) (Hive subgraph or `buildSubgraphSchema`) |
+| Family                                      | When to open it                                                       | Transport                            | On Apollo Router?                                                                   |
+| ------------------------------------------- | --------------------------------------------------------------------- | ------------------------------------ | ----------------------------------------------------------------------------------- |
+| REST / OpenAPI / JSON Schema / RAML / OData | HTTP JSON APIs, entity lookups, FHIR                                  | `transport-connect`                  | Yes (Connect-compatible)                                                            |
+| SOAP / WSDL                                 | WSDL ops as Connect + XML body (under HTTP/REST)                      | `transport-connect` (+ XML codec)    | No -- Hive Gateway / [Serve Subgraph](/v2/serve-subgraph)                           |
+| GraphQL HTTP / Federation                   | Existing GraphQL / Federation subgraphs                               | `http` / federation                  | N/A                                                                                 |
+| SQL                                         | Postgres / MySQL (MariaDB) / SQLite -- tables, FKs, CRUD, entity fill | `transport-sql`                      | No -- [Serve Subgraph](/v2/serve-subgraph) (Hive subgraph or `buildSubgraphSchema`) |
+| Mongo                                       | Collections, find/filter/CRUD, ObjectId entities                      | `transport-mongo`                    | No -- [Serve Subgraph](/v2/serve-subgraph)                                          |
+| Neo4j                                       | Nodes / relationships via Neo4j GraphQL natives                       | `transport-neo4j`                    | No -- [Serve Subgraph](/v2/serve-subgraph)                                          |
+| Thrift                                      | `.thrift` IDL -- binary RPC or TJSON Connect                          | `transport-thrift` / Connect (TJSON) | TJSON `@connect` only; binary via [Serve Subgraph](/v2/serve-subgraph)              |
+| Protobuf / gRPC                             | RPC field-number maps (`@protobuf__rpc`)                              | `transport-protobuf`                 | No -- [Serve Subgraph](/v2/serve-subgraph) (Hive subgraph or `buildSubgraphSchema`) |
 
 Shared skills: [Selection mapping](/v2/guides/selection-mapping),
 [Entity resolution](/v2/concepts/federation#entity-resolution), [Directives](/v2/directives).

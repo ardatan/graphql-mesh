@@ -22,11 +22,11 @@ shape.
 
 ## Packages
 
-```bash
-pnpm add @graphql-mesh/compose-cli @omnigraph/openapi @graphql-hive/gateway @graphql-mesh/transport-connect
-# JSON Schema / OData loaders as needed: @omnigraph/json-schema / OData package used by Mesh
-# npm i … (same package names)
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @omnigraph/openapi @graphql-hive/gateway @graphql-mesh/transport-connect
 ```
+
+JSON Schema / OData loaders as needed: `@omnigraph/json-schema` or the OData package used by Mesh.
 
 SOAP uses the same `@connect` / `@source` author API plus a Mesh JSON↔XML codec -- see
 [SOAP-as-Connect](#soap-as-connect).
@@ -92,7 +92,8 @@ type Query {
 }
 ```
 
-Music Store stage 2 (Reviews) is the same pattern for REST reviews on tracks.
+Music Store stage 2 (Reviews) is the same pattern for REST reviews on tracks -- build the OpenAPI
+server with [Reviews with feTS](/v2/examples/music-store/reviews-fets).
 
 ## JSON Schema / FHIR
 
@@ -387,6 +388,7 @@ Upstream arg tables:
 <Cards>
   <Cards.Card arrow title="HTTP/REST Connectors (concept)" href="/v2/concepts/connectors" />
   <Cards.Card arrow title="Directives: @connect" href="/v2/directives#connect" />
+  <Cards.Card arrow title="Reviews with feTS" href="/v2/examples/music-store/reviews-fets" />
   <Cards.Card arrow title="Music Store stage 2" href="/v2/examples/music-store" />
   <Cards.Card arrow title="Community Connectors" href="/v2/examples/community-connectors" />
   <Cards.Card arrow title="FHIR" href="/v2/examples/fhir" />

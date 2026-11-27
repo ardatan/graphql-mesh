@@ -40,12 +40,14 @@ would regenerate over your edits. Step 2 matches [Hand-write](/v2/paths/hand-wri
 
 ### Shell walkthrough (Generate → edit → consume)
 
-```bash
-# Packages (OpenAPI / Connect example):
-pnpm add @graphql-mesh/compose-cli @omnigraph/openapi @graphql-hive/gateway \
-  @graphql-mesh/transport-connect
-# npm i … (same package names)
+Packages (OpenAPI / Connect example):
 
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @omnigraph/openapi @graphql-hive/gateway \
+  @graphql-mesh/transport-connect
+```
+
+```bash
 # --- Config 1 in place: sourceHandler loadOpenAPISubgraph('reviews', ...) ---
 
 # 1. Generate emit
@@ -136,7 +138,8 @@ hive-gateway supergraph
 
 Stage 2 of the [Music Store Example](/v2/examples/music-store) generates **Reviews** from a REST /
 OpenAPI source (HTTP/REST Connectors emit), then edits the `@connect` SDL before it joins the
-catalog.
+catalog. Build the OpenAPI Reviews server with
+[Reviews with feTS](/v2/examples/music-store/reviews-fets).
 
 | Step       | Music Store Example move                                                                      |
 | ---------- | --------------------------------------------------------------------------------------------- |
@@ -189,7 +192,8 @@ type Track @key(fields: "id", resolvable: false) {
 Trace binders: [Selection mapping](/v2/guides/selection-mapping). Protocol:
 [HTTP / REST](/v2/protocols/http-rest).
 
-Full stage walkthrough: [Music Store Example](/v2/examples/music-store).
+Full stage walkthrough: [Music Store Example](/v2/examples/music-store). feTS server tutorial:
+[Reviews with feTS](/v2/examples/music-store/reviews-fets).
 
 ## Optional: run the edited subgraph yourself
 
@@ -215,5 +219,6 @@ list/batch -- [Directives](/v2/directives#lookup). Guide:
   <Cards.Card arrow title="AI-assisted authoring" href="/v2/guides/ai-assisted-authoring" />
   <Cards.Card arrow title="Transform Subgraph" href="/v2/transforms" />
   <Cards.Card arrow title="Selection mapping" href="/v2/guides/selection-mapping" />
+  <Cards.Card arrow title="Reviews with feTS" href="/v2/examples/music-store/reviews-fets" />
   <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
 </Cards>

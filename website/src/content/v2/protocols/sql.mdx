@@ -18,14 +18,52 @@ discriminator; Hive Gateway runs `transport-sql`. Stock Apollo Router does **not
 | Directive     | `@sql` (`ROW` / `ROWS` / `CONNECTION` / `COUNT` / `INSERT` / `UPDATE` / `DELETE`) |
 | Transport     | `@graphql-mesh/transport-sql`                                                     |
 | Spec          | `https://specs.graphql-mesh.dev/sql/v0.1`                                         |
+| Dialects      | **PostgreSQL**, **MySQL** (incl. MariaDB URIs), **SQLite**                        |
 | Apollo Router | Via [Serve Subgraph](/v2/serve-subgraph) (Hive Gateway runs `@sql` natively)      |
-| Examples      | Chinook (SQLite); Music Store stage 1; MySQL / Postgres                           |
+| Examples      | Chinook (SQLite); Music Store stage 1; MySQL / Postgres endpoints below           |
+
+## Supported dialects
+
+`@omnigraph/sql` introspects and `@graphql-mesh/transport-sql` executes these dialects
+(`SqlAdapter`: `postgres` | `mysql` | `sqlite`). The adapter is usually inferred from the `endpoint`
+URI; you can set `adapter` explicitly when needed.
+
+| Dialect        | Adapter    | Typical `endpoint`                                               | Notes                                                                                                    |
+| -------------- | ---------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| **PostgreSQL** | `postgres` | `postgres://…` / `postgresql://…`, or host-style URI             | Optional `schema: 'public'` (and `pgPool` for introspection). Env: `DATABASE_URL`, `POSTGRES_URL`, `PG*` |
+| **MySQL**      | `mysql`    | `mysql://…` / `mysql2://…` / `mysqls://…`                        | Uses `mysql2` at runtime. Env: `MYSQL_URL`                                                               |
+| **MariaDB**    | `mysql`    | `mariadb://…` (same MySQL adapter)                               | URI maps to the MySQL dialect -- not a separate adapter                                                  |
+| **SQLite**     | `sqlite`   | `file:./chinook.db`, `sqlite:…`, bare `*.db` path, or `:memory:` | `cwd` resolves relative file paths. Env: `SQLITE_URL`                                                    |
+
+```ts
+import { loadSqlSubgraph } from '@omnigraph/sql'
+
+// PostgreSQL
+loadSqlSubgraph('shop', {
+  endpoint: 'postgres://localhost:5432/shop',
+  schema: 'public'
+})
+
+// MySQL
+loadSqlSubgraph('hr', {
+  endpoint: 'mysql://root@127.0.0.1:3306/employees'
+})
+
+// MariaDB (mysql adapter)
+loadSqlSubgraph('app', {
+  endpoint: 'mariadb://app@127.0.0.1:3306/app'
+})
+
+// SQLite
+loadSqlSubgraph('chinook', {
+  endpoint: 'file:./chinook.db'
+})
+```
 
 ## Packages
 
-```bash
-pnpm add @graphql-mesh/compose-cli @omnigraph/sql @graphql-hive/gateway @graphql-mesh/transport-sql
-# npm i @graphql-mesh/compose-cli @omnigraph/sql @graphql-hive/gateway @graphql-mesh/transport-sql
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @omnigraph/sql @graphql-hive/gateway @graphql-mesh/transport-sql
 ```
 
 ## Generate Chinook
@@ -295,7 +333,8 @@ type Playlist {
 }
 ```
 
-Walkthrough: [Music Store Example](/v2/examples/music-store) stage 1.
+Walkthrough: [Music Store Example](/v2/examples/music-store) stage 1 (Chinook SQLite). Dialects
+above: PostgreSQL, MySQL / MariaDB, SQLite.
 
 <Cards>
   <Cards.Card arrow title="Directives: @sql" href="/v2/directives#sql" />

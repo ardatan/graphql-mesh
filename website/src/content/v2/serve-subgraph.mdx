@@ -72,10 +72,11 @@ Use this when:
 - Composition / registry still publishes that subgraph's SDL into the supergraph the foreign router
   runs.
 
-```bash
-# Packages: @graphql-mesh/compose-cli @graphql-hive/gateway + loader/transport for the SDL
-# e.g. pnpm add @omnigraph/sql @graphql-mesh/transport-sql
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @graphql-hive/gateway @omnigraph/sql @graphql-mesh/transport-sql
+```
 
+```bash
 # Emit subgraph SDL (Generate or owned file via composeConfig)
 pnpm exec mesh-compose --subgraph chinook -o chinook-subgraph.graphql
 
@@ -97,10 +98,14 @@ Mercurius, or any GraphQL HTTP stack. It does **what Apollo's** `@apollo/subgrap
 execution (protocol transports, Connect in-process, entity hops). Transports and entity hops come
 from the SDL; you optionally pass `resolvers` for fields you own in code.
 
-```bash
-pnpm add graphql graphql-yoga @graphql-mesh/subgraph
-# plus transports your SDL uses, e.g. @graphql-mesh/transport-connect / transport-sql
-# npm i … (same package names)
+```sh npm2yarn
+npm i graphql graphql-yoga @graphql-mesh/subgraph
+```
+
+Plus transports your SDL uses, for example:
+
+```sh npm2yarn
+npm i @graphql-mesh/transport-connect
 ```
 
 ```ts {8-14}
