@@ -14,7 +14,7 @@ Federation-compatible gateway -- including the one that already serves your base
 when you [enhance it with Mesh subgraphs](/v2#enhance-an-existing-federation). To run one Mesh
 subgraph as its own Federation endpoint, see [Serve Subgraph](/v2/serve-subgraph).
 
-| Runtime                                        | Role in Mesh docs               | What it executes                                                                                                                                                                                                |
+| Runtime                                        | Role                            | What it executes                                                                                                                                                                                                |
 | ---------------------------------------------- | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [Hive Gateway](/v2/serve/hive-gateway) (JS/TS) | Preferred Mesh runtime          | Full Mesh transport surface (HTTP/REST Connectors, <ProtocolRef name="sql" />, <ProtocolRef name="mongo" />, <ProtocolRef name="protobuf" />, <ProtocolRef name="thrift" />, <ProtocolRef name="neo4j" />, ...) |
 | [Apollo Router](/v2/serve/apollo-router)       | Peer for Connect-compatible SDL | HTTP/REST Connectors (`@connect` / `@source`) only -- <ProtocolRef name="http-rest" />                                                                                                                          |
