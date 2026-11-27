@@ -476,8 +476,7 @@ export function createFederationTransform(config: FederationTransformConfig): Su
             const returnsList = isListType(getNullableType(fieldConfig.type));
             const argNames = fieldConfig.args ? Object.keys(fieldConfig.args) : [];
             // When keyArg is omitted, a lone list arg still counts as batch.
-            const effectiveKeyArg =
-              keyArg || (argNames.length === 1 ? argNames[0] : undefined);
+            const effectiveKeyArg = keyArg || (argNames.length === 1 ? argNames[0] : undefined);
             const batchListArg =
               !!effectiveKeyArg &&
               !!fieldConfig.args?.[effectiveKeyArg] &&

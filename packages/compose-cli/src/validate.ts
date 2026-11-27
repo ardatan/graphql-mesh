@@ -346,7 +346,11 @@ function readJoinGraphEnumToName(schema: ReturnType<typeof buildSchema>): Map<st
 
 /** True when the schema defines or applies Federation Spec draft lookup directives. */
 function schemaHasFederationLookupDirectives(schema: ReturnType<typeof buildSchema>): boolean {
-  if (schema.getDirective('lookup') || schema.getDirective('is') || schema.getDirective('internal')) {
+  if (
+    schema.getDirective('lookup') ||
+    schema.getDirective('is') ||
+    schema.getDirective('internal')
+  ) {
     return true;
   }
   for (const type of Object.values(schema.getTypeMap())) {

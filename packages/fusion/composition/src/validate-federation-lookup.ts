@@ -336,7 +336,11 @@ function validateLookupArgument(opts: {
     // on the return type in at least one source schema. Within a single subgraph
     // validate we check local return types; missing path is an error when the
     // object is defined here without that field.
-    if (pathParts.length === 1 && !isApps?.length && objectType.getFields()[pathParts[0]!] == null) {
+    if (
+      pathParts.length === 1 &&
+      !isApps?.length &&
+      objectType.getFields()[pathParts[0]!] == null
+    ) {
       errors.push(
         new GraphQLError(
           `@lookup on ${locationLabel}: argument ${arg.name} must match a field on ${objectType.name} (or use @is(field:))`,
@@ -351,10 +355,9 @@ function validateLookupArgument(opts: {
             ? `must end on a scalar or enum field`
             : `does not match a field path on ${objectType.name}`;
       errors.push(
-        new GraphQLError(
-          `@is(field: "${keyPath}") on ${locationLabel}(${arg.name}:) ${reason}`,
-          { nodes: arg.astNode || undefined },
-        ),
+        new GraphQLError(`@is(field: "${keyPath}") on ${locationLabel}(${arg.name}:) ${reason}`, {
+          nodes: arg.astNode || undefined,
+        }),
       );
     }
   }

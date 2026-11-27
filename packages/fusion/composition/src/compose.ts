@@ -922,10 +922,7 @@ export function getAnnotatedSubgraphs(
   for (const pending of pendingAnnotated) {
     let { transformedSubgraph, importedDirectivesAST, composeDirectiveNames, subgraphName, url } =
       pending;
-    const stamped = stampInaccessibleForInternalOnlyCoords(
-      transformedSubgraph,
-      publicCoords,
-    );
+    const stamped = stampInaccessibleForInternalOnlyCoords(transformedSubgraph, publicCoords);
     transformedSubgraph = stamped.schema;
     if (stamped.needsInaccessibleImport) {
       transformedSubgraph = importFederationDirectives(transformedSubgraph, ['@inaccessible']);
@@ -994,11 +991,7 @@ function stampInaccessibleForInternalOnlyCoords(
   const next = mapSchema(schema, {
     [MapperKind.OBJECT_TYPE]: type => {
       const dirs = getDirectiveExtensions(type, schema);
-      if (
-        dirs.internal?.length &&
-        !dirs.inaccessible?.length &&
-        !publicCoords.has(type.name)
-      ) {
+      if (dirs.internal?.length && !dirs.inaccessible?.length && !publicCoords.has(type.name)) {
         dirs.inaccessible = [{}];
         needsInaccessibleImport = true;
         return new (Object.getPrototypeOf(type).constructor)({

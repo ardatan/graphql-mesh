@@ -742,8 +742,7 @@ function synthesizeMergeFromLookup(
     // `@join__directive(name: "is")` left on ARGUMENT_DEFINITION by extract.
     const isFromJoin = (
       (argDirs?.join__directive as
-        | Array<{ name?: string; graphs?: string[]; args?: { field?: string } }>
-        | undefined) || []
+        Array<{ name?: string; graphs?: string[]; args?: { field?: string } }> | undefined) || []
     )
       .filter(
         d => d?.name === 'is' && joinDirectiveTargetsSubgraph(d, subgraphName, subgraphEnumName),
