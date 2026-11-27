@@ -81,9 +81,10 @@ function coerceToSchema(input: BuildSubgraphSchemaInput): GraphQLSchema {
  * become entity resolution for `Query._entities`. Mesh `@merge` list/batch
  * entry fields stay as ordinary Query fields (not deprecated).
  *
- * Mesh stitching `@source` / `@meshSource` (not Apollo SCHEMA `@source`) reverse
- * rename stamps so transports hit original names, then wrap transforms restore
- * the public surface — same path Hive Gateway uses for stamped subgraph SDL.
+ * Mesh stitching `@source` / `@meshSource` reverse rename stamps (resolved via
+ * Mesh `@link` import URL — never Apollo Connectors SCHEMA `@source` from
+ * `specs.apollo.dev/connect`) so transports hit original names; wrap transforms
+ * restore the public surface — same path Hive Gateway uses for stamped SDL.
  *
  * Pass `pubsub` to wire `@pubsubOperation` / `@pubsubPublish`; omit it to leave
  * those directives as a no-op.

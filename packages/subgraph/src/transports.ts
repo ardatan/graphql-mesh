@@ -45,7 +45,24 @@ export function getTransportEntryFromSchema(schema: GraphQLSchema): TransportEnt
 
 function schemaHasConnectDirectives(schema: GraphQLSchema): boolean {
   const schemaDirs = getDirectiveExtensions(schema);
-  if (schemaDirs?.source?.length || schemaDirs?.connect?.length) {
+  // Apollo Connectors SCHEMA `@source` is linked from specs.apollo.dev/connect —
+  // never treat Mesh stitching `@source` / `@meshSource` as Connectors.
+  const links = schemaDirs?.link;
+  const hasConnectLink =
+    Array.isArray(links) &&
+    links.some(
+      (link: { url?: string }) =>
+        typeof link?.url === 'string' && link.url.startsWith('https://specs.apollo.dev/connect'),
+    );
+  if (hasConnectLink) {
+    return true;
+  }
+  if (schemaDirs?.connect?.length) {
+    return true;
+  }
+  // SCHEMA `@source(http:)` without a `@link` (hand-written Connectors SDL).
+  const schemaSources = schemaDirs?.source as { http?: unknown }[] | undefined;
+  if (schemaSources?.some(s => s?.http != null)) {
     return true;
   }
   for (const type of Object.values(schema.getTypeMap())) {

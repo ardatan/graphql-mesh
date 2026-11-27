@@ -1,10 +1,17 @@
 import { execute, parse, subscribe, type GraphQLObjectType } from 'graphql';
 import { MemPubSub } from '@graphql-hive/pubsub';
+import { getDirectiveExtensions } from '@graphql-tools/utils';
 import { buildSubgraphSchema } from '../src/index.js';
 import {
   extractMeshSourceTransforms,
+  getApolloConnectorsSourceDirectiveName,
+  getMeshSourceDirectiveName,
   schemaHasMeshSourceTransforms,
 } from '../src/source-transforms.js';
+
+function linkExtensions(schema: { extensions?: unknown }) {
+  return { directives: getDirectiveExtensions(schema as any) || {} };
+}
 
 const MESH_SOURCE_DIRECTIVES = /* GraphQL */ `
   directive @link(url: String!, import: [String]) repeatable on SCHEMA
@@ -117,6 +124,8 @@ describe('buildSubgraphSchema Mesh @source transforms', () => {
 
   it('does not treat Apollo Connectors @source as Mesh stitching transforms', async () => {
     const typeDefs = /* GraphQL */ `
+      directive @link(url: String!, import: [link__Import]) repeatable on SCHEMA
+      scalar link__Import
       directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
       directive @connect(source: String, http: ConnectHTTP, selection: String!) on FIELD_DEFINITION
       input SourceHTTP {
@@ -125,7 +134,9 @@ describe('buildSubgraphSchema Mesh @source transforms', () => {
       input ConnectHTTP {
         GET: String
       }
-      extend schema @source(name: "api", http: { baseURL: "https://example.com" })
+      extend schema
+        @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"])
+        @source(name: "api", http: { baseURL: "https://example.com" })
       type Query {
         hello: String @connect(source: "api", http: { GET: "/hello" }, selection: "$")
       }
@@ -137,6 +148,88 @@ describe('buildSubgraphSchema Mesh @source transforms', () => {
     expect(schemaHasMeshSourceTransforms(raw)).toBe(false);
     const { transforms } = extractMeshSourceTransforms(raw);
     expect(transforms).toEqual([]);
+    expect(getApolloConnectorsSourceDirectiveName(linkExtensions(raw))).toBe('source');
+    expect(getMeshSourceDirectiveName(linkExtensions(raw))).toBeUndefined();
+  });
+
+  it('supports Mesh @meshSource and Apollo SCHEMA @source together via @link URLs', async () => {
+    // Same clash-avoidance Compose uses: Mesh aliases `@source` → `@meshSource`
+    // when Connectors own SCHEMA `@source`.
+    const typeDefs = /* GraphQL */ `
+      directive @link(url: String!, import: [link__Import]) repeatable on SCHEMA
+      scalar link__Import
+      directive @source(name: String!, http: SourceHTTP!) repeatable on SCHEMA
+      directive @meshSource(
+        name: String!
+        type: String
+        subgraph: String!
+      ) repeatable on FIELD_DEFINITION | OBJECT | INTERFACE | INPUT_OBJECT | ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION | ENUM_VALUE
+      directive @connect(source: String, http: ConnectHTTP, selection: String!) on FIELD_DEFINITION
+
+      input SourceHTTP {
+        baseURL: String!
+      }
+      input ConnectHTTP {
+        GET: String
+      }
+
+      extend schema
+        @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"])
+        @link(
+          url: "https://specs.graphql-mesh.dev/core/v0.1"
+          import: [{ name: "@source", as: "@meshSource" }]
+        )
+        @source(name: "api", http: { baseURL: "https://example.com" })
+
+      type Query {
+        user: User! @meshSource(name: "my_user", type: "MyUser!", subgraph: "TEST")
+        hello: String @connect(source: "api", http: { GET: "/hello" }, selection: "$")
+      }
+
+      type User @meshSource(name: "MyUser", subgraph: "TEST") {
+        id: ID! @meshSource(name: "user_id", type: "ID!", subgraph: "TEST")
+      }
+    `;
+
+    const { buildSchema } = await import('graphql');
+    const raw = buildSchema(typeDefs, { assumeValid: true, assumeValidSDL: true });
+    expect(getMeshSourceDirectiveName(linkExtensions(raw))).toBe('meshSource');
+    expect(getApolloConnectorsSourceDirectiveName(linkExtensions(raw))).toBe('source');
+    expect(schemaHasMeshSourceTransforms(raw)).toBe(true);
+
+    const schema = await buildSubgraphSchema(typeDefs, {
+      skipTransports: true,
+      resolvers: {
+        Query: {
+          user: () => ({ user_id: 'u1' }),
+          hello: () => 'world',
+        },
+        User: {
+          id: (parent: { user_id?: string; id?: string }) => parent.user_id ?? parent.id,
+        },
+      },
+    });
+
+    expect(schema.getType('User')).toBeDefined();
+    expect(schema.getType('MyUser')).toBeUndefined();
+
+    const result = await execute({
+      schema,
+      document: parse(/* GraphQL */ `
+        {
+          user {
+            id
+          }
+          hello
+        }
+      `),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({ user: { id: 'u1' }, hello: 'world' });
+
+    // Apollo SCHEMA `@source(http:)` stays on the schema for Connectors.
+    const schemaDirs = getDirectiveExtensions(schema);
+    expect(schemaDirs?.source?.some((s: { http?: unknown }) => s?.http != null)).toBe(true);
   });
 });
 

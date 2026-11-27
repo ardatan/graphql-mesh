@@ -9,7 +9,9 @@ export { ensureFederationEntitiesField, ensureFederationServiceField } from './f
 export {
   applyMeshSourceTransforms,
   extractMeshSourceTransforms,
+  getApolloConnectorsSourceDirectiveName,
   getMeshSourceDirectiveName,
+  isApolloConnectorsSpecUrl,
   schemaHasMeshSourceTransforms,
 } from './source-transforms.js';
 export { wirePubSubDirectives } from './pubsub.js';

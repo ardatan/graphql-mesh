@@ -31,6 +31,8 @@ function isMeshSourceSpecUrl(url: unknown): boolean {
   if (typeof url !== 'string') {
     return false;
   }
+  // Current core `@link` plus the older Mesh source `@link` still seen on
+  // existing subgraph SDL. Unpublished intermediate prefixes are not accepted.
   return (
     url === 'https://the-guild.dev/graphql/mesh/spec/v1.0' ||
     url.startsWith('https://the-guild.dev/graphql/mesh/spec/') ||
@@ -38,10 +40,61 @@ function isMeshSourceSpecUrl(url: unknown): boolean {
   );
 }
 
+/** Apollo Federation Connectors `@link` (SCHEMA `@source` / `@connect`). */
+export function isApolloConnectorsSpecUrl(url: unknown): boolean {
+  return typeof url === 'string' && url.startsWith('https://specs.apollo.dev/connect');
+}
+
+function linkImportsSourceDirective(
+  linkDirective: { import?: unknown[] },
+  /** Local name without `@`, e.g. `source` or `meshSource`. */
+  wantLocalName?: string,
+): string | undefined {
+  for (const importInfo of linkDirective.import || []) {
+    if (importInfo === '@source') {
+      if (!wantLocalName || wantLocalName === 'source') {
+        return 'source';
+      }
+      continue;
+    }
+    if (importInfo === '@meshSource') {
+      if (!wantLocalName || wantLocalName === 'meshSource') {
+        return 'meshSource';
+      }
+      continue;
+    }
+    if (importInfo && typeof importInfo === 'object') {
+      const name = (importInfo as { name?: string }).name;
+      const alias = (importInfo as { as?: string }).as;
+      if (name === '@source' || name === '@meshSource') {
+        const local =
+          typeof alias === 'string'
+            ? alias.startsWith('@')
+              ? alias.slice(1)
+              : undefined
+            : name === '@meshSource'
+              ? 'meshSource'
+              : 'source';
+        if (!local) {
+          continue;
+        }
+        if (!wantLocalName || wantLocalName === local) {
+          return local;
+        }
+      }
+    }
+  }
+  return undefined;
+}
+
 /**
  * Resolve the Mesh stitching `@source` / `@meshSource` directive name from
- * schema `@link` imports. Returns undefined when the schema only has Apollo
- * Connectors SCHEMA `@source` (or no Mesh source link).
+ * schema `@link` imports (Mesh core / Guild Mesh spec URLs only).
+ *
+ * Apollo Connectors SCHEMA `@source` is imported from
+ * `https://specs.apollo.dev/connect/...` and is never returned here — when both
+ * appear in one schema, Mesh is aliased (typically `@meshSource`) so the names
+ * do not clash.
  */
 export function getMeshSourceDirectiveName(
   schemaExtensions: Record<string, any> | undefined,
@@ -54,12 +107,34 @@ export function getMeshSourceDirectiveName(
     if (!isMeshSourceSpecUrl(linkDirective?.url)) {
       continue;
     }
+    const local = linkImportsSourceDirective(linkDirective);
+    if (local) {
+      return local;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Resolve Apollo Connectors SCHEMA `@source` local name from `@link` imports
+ * (`https://specs.apollo.dev/connect/...`). Undefined when Connectors do not
+ * import `@source` (Mesh-only graphs).
+ */
+export function getApolloConnectorsSourceDirectiveName(
+  schemaExtensions: Record<string, any> | undefined,
+): string | undefined {
+  const linkDirectives = schemaExtensions?.directives?.link;
+  if (!Array.isArray(linkDirectives)) {
+    return undefined;
+  }
+  for (const linkDirective of linkDirectives) {
+    if (!isApolloConnectorsSpecUrl(linkDirective?.url)) {
+      continue;
+    }
+    // Connectors import `@source` (optionally aliased); never `@meshSource`.
     for (const importInfo of linkDirective.import || []) {
       if (importInfo === '@source') {
         return 'source';
-      }
-      if (importInfo === '@meshSource') {
-        return 'meshSource';
       }
       if (importInfo && typeof importInfo === 'object' && importInfo.name === '@source') {
         const alias = importInfo.as;
@@ -89,38 +164,55 @@ function getMeshSourceDirectives(
   directives: Record<string, any> | undefined,
   meshSourceDirectiveName: string | undefined,
 ): SourceDirective[] | undefined {
-  if (meshSourceDirectiveName && directives?.[meshSourceDirectiveName]?.length) {
-    return directives[meshSourceDirectiveName] as SourceDirective[];
+  if (!meshSourceDirectiveName) {
+    return undefined;
   }
-  const candidates = (directives?.meshSource || directives?.source) as
-    SourceDirective[] | undefined;
+  const candidates = directives?.[meshSourceDirectiveName] as SourceDirective[] | undefined;
   if (!candidates?.length) {
     return undefined;
   }
-  // Drop Apollo SCHEMA `@source(http:)` so it is never treated as a rename stamp.
+  // Belt-and-suspenders: never treat SCHEMA `@source(http:)` as a rename stamp
+  // even if a mis-linked name pointed here.
   const meshOnly = candidates.filter(isMeshStitchingSource);
   return meshOnly.length ? meshOnly : undefined;
 }
 
 /**
- * Resolve the Mesh stitching source directive name for a schema: prefer `@link`
- * import alias, then fall back to a present `meshSource` / `source` directive def.
+ * Resolve the Mesh stitching source directive name for a schema.
+ *
+ * 1. Prefer Mesh `@link` import (`@source` / `@meshSource` / alias).
+ * 2. If Apollo Connectors `@link` owns `@source`, do **not** fall back to bare
+ *    `source` — Mesh must use `@meshSource` (or another alias) to avoid a clash.
+ * 3. Otherwise allow unlinked Mesh SDL: `meshSource` def, or Mesh-shaped
+ *    `source` stamps (no `http`).
  */
 function resolveMeshSourceDirectiveNameForSchema(schema: GraphQLSchema): string | undefined {
-  const schemaExtensions = schema.extensions as Record<string, any> | undefined;
-  return (
-    getMeshSourceDirectiveName(schemaExtensions) ||
-    (schema.getDirective('meshSource')
-      ? 'meshSource'
-      : schema.getDirective('source')
-        ? 'source'
-        : undefined)
-  );
+  // Prefer directive apps from AST/extensions (`getDirectiveExtensions` merges both).
+  const schemaExtensions = {
+    directives: getDirectiveExtensions(schema) || {},
+  };
+  const fromLink = getMeshSourceDirectiveName(schemaExtensions);
+  if (fromLink) {
+    return fromLink;
+  }
+  const apolloSourceName = getApolloConnectorsSourceDirectiveName(schemaExtensions);
+  if (schema.getDirective('meshSource')) {
+    return 'meshSource';
+  }
+  // Apollo Connectors already claimed `source` via `@link` — do not steal it.
+  if (apolloSourceName != null) {
+    return undefined;
+  }
+  if (schema.getDirective('source')) {
+    return 'source';
+  }
+  return undefined;
 }
 
 /**
  * True when the schema carries Mesh stitching `@source` / `@meshSource` rename
- * (or hoist) stamps — not Apollo Connectors SCHEMA `@source`.
+ * (or hoist) stamps — never Apollo Connectors SCHEMA `@source` (disambiguated
+ * via `@link` import URL).
  */
 export function schemaHasMeshSourceTransforms(schema: GraphQLSchema): boolean {
   const meshSourceDirectiveName = resolveMeshSourceDirectiveNameForSchema(schema);
