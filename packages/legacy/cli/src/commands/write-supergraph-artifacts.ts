@@ -9,10 +9,9 @@ import { writeFile } from '@graphql-mesh/utils';
  * next to the client `schema.graphql`.
  *
  * Canonical module: `supergraph.graphql.ts` — SDL export plus programmatic Hive
- * Gateway factory that loads that Supergraph (standard Gateway transports from
- * `@transport` in the SG; no custom Mesh transport layer).
- *
- * Plain `supergraph.graphql` is also written so CLI / `hive-gateway` can take a path.
+ * Gateway factory (`createBuiltHiveGateway`). Prefer `createMeshHTTPHandler` /
+ * `createBuiltMeshHTTPHandler` for the Mesh UX (Gateway runs under the hood when
+ * this SDL is on the Mesh schema). Plain `supergraph.graphql` is also written.
  */
 export async function writeSupergraphArtifacts(opts: {
   outputDir: string;

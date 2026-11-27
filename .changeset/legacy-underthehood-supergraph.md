@@ -1,17 +1,19 @@
 ---
-'@graphql-mesh/merger-federation': minor
-'@graphql-mesh/merger-stitching': major
-'@graphql-mesh/merger-bare': minor
-'@graphql-mesh/config': minor
+'@graphql-mesh/merger-federation': major
+'@graphql-mesh/config': major
+'@graphql-mesh/http': minor
+'@graphql-mesh/graphql': major
 '@graphql-mesh/transform-type-merging': minor
 '@graphql-mesh/fusion-composition': patch
 '@graphql-mesh/cli': minor
 ---
 
-Legacy multi-source Mesh now uses a **federation merger** (`@graphql-mesh/merger-federation`) as the only multi-source merger: sources → subgraphs via `composeSubgraphs` (like Mesh v2), then `handleFederationSupergraph` with in-process source executors for the Mesh UX path. Classic `stitchSchemas` is removed. `@graphql-mesh/merger-stitching` re-exports the federation merger for back-compat with `merger: stitching`.
+**Breaking:** `@graphql-mesh/merger-stitching` and `@graphql-mesh/merger-bare` are **removed**. Legacy Mesh uses only `@graphql-mesh/merger-federation` (under-the-hood Supergraph). Configs with `merger: bare` or `merger: stitching` are remapped to `federation` with a warning; prefer omitting `merger` or setting `merger: federation`.
 
-User-facing APIs stay the same (`getMesh`, `createMeshHTTPHandler`, generated `createBuiltMeshHTTPHandler`, `.meshrc`). Default `merger` for multi-source configs is `federation` (single-source still defaults to `bare`). Under the hood, `mesh build` / `mesh dev` write `.mesh/supergraph.graphql.ts` (SDL + programmatic `createBuiltHiveGateway`) and plain `.mesh/supergraph.graphql`. `mesh start` / `mesh dev` feed that Supergraph to Hive Gateway when present — **no custom `mesh://` in-process transport**; Gateway uses standard transports from `@transport` in the Supergraph.
+Sources → subgraphs via `composeSubgraphs` (like Mesh v2), then `handleFederationSupergraph` with in-process source executors for the Mesh UX path. Classic `stitchSchemas` is gone. Composition failures surface (no silent stitch fallback).
 
-`transform-type-merging` now stamps Fed `@key(fields)` / Mesh `@merge` (and Fed `@requires` for computed fields) instead of stitch `subschemaConfig.merge`.
+The GraphQL HTTP handler no longer builds stitch `subschemaConfig.merge` via `getSubschemaForFederationWithTypeDefs`; entity planning uses Supergraph composition from subgraph SDL (`@key` / Fed `@link`). Prefer current omnigraph / compose loaders (`loadSqlSubgraph`, `loadGraphQLHTTPSubgraph`, …) for new work; v0 YAML handlers that already wrap those loaders (e.g. `postgraphile` → `@omnigraph/sql`) stay valid.
 
-No `.meshrc` migration is required for typical configs. After `getMesh`, the composed SDL is on `schema.extensions.supergraphSdl` when composition succeeds. Composition failures now surface instead of silently falling back to stitching — fix overlapping Subscription fields (prefix/encapsulate) or type-merging keys as needed.
+User-facing APIs stay the same: `getMesh`, `createMeshHTTPHandler`, generated `createBuiltMeshHTTPHandler`, `.meshrc`. Default merger is `federation`. `createMeshHTTPHandler` runs **Hive Gateway under the hood** when `schema.extensions.supergraphSdl` is present (CLI `serve` surface unchanged — still calls `createMeshHTTPHandler`). `mesh build` / `mesh dev` also write `.mesh/supergraph.graphql` + `.mesh/supergraph.graphql.ts` (`createBuiltHiveGateway`). No custom `mesh://` transport.
+
+`transform-type-merging` stamps Fed `@key(fields)` / Mesh `@merge` (and Fed `@requires` for computed fields) instead of stitch `subschemaConfig.merge`.

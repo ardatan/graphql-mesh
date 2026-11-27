@@ -164,7 +164,7 @@ export async function generateTsArtifacts(
   {
     unifiedSchema,
     rawSources,
-    mergerType = 'stitching',
+    mergerType = 'federation',
     documents,
     flattenTypes,
     importedModulesSet,

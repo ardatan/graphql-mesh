@@ -4,7 +4,6 @@ import { MemPubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import GraphQLHandler from '@graphql-mesh/graphql';
 import JsonSchemaHandler from '@graphql-mesh/json-schema';
-import BareMerger from '@graphql-mesh/merger-bare';
 import FederationMerger from '@graphql-mesh/merger-federation';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { defaultImportFn } from '@graphql-mesh/utils';
@@ -580,7 +579,7 @@ type Subscription {waveLarge:String wave0:String wave1:String}
           }),
         },
       ],
-      merger: new BareMerger({
+      merger: new FederationMerger({
         cache,
         pubsub,
         log,

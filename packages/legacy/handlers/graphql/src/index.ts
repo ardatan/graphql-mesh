@@ -8,7 +8,6 @@ import {
   Kind,
   parse,
   print,
-  visit,
 } from 'graphql';
 import lodashGet from 'lodash.get';
 import { type Logger } from '@graphql-hive/logger';
@@ -42,7 +41,6 @@ import type { SubscriptionProtocol } from '@graphql-tools/url-loader';
 import { UrlLoader } from '@graphql-tools/url-loader';
 import type { ExecutionRequest, Executor } from '@graphql-tools/utils';
 import {
-  getDocumentNodeFromSchema,
   getOperationASTFromRequest,
   isAsyncIterable,
   isDocumentNode,
@@ -50,7 +48,7 @@ import {
   parseSelectionSet,
 } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
-import { getSubschemaForFederationWithTypeDefs, SubgraphSDLQuery } from './utils.js';
+import { SubgraphSDLQuery } from './utils.js';
 
 function inspect(value: unknown): string {
   return util.inspect(value);
@@ -355,28 +353,10 @@ export default class GraphQLHandler implements MeshHandler {
   }
 
   async getMeshSource(payload: GetMeshSourcePayload): Promise<MeshSource> {
-    const meshSource = await this.getMeshSourceWithoutFederation(payload);
-    if (meshSource.schema.getDirective('key') != null) {
-      const typeDefs = visit(getDocumentNodeFromSchema(meshSource.schema), {
-        ObjectTypeDefinition(node) {
-          if (node.directives?.find(d => d.name.value === 'extends')) {
-            return {
-              ...node,
-              directives: node.directives.filter(d => d.name.value !== 'extends'),
-              kind: Kind.OBJECT_TYPE_EXTENSION,
-            };
-          }
-          return node;
-        },
-      });
-      const extraConfig = getSubschemaForFederationWithTypeDefs(typeDefs);
-      return {
-        ...meshSource,
-        ...extraConfig,
-        batch: true,
-      };
-    }
-    return meshSource;
+    // Federation entity hops are planned by merger-federation (`composeSubgraphs` +
+    // join Supergraph) from subgraph SDL `@key` / Fed `@link`. Do not build classic
+    // stitch `subschemaConfig.merge` via getSubschemaForFederationWithTypeDefs.
+    return this.getMeshSourceWithoutFederation(payload);
   }
 
   async getMeshSourceWithoutFederation({ fetchFn }: GetMeshSourcePayload): Promise<MeshSource> {

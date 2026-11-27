@@ -1,8 +1,15 @@
 import type { CORSOptions } from 'graphql-yoga';
 import { createYoga } from 'graphql-yoga';
+import { createGatewayRuntime, type GatewayRuntime } from '@graphql-hive/gateway-runtime';
+import { handleFederationSupergraph } from '@graphql-mesh/fusion-runtime';
 import type { MeshInstance } from '@graphql-mesh/runtime';
-import { memoize1 } from '@graphql-tools/utils';
+import { memoize1, type Executor } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
+
+type UnderthehoodOnSubgraphExecute = (
+  subgraphName: string,
+  executionRequest: Parameters<Executor>[0],
+) => ReturnType<Executor>;
 
 export const graphqlHandler = ({
   getBuiltMesh,
@@ -28,6 +35,53 @@ export const graphqlHandler = ({
   renderGraphiQL?: (options?: any) => string | Promise<string>;
 }) => {
   const getYogaForMesh = memoize1(function getYogaForMesh(mesh: MeshInstance) {
+    const supergraphSdl = (mesh.schema.extensions as { supergraphSdl?: string } | undefined)
+      ?.supergraphSdl;
+    const onSubgraphExecute = (
+      mesh.schema.extensions as { onSubgraphExecute?: UnderthehoodOnSubgraphExecute } | undefined
+    )?.onSubgraphExecute;
+
+    // Under the hood: when underthehood compose produced a Supergraph, serve via
+    // Hive Gateway. Public entry remains createMeshHTTPHandler (CLI serve unchanged).
+    if (typeof supergraphSdl === 'string' && supergraphSdl.length > 0) {
+      const gateway = createGatewayRuntime({
+        supergraph: supergraphSdl,
+        logging: mesh.log,
+        maskedErrors: false,
+        graphiql: playgroundEnabled && {
+          title: playgroundTitle,
+        },
+        cors: corsConfig,
+        graphqlEndpoint,
+        landingPage: false,
+        batching: batchingLimit ? { limit: batchingLimit } : false,
+        healthCheckEndpoint,
+        ...(playgroundEnabled && playgroundOffline
+          ? {
+              renderGraphiQL: requireOfflineRenderGraphiQL(renderGraphiQLFn),
+            }
+          : {}),
+        ...(typeof onSubgraphExecute === 'function'
+          ? {
+              unifiedGraphHandler(opts) {
+                return handleFederationSupergraph({
+                  ...opts,
+                  onSubgraphExecute,
+                  log: mesh.log,
+                });
+              },
+            }
+          : {}),
+      });
+      mesh.deferDispose(() =>
+        handleMaybePromise(
+          () => (gateway as AsyncDisposable)[Symbol.asyncDispose](),
+          () => undefined,
+        ),
+      );
+      return gateway as GatewayRuntime;
+    }
+
     const yogaOptions: Parameters<typeof createYoga>[0] = {
       plugins: [...mesh.plugins],
       extraParamNames,
@@ -50,12 +104,7 @@ export const graphqlHandler = ({
     };
 
     if (playgroundEnabled && playgroundOffline) {
-      if (!renderGraphiQLFn) {
-        throw new Error(
-          'serve.playground.offline is enabled but renderGraphiQL was not provided. Import `renderGraphiQL` from `@graphql-yoga/render-graphiql` and pass it to createMeshHTTPHandler (generated Mesh artifacts do this automatically).',
-        );
-      }
-      yogaOptions.renderGraphiQL = renderGraphiQLFn;
+      yogaOptions.renderGraphiQL = requireOfflineRenderGraphiQL(renderGraphiQLFn);
     }
 
     const yoga = createYoga(yogaOptions);
@@ -71,3 +120,14 @@ export const graphqlHandler = ({
   return (request: Request, ctx: any) =>
     getBuiltMesh().then(mesh => getYogaForMesh(mesh).handleRequest(request, ctx));
 };
+
+function requireOfflineRenderGraphiQL(
+  renderGraphiQLFn?: (options?: any) => string | Promise<string>,
+) {
+  if (!renderGraphiQLFn) {
+    throw new Error(
+      'serve.playground.offline is enabled but renderGraphiQL was not provided. Import `renderGraphiQL` from `@graphql-yoga/render-graphiql` and pass it to createMeshHTTPHandler (generated Mesh artifacts do this automatically).',
+    );
+  }
+  return renderGraphiQLFn;
+}
