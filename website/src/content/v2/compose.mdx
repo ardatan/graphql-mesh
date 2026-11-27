@@ -78,22 +78,22 @@ Use this for join-only subgraphs, fully authored Connect SDL, and edited loader 
 During composition, Mesh applies **loader / Query semantic conventions** unless you opt out. When
 the same object type appears across subgraphs and a Query field matches a ById / ByIds naming
 pattern with a key arg that lines up with a key field on that type, Compose stamps Federation entity
-wiring automatically -- `@key` plus Connect/protocol `entity: true` (or type-level `$this` maps),
-instead of Mesh <DirectiveRef name="merge" /> on HTTP/REST Connectors subgraphs
-(<ProtocolRef name="http-rest" />, <ProtocolRef name="sql" />, ...). Singular GraphQL hops prefer
-Federation `@lookup` (+ `@is` when needed); legacy `@merge` may still appear for **batch / list**
-back-compat only -- see [Directives: @lookup](/v2/directives#lookup).
+wiring automatically -- `@key` plus Connect/protocol `entity: true` (or type-level `$this` maps), on
+HTTP/REST Connectors and protocol subgraphs (<ProtocolRef name="http-rest" />,
+
+<ProtocolRef name="sql" />, ...). GraphQL hops use Federation `@lookup` (+ `@is` when needed) -- see
+[Directives: @lookup](/v2/directives#lookup).
 
 Naming is matched in snake_case. Typical patterns (key field often `id`):
 
-| Field / arg (examples)                                 | Intent                 | Connect / protocol / hop result                                                             |
-| ------------------------------------------------------ | ---------------------- | ------------------------------------------------------------------------------------------- |
-| `Query.bookById` / `Query.bookById(id:)`               | Singular ById          | `entity: true` (or type-level `$this` / Federation `@lookup`)                               |
-| `Query.getCustomer` / `Query.getCustomer(id:)`         | `get_<Type>` + key arg | Same                                                                                        |
-| `Query.getCustomerById` / `Query.getCustomerById(id:)` | Explicit ById suffix   | Same                                                                                        |
-| `Query.customer` / `Query.customer(id:)`               | Type name + key arg    | Same                                                                                        |
-| `Query.customersByIds` / `Query.customersByIds(ids:)`  | Batch ByIds            | Batch Connect / legacy `@merge` (no singular `_entities` claim without a singular resolver) |
-| `Query.getFoosByIds` / `Query.getFoosByIds(ids:)`      | Batch with `get_`      | Same                                                                                        |
+| Field / arg (examples)                                 | Intent                 | Connect / protocol / hop result                                                           |
+| ------------------------------------------------------ | ---------------------- | ----------------------------------------------------------------------------------------- |
+| `Query.bookById` / `Query.bookById(id:)`               | Singular ById          | `entity: true` (or type-level `$this` / Federation `@lookup`)                             |
+| `Query.getCustomer` / `Query.getCustomer(id:)`         | `get_<Type>` + key arg | Same                                                                                      |
+| `Query.getCustomerById` / `Query.getCustomerById(id:)` | Explicit ById suffix   | Same                                                                                      |
+| `Query.customer` / `Query.customer(id:)`               | Type name + key arg    | Same                                                                                      |
+| `Query.customersByIds` / `Query.customersByIds(ids:)`  | Batch ByIds            | Batch Connect / protocol maps (no singular `_entities` claim without a singular resolver) |
+| `Query.getFoosByIds` / `Query.getFoosByIds(ids:)`      | Batch with `get_`      | Same                                                                                      |
 
 Examples: `Query.bookById`, OpenAPI Billing `getCustomer` (`Query.getCustomer` + `entity: true`).
 

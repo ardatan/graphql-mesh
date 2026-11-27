@@ -66,10 +66,10 @@ conventions during Composition.
 
 On Connect / protocol Query fields that look up one entity by its key, composition or the loader may
 stamp `entity: true` (or a type-level `@connect` / `@sql` / `@protobuf__rpc` with `$this.<key>`).
-That wires Hive Gateway / Apollo Router `_entities` -> `resolveReference` without Mesh `@merge`.
+That wires Hive Gateway / Apollo Router `_entities` -> `resolveReference`.
 
-For **hand-written GraphQL** subgraphs that need a singular entity hop, prefer Federation Spec
-`@lookup` / `@is` / `@internal` imported from
+For **hand-written GraphQL** subgraphs that need an entity hop, use Federation Spec `@lookup` /
+`@is` / `@internal` imported from
 [graphql-federation-spec/draft](https://graphql.github.io/graphql-federation-spec/draft) -- not from
 `specs.graphql-mesh.dev`. See [Directives: @lookup](/v2/directives#lookup).
 
@@ -136,9 +136,8 @@ See [Selection mapping](/v2/guides/selection-mapping) for `$this` / `$batch` bin
 
 Composition recognizes Query names like `bookById`, `getCustomer`, `customersByIds` (snake_case
 match) when the key arg lines up with a key field. Connect / protobuf get `entity: true` or
-type-level `$this` maps; singular GraphQL hops prefer Federation `@lookup` (+ `@is` when needed).
-Legacy Mesh `@merge` remains for **batch / list** back-compat only. Full table and opt-out:
-[Composition semantic conventions](/v2/compose#semantic-conventions).
+type-level `$this` maps; GraphQL hops use Federation `@lookup` (+ `@is` when needed). Full table and
+opt-out: [Composition semantic conventions](/v2/compose#semantic-conventions).
 
 ### Federation transform
 
@@ -196,10 +195,9 @@ type Track @key(fields: "id", resolvable: false) {
 See [Music Store Example](/v2/examples/music-store) and [FHIR](/v2/examples/fhir) for entity joins.
 Semantic ById conventions: [Composition](/v2/compose#semantic-conventions).
 
-Prefer Federation `@lookup` / `@is` / `@internal` (or `@key` + Connect / protocol `entity: true`)
-for new entity hops -- [Directives: @lookup](/v2/directives#lookup). Mesh
+Recommend Federation `@lookup` / `@is` / `@internal` (or `@key` + Connect / protocol `entity: true`)
+for entity hops -- [Directives: @lookup](/v2/directives#lookup).
 
-<DirectiveRef name="merge" /> is **runtime back-compat only** (especially batch/list).
 <DirectiveRef name="resolveTo" /> remains for field delegation when entity stubs are not enough.
 
 <Cards>

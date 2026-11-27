@@ -38,8 +38,8 @@ Gateway** (JS/TS) and **Apollo Router** (<ConceptRef name="gateway" /> peers).
 | `referenceResource` | Hand-written `.graphql`              | Join-only: `Resource`, opt-in types, `Reference.resource` |
 
 Clients fetch a Patient, fetch an Observation, and follow `Observation.subject.resource` into a
-Patient entity -- Federation `@key` + Connect join, not Mesh `@resolveTo` / legacy `@merge` (see
-[Directives](/v2/directives#merge)).
+Patient entity -- Federation `@key` + Connect join (not Mesh `@resolveTo` for this pattern; see
+[Entity resolution](/v2/concepts/federation#entity-resolution)).
 
 ---
 
