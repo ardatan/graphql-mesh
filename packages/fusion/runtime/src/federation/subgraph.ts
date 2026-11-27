@@ -681,7 +681,7 @@ function synthesizeMergeFromLookup(
     return undefined;
   }
   const args = fieldConfig.args || {};
-  const argNames = Object.keys(args);
+  const argNames = Object.keys(args) as string[];
   if (!argNames.length) {
     // Zero-arg lookup: keyless type merge entry (selection only).
     return [{}];
@@ -691,14 +691,15 @@ function synthesizeMergeFromLookup(
     const argConfig = args[argName]!;
     const argDirs = getDirectiveExtensions(argConfig);
     const keyField = resolveLookupKeyField(
-      argName,
+      String(argName),
       argDirs?.is as Array<{ field?: string }> | undefined,
     );
     // Nested paths (`address.id`) are not expressible as a simple stitching keyField;
     // fall back to the first path segment for hop planning.
-    const simpleKeyField = keyField.split('.')[0] || argName;
+    const keyArg = String(argName);
+    const simpleKeyField = keyField.split('.')[0] || keyArg;
     merges.push({
-      keyArg: argName,
+      keyArg,
       keyField: simpleKeyField,
     });
   }
