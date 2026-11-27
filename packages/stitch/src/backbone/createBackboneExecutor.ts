@@ -89,15 +89,15 @@ export function createBackboneExecutor(
     const coerced = coerceOperationVariables(operation, request.variables ?? {});
     // Condition nodes -> one plan per document (no per-variable specialization).
     let overrideKey = '';
-    if (options.overrideLabels && request.context != null) {
-      const labels = [...options.overrideLabels];
-      // Percent overrides roll RNG inside fieldConfig.override at plan time -
-      // never reuse a cached plan across requests when any percent label exists.
-      if (labels.some(l => l.startsWith('percent('))) {
-        overrideKey += `::pct:${Math.random().toString(36).slice(2)}`;
-      } else if (options.handleProgressiveOverride) {
+    // Percent overrides roll RNG inside fieldConfig.override at plan time -
+    // never cache those plans (random cache keys would grow the Map forever).
+    const hasPercentOverride =
+      options.overrideLabels != null &&
+      [...options.overrideLabels].some(l => l.startsWith('percent('));
+    if (options.overrideLabels && request.context != null && !hasPercentOverride) {
+      if (options.handleProgressiveOverride) {
         const enabled: string[] = [];
-        for (const label of labels) {
+        for (const label of options.overrideLabels) {
           try {
             const on = options.handleProgressiveOverride(label, request.context);
             if (on === true) {
@@ -112,14 +112,11 @@ export function createBackboneExecutor(
     }
     const cacheKey = (operation.name?.value ?? '') + overrideKey;
     let byName = planCache.get(request.document);
-    if (byName) {
+    if (!hasPercentOverride && byName) {
       const cached = byName.get(cacheKey);
       if (cached) {
         return cached;
       }
-    } else {
-      byName = new Map();
-      planCache.set(request.document, byName);
     }
     let plan: StitchPlan;
     try {
@@ -137,7 +134,13 @@ export function createBackboneExecutor(
         incompleteReasons: [err instanceof Error ? err.message : 'Plan build failed'],
       };
     }
-    byName.set(cacheKey, plan);
+    if (!hasPercentOverride) {
+      if (!byName) {
+        byName = new Map();
+        planCache.set(request.document, byName);
+      }
+      byName.set(cacheKey, plan);
+    }
     return plan;
   }
 

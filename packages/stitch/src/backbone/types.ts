@@ -223,4 +223,10 @@ export interface BackboneExecutionContext {
    * queries; skipped for mutations / after errors).
    */
   entityByRepHash?: Map<string, Record<string, any>>;
+  /**
+   * Set when a non-null mutation root field fails. Remaining hops (including
+   * later mutation roots) are released without running — graphql-js /
+   * classic stitching parity (no further side effects once data is null).
+   */
+  abortRemainingHops?: boolean;
 }
