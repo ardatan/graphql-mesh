@@ -9146,7 +9146,7 @@ __metadata:
     "@graphql-mesh/transport-common": "workspace:*"
     "@graphql-mesh/types": "npm:^0.107.3"
     "@graphql-mesh/utils": "npm:^0.107.3"
-    "@graphql-tools/schema": "npm:^10.0.0"
+    "@graphql-tools/schema": "npm:^11.0.9"
     "@graphql-tools/utils": "npm:^13.2.3"
     "@graphql-tools/wrap": "workspace:*"
     graphql: "npm:17.1.0"

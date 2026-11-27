@@ -281,6 +281,16 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
     schema = wrapSchema(unifiedSubschema);
   }
 
+  // Root transforms run after underthehood compose. Keep `supergraphSdl` for
+  // artifacts, but mark the live schema so HTTP falls back to Yoga and serves
+  // the transformed field set (Gateway would otherwise use the pre-transform SDL).
+  if (transforms.length > 0) {
+    schema.extensions = {
+      ...(schema.extensions || {}),
+      skipUnderthehoodGateway: true,
+    };
+  }
+
   // `additionalTypeDefs` may add fields with `@connect` after source handlers already
   // ran `processDirectives` and wrapSchema installed rename proxies. Re-process so
   // *new* fields get HTTP resolvers; do not replace proxies on already-wired fields

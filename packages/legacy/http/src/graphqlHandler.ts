@@ -43,7 +43,17 @@ export const graphqlHandler = ({
 
     // Under the hood: when underthehood compose produced a Supergraph, serve via
     // Hive Gateway. Public entry remains createMeshHTTPHandler (CLI serve unchanged).
-    if (typeof supergraphSdl === 'string' && supergraphSdl.length > 0) {
+    // Skip Gateway when root transforms changed the executable field set after compose
+    // — Gateway would still serve the pre-transform Supergraph SDL.
+    const skipUnderthehoodGateway = Boolean(
+      (mesh.schema.extensions as { skipUnderthehoodGateway?: boolean } | undefined)
+        ?.skipUnderthehoodGateway,
+    );
+    if (
+      typeof supergraphSdl === 'string' &&
+      supergraphSdl.length > 0 &&
+      !skipUnderthehoodGateway
+    ) {
       const gateway = createGatewayRuntime({
         supergraph: supergraphSdl,
         logging: mesh.log,
@@ -56,6 +66,9 @@ export const graphqlHandler = ({
         landingPage: false,
         batching: batchingLimit ? { limit: batchingLimit } : false,
         healthCheckEndpoint,
+        // Preserve Mesh plugins (context hooks, user plugins). Gateway owns schema
+        // planning; useSchema/useEngine from getMesh stay harmless alongside that.
+        plugins: () => [...mesh.plugins] as any,
         ...(playgroundEnabled && playgroundOffline
           ? {
               renderGraphiQL: requireOfflineRenderGraphiQL(renderGraphiQLFn),
