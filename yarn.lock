@@ -5348,11 +5348,28 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@e2e/mesh-subgraph-apollo-router@workspace:e2e/mesh-subgraph-apollo-router":
+  version: 0.0.0-use.local
+  resolution: "@e2e/mesh-subgraph-apollo-router@workspace:e2e/mesh-subgraph-apollo-router"
+  dependencies:
+    "@apollo/server": "npm:^5.5.2"
+    "@apollo/subgraph": "npm:^2.16.0"
+    "@graphql-hive/gateway": "npm:^2.15.12"
+    "@graphql-mesh/compose-cli": "workspace:*"
+    "@graphql-mesh/subgraph": "workspace:*"
+    "@whatwg-node/fetch": "npm:^0.12.1"
+    fets: "npm:^0.8.14"
+    graphql: "npm:17.1.0"
+    graphql-yoga: "npm:^6.1.1"
+  languageName: unknown
+  linkType: soft
+
 "@e2e/mesh-subgraph-schema@workspace:e2e/mesh-subgraph-schema":
   version: 0.0.0-use.local
   resolution: "@e2e/mesh-subgraph-schema@workspace:e2e/mesh-subgraph-schema"
   dependencies:
     "@graphql-mesh/subgraph": "workspace:*"
+    "@whatwg-node/fetch": "npm:^0.12.1"
     graphql: "npm:17.1.0"
     graphql-yoga: "npm:^6.1.1"
   languageName: unknown

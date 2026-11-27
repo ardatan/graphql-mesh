@@ -4,4 +4,5 @@ export type {
   BuildSubgraphSchemaOptions,
 } from './buildSubgraphSchema.js';
 export { wireLookupEntityResolvers } from './lookup.js';
-export { ensureFederationServiceField } from './federation-root.js';
+export { collectEntityObjectTypes, wireResolveReferenceFromResolvers } from './entities.js';
+export { ensureFederationEntitiesField, ensureFederationServiceField } from './federation-root.js';

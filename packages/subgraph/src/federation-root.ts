@@ -5,16 +5,18 @@ import {
   GraphQLScalarType,
   GraphQLString,
   GraphQLUnionType,
-  isObjectType,
   type GraphQLFieldConfig,
-  type GraphQLObjectType as GraphQLObjectTypeType,
   type GraphQLResolveInfo,
   type GraphQLSchema,
 } from 'graphql';
 import { entitiesResolver } from '@apollo/subgraph';
 import { installQueryField } from '@graphql-mesh/utils';
 import { MapperKind, mapSchema, printSchemaWithDirectives } from '@graphql-tools/utils';
-import { getTypeResolveReference } from './lookup.js';
+import {
+  collectEntityObjectTypes,
+  ensureQueryRoot,
+  remirrorResolveReferences,
+} from './entities.js';
 
 /**
  * Federation `_Service` type for `Query._service { sdl }`.
@@ -28,23 +30,13 @@ const ServiceType = new GraphQLObjectType({
   },
 });
 
-function collectEntityTypes(schema: GraphQLSchema): GraphQLObjectTypeType[] {
-  return Object.values(schema.getTypeMap()).filter(
-    (t): t is GraphQLObjectTypeType =>
-      isObjectType(t) && !t.name.startsWith('__') && !!getTypeResolveReference(t),
-  );
-}
-
 /**
  * Ensure Federation `Query._entities` dispatches via `@apollo/subgraph`
- * `entitiesResolver` for every type that has a `resolveReference`.
+ * `entitiesResolver` for every `@key` / resolveReference entity type.
  */
 export function ensureFederationEntitiesField(schema: GraphQLSchema): GraphQLSchema {
-  const queryType = schema.getQueryType();
-  if (!queryType) {
-    return schema;
-  }
-  const entityTypes = collectEntityTypes(schema);
+  schema = ensureQueryRoot(schema);
+  const entityTypes = collectEntityObjectTypes(schema);
   if (!entityTypes.length) {
     return schema;
   }
@@ -70,6 +62,19 @@ export function ensureFederationEntitiesField(schema: GraphQLSchema): GraphQLSch
       },
     });
     typeMap._Entity = entityUnion;
+  } else {
+    // Refresh member list when rebuilds left a stale empty union.
+    const existing = new Set(entityUnion.getTypes().map(t => t.name));
+    if (entityTypes.some(t => !existing.has(t.name))) {
+      entityUnion = new GraphQLUnionType({
+        name: '_Entity',
+        types: entityTypes,
+        resolveType(obj) {
+          return obj?.__typename || undefined;
+        },
+      });
+      typeMap._Entity = entityUnion;
+    }
   }
 
   const entitiesResolve = (
@@ -85,7 +90,7 @@ export function ensureFederationEntitiesField(schema: GraphQLSchema): GraphQLSch
     return entitiesResolver({ representations, context, info });
   };
 
-  return installQueryField(schema, '_entities', {
+  schema = installQueryField(schema, '_entities', {
     type: new GraphQLNonNull(new GraphQLList(entityUnion)),
     args: {
       representations: {
@@ -97,16 +102,20 @@ export function ensureFederationEntitiesField(schema: GraphQLSchema): GraphQLSch
     },
     resolve: entitiesResolve,
   });
+  return remirrorResolveReferences(schema);
 }
 
 /**
- * Strip Federation Spec `@internal` fields/args from printed `_service` SDL
- * while leaving them executable on the live schema.
+ * Strip Federation Spec `@internal` fields/args and Federation runtime types
+ * from printed `_service` SDL while leaving them executable on the live schema.
  */
 function printSubgraphSdlForService(schema: GraphQLSchema): string {
   const filtered = mapSchema(schema, {
     [MapperKind.OBJECT_FIELD]: (fieldConfig, _fieldName, typeName) => {
-      if (typeName === 'Query' && (_fieldName === '_entities' || _fieldName === '_service')) {
+      if (
+        (typeName === 'Query' || schema.getQueryType()?.name === typeName) &&
+        (_fieldName === '_entities' || _fieldName === '_service')
+      ) {
         return null;
       }
       const dirs = (fieldConfig.extensions as any)?.directives;
@@ -157,10 +166,7 @@ function printSubgraphSdlForService(schema: GraphQLSchema): string {
  * subgraph polling.
  */
 export function ensureFederationServiceField(schema: GraphQLSchema): GraphQLSchema {
-  const queryType = schema.getQueryType();
-  if (!queryType) {
-    return schema;
-  }
+  schema = ensureQueryRoot(schema);
 
   const typeMap = schema.getTypeMap() as Record<string, any>;
   if (!typeMap._Service) {

@@ -261,8 +261,10 @@ describe('buildSubgraphSchema', () => {
       },
     });
 
-    // No resolveReference → _entities should not be installed (or return empty path).
-    const query = schema.getQueryType()!;
-    expect(query.getFields()._entities).toBeUndefined();
+    // List `@lookup` must not wire resolveReference; `@key` still installs `_entities`
+    // (representation pass-through) for Federation entity types.
+    const product = schema.getType('Product') as any;
+    expect(product.extensions?.apollo?.subgraph?.resolveReference).toBeUndefined();
+    expect(schema.getQueryType()!.getFields()._entities).toBeDefined();
   });
 });

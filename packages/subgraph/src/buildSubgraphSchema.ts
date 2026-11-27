@@ -13,6 +13,7 @@ import { addResolversToSchema } from '@graphql-tools/schema';
 import { isDocumentNode, type IResolvers } from '@graphql-tools/utils';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
+import { wireResolveReferenceFromResolvers } from './entities.js';
 import { ensureFederationEntitiesField, ensureFederationServiceField } from './federation-root.js';
 import { wireLookupEntityResolvers } from './lookup.js';
 import {
@@ -103,6 +104,8 @@ export function buildSubgraphSchema(
         resolvers,
         updateResolversInPlace: false,
       });
+      // `addResolversToSchema` does not install `__resolveReference`; wire it.
+      wireResolveReferenceFromResolvers(schema, resolvers as Record<string, any>);
     }
   }
 
@@ -111,6 +114,7 @@ export function buildSubgraphSchema(
     // `@is` onto `resolveReference` (skips types already wired via `entity: true`).
     let next = wireLookupEntityResolvers(executable);
     // Transports (connect/sql/…) may already install `_entities`; repair if needed.
+    // Also includes `@key` types (pass-through when no resolveReference).
     next = ensureFederationEntitiesField(next);
     next = ensureFederationServiceField(next);
     return next;
