@@ -18,7 +18,7 @@ export function MeshHero(props: HeroContainerProps) {
         GraphQL Mesh
       </Heading>
       <p className="mx-auto w-[512px] max-w-[80%] text-balance text-center leading-6 text-green-800">
-        The Federation Framework for any API
+        Federate any API into a GraphQL Supergraph
       </p>
       <HeroFeatures>
         <li>
