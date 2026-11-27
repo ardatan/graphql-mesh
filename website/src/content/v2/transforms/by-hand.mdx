@@ -113,6 +113,15 @@ field for one-object hops (Mesh `@merge` only if the entry field returns a **lis
 +    url: "https://graphql.github.io/graphql-federation-spec/draft"
 +    import: ["@lookup", "@is", "@internal"]
 +  )
++  @composeDirective(name: "@lookup")
++  @composeDirective(name: "@is")
++  @composeDirective(name: "@internal")
++
++directive @lookup on FIELD_DEFINITION
++directive @is(field: FieldSelectionMap!) on ARGUMENT_DEFINITION
++directive @internal on OBJECT | FIELD_DEFINITION
++
++scalar FieldSelectionMap
 +
 -type Product {
 +type Product @key(fields: "upc") {
