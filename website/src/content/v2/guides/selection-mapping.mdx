@@ -44,7 +44,7 @@ Mongo / Protobuf dialects reuse `$args` / `$this` but not the full Apollo expres
 <DirectiveRef name="connect" /> maps HTTP responses with Connectors `selection`, and puts path /
 query / body binders in `http` (and related args):
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Track @key(fields: "id", resolvable: false) {
   id: ID!
@@ -69,7 +69,7 @@ type Track @key(fields: "id", resolvable: false) {
 
 ById root with Composition-stamped `entity: true`:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Query {
   getCustomer(id: String!): Customer
@@ -87,7 +87,7 @@ type Query {
 
 Richer Connect expressions (FHIR `Reference.resource`):
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 resource: Resource
   @connect(
@@ -117,7 +117,7 @@ SQL emit uses <DirectiveRef name="sql" /> (kind discriminator: `ROW` / `ROWS` / 
 `COUNT` / `INSERT` / `UPDATE` / `DELETE`). Request binders land in `where` / structured `args`;
 column maps land in `selection`. Chinook aliases SQL columns to GraphQL names:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Query {
   track(id: ID!): Track
@@ -167,7 +167,7 @@ Hive Gateway only -- stock Apollo Router does not execute `@sql`. Protocol:
 <DirectiveRef name="protobuf__rpc" /> uses a **compact field-number** dialect (not JSONSelection).
 Protobuf field-number map:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Query {
   moviesByYear(year: Int!): MoviesResult!

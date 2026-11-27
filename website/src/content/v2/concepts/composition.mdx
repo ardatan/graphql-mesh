@@ -40,9 +40,10 @@ hand SDL.
 
 Beyond merging Federation types, Mesh Compose may:
 
-- Stamp **semantic ById / ByIds** entity wiring (`entity: true`, type-level `$this`, or Federation
-  `@lookup` for GraphQL hops) -- see [Composition](/v2/compose#semantic-conventions) and
-  [Directives: @lookup](/v2/directives#lookup).
+- Stamp **semantic ById / ByIds** entity wiring (`entity: true`, type-level `$this`, Federation
+  `@lookup` for one-object GraphQL hops, or Mesh `@merge` for list/batch) -- see
+  [Composition](/v2/compose#semantic-conventions), [Directives: @lookup](/v2/directives#lookup), and
+  [Directives: @merge](/v2/directives#merge).
 - Rewrite `$args` inside <ProtocolRef name="http-rest" /> `@connect`,
   <ProtocolRef name="protobuf" /> `@protobuf__rpc`, and <ProtocolRef name="thrift" /> `@thrift__rpc`
   when rename transforms change GraphQL arg names.

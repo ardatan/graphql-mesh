@@ -55,7 +55,7 @@ service Calculator {
 
 Emitted / hand `@thrift__rpc` -- wire types in `args` / `selection`:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 extend schema
   @link(url: "https://specs.graphql-mesh.dev/thrift/v0.1", import: ["@thrift__rpc"])
@@ -91,7 +91,7 @@ When `ignoreErrorResponses` is false, declared Thrift exceptions become GraphQL 
 success type and each exception share a result union; `@thrift__rpc(throws:)` maps exception names
 to wire field ids:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 # PostTweetResult = Tweet | TwitterUnavailable (union from throws)
 
@@ -141,7 +141,7 @@ loadThriftSubgraph('calculator', {
 })
 ```
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Query {
   add(request: AddRequestInput): Int
@@ -166,7 +166,7 @@ If you rename a GraphQL argument, Compose rewrites binders inside `@thrift__rpc`
 `@connect` / `@protobuf__rpc`. After renaming `request` -> `input`, the `args` string must read
 `$args.input`, not `$args.request`:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Query {
   # GraphQL arg renamed to input; binder follows
@@ -197,7 +197,7 @@ loadThriftSubgraph('calculator', {
 })
 ```
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 extend schema
   @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])

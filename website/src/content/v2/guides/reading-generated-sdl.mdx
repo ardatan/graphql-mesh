@@ -21,7 +21,8 @@ directives. Before you edit or hand-write, learn to recognize the important stam
 | <DirectiveRef name="connect" /> / <DirectiveRef name="source" />        | HTTP/REST Connectors-style mapping (Router dual-run when compatible).                                                                                      | [Directives](/v2/directives#connect) / [HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives) |
 | Protocol directives                                                     | <DirectiveRef name="sql" />, <DirectiveRef name="mongo" />, <DirectiveRef name="thrift__rpc" />, <DirectiveRef name="protobuf__rpc" />, Neo4j natives, ... | [Directives](/v2/directives) / [Protocols](/v2/protocols)                                                                                           |
 | <DirectiveRef name="key" />                                             | <ConceptRef name="federation">Federation</ConceptRef> entity key; often `resolvable: false` on join stubs.                                                 | [Directives](/v2/directives#federation) / [Entity resolution](/v2/concepts/federation#entity-resolution)                                            |
-| Federation `@lookup` / `@is` / `@internal`                              | Entity hops (Federation Spec draft URL -- not Mesh-owned).                                                                                                 | [Directives: @lookup](/v2/directives#lookup)                                                                                                        |
+| Federation `@lookup` / `@is` / `@internal`                              | One-object entity entry fields (Federation Spec draft URL -- not Mesh-owned).                                                                              | [Directives: @lookup](/v2/directives#lookup)                                                                                                        |
+| <DirectiveRef name="merge" />                                           | Mesh list/batch entity hop when the entry field returns a list.                                                                                            | [Directives](/v2/directives#merge)                                                                                                                  |
 | <DirectiveRef name="resolveTo" />                                       | Mesh field delegation -- prefer `@lookup` or `@key` + Connect / protocol maps for entity joins.                                                            | [Directives](/v2/directives#resolveTo)                                                                                                              |
 | `entity: true` / type-level entity maps                                 | Wires `_entities` / `resolveReference` for Connect or protocol lookups.                                                                                    | [Federation](/v2/concepts/federation#entity-resolution) / [Semantic conventions](/v2/compose#semantic-conventions)                                  |
 | `selection` / `args`                                                    | How JSON (or rows) map into GraphQL fields and how field args become HTTP / RPC inputs.                                                                    | [Selection mapping](/v2/guides/selection-mapping) / [Connectors mapping](https://www.apollographql.com/docs/graphos/connectors/mapping)             |
@@ -38,7 +39,7 @@ Start at `Query.album`, then the type:
 3. `type Album @key(fields: "id") @sql(... $this.id ...)` -- Federation can refill the row when
    another subgraph contributed fields on `Album`.
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 schema @transport(subgraph: "chinook", kind: "sql", location: "file:chinook.db") {
   query: Query
@@ -85,7 +86,7 @@ type Album
 3. If the arg were `userId` instead of `id`, expect **type-level** `@connect` with `$this.id`
    instead of field-level `entity: true` ([Directives](/v2/directives#connect)).
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Query {
   getCustomer(id: String!): Customer

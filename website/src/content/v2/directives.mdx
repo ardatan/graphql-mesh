@@ -1,7 +1,7 @@
 ---
 description:
   Mesh subgraph directive reference -- HTTP/REST Connectors, Mesh protocols, Federation @lookup /
-  @is / @internal, @resolveTo
+  @is / @internal, Mesh @merge (list/batch), @resolveTo
 ---
 
 import { Callout, Cards } from '@theguild/components'
@@ -11,7 +11,8 @@ import { DirectiveRef, ProtocolRef } from '../../components/v2-directive-ref'
 
 **Directive reference** for Mesh subgraph SDL -- [HTTP/REST Connectors](/v2/concepts/connectors)
 (`@connect` / `@source`), Mesh protocol directives, Federation entity hops (`@lookup` / `@is` /
-`@internal`), Federation `@key`, and `@link` / `@transport`. Full `@connect` / `@source` arg tables:
+`@internal`), Mesh `@merge` for list/batch hops, Federation `@key`, and `@link` / `@transport`. Full
+`@connect` / `@source` arg tables:
 [HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives).
 
 Use this page when [reading generated SDL](/v2/guides/reading-generated-sdl) or
@@ -26,6 +27,7 @@ not just arg lists. Binders: [Selection mapping](/v2/guides/selection-mapping). 
 | HTTP/REST Connectors   | `@connect`, `@source`                                        | Entity ById, type-level `$this`, nested `$this`, SOAP/OData  |
 | Mesh core              | `@transport`                                                 | Kind / location stamp                                        |
 | Federation entity hops | `@lookup`, `@is`, `@internal`                                | One-object entry field; arg rename; hide lookup from clients |
+| Mesh list/batch hops   | `@merge`                                                     | List/batch entity entry when `@lookup` is one-object only    |
 | Mesh field delegation  | `@resolveTo`                                                 | Batch keysArg / valueKeyField / pubsubTopic                  |
 | Event-driven (EDFS)    | `@pubsubOperation`, `@pubsubPublish`                         | Subgraph subscribe / publish; webhooks                       |
 | SQL                    | `@sql`                                                       | ROW/entity, ROWS, through, INSERT/DELETE                     |
@@ -86,7 +88,7 @@ Transforms that rename GraphQL args rewrite `$args` / `$this` inside these binde
 
 `Track` is a join stub (`@key` resolvable false). Reviews come from REST using `$this.id`:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Track @key(fields: "id", resolvable: false) {
   id: ID!
@@ -107,7 +109,7 @@ type Track @key(fields: "id", resolvable: false) {
 Composition semantic conventions (`get_<Type>` + key-typed arg matching the key field) stamp
 `entity: true` and `@key` -- Connect entity fill (loader path; hand GraphQL hops use `@lookup`):
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Query {
   getCustomer(id: String!): Customer
@@ -134,7 +136,7 @@ type Customer @key(fields: "id") {
 Query as the client entrypoint with `$args.userId` and adds a **type-level** `@connect` with
 `$this.id` for `_entities`:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Query {
   getUserById(userId: ID!): User
@@ -216,9 +218,9 @@ schema directive (not rewritten to `@join__directive` the way `@connect` / `@sou
 extend schema @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
 ```
 
-Shared Mesh core also exports `@hoist`, `@resolveTo`, and pubsub helpers under the same `core/v0.1`
-URL when needed -- import the names you use. For entity hops prefer Federation `@lookup` / `@is` /
-`@internal` from the
+Shared Mesh core also exports `@hoist`, `@resolveTo`, `@merge` (list/batch entity hops), and pubsub
+helpers under the same `core/v0.1` URL when needed -- import the names you use. For an entity entry
+field that returns **one object**, prefer Federation `@lookup` / `@is` / `@internal` from the
 [Federation Spec draft](https://graphql.github.io/graphql-federation-spec/draft) (not Mesh core).
 
 | Arg        | Meaning                                          |
@@ -328,9 +330,54 @@ Hand-written GraphQL subgraphs that need an entity entry field should stamp `@lo
 `@internal` as needed).
 
 <Callout type="info">
-  Spec `@lookup` marks an entity entry field that returns one object (not a list). For batch joins
-  across subgraphs prefer batched Connect / protocol fields or <DirectiveRef name="resolveTo" />.
+  Spec `@lookup` marks an entity entry field that returns one object (not a list). For list/batch
+  entry points use Mesh <DirectiveRef name="merge" />, or batched Connect / protocol fields /
+  <DirectiveRef name="resolveTo" /> when that fits better.
 </Callout>
+
+---
+
+<a id="merge" />
+
+## Mesh `@merge`
+
+`@merge`
+
+Mesh core entity hop for **list / batch** entry fields (a Query that takes many keys and returns a
+list). Hive Gateway parses and executes `@merge` at runtime. Prefer Federation `@lookup` / `@is` /
+`@internal` when the entry field returns **one object**; use `@merge` when you need a list-shaped
+hop (ByIds) that `@lookup` does not cover. Connect / protocol `entity: true` remains the loader path
+for HTTP/REST and protocol subgraphs.
+
+**Import**
+
+```graphql
+extend schema @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@merge"])
+```
+
+| Arg        | Meaning                                                    |
+| ---------- | ---------------------------------------------------------- |
+| `subgraph` | Owning subgraph name                                       |
+| `keyField` | Entity key field on the type (e.g. `id`)                   |
+| `keyArg`   | Query argument that carries that key (e.g. `ids`)          |
+| `argsExpr` | Optional richer arg expression when `keyArg` is not enough |
+
+### Scenario: list / batch ByIds hop
+
+```graphql
+type Query {
+  vaccinations(ids: [ID!]!): [Vaccination]!
+    @merge(subgraph: "vaccination", keyField: "id", keyArg: "ids")
+}
+
+type Vaccination @key(fields: "id") {
+  id: ID!
+  name: String
+}
+```
+
+See [Entity resolution](/v2/concepts/federation#entity-resolution) and
+[Federation `@lookup`](#lookup) for one-object entry fields.
 
 ---
 
@@ -600,7 +647,7 @@ extend schema
 
 Query uses `$args`; type-level `@sql` uses `$this` so `_entities` can refill the row:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Query {
   album(id: ID!): Album
@@ -640,7 +687,7 @@ type Album
 
 ### Scenario: FK list (`Artist.albums`)
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Artist @key(fields: "id") {
   id: ID!
@@ -665,7 +712,7 @@ type Artist @key(fields: "id") {
 
 ### Scenario: many-to-many `through` (Playlist -> tracks)
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Playlist {
   tracks(where: TrackFilter, limit: Int, offset: Int): [Track!]!
@@ -692,7 +739,7 @@ type Playlist {
 
 ### Scenario: INSERT / DELETE
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Mutation {
   createAlbum(input: CreateAlbumInput!): AlbumPayload!
@@ -764,7 +811,7 @@ variants). Typical args: `collection`, `query`, `selection`, `sort` / `limit` / 
 
 ### Scenario: findById + entity fill
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 schema @transport(subgraph: "users", kind: "mongo", location: "mongodb://localhost:27017/test") {
   query: Query
@@ -806,7 +853,7 @@ type User
 
 ### Scenario: filtered list
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Query {
   findUsers(filter: UserFilterInput, sort: [UserSort!], limit: Int = 100, skip: Int): [User!]!
@@ -826,7 +873,7 @@ type Query {
 
 ### Scenario: insert / update
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Mutation {
   insertOneUser(document: UserDocumentInput!): User
@@ -886,7 +933,7 @@ extend schema
 
 Flat `$args.*`; rename transforms rewrite binders the same way as `@connect`:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Query {
   moviesByYear(year: Int!): MoviesResult!
@@ -916,7 +963,7 @@ type Query {
 Loader emit for `SearchMoviesByCast` sets `stream: true` and uses `input.*` paths against an Input
 type:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Query {
   exampleSearchMoviesByCast(input: SearchByCastRequest_Input): [Movie]
@@ -973,7 +1020,7 @@ extend schema
 Binary Thrift uses `@thrift__rpc` with wire field maps. `CALL` is the default request/response
 shape; `ONEWAY` has no reply payload (`$(void)`):
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Query {
   # CALL: request struct in, i32 out
@@ -1230,7 +1277,7 @@ extend schema @link(url: "https://specs.apollo.dev/link/v1.0")
 | HTTP/REST Connect | `https://specs.apollo.dev/connect/v0.4`                   | `@connect`, `@source`                                                              |
 | Federation        | `https://specs.apollo.dev/federation/v2.6`                | `@key`, `@composeDirective`, ...                                                   |
 | Federation hops   | `https://graphql.github.io/graphql-federation-spec/draft` | `@lookup`, `@is`, `@internal` (not Mesh-owned; not under `specs.graphql-mesh.dev`) |
-| Mesh core         | `https://specs.graphql-mesh.dev/core/v0.1`                | `@transport`, `@resolveTo`, `@pubsubOperation`, `@pubsubPublish`, ...              |
+| Mesh core         | `https://specs.graphql-mesh.dev/core/v0.1`                | `@transport`, `@merge`, `@resolveTo`, `@pubsubOperation`, `@pubsubPublish`, ...    |
 | Mesh auth         | `https://specs.graphql-mesh.dev/auth/v0.1`                | `@skipAuth` (not Federation `@authenticated`)                                      |
 | Mesh rate-limit   | `https://specs.graphql-mesh.dev/rate-limit/v0.1`          | `@rateLimit`                                                                       |
 | Mesh SQL          | `https://specs.graphql-mesh.dev/sql/v0.1`                 | `@sql`                                                                             |

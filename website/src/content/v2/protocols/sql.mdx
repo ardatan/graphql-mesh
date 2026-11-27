@@ -43,7 +43,7 @@ export const composeConfig = defineComposeConfig({
 Query by primary key (`kind: ROW` + `$args`). The object type repeats `ROW` with `$this` so
 Federation can resolve the entity:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 extend schema
   @link(url: "https://specs.graphql-mesh.dev/sql/v0.1", import: ["@sql"])
@@ -94,7 +94,7 @@ type Album
 Child collections use `kind: ROWS` with `$this` plus optional `$args.where` (Artist -> albums).
 Many-to-many uses `through:` (Playlist -> tracks via `playlist_track` in Chinook):
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Artist @key(fields: "id") {
   id: ID!
@@ -148,7 +148,7 @@ type Playlist {
 
 `INSERT` / `UPDATE` / `DELETE` bind columns from `$args`:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Mutation {
   createAlbum(input: CreateAlbumInput!): AlbumPayload!
@@ -196,7 +196,7 @@ rule. Binders: [Selection mapping](/v2/guides/selection-mapping). Entity / ById:
 Offset lists (`kind: ROWS`) are not the only list shape. `CONNECTION` builds Relay-style `nodes` /
 `pageInfo` / `$totalCount` from the same table; `COUNT` returns a scalar:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Query {
   allAlbums(
@@ -236,7 +236,7 @@ type Query {
 Related lists pin the parent key with `$this`, then splice in optional client filters via
 `...$args.where` so callers can still page or filter the related set:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Artist @key(fields: "id") {
   id: ID!
@@ -263,7 +263,7 @@ type Artist @key(fields: "id") {
 When there is no direct FK on the target table, `through` describes the join table. Playlist tracks
 go through `playlist_track`: `local` is the parent column, `remote` / `target` reach `tracks`:
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```graphql
 type Playlist {
   tracks(where: TrackFilter, limit: Int, offset: Int): [Track!]!
