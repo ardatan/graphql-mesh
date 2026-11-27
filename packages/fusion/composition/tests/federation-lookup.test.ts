@@ -355,6 +355,66 @@ describe('Federation Spec @lookup / @is / @internal', () => {
     expect(dirs.lookup?.length || 0).toBe(0);
   });
 
+  it('preserves inferred sku↔sku binding when @key fields is id (no @is remap)', () => {
+    // productBySku(sku) with Product.sku: inferred argsExpr was `sku: $key.sku`.
+    // Do not stamp `@is(field: "id")` just because @key.fields is id.
+    const schema = buildSchema(/* GraphQL */ `
+      type Query {
+        productBySku(sku: ID!): Product
+      }
+      type Product {
+        id: ID!
+        sku: ID!
+      }
+    `);
+    const transform = createFederationTransform({
+      Product: {
+        key: {
+          fields: 'id',
+          resolveReference: {
+            fieldName: 'productBySku',
+          },
+        },
+      },
+    });
+    const result = transform(schema, { name: 'products', schema });
+    const field = result.getQueryType()!.getFields().productBySku!;
+    const dirs = getDirectiveExtensions(field);
+    expect(dirs.lookup?.length).toBeGreaterThan(0);
+    expect(dirs.merge?.length || 0).toBe(0);
+    const skuArg = field.args.find(a => a.name === 'sku')!;
+    const argDirs = getDirectiveExtensions(skuArg);
+    expect(argDirs.is?.length || 0).toBe(0);
+  });
+
+  it('stamps @is(field: keyField) when the arg has no matching return field', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      type Query {
+        product(productId: ID!): Product
+      }
+      type Product {
+        id: ID!
+      }
+    `);
+    const transform = createFederationTransform({
+      Product: {
+        key: {
+          fields: 'id',
+          resolveReference: {
+            fieldName: 'product',
+          },
+        },
+      },
+    });
+    const result = transform(schema, { name: 'products', schema });
+    const field = result.getQueryType()!.getFields().product!;
+    const dirs = getDirectiveExtensions(field);
+    expect(dirs.lookup?.length).toBeGreaterThan(0);
+    const productIdArg = field.args.find(a => a.name === 'productId')!;
+    const argDirs = getDirectiveExtensions(productIdArg);
+    expect(argDirs.is?.some((d: { field?: string }) => d?.field === 'id')).toBe(true);
+  });
+
   it('keeps @merge for batch resolveReference when keyArg is omitted', () => {
     // Singular return so the list *argument* (not a list return) forces `@merge`.
     const schema = buildSchema(/* GraphQL */ `

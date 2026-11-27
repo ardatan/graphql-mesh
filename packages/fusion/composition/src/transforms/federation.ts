@@ -523,21 +523,32 @@ export function createFederationTransform(config: FederationTransformConfig): Su
               }
               lookupDirectiveUsed = true;
               // Prefer inferred keyArg when omitted (e.g. productId → Product.id).
+              // When Product also has a same-named field as the arg (sku), inferred
+              // argsExpr was `sku: $key.sku` — keep that binding via implicit mapping.
+              // Only stamp `@is(field: keyField)` when the arg has no matching return
+              // field (productId → id).
               if (
                 effectiveKeyArg &&
                 keyField &&
                 effectiveKeyArg !== keyField &&
                 fieldConfig.args?.[effectiveKeyArg]
               ) {
-                const argConfig = fieldConfig.args[effectiveKeyArg];
-                const argDirs = getDirectiveExtensions(argConfig) || {};
-                argDirs.is ||= [];
-                if (!argDirs.is.some((d: { field?: string }) => d?.field === keyField)) {
-                  argDirs.is.push({ field: keyField });
+                const returnNamedType = getNamedType(fieldConfig.type);
+                const hasMatchingReturnField =
+                  !!returnNamedType &&
+                  'getFields' in returnNamedType &&
+                  !!returnNamedType.getFields()[effectiveKeyArg];
+                if (!hasMatchingReturnField) {
+                  const argConfig = fieldConfig.args[effectiveKeyArg];
+                  const argDirs = getDirectiveExtensions(argConfig) || {};
+                  argDirs.is ||= [];
+                  if (!argDirs.is.some((d: { field?: string }) => d?.field === keyField)) {
+                    argDirs.is.push({ field: keyField });
+                  }
+                  const argExtensions: Record<string, unknown> = (argConfig.extensions ||= {});
+                  argExtensions.directives = argDirs;
+                  isDirectiveUsed = true;
                 }
-                const argExtensions: Record<string, unknown> = (argConfig.extensions ||= {});
-                argExtensions.directives = argDirs;
-                isDirectiveUsed = true;
               }
             }
           }
