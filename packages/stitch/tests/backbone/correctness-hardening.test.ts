@@ -417,6 +417,66 @@ describe('backbone correctness: mutation serial semantics', () => {
     expect(result.errors?.some(e => e.message.includes('optional boom'))).toBe(true);
   });
 
+  it('aborts later mutation roots when a non-null root Island resolves to null', async () => {
+    const order: string[] = [];
+    // Remote provides a Mutation type so stitchSchemas can extend it; the
+    // gateway-local fields below become root Islands (not Fetch hops).
+    const remote = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Mutation {
+          _remote: String
+        }
+        type Query {
+          _empty: String
+        }
+      `,
+      resolvers: {
+        Mutation: {
+          _remote: () => 'remote',
+        },
+      },
+    });
+    const schema = stitchSchemas({
+      subschemas: [{ schema: remote, executor: createDefaultExecutor(remote) }],
+      typeDefs: /* GraphQL */ `
+        extend type Mutation {
+          first: String!
+          second: String!
+        }
+      `,
+      resolvers: {
+        Mutation: {
+          first: () => {
+            order.push('first');
+            return null;
+          },
+          second: () => {
+            order.push('second');
+            return 'ok';
+          },
+        },
+      },
+    });
+    const stitchingInfo = schema.extensions?.['stitchingInfo'] as {
+      localFields?: Map<string, Set<string>>;
+    };
+    expect(stitchingInfo.localFields?.get('Mutation')?.has('first')).toBe(true);
+    expect(stitchingInfo.localFields?.get('Mutation')?.has('second')).toBe(true);
+
+    const backbone = createBackboneExecutor(schema);
+    const result = await exec(backbone, {
+      document: parse(/* GraphQL */ `
+        mutation {
+          first
+          second
+        }
+      `),
+    });
+    // Success-path Island null must set abortRemainingHops (Fetch parity).
+    expect(order).toEqual(['first']);
+    expect(result.data).toBeNull();
+  });
+
   it('aborts later mutation roots when the executor throws on a non-null root', async () => {
     const order: string[] = [];
     const remote = makeExecutableSchema({

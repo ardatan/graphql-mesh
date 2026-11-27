@@ -1564,6 +1564,9 @@ function executeIslandNode(
     () => resolve!(ctx.rootValue, args, ctx.contextValue, info),
     result => {
       ctx.data[responseKey] = result;
+      // Resolver returned null for a NonNull mutation root (no throw): same
+      // abort as Fetch writeRootResult / Island rejection path.
+      maybeAbortMutationAfterNullifiedRoot(ctx, responseKey, fieldName);
       // continue: dataflow hop, not tree execute
     },
     err => {
