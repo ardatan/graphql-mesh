@@ -1,6 +1,6 @@
 /**
  * Port of Hive Gateway `e2e/federation-example/federation-example.bench.ts`.
- * HTTP load against `@graphql-hive/gateway` (Tools QP vs Router QP).
+ * HTTP load against `@graphql-hive/gateway` (Stitching vs Router QP).
  * Package-level Stitching vs Apollo Gateway: `bench/federation/federation.bench.ts`.
  */
 import path from 'node:path';
@@ -52,11 +52,7 @@ describe('Gateway', async () => {
     expect(data).toEqual(exampleOperation.result);
   }
 
-  bench('Hive Gateway w/ Tools', () => hit(toolsGw.port, toolsGw.hostname), benchConfig);
+  bench('Hive GW w/ Stitching', () => hit(toolsGw.port, toolsGw.hostname), benchConfig);
 
-  bench(
-    'Hive Gateway w/ Hive Router Query Planner',
-    () => hit(routerGw.port, routerGw.hostname),
-    benchConfig,
-  );
+  bench('Hive GW w/ Router QP', () => hit(routerGw.port, routerGw.hostname), benchConfig);
 });
