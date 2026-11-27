@@ -19,11 +19,12 @@ sources:
       - prefix:
           value: Github
           includeRootOperations: true
+          # GitHub `Query implements Node` requires `id`; do not rename it to Githubid
+          # (federation compose rejects Query without interface field `id`).
+          ignore:
+            - Query.id
 
 additionalTypeDefs: |
-  extend type Query {
-    id: ID!
-  }
   extend type GeoCity {
     developers(limit: Int = 2): [GithubUser] @resolveTo(
       requiredSelectionSet: "{ name }",
