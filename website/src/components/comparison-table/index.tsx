@@ -5,6 +5,7 @@ type Entry = { text: string; score: number };
 const data: Array<{
   name: string;
   'Non-GraphQL → subgraph': Entry;
+  Connectors: Entry;
   Transforms: Entry;
   'Gateway / registry': Entry;
 }> = [
@@ -12,6 +13,10 @@ const data: Array<{
     name: 'GraphQL Mesh',
     'Non-GraphQL → subgraph': {
       text: 'Generate Federation-ready Mesh subgraph SDL from REST, SQL, gRPC, and more -- or Hand-write / Generate-then-edit.',
+      score: 2,
+    },
+    Connectors: {
+      text: 'HTTP/REST Connectors (`@connect` / `@source`) emit natively; run on Apollo Router and Hive Gateway. Mesh protocols (SQL, gRPC, …) still work via Serve Subgraph.',
       score: 2,
     },
     Transforms: {
@@ -29,6 +34,10 @@ const data: Array<{
       text: 'Expects Federation-compliant GraphQL subgraphs. Non-GraphQL sources need a separate subgraph process you own.',
       score: 0,
     },
+    Connectors: {
+      text: 'Router executes Connectors on Connect-shaped SDL. Mesh can generate that SDL for you and drop it into GraphOS / Router.',
+      score: 1,
+    },
     Transforms: {
       text: 'Schema shape lives in each subgraph codebase -- no Mesh-style Automatic / By-hand transform path on composed SDL.',
       score: 1,
@@ -43,6 +52,10 @@ const data: Array<{
     'Non-GraphQL → subgraph': {
       text: 'Typically GraphQL executors + programmatic merge. Non-GraphQL sources need custom gateway-level wiring.',
       score: 1,
+    },
+    Connectors: {
+      text: 'No Connectors contract -- REST/HTTP usually wired with custom resolvers or DataLoader code at the stitch layer.',
+      score: 0,
     },
     Transforms: {
       text: 'In-process stitchSchemas / type merge config -- not Federation subgraph SDL + Transform Subgraph.',
@@ -70,8 +83,8 @@ export function ComparisonTable({ children, className, ...rest }: ComparisonTabl
           What Mesh adds
         </Heading>
         <p className="mt-4 mb-8 sm:mb-16 text-green-800">
-          Beside plain Federation and Schema Stitching -- non-GraphQL → subgraph, transforms, and
-          gateway independence
+          Beside plain Federation and Schema Stitching -- non-GraphQL → subgraph, Connectors,
+          transforms, and gateway independence
         </p>
       </header>
       {/* this is focusable (by default) because a keyboard user will scroll through the overflowing table with arrows */}
@@ -80,7 +93,10 @@ export function ComparisonTable({ children, className, ...rest }: ComparisonTabl
           <thead>
             <TableRow>
               {headers.map(header => (
-                <TableHeader className="sm:w-1/4 whitespace-pre" key={header}>
+                <TableHeader
+                  className={cn('whitespace-pre', headers.length > 4 ? 'sm:w-[20%]' : 'sm:w-1/4')}
+                  key={header}
+                >
                   {header === 'name' ? '' : header}
                 </TableHeader>
               ))}

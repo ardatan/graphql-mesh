@@ -17,14 +17,14 @@ export function ManipulateDataSection({ className }: { className?: string }) {
           className="absolute w-full h-full object-cover object-right"
         />
       </DecorationIsolation>
-      <Heading as="h3" size="md" className="text-white text-center">
-        Generate → Transform → Compose → Serve
+      <Heading as="h3" size="md" className="text-white text-center text-balance">
+        From subgraph SDL to any Federation Gateway
       </Heading>
       <p className="mt-4 text-white/80 text-center text-balance">
-        The Mesh v2 path from source to any Federation Gateway -- optional transform, then compose
-        and serve.
+        Same order as the docs: generate and optionally transform subgraphs, serve a subgraph peer
+        when needed, compose, then serve the supergraph on the gateway you already run.
       </p>
-      <dl className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-8 mt-8 lg:mt-16 xl:[&>*:not(:first-child)]:pl-8 max-sm:[&>*:not(:first-child)]:pt-4 max-sm:divide-y xl:divide-x divide-green-700">
+      <dl className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4 lg:gap-6 mt-8 lg:mt-16 xl:[&>*:not(:first-child)]:pl-6 max-sm:[&>*:not(:first-child)]:pt-4 max-sm:divide-y xl:divide-x divide-green-700">
         <ListItem
           title="Generate"
           description="Emit Federation-ready Mesh subgraph SDL from REST, SQL, gRPC, and more."
@@ -36,12 +36,17 @@ export function ManipulateDataSection({ className }: { className?: string }) {
           href="/v2/transforms"
         />
         <ListItem
+          title="Serve Subgraph"
+          description="When a foreign gateway needs a Mesh-backed Federation URL -- Hive subgraph or buildSubgraphSchema."
+          href="/v2/serve-subgraph"
+        />
+        <ListItem
           title="Compose"
           description="Mesh Compose (or your registry) turns subgraphs into a supergraph."
           href="/v2/compose"
         />
         <ListItem
-          title="Serve"
+          title="Serve Supergraph"
           description="Run with any Federation Gateway -- Hive Gateway, Apollo Router, and peers."
           href="/v2/serve"
         />
