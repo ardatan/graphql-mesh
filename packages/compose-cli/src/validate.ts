@@ -59,11 +59,8 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
   const errors: GraphQLError[] = [];
   // Federation Spec draft `@lookup` / `@is` / `@internal` when still native on the SG.
   // Join-rewritten apps are validated earlier on annotated subgraphs during compose.
-  if (
-    supergraphSdl.includes('@lookup') ||
-    supergraphSdl.includes('@internal') ||
-    supergraphSdl.includes('@is')
-  ) {
+  // Gate on the parsed schema (not raw SDL) so whitespace variants like `@ is` still run.
+  if (schemaHasFederationLookupDirectives(schema)) {
     errors.push(...validateFederationLookupDirectives(schema));
   }
   const typeMap = schema.getTypeMap();
@@ -345,4 +342,32 @@ function readJoinGraphEnumToName(schema: ReturnType<typeof buildSchema>): Map<st
     }
   }
   return map;
+}
+
+/** True when the schema defines or applies Federation Spec draft lookup directives. */
+function schemaHasFederationLookupDirectives(schema: ReturnType<typeof buildSchema>): boolean {
+  if (schema.getDirective('lookup') || schema.getDirective('is') || schema.getDirective('internal')) {
+    return true;
+  }
+  for (const type of Object.values(schema.getTypeMap())) {
+    if ((!isObjectType(type) && !isInterfaceType(type)) || type.name.startsWith('__')) {
+      continue;
+    }
+    const typeDirs = getDirectiveExtensions(type, schema);
+    if (typeDirs?.internal?.length) {
+      return true;
+    }
+    for (const field of Object.values(type.getFields())) {
+      const fieldDirs = getDirectiveExtensions(field, schema);
+      if (fieldDirs?.lookup?.length || fieldDirs?.internal?.length) {
+        return true;
+      }
+      for (const arg of field.args) {
+        if (getDirectiveExtensions(arg, schema)?.is?.length) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
 }

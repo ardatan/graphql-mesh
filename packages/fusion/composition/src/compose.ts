@@ -187,6 +187,16 @@ export function getAnnotatedSubgraphs(
   );
 
   const annotatedSubgraphs: ServiceDefinition[] = [];
+  // Defer `@inaccessible` stamping until every subgraph is annotated so a
+  // source-local `@internal` cannot hide a peer's public declaration.
+  type PendingAnnotated = {
+    subgraphName: string;
+    url: string | undefined;
+    transformedSubgraph: GraphQLSchema;
+    importedDirectivesAST: Set<string>;
+    composeDirectiveNames: string[];
+  };
+  const pendingAnnotated: PendingAnnotated[] = [];
   for (const subgraphConfig of subgraphs) {
     const { name: subgraphName, schema, transforms } = subgraphConfig;
     let url: string = subgraphConfig.url;
@@ -593,41 +603,6 @@ export function getAnnotatedSubgraphs(
         }
       }
     }
-    // Federation Spec `@internal` → also `@inaccessible` so the client/API schema
-    // hides internal members while subgraph extract still sees join metadata.
-    let internalNeedsInaccessible = false;
-    transformedSubgraph = mapSchema(transformedSubgraph, {
-      [MapperKind.OBJECT_TYPE]: type => {
-        const dirs = getDirectiveExtensions(type, transformedSubgraph);
-        if (dirs.internal?.length && !dirs.inaccessible?.length) {
-          dirs.inaccessible = [{}];
-          internalNeedsInaccessible = true;
-          return new (Object.getPrototypeOf(type).constructor)({
-            ...type.toConfig(),
-            astNode: undefined,
-            extensions: { ...(type.extensions || {}), directives: dirs },
-          });
-        }
-      },
-      [MapperKind.OBJECT_FIELD]: fieldConfig => {
-        const dirs = getDirectiveExtensions(fieldConfig, transformedSubgraph);
-        if (dirs.internal?.length && !dirs.inaccessible?.length) {
-          dirs.inaccessible = [{}];
-          internalNeedsInaccessible = true;
-          return {
-            ...fieldConfig,
-            astNode: undefined,
-            extensions: {
-              ...(fieldConfig.extensions || {}),
-              directives: dirs,
-            },
-          };
-        }
-      },
-    });
-    if (internalNeedsInaccessible) {
-      transformedSubgraph = importFederationDirectives(transformedSubgraph, ['@inaccessible']);
-    }
     // Cross-subgraph Connectors stubs → `@key(..., resolvable: false)` so Hive
     // plans `_entities` (Router already resolves stubs from selection). Runs for
     // OpenAPI subgraphs with no transforms as well as transform pipelines.
@@ -929,6 +904,33 @@ export function getAnnotatedSubgraphs(
         : new AggregateError(lookupErrors, lookupErrors.map(e => e.message).join('\n'));
     }
 
+    pendingAnnotated.push({
+      subgraphName,
+      url,
+      transformedSubgraph,
+      importedDirectivesAST,
+      composeDirectiveNames,
+    });
+  }
+
+  // Coordinates any subgraph exposes without `@internal` stay public in the API schema.
+  const publicCoords = new Set<string>();
+  for (const pending of pendingAnnotated) {
+    collectPublicFederationCoords(pending.transformedSubgraph, publicCoords);
+  }
+
+  for (const pending of pendingAnnotated) {
+    let { transformedSubgraph, importedDirectivesAST, composeDirectiveNames, subgraphName, url } =
+      pending;
+    const stamped = stampInaccessibleForInternalOnlyCoords(
+      transformedSubgraph,
+      publicCoords,
+    );
+    transformedSubgraph = stamped.schema;
+    if (stamped.needsInaccessibleImport) {
+      transformedSubgraph = importFederationDirectives(transformedSubgraph, ['@inaccessible']);
+    }
+
     let subgraphAST = getDocumentNodeFromSchema(transformedSubgraph);
     if (importedDirectivesAST.size) {
       subgraphAST = concatAST([
@@ -936,8 +938,6 @@ export function getAnnotatedSubgraphs(
         parse([...importedDirectivesAST].join('\n'), { noLocation: true }),
       ]);
     }
-    // `@transport` often lives only in extensions / extras; printers may omit the
-    // SCHEMA directive definition while `@composeDirective(name: "@transport")` remains.
     if (composeDirectiveNames.includes('@transport')) {
       const hasTransportDef = subgraphAST.definitions.some(
         d => d.kind === 'DirectiveDefinition' && d.name.value === 'transport',
@@ -961,6 +961,74 @@ export function getAnnotatedSubgraphs(
   }
 
   return annotatedSubgraphs;
+}
+
+function collectPublicFederationCoords(schema: GraphQLSchema, publicCoords: Set<string>): void {
+  for (const type of Object.values(schema.getTypeMap())) {
+    if (!isObjectType(type) || type.name.startsWith('__')) {
+      continue;
+    }
+    const typeDirs = getDirectiveExtensions(type, schema);
+    if (!typeDirs?.internal?.length) {
+      publicCoords.add(type.name);
+    }
+    for (const [fieldName, field] of Object.entries(type.getFields())) {
+      const fieldDirs = getDirectiveExtensions(field, schema);
+      if (!fieldDirs?.internal?.length) {
+        publicCoords.add(`${type.name}.${fieldName}`);
+      }
+    }
+  }
+}
+
+/**
+ * Federation Spec `@internal` is source-local. Stamp `@inaccessible` only when no
+ * peer subgraph exposes the same coordinate publicly, so client/API schema hide
+ * does not erase another subgraph's public declaration.
+ */
+function stampInaccessibleForInternalOnlyCoords(
+  schema: GraphQLSchema,
+  publicCoords: Set<string>,
+): { schema: GraphQLSchema; needsInaccessibleImport: boolean } {
+  let needsInaccessibleImport = false;
+  const next = mapSchema(schema, {
+    [MapperKind.OBJECT_TYPE]: type => {
+      const dirs = getDirectiveExtensions(type, schema);
+      if (
+        dirs.internal?.length &&
+        !dirs.inaccessible?.length &&
+        !publicCoords.has(type.name)
+      ) {
+        dirs.inaccessible = [{}];
+        needsInaccessibleImport = true;
+        return new (Object.getPrototypeOf(type).constructor)({
+          ...type.toConfig(),
+          astNode: undefined,
+          extensions: { ...(type.extensions || {}), directives: dirs },
+        });
+      }
+    },
+    [MapperKind.OBJECT_FIELD]: (fieldConfig, fieldName, typeName) => {
+      const dirs = getDirectiveExtensions(fieldConfig, schema);
+      if (
+        dirs.internal?.length &&
+        !dirs.inaccessible?.length &&
+        !publicCoords.has(`${typeName}.${fieldName}`)
+      ) {
+        dirs.inaccessible = [{}];
+        needsInaccessibleImport = true;
+        return {
+          ...fieldConfig,
+          astNode: undefined,
+          extensions: {
+            ...(fieldConfig.extensions || {}),
+            directives: dirs,
+          },
+        };
+      }
+    },
+  });
+  return { schema: next, needsInaccessibleImport };
 }
 
 export interface GetAnnotatedSubgraphsOptions {
@@ -1237,7 +1305,8 @@ function addAnnotationsForSemanticConventions({
           }
           directiveExtensions.lookup ||= [];
           if (!directiveExtensions.lookup.length) {
-            directiveExtensions.lookup.push({});
+            // Optional Mesh `subgraph:` for join attribution (stripped in mesh-join).
+            directiveExtensions.lookup.push({ subgraph: subgraphName });
           }
           if (argName !== fieldName && queryFieldConfig.args?.[argName]) {
             const argConfig = queryFieldConfig.args[argName];

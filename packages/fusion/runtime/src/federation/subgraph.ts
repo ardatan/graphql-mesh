@@ -127,7 +127,9 @@ export function handleFederationSubschema({
   stitchingDirectivesTransformer,
   onSubgraphExecute,
 }: HandleFederationSubschemaOpts) {
-  // Fix name
+  // Fix name — keep the join__Graph enum identifier for filtering arg `@is` joins
+  // (`graphs: [PRODUCTS_2]`), which may differ from the real subgraph name.
+  const subgraphEnumName = subschemaConfig.name || '';
   const subgraphName =
     (subschemaConfig.name =
       realSubgraphNameMap?.get(subschemaConfig.name || '') || subschemaConfig.name) || '';
@@ -228,6 +230,7 @@ export function handleFederationSubschema({
           fieldConfig,
           fieldDirectives,
           subgraphName,
+          subgraphEnumName,
         );
         if (mergeFromLookup) {
           fieldDirectives.merge = mergeFromLookup;
@@ -697,13 +700,17 @@ function resolveLookupKeyField(
 function joinDirectiveTargetsSubgraph(
   directive: { graphs?: string[] } | null | undefined,
   subgraphName: string,
+  subgraphEnumName: string,
 ): boolean {
   const graphs = directive?.graphs;
   if (!graphs?.length) {
     return true;
   }
   return graphs.some(
-    g => compareSubgraphNames(g, subgraphName) || g === subgraphName.toUpperCase(),
+    g =>
+      g === subgraphEnumName ||
+      compareSubgraphNames(g, subgraphName) ||
+      g === subgraphName.toUpperCase(),
   );
 }
 
@@ -716,6 +723,7 @@ function synthesizeMergeFromLookup(
   fieldConfig: GraphQLFieldConfig<any, any>,
   fieldDirectives: { lookup?: unknown[]; merge?: unknown[] },
   subgraphName: string,
+  subgraphEnumName: string,
 ): Array<Record<string, unknown>> | undefined {
   if (!fieldDirectives.lookup?.length || fieldDirectives.merge?.length) {
     return undefined;
@@ -737,7 +745,9 @@ function synthesizeMergeFromLookup(
         | Array<{ name?: string; graphs?: string[]; args?: { field?: string } }>
         | undefined) || []
     )
-      .filter(d => d?.name === 'is' && joinDirectiveTargetsSubgraph(d, subgraphName))
+      .filter(
+        d => d?.name === 'is' && joinDirectiveTargetsSubgraph(d, subgraphName, subgraphEnumName),
+      )
       .map(d => ({ field: d.args?.field }));
     const keyField = resolveLookupKeyField(String(argName), [
       ...((argDirs?.is as Array<{ field?: string }> | undefined) || []),

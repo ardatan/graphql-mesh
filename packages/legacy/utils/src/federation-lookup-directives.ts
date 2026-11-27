@@ -4,6 +4,7 @@ import {
   GraphQLNonNull,
   GraphQLScalarType,
   GraphQLSchema,
+  GraphQLString,
 } from 'graphql';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
 import { importFederationDirectives } from './federation-ready.js';
@@ -24,7 +25,8 @@ import { importFederationDirectives } from './federation-ready.js';
 export const FEDERATION_LOOKUP_DIRECTIVES_SDL = /* GraphQL */ `
   scalar FieldSelectionMap
 
-  directive @lookup on FIELD_DEFINITION
+  # Optional Mesh compose \`subgraph:\` for join attribution (stripped in mesh-join).
+  directive @lookup(subgraph: String) on FIELD_DEFINITION
 
   directive @is(field: FieldSelectionMap!) on ARGUMENT_DEFINITION
 
@@ -53,6 +55,11 @@ export const FieldSelectionMapScalar = new GraphQLScalarType({
 export const LookupDirective = new GraphQLDirective({
   name: 'lookup',
   locations: [DirectiveLocation.FIELD_DEFINITION],
+  // Optional Mesh compose attribution (Federation draft has no args); mesh-join
+  // drops `subgraph:` when rewriting to `@join__directive(graphs:)`.
+  args: {
+    subgraph: { type: GraphQLString },
+  },
 });
 
 /**

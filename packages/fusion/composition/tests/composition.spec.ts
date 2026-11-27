@@ -200,7 +200,7 @@ directive @link(url:String as:String for:link__Purpose import:[link__Import]) re
 scalar link__Import
 enum link__Purpose {"""\`SECURITY\` features provide metadata necessary to securely resolve fields.""" SECURITY """\`EXECUTION\` features provide metadata necessary for operation execution.""" EXECUTION}
 enum join__Graph {BAR @join__graph(name:"Bar" url:"") BAZ @join__graph(name:"Baz" url:"") FOO @join__graph(name:"Foo" url:"")}
-type Query @join__type(graph:BAR) @join__type(graph:BAZ) @join__type(graph:FOO) {foo(id:ID!):Foo! @join__directive(graphs:[BAR] name:"lookup" args:{}) @join__directive(graphs:[BAZ] name:"lookup" args:{}) @join__directive(graphs:[FOO] name:"lookup" args:{}) @join__directive(graphs:[FOO] name:"merge" args:{keyField:"id" keyArg:"id"}) bar(id:ID!):Bar! @join__directive(graphs:[BAR] name:"lookup" args:{}) @join__field(graph:BAR)}
+type Query @join__type(graph:BAR) @join__type(graph:BAZ) @join__type(graph:FOO) {foo(id:ID!):Foo! @join__directive(graphs:[BAR] name:"lookup" args:{}) @join__directive(graphs:[FOO] name:"merge" args:{keyField:"id" keyArg:"id"}) bar(id:ID!):Bar! @join__directive(graphs:[BAR] name:"lookup" args:{}) @join__field(graph:BAR)}
 type Foo @join__type(graph:BAR key:"id") @join__type(graph:BAZ key:"id") @join__type(graph:FOO key:"id") {id:ID! bar:Bar! @join__field(graph:BAR) barId:ID! @join__field(graph:FOO)}
 type Bar @join__type(graph:BAR key:"id") {id:ID!}
 directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION | ARGUMENT_DEFINITION

@@ -488,12 +488,23 @@ export function createFederationTransform(config: FederationTransformConfig): Su
             // Fed draft: `@lookup` must be Query-reachable — non-Query resolveReference
             // stays on Mesh `@merge`.
             const isQueryOperation = operation === OperationTypeNode.QUERY;
+            // `@is` can only target a direct field argument; dotted keyArg (e.g.
+            // `input.id`) stays on Mesh `@merge`.
+            const keyArgIsDirect = !keyArg || !!fieldConfig.args?.[keyArg];
             // Keep Mesh `@merge` when:
             // - list / batch (draft `@lookup` must not return a list)
             // - explicit `argsExpr` (nested / composite key mapping)
             // - more than one argument (multi-key / requires-related args)
             // - non-Query operation
-            if (returnsList || batchListArg || explicitArgsExpr || multiArg || !isQueryOperation) {
+            // - keyArg is not a direct field argument
+            if (
+              returnsList ||
+              batchListArg ||
+              explicitArgsExpr ||
+              multiArg ||
+              !isQueryOperation ||
+              !keyArgIsDirect
+            ) {
               const mergeDirectiveExtensions = (fieldDirectives.merge ||= []);
               mergeDirectiveExtensions.push({
                 subgraph: subgraphConfig.name,
@@ -508,7 +519,8 @@ export function createFederationTransform(config: FederationTransformConfig): Su
               // (+ `@is` when arg name ≠ key field).
               fieldDirectives.lookup ||= [];
               if (!fieldDirectives.lookup.length) {
-                fieldDirectives.lookup.push({});
+                // Optional Mesh `subgraph:` for join attribution (stripped in mesh-join).
+                fieldDirectives.lookup.push({ subgraph: subgraphConfig.name });
               }
               lookupDirectiveUsed = true;
               if (keyArg && keyField && keyArg !== keyField && fieldConfig.args?.[keyArg]) {

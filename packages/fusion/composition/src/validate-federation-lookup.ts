@@ -3,10 +3,13 @@ import {
   getNullableType,
   GraphQLError,
   isAbstractType,
+  isEnumType,
   isInputObjectType,
   isInterfaceType,
   isListType,
+  isNonNullType,
   isObjectType,
+  isScalarType,
   isUnionType,
   type GraphQLArgument,
   type GraphQLField,
@@ -302,13 +305,31 @@ function validateLookupArgument(opts: {
     );
     return;
   }
-  const pathParts = keyPath.split('.').filter(Boolean);
-  if (!pathParts.length) {
+  // Reject leading / trailing / repeated dots — do not filter empty segments away
+  // (runtime keeps the original path and would read `address[""].id`).
+  if (!keyPath || keyPath.startsWith('.') || keyPath.endsWith('.') || keyPath.includes('..')) {
+    errors.push(
+      new GraphQLError(
+        `@is(field: "${keyPath}") on ${locationLabel}(${arg.name}:) must be a dotted field path without empty segments`,
+        { nodes: arg.astNode || undefined },
+      ),
+    );
+    return;
+  }
+  const pathParts = keyPath.split('.');
+  if (!pathParts.length || pathParts.some(p => !p)) {
+    errors.push(
+      new GraphQLError(
+        `@is(field: "${keyPath}") on ${locationLabel}(${arg.name}:) must be a dotted field path without empty segments`,
+        { nodes: arg.astNode || undefined },
+      ),
+    );
     return;
   }
 
   for (const objectType of possibleObjects) {
-    if (objectHasFieldPath(objectType, pathParts, schema)) {
+    const pathResult = objectHasFieldPath(objectType, pathParts, schema);
+    if (pathResult === true) {
       continue;
     }
     // Spec: matched field need not exist on *this* source schema, but must exist
@@ -323,10 +344,15 @@ function validateLookupArgument(opts: {
         ),
       );
     } else if (isApps?.length) {
-      // Require the full `@is` path when the concrete type is present locally.
+      const reason =
+        pathResult === 'required-args'
+          ? `selects a field with a required argument that the plain path cannot supply`
+          : pathResult === 'non-leaf'
+            ? `must end on a scalar or enum field`
+            : `does not match a field path on ${objectType.name}`;
       errors.push(
         new GraphQLError(
-          `@is(field: "${keyPath}") on ${locationLabel}(${arg.name}:) does not match a field path on ${objectType.name}`,
+          `@is(field: "${keyPath}") on ${locationLabel}(${arg.name}:) ${reason}`,
           { nodes: arg.astNode || undefined },
         ),
       );
@@ -334,11 +360,28 @@ function validateLookupArgument(opts: {
   }
 }
 
+type FieldPathResult = true | false | 'required-args' | 'non-leaf';
+
+function fieldHasUnsatisfiedRequiredArgs(
+  field: GraphQLField<unknown, unknown>,
+  schema: GraphQLSchema,
+): boolean {
+  return field.args.some(arg => {
+    if (!isNonNullType(arg.type) || arg.defaultValue !== undefined) {
+      return false;
+    }
+    // Federation Spec `@require` can satisfy a required arg; Mesh DX does not
+    // yet model that annotation — treat unsatisfied required args as invalid.
+    const argDirs = getDirectiveExtensions(arg, schema);
+    return !argDirs?.require?.length;
+  });
+}
+
 function objectHasFieldPath(
   type: GraphQLObjectType,
   pathParts: string[],
   schema: GraphQLSchema,
-): boolean {
+): FieldPathResult {
   let current: GraphQLObjectType | null = type;
   for (let i = 0; i < pathParts.length; i++) {
     if (!current) {
@@ -348,8 +391,15 @@ function objectHasFieldPath(
     if (!field) {
       return false;
     }
+    if (fieldHasUnsatisfiedRequiredArgs(field, schema)) {
+      return 'required-args';
+    }
     if (i === pathParts.length - 1) {
-      return true;
+      const named = getNamedType(field.type);
+      if (isScalarType(named) || isEnumType(named)) {
+        return true;
+      }
+      return 'non-leaf';
     }
     const next = getNamedType(field.type);
     if (isObjectType(next)) {
@@ -357,9 +407,29 @@ function objectHasFieldPath(
     } else if (isInterfaceType(next) || isUnionType(next)) {
       // Nested abstract: accept if any possible type continues the path.
       const rest = pathParts.slice(i + 1);
-      return schema
-        .getPossibleTypes(next)
-        .some(t => isObjectType(t) && objectHasFieldPath(t, rest, schema));
+      let sawRequiredArgs = false;
+      let sawNonLeaf = false;
+      for (const t of schema.getPossibleTypes(next)) {
+        if (!isObjectType(t)) {
+          continue;
+        }
+        const r = objectHasFieldPath(t, rest, schema);
+        if (r === true) {
+          return true;
+        }
+        if (r === 'required-args') {
+          sawRequiredArgs = true;
+        } else if (r === 'non-leaf') {
+          sawNonLeaf = true;
+        }
+      }
+      if (sawRequiredArgs) {
+        return 'required-args';
+      }
+      if (sawNonLeaf) {
+        return 'non-leaf';
+      }
+      return false;
     } else if (isInputObjectType(next)) {
       return false;
     } else {

@@ -252,10 +252,104 @@ describe('Federation Spec @lookup / @is / @internal', () => {
     expect(errors.some(e => e.message.includes('does not match a field path'))).toBe(true);
   });
 
-  it('keeps @merge for batch resolveReference when keyArg is omitted', () => {
+  it('rejects @is paths with empty segments', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      scalar FieldSelectionMap
+      directive @lookup on FIELD_DEFINITION
+      directive @is(field: FieldSelectionMap!) on ARGUMENT_DEFINITION
+      type Query {
+        product(addressId: ID! @is(field: "address..id")): Product @lookup
+      }
+      type Product {
+        id: ID!
+        address: Address
+      }
+      type Address {
+        id: ID!
+      }
+    `);
+    const errors = validateFederationLookupDirectives(schema);
+    expect(errors.some(e => e.message.includes('empty segments'))).toBe(true);
+  });
+
+  it('rejects @is paths that end on a non-leaf field', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      scalar FieldSelectionMap
+      directive @lookup on FIELD_DEFINITION
+      directive @is(field: FieldSelectionMap!) on ARGUMENT_DEFINITION
+      type Query {
+        product(addr: ID! @is(field: "address")): Product @lookup
+      }
+      type Product {
+        id: ID!
+        address: Address
+      }
+      type Address {
+        id: ID!
+      }
+    `);
+    const errors = validateFederationLookupDirectives(schema);
+    expect(errors.some(e => e.message.includes('scalar or enum'))).toBe(true);
+  });
+
+  it('does not hide a public peer when another subgraph marks the field @internal', () => {
+    const a = buildSchema(/* GraphQL */ `
+      directive @internal on FIELD_DEFINITION
+      type Query {
+        status: String @internal
+        aOnly: String
+      }
+    `);
+    const b = buildSchema(/* GraphQL */ `
+      type Query {
+        status: String
+        bOnly: String
+      }
+    `);
+    const { errors, supergraphSdl } = composeSubgraphs([
+      { name: 'A', schema: a },
+      { name: 'B', schema: b },
+    ]);
+    expect(errors ?? []).toEqual([]);
+    expect(supergraphSdl).toMatch(/status:\s*String(?!\s*@inaccessible)/);
+  });
+
+  it('keeps @merge when resolveReference keyArg is not a direct field argument', () => {
     const schema = buildSchema(/* GraphQL */ `
       type Query {
-        products(ids: [ID!]!): [Product!]!
+        product(input: ProductInput!): Product
+      }
+      input ProductInput {
+        id: ID!
+      }
+      type Product {
+        id: ID!
+      }
+    `);
+    const transform = createFederationTransform({
+      Product: {
+        key: {
+          fields: 'id',
+          resolveReference: {
+            fieldName: 'product',
+            keyArg: 'input.id',
+            keyField: 'id',
+          },
+        },
+      },
+    });
+    const result = transform(schema, { name: 'products', schema });
+    const field = result.getQueryType()!.getFields().product!;
+    const dirs = getDirectiveExtensions(field);
+    expect(dirs.merge?.length).toBeGreaterThan(0);
+    expect(dirs.lookup?.length || 0).toBe(0);
+  });
+
+  it('keeps @merge for batch resolveReference when keyArg is omitted', () => {
+    // Singular return so the list *argument* (not a list return) forces `@merge`.
+    const schema = buildSchema(/* GraphQL */ `
+      type Query {
+        products(ids: [ID!]!): Product
       }
       type Product {
         id: ID!
