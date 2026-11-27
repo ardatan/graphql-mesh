@@ -27,7 +27,7 @@ export function MeshHero(props: HeroContainerProps) {
         </li>
         <li>
           <CheckIcon className="text-green-800 shrink-0" />
-          Hive Platform, Apollo GraphOS, and other registries supported
+          Support any GraphQL Platform incl. Hive and Apollo GraphOS
         </li>
         <li>
           <CheckIcon className="text-green-800 shrink-0" />
