@@ -59,7 +59,11 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
   const errors: GraphQLError[] = [];
   // Federation Spec draft `@lookup` / `@is` / `@internal` when still native on the SG.
   // Join-rewritten apps are validated earlier on annotated subgraphs during compose.
-  if (supergraphSdl.includes('@lookup') || supergraphSdl.includes('@internal')) {
+  if (
+    supergraphSdl.includes('@lookup') ||
+    supergraphSdl.includes('@internal') ||
+    supergraphSdl.includes('@is')
+  ) {
     errors.push(...validateFederationLookupDirectives(schema));
   }
   const typeMap = schema.getTypeMap();

@@ -224,7 +224,11 @@ export function handleFederationSubschema({
       const fieldDirectives = getDirectiveExtensions<FieldDirectives>(fieldConfig);
       // Federation Spec `@lookup` (+ `@is`) → stitching `@merge` hop config.
       if (fieldDirectives.lookup?.length && !fieldDirectives.merge?.length) {
-        const mergeFromLookup = synthesizeMergeFromLookup(fieldConfig, fieldDirectives);
+        const mergeFromLookup = synthesizeMergeFromLookup(
+          fieldConfig,
+          fieldDirectives,
+          subgraphName,
+        );
         if (mergeFromLookup) {
           fieldDirectives.merge = mergeFromLookup;
           const fieldExtensions: Record<string, unknown> = (fieldConfig.extensions ||= {});
@@ -686,6 +690,24 @@ function resolveLookupKeyField(
 }
 
 /**
+ * `@graphql-tools/federation` extract filters field/type `@join__directive` by
+ * graph, but leaves ARGUMENT_DEFINITION joins unfiltered — keep only `is`
+ * mappings whose `graphs` include this subgraph (or omit graphs entirely).
+ */
+function joinDirectiveTargetsSubgraph(
+  directive: { graphs?: string[] } | null | undefined,
+  subgraphName: string,
+): boolean {
+  const graphs = directive?.graphs;
+  if (!graphs?.length) {
+    return true;
+  }
+  return graphs.some(
+    g => compareSubgraphNames(g, subgraphName) || g === subgraphName.toUpperCase(),
+  );
+}
+
+/**
  * Build stitching `@merge` hop args from Federation Spec draft `@lookup` + `@is`
  * on entity entry fields that return one object (not a list). Keeps the existing
  * stitching transformer path while preferring `@lookup` on SDL.
@@ -693,6 +715,7 @@ function resolveLookupKeyField(
 function synthesizeMergeFromLookup(
   fieldConfig: GraphQLFieldConfig<any, any>,
   fieldDirectives: { lookup?: unknown[]; merge?: unknown[] },
+  subgraphName: string,
 ): Array<Record<string, unknown>> | undefined {
   if (!fieldDirectives.lookup?.length || fieldDirectives.merge?.length) {
     return undefined;
@@ -703,7 +726,7 @@ function synthesizeMergeFromLookup(
     // Zero-arg lookup: keyless type merge entry (selection only).
     return [{}];
   }
-  const merges: Array<Record<string, unknown>> = [];
+  const mappings: Array<{ keyArg: string; keyField: string }> = [];
   for (const argName of argNames) {
     const argConfig = args[argName]!;
     const argDirs = getDirectiveExtensions(argConfig);
@@ -711,23 +734,32 @@ function synthesizeMergeFromLookup(
     // `@join__directive(name: "is")` left on ARGUMENT_DEFINITION by extract.
     const isFromJoin = (
       (argDirs?.join__directive as
-        Array<{ name?: string; args?: { field?: string } }> | undefined) || []
+        | Array<{ name?: string; graphs?: string[]; args?: { field?: string } }>
+        | undefined) || []
     )
-      .filter(d => d?.name === 'is')
+      .filter(d => d?.name === 'is' && joinDirectiveTargetsSubgraph(d, subgraphName))
       .map(d => ({ field: d.args?.field }));
     const keyField = resolveLookupKeyField(String(argName), [
       ...((argDirs?.is as Array<{ field?: string }> | undefined) || []),
       ...isFromJoin,
     ]);
-    // Nested paths (`address.id`) are not expressible as a simple stitching keyField;
-    // fall back to the first path segment for hop planning.
-    const keyArg = String(argName);
-    const simpleKeyField = keyField.split('.')[0] || keyArg;
-    merges.push({
-      keyArg,
-      keyField: simpleKeyField,
+    // Stitching transformer supports dotted `keyField` (builds nested selections).
+    mappings.push({
+      keyArg: String(argName),
+      keyField,
     });
   }
-  // Stitching transformer expects one `@merge` app per field; use the first arg mapping.
-  return merges.length ? [merges[0]!] : undefined;
+  if (!mappings.length) {
+    return undefined;
+  }
+  // One `@merge` app per field. Multi-arg lookups need argsExpr so every required
+  // argument is supplied from the entity representation.
+  if (mappings.length === 1) {
+    return [mappings[0]!];
+  }
+  return [
+    {
+      argsExpr: mappings.map(m => `${m.keyArg}: $key.${m.keyField}`).join(', '),
+    },
+  ];
 }

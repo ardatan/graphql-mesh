@@ -37,8 +37,64 @@ describe('Federation Spec @lookup / @is / @internal', () => {
     expect(supergraphSdl).toBeTruthy();
     const fooAnnotated = annotatedSubgraphs.find(s => s.name === 'Foo')!;
     const printed = print(fooAnnotated.typeDefs);
-    expect(printed).toContain('@lookup');
+    expect(printed).toMatch(/fooById\([^)]*\)[^\n]*@lookup/);
     expect(printed).not.toMatch(/fooById\([^)]*\)[^\n]*@merge/);
+  });
+
+  it('keeps @merge (not @lookup) for Mutation semantic-convention entry fields', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      type Query {
+        ping: String
+      }
+      type Mutation {
+        productById(id: ID!): Product
+      }
+      type Product {
+        id: ID!
+      }
+    `);
+    const { errors, annotatedSubgraphs } = composeSubgraphs([{ name: 'Products', schema }]);
+    expect(errors ?? []).toEqual([]);
+    const printed = print(annotatedSubgraphs.find(s => s.name === 'Products')!.typeDefs);
+    expect(printed).toMatch(/productById\([^)]*\)[^\n]*@merge/);
+    expect(printed).not.toMatch(/productById\([^)]*\)[^\n]*@lookup/);
+  });
+
+  it('keeps @merge for multi-arg Query semantic-convention entry fields', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      type Query {
+        productById(id: ID!, locale: String = "en"): Product
+      }
+      type Product {
+        id: ID!
+      }
+    `);
+    const { errors, annotatedSubgraphs } = composeSubgraphs([{ name: 'Products', schema }]);
+    expect(errors ?? []).toEqual([]);
+    const printed = print(annotatedSubgraphs.find(s => s.name === 'Products')!.typeDefs);
+    expect(printed).toMatch(/productById\([^)]*\)[^\n]*@merge/);
+    expect(printed).not.toMatch(/productById\([^)]*\)[^\n]*@lookup/);
+  });
+
+  it('stamps @inaccessible alongside @internal so clients cannot select internal members', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      directive @lookup on FIELD_DEFINITION
+      directive @internal on OBJECT | FIELD_DEFINITION
+      directive @key(fields: String!) repeatable on OBJECT | INTERFACE
+      type Query {
+        products: [Product!]!
+        productBySku(sku: ID!): Product @lookup @internal
+      }
+      type Product @key(fields: "id") {
+        id: ID!
+        sku: ID!
+      }
+    `);
+    const { errors, annotatedSubgraphs } = composeSubgraphs([{ name: 'Products', schema }]);
+    expect(errors ?? []).toEqual([]);
+    const printed = print(annotatedSubgraphs.find(s => s.name === 'Products')!.typeDefs);
+    expect(printed).toMatch(/productBySku\([^)]*\)[^\n]*@internal/);
+    expect(printed).toMatch(/productBySku\([^)]*\)[^\n]*@inaccessible/);
   });
 
   it('accepts @is when lookup arg name differs from entity field', () => {
@@ -134,6 +190,122 @@ describe('Federation Spec @lookup / @is / @internal', () => {
     expect(errors.some(e => e.message.includes('@internal') && e.message.includes('@key'))).toBe(
       true,
     );
+  });
+
+  it('rejects @internal on a nested @key selection field', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      directive @key(fields: String!) repeatable on OBJECT | INTERFACE
+      directive @internal on OBJECT | FIELD_DEFINITION
+      type Query {
+        product(id: ID!): Product
+      }
+      type Product @key(fields: "supplier { id }") {
+        id: ID!
+        supplier: Supplier
+      }
+      type Supplier {
+        id: ID! @internal
+      }
+    `);
+    const errors = validateFederationLookupDirectives(schema);
+    expect(
+      errors.some(
+        e =>
+          e.message.includes('@internal') &&
+          e.message.includes('Supplier.id') &&
+          e.message.includes('@key'),
+      ),
+    ).toBe(true);
+  });
+
+  it('rejects zero-argument @lookup fields', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      directive @lookup on FIELD_DEFINITION
+      type Query {
+        product: Product @lookup
+      }
+      type Product {
+        id: ID!
+      }
+    `);
+    const errors = validateFederationLookupDirectives(schema);
+    expect(errors.some(e => e.message.includes('at least one argument'))).toBe(true);
+  });
+
+  it('rejects incomplete nested @is field paths', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      scalar FieldSelectionMap
+      directive @lookup on FIELD_DEFINITION
+      directive @is(field: FieldSelectionMap!) on ARGUMENT_DEFINITION
+      type Query {
+        product(addressId: ID! @is(field: "address.id")): Product @lookup
+      }
+      type Product {
+        id: ID!
+        address: Address
+      }
+      type Address {
+        street: String
+      }
+    `);
+    const errors = validateFederationLookupDirectives(schema);
+    expect(errors.some(e => e.message.includes('does not match a field path'))).toBe(true);
+  });
+
+  it('keeps @merge for batch resolveReference when keyArg is omitted', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      type Query {
+        products(ids: [ID!]!): [Product!]!
+      }
+      type Product {
+        id: ID!
+      }
+    `);
+    const transform = createFederationTransform({
+      Product: {
+        key: {
+          fields: 'id',
+          resolveReference: {
+            fieldName: 'products',
+          },
+        },
+      },
+    });
+    const result = transform(schema, { name: 'products', schema });
+    const field = result.getQueryType()!.getFields().products!;
+    const dirs = getDirectiveExtensions(field);
+    expect(dirs.merge?.length).toBeGreaterThan(0);
+    expect(dirs.lookup?.length || 0).toBe(0);
+  });
+
+  it('keeps @merge for non-Query resolveReference operations', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      type Query {
+        ping: String
+      }
+      type Mutation {
+        productById(id: ID!): Product
+      }
+      type Product {
+        id: ID!
+      }
+    `);
+    const transform = createFederationTransform({
+      Product: {
+        key: {
+          fields: 'id',
+          resolveReference: {
+            fieldName: 'productById',
+            operation: 'mutation',
+          },
+        },
+      },
+    });
+    const result = transform(schema, { name: 'products', schema });
+    const field = result.getMutationType()!.getFields().productById!;
+    const dirs = getDirectiveExtensions(field);
+    expect(dirs.merge?.length).toBeGreaterThan(0);
+    expect(dirs.lookup?.length || 0).toBe(0);
   });
 
   it('rejects @lookup behind an intermediate field that has arguments', () => {

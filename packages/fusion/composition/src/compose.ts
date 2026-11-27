@@ -406,9 +406,11 @@ export function getAnnotatedSubgraphs(
           astNode: undefined,
         };
       },
-      [MapperKind.ROOT_FIELD]: (fieldConfig, fieldName) => {
+      [MapperKind.ROOT_FIELD]: (fieldConfig, fieldName, typeName, schema) => {
         const directiveExtensions = getDirectiveExtensions(fieldConfig);
         // Connectors must never get stitching `@meshSource` (Apollo owns SCHEMA `@source`).
+        // Fed draft `@lookup` is Query-reachable only; Mutation/Subscription keep Mesh `@merge`.
+        const allowLookup = typeName === schema.getQueryType()?.name;
         if (!sourceDirectiveUsed) {
           if (!transforms?.length && !options.ignoreSemanticConventions) {
             addAnnotationsForSemanticConventions({
@@ -416,6 +418,7 @@ export function getAnnotatedSubgraphs(
               queryFieldConfig: fieldConfig,
               directiveExtensions,
               subgraphName,
+              allowLookup,
             });
             if (directiveExtensions.merge) {
               mergeDirectiveUsed = true;
@@ -533,14 +536,16 @@ export function getAnnotatedSubgraphs(
       // Semantic conventions (ById/ByIds) after transforms - including connectors / protobuf.
       // `@connect` / `@protobuf__rpc` with `entity: true` skip Mesh `@merge`; `@key` still lands.
       transformedSubgraph = mapSchema(transformedSubgraph, {
-        [MapperKind.ROOT_FIELD]: (fieldConfig, fieldName) => {
+        [MapperKind.ROOT_FIELD]: (fieldConfig, fieldName, typeName, schema) => {
           const directiveExtensions = getDirectiveExtensions(fieldConfig);
+          const allowLookup = typeName === schema.getQueryType()?.name;
           if (!options.ignoreSemanticConventions) {
             addAnnotationsForSemanticConventions({
               queryFieldName: fieldName,
               queryFieldConfig: fieldConfig,
               directiveExtensions,
               subgraphName,
+              allowLookup,
             });
             if (directiveExtensions.merge) {
               mergeDirectiveUsed = true;
@@ -567,6 +572,61 @@ export function getAnnotatedSubgraphs(
           }
         },
       });
+    }
+    // Hand-authored `@lookup` / `@is` / `@merge` (e.g. with ignoreSemanticConventions).
+    for (const type of Object.values(transformedSubgraph.getTypeMap())) {
+      if (!isObjectType(type) || type.name.startsWith('__')) {
+        continue;
+      }
+      for (const field of Object.values(type.getFields())) {
+        const dirs = getDirectiveExtensions(field, transformedSubgraph);
+        if (dirs.merge?.length) {
+          mergeDirectiveUsed = true;
+        }
+        if (dirs.lookup?.length) {
+          lookupDirectiveUsed = true;
+        }
+        for (const arg of field.args) {
+          if (getDirectiveExtensions(arg, transformedSubgraph).is?.length) {
+            isDirectiveUsed = true;
+          }
+        }
+      }
+    }
+    // Federation Spec `@internal` → also `@inaccessible` so the client/API schema
+    // hides internal members while subgraph extract still sees join metadata.
+    let internalNeedsInaccessible = false;
+    transformedSubgraph = mapSchema(transformedSubgraph, {
+      [MapperKind.OBJECT_TYPE]: type => {
+        const dirs = getDirectiveExtensions(type, transformedSubgraph);
+        if (dirs.internal?.length && !dirs.inaccessible?.length) {
+          dirs.inaccessible = [{}];
+          internalNeedsInaccessible = true;
+          return new (Object.getPrototypeOf(type).constructor)({
+            ...type.toConfig(),
+            astNode: undefined,
+            extensions: { ...(type.extensions || {}), directives: dirs },
+          });
+        }
+      },
+      [MapperKind.OBJECT_FIELD]: fieldConfig => {
+        const dirs = getDirectiveExtensions(fieldConfig, transformedSubgraph);
+        if (dirs.internal?.length && !dirs.inaccessible?.length) {
+          dirs.inaccessible = [{}];
+          internalNeedsInaccessible = true;
+          return {
+            ...fieldConfig,
+            astNode: undefined,
+            extensions: {
+              ...(fieldConfig.extensions || {}),
+              directives: dirs,
+            },
+          };
+        }
+      },
+    });
+    if (internalNeedsInaccessible) {
+      transformedSubgraph = importFederationDirectives(transformedSubgraph, ['@inaccessible']);
     }
     // Cross-subgraph Connectors stubs → `@key(..., resolvable: false)` so Hive
     // plans `_entities` (Router already resolves stubs from selection). Runs for
@@ -951,11 +1011,14 @@ function addAnnotationsForSemanticConventions({
   queryFieldConfig,
   directiveExtensions,
   subgraphName,
+  allowLookup = true,
 }: {
   queryFieldConfig: GraphQLFieldConfig<any, any>;
   queryFieldName: string;
   directiveExtensions: any;
   subgraphName: string;
+  /** Federation Spec `@lookup` is Query-reachable only; false → Mesh `@merge`. */
+  allowLookup?: boolean;
 }) {
   // Prefer federation-spec `@lookup` for single-object entry; honor `@merge` if already present.
   if (directiveExtensions.merge?.length || directiveExtensions.lookup?.length) {
@@ -1159,7 +1222,11 @@ function addAnnotationsForSemanticConventions({
           //   forbids `@lookup` returning a list; do not extend `@lookup` for batch).
           const nullableReturn = getNullableType(queryFieldConfig.type);
           const returnsList = isListType(nullableReturn);
-          if (batchListArg || returnsList) {
+          // Multi-arg entry (extra defaults / locale / …) stays on Mesh `@merge` —
+          // `@lookup` hop synthesis maps one keyArg today. Non-Query roots also
+          // keep `@merge` (Fed draft: `@lookup` must be Query-reachable).
+          const argCount = Object.keys(queryFieldConfig.args || {}).length;
+          if (batchListArg || returnsList || argCount > 1 || !allowLookup) {
             directiveExtensions.merge ||= [];
             directiveExtensions.merge.push({
               subgraph: subgraphName,

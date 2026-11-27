@@ -119,7 +119,8 @@ export function importFederationLookupDirectives(
   const config = subgraph.toConfig();
   const existingNames = new Set(config.directives.map(d => d.name));
   const types = [...config.types];
-  if (wanted.has('is') && !types.some(t => t.name === 'FieldSelectionMap')) {
+  const existingFieldSelectionMap = types.find(t => t.name === 'FieldSelectionMap');
+  if (wanted.has('is') && !existingFieldSelectionMap) {
     types.push(FieldSelectionMapScalar);
   }
   const toAdd: GraphQLDirective[] = [];
@@ -127,7 +128,22 @@ export function importFederationLookupDirectives(
     toAdd.push(LookupDirective);
   }
   if (wanted.has('is') && !existingNames.has('is')) {
-    toAdd.push(IsDirective);
+    // Reuse the schema's FieldSelectionMap instance to avoid GraphQL.js duplicate-type errors.
+    const fieldSelectionMapScalar =
+      existingFieldSelectionMap instanceof GraphQLScalarType
+        ? existingFieldSelectionMap
+        : FieldSelectionMapScalar;
+    toAdd.push(
+      new GraphQLDirective({
+        name: 'is',
+        locations: [DirectiveLocation.ARGUMENT_DEFINITION],
+        args: {
+          field: {
+            type: new GraphQLNonNull(fieldSelectionMapScalar),
+          },
+        },
+      }),
+    );
   }
   if (wanted.has('internal') && !existingNames.has('internal')) {
     toAdd.push(InternalDirective);

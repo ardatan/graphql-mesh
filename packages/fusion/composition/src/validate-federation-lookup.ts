@@ -25,24 +25,8 @@ import { getDirectiveExtensions } from '@graphql-tools/utils';
  */
 export function validateFederationLookupDirectives(schema: GraphQLSchema): GraphQLError[] {
   const errors: GraphQLError[] = [];
-  const queryType = schema.getQueryType();
-  if (!queryType) {
-    return errors;
-  }
 
-  const reachableLookupFields = collectQueryReachableLookupFields(schema, queryType, errors);
-
-  for (const { typeName, fieldName, field, parentIsInternal } of reachableLookupFields) {
-    validateLookupField({
-      errors,
-      schema,
-      locationLabel: `field ${typeName}.${fieldName}`,
-      field,
-      parentIsInternal,
-    });
-  }
-
-  // `@is` only belongs on lookup field arguments.
+  // `@is` only belongs on lookup field arguments (runs even when Query is absent).
   for (const type of Object.values(schema.getTypeMap())) {
     if (!isObjectType(type) && !isInterfaceType(type)) {
       continue;
@@ -66,7 +50,7 @@ export function validateFederationLookupDirectives(schema: GraphQLSchema): Graph
     }
   }
 
-  // `@internal` on an entity key field is invalid (local; not shareable identity).
+  // `@internal` on any field a `@key` selection references (including nested paths).
   for (const type of Object.values(schema.getTypeMap())) {
     if (!isObjectType(type) && !isInterfaceType(type)) {
       continue;
@@ -76,26 +60,49 @@ export function validateFederationLookupDirectives(schema: GraphQLSchema): Graph
     if (!keys.length) {
       continue;
     }
-    const fields = type.getFields();
-    for (const fieldName in fields) {
-      const field = fields[fieldName]!;
-      const fieldDirs = getDirectiveExtensions(field, schema);
-      if (!fieldDirs?.internal?.length) {
+    for (const k of keys as Array<{ fields?: string }>) {
+      const fieldsSel = typeof k?.fields === 'string' ? k.fields : '';
+      if (!fieldsSel.trim()) {
         continue;
       }
-      const usedAsKey = keys.some((k: { fields?: string }) => {
-        const fieldsSel = typeof k?.fields === 'string' ? k.fields : '';
-        return fieldsSel.split(/[\s{}/]+/).includes(fieldName);
-      });
-      if (usedAsKey) {
-        errors.push(
-          new GraphQLError(
-            `@internal on ${type.name}.${fieldName} cannot be used as a @key field (Federation Spec: internal members are local and have no semantic equivalence across source schemas)`,
-            { nodes: field.astNode || undefined },
-          ),
-        );
+      collectInternalKeyFieldErrors(errors, schema, type as GraphQLObjectType, fieldsSel.trim());
+    }
+  }
+
+  const queryType = schema.getQueryType();
+  if (!queryType) {
+    // Still flag every `@lookup` — none are Query-reachable without a Query root.
+    for (const type of Object.values(schema.getTypeMap())) {
+      if ((!isObjectType(type) && !isInterfaceType(type)) || type.name.startsWith('__')) {
+        continue;
+      }
+      const fields = type.getFields();
+      for (const fieldName in fields) {
+        const field = fields[fieldName]!;
+        const fieldDirs = getDirectiveExtensions(field, schema);
+        if (fieldDirs?.lookup?.length) {
+          errors.push(
+            new GraphQLError(
+              `@lookup on ${type.name}.${fieldName} must be reachable from Query via a chain of fields with no arguments`,
+              { nodes: field.astNode || undefined },
+            ),
+          );
+        }
       }
     }
+    return errors;
+  }
+
+  const reachableLookupFields = collectQueryReachableLookupFields(schema, queryType, errors);
+
+  for (const { typeName, fieldName, field, parentIsInternal } of reachableLookupFields) {
+    validateLookupField({
+      errors,
+      schema,
+      locationLabel: `field ${typeName}.${fieldName}`,
+      field,
+      parentIsInternal,
+    });
   }
 
   return errors;
@@ -162,9 +169,9 @@ function collectQueryReachableLookupFields(
 
   const reachableKeys = new Set(out.map(r => `${r.typeName}.${r.fieldName}`));
 
-  // Flag @lookup that is not Query-reachable (Mutation/Subscription or behind args).
+  // Flag @lookup that is not Query-reachable (Mutation/Subscription, interfaces, or behind args).
   for (const type of Object.values(schema.getTypeMap())) {
-    if (!isObjectType(type) || type.name.startsWith('__')) {
+    if ((!isObjectType(type) && !isInterfaceType(type)) || type.name.startsWith('__')) {
       continue;
     }
     const fields = type.getFields();
@@ -215,6 +222,16 @@ function validateLookupField(opts: {
     errors.push(
       new GraphQLError(
         `@lookup on ${locationLabel} must return an object, interface, or union type`,
+        { nodes: field.astNode || undefined },
+      ),
+    );
+    return;
+  }
+
+  if (!field.args.length) {
+    errors.push(
+      new GraphQLError(
+        `@lookup on ${locationLabel} must declare at least one argument (stable key)`,
         { nodes: field.astNode || undefined },
       ),
     );
@@ -274,8 +291,15 @@ function validateLookupArgument(opts: {
   }
 
   const keyPath = resolveLookupKeyField(arg.name, isApps);
-  // OneOf / alternate maps (`{ id } | { name }`) are validated lightly: require coverage later.
+  // OneOf / alternate maps (`{ id } | { name }`) are not supported by Mesh hop
+  // synthesis yet — reject rather than silently accepting incomplete coverage.
   if (keyPath.includes('{') || keyPath.includes('|')) {
+    errors.push(
+      new GraphQLError(
+        `@is(field: "${keyPath}") on ${locationLabel}(${arg.name}:) uses FieldSelectionMap alternatives/object maps that Mesh compose DX does not support yet; use a plain field path`,
+        { nodes: arg.astNode || undefined },
+      ),
+    );
     return;
   }
   const pathParts = keyPath.split('.').filter(Boolean);
@@ -284,34 +308,28 @@ function validateLookupArgument(opts: {
   }
 
   for (const objectType of possibleObjects) {
-    if (!objectHasFieldPath(objectType, pathParts, schema)) {
-      // Spec: matched field need not exist on *this* source schema, but must exist
-      // on the return type in at least one source schema. Within a single subgraph
-      // validate we check local return types; missing path is an error when the
-      // object is defined here without that field.
-      if (
-        objectType.getFields()[pathParts[0]!] == null &&
-        pathParts.length === 1 &&
-        !isApps?.length
-      ) {
-        errors.push(
-          new GraphQLError(
-            `@lookup on ${locationLabel}: argument ${arg.name} must match a field on ${objectType.name} (or use @is(field:))`,
-            { nodes: arg.astNode || undefined },
-          ),
-        );
-      } else if (isApps?.length && pathParts.length >= 1) {
-        // When @is is present, require the first segment to exist locally when the type is concrete here.
-        const first = pathParts[0]!;
-        if (objectType.getFields()[first] == null) {
-          errors.push(
-            new GraphQLError(
-              `@is(field: "${keyPath}") on ${locationLabel}(${arg.name}:) does not match a field path on ${objectType.name}`,
-              { nodes: arg.astNode || undefined },
-            ),
-          );
-        }
-      }
+    if (objectHasFieldPath(objectType, pathParts, schema)) {
+      continue;
+    }
+    // Spec: matched field need not exist on *this* source schema, but must exist
+    // on the return type in at least one source schema. Within a single subgraph
+    // validate we check local return types; missing path is an error when the
+    // object is defined here without that field.
+    if (pathParts.length === 1 && !isApps?.length && objectType.getFields()[pathParts[0]!] == null) {
+      errors.push(
+        new GraphQLError(
+          `@lookup on ${locationLabel}: argument ${arg.name} must match a field on ${objectType.name} (or use @is(field:))`,
+          { nodes: arg.astNode || undefined },
+        ),
+      );
+    } else if (isApps?.length) {
+      // Require the full `@is` path when the concrete type is present locally.
+      errors.push(
+        new GraphQLError(
+          `@is(field: "${keyPath}") on ${locationLabel}(${arg.name}:) does not match a field path on ${objectType.name}`,
+          { nodes: arg.astNode || undefined },
+        ),
+      );
     }
   }
 }
@@ -349,4 +367,95 @@ function objectHasFieldPath(
     }
   }
   return true;
+}
+
+/** Push errors for `@internal` fields referenced by a `@key(fields:)` selection. */
+function collectInternalKeyFieldErrors(
+  errors: GraphQLError[],
+  schema: GraphQLSchema,
+  type: GraphQLObjectType,
+  sel: string,
+): void {
+  let i = 0;
+  const s = sel;
+  while (i < s.length) {
+    while (i < s.length && /\s/.test(s[i]!)) {
+      i++;
+    }
+    if (i >= s.length) {
+      break;
+    }
+    if (s[i] === '{') {
+      return;
+    }
+    const start = i;
+    while (i < s.length && /[A-Za-z0-9_]/.test(s[i]!)) {
+      i++;
+    }
+    if (i === start) {
+      i++;
+      continue;
+    }
+    const name = s.slice(start, i);
+    while (i < s.length && /\s/.test(s[i]!)) {
+      i++;
+    }
+    const field = type.getFields()[name];
+    if (!field) {
+      if (s[i] === '{') {
+        // Skip unknown nested block.
+        let depth = 0;
+        while (i < s.length) {
+          if (s[i] === '{') {
+            depth++;
+          } else if (s[i] === '}') {
+            depth--;
+            if (depth === 0) {
+              i++;
+              break;
+            }
+          }
+          i++;
+        }
+      }
+      continue;
+    }
+    if (s[i] === '{') {
+      let depth = 0;
+      const blockStart = i;
+      while (i < s.length) {
+        if (s[i] === '{') {
+          depth++;
+        } else if (s[i] === '}') {
+          depth--;
+          if (depth === 0) {
+            i++;
+            break;
+          }
+        }
+        i++;
+      }
+      const inner = s.slice(blockStart + 1, i - 1);
+      const named = getNamedType(field.type);
+      if (isObjectType(named)) {
+        collectInternalKeyFieldErrors(errors, schema, named, inner);
+      } else if (isInterfaceType(named) || isUnionType(named)) {
+        for (const t of schema.getPossibleTypes(named)) {
+          if (isObjectType(t)) {
+            collectInternalKeyFieldErrors(errors, schema, t, inner);
+          }
+        }
+      }
+      continue;
+    }
+    const fieldDirs = getDirectiveExtensions(field, schema);
+    if (fieldDirs?.internal?.length) {
+      errors.push(
+        new GraphQLError(
+          `@internal on ${type.name}.${name} cannot be used as a @key field (Federation Spec: internal members are local and have no semantic equivalence across source schemas)`,
+          { nodes: field.astNode || undefined },
+        ),
+      );
+    }
+  }
 }

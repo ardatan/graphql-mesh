@@ -474,19 +474,26 @@ export function createFederationTransform(config: FederationTransformConfig): Su
             const keyArg = mergeDirectiveConfig.keyArg;
             const keyField = mergeDirectiveConfig.keyField;
             const returnsList = isListType(getNullableType(fieldConfig.type));
+            const argNames = fieldConfig.args ? Object.keys(fieldConfig.args) : [];
+            // When keyArg is omitted, a lone list arg still counts as batch.
+            const effectiveKeyArg =
+              keyArg || (argNames.length === 1 ? argNames[0] : undefined);
             const batchListArg =
-              !!keyArg &&
-              !!fieldConfig.args?.[keyArg] &&
-              isListType(getNullableType(fieldConfig.args[keyArg].type));
+              !!effectiveKeyArg &&
+              !!fieldConfig.args?.[effectiveKeyArg] &&
+              isListType(getNullableType(fieldConfig.args[effectiveKeyArg].type));
             // Multi-arg entry fields (multi-field keys, @requires extras) need Mesh
             // `@merge` / argsExpr — `@lookup` hop synthesis only maps one keyArg today.
-            const argCount = fieldConfig.args ? Object.keys(fieldConfig.args).length : 0;
-            const multiArg = argCount > 1;
+            const multiArg = argNames.length > 1;
+            // Fed draft: `@lookup` must be Query-reachable — non-Query resolveReference
+            // stays on Mesh `@merge`.
+            const isQueryOperation = operation === OperationTypeNode.QUERY;
             // Keep Mesh `@merge` when:
             // - list / batch (draft `@lookup` must not return a list)
             // - explicit `argsExpr` (nested / composite key mapping)
             // - more than one argument (multi-key / requires-related args)
-            if (returnsList || batchListArg || explicitArgsExpr || multiArg) {
+            // - non-Query operation
+            if (returnsList || batchListArg || explicitArgsExpr || multiArg || !isQueryOperation) {
               const mergeDirectiveExtensions = (fieldDirectives.merge ||= []);
               mergeDirectiveExtensions.push({
                 subgraph: subgraphConfig.name,
