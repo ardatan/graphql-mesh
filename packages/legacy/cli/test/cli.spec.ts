@@ -130,10 +130,19 @@ describe('runtime', () => {
 
       expect(supergraphGraphql).toContain('join__Graph');
       expect(supergraphGraphql).not.toContain('mesh://legacy/');
-      expect(supergraphGraphqlTs).toContain('export const supergraphSdl');
-      expect(supergraphGraphqlTs).toContain('createBuiltHiveGateway');
-      expect(supergraphGraphqlTs).toContain('createGatewayRuntime');
+      expect(supergraphGraphqlTs).toMatch(/export default \/\*\s*GraphQL\s*\*\/ `/);
       expect(supergraphGraphqlTs).toContain('join__Graph');
+      expect(supergraphGraphqlTs).not.toContain('createBuiltHiveGateway');
+      expect(supergraphGraphqlTs).not.toContain('createGatewayRuntime');
+      expect(supergraphGraphqlTs).not.toContain('export const supergraphSdl');
+
+      const builtMesh = await fs.promises.readFile(
+        pathModule.join(artifactsDir, 'index.ts'),
+        'utf8',
+      );
+      expect(builtMesh).toContain(`import supergraph from './supergraph.graphql'`);
+      expect(builtMesh).toContain('createMeshHTTPHandler');
+      expect(builtMesh).not.toContain('createBuiltHiveGateway');
     });
   });
 });

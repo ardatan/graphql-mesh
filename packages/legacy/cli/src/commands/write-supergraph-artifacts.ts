@@ -8,10 +8,11 @@ import { writeFile } from '@graphql-mesh/utils';
  * join-style SDL (sources → subgraphs like Mesh v2). Write under-the-hood artifacts
  * next to the client `schema.graphql`.
  *
- * Canonical module: `supergraph.graphql.ts` — SDL export plus programmatic Hive
- * Gateway factory (`createBuiltHiveGateway`). Prefer `createMeshHTTPHandler` /
- * `createBuiltMeshHTTPHandler` for the Mesh UX (Gateway runs under the hood when
- * this SDL is on the Mesh schema). Plain `supergraph.graphql` is also written.
+ * Canonical module: `supergraph.graphql.ts` — default-export SDL as a GraphQL
+ * template literal only (no `createBuiltHiveGateway` / named `supergraphSdl` surface).
+ * HTTP stays `createMeshHTTPHandler` / `createBuiltMeshHTTPHandler` (Gateway under
+ * the hood when the Mesh schema carries this SDL). Plain `supergraph.graphql` is
+ * also written.
  */
 export async function writeSupergraphArtifacts(opts: {
   outputDir: string;
@@ -29,24 +30,7 @@ export async function writeSupergraphArtifacts(opts: {
 
   const graphqlTsContents =
     `/* This file was automatically generated. DO NOT UPDATE MANUALLY. */\n` +
-    `import { createGatewayRuntime, type GatewayConfigSupergraph } from '@graphql-hive/gateway-runtime';\n` +
-    `\n` +
-    `export const supergraphSdl = ${JSON.stringify(supergraphSdl)};\n` +
-    `export default supergraphSdl;\n` +
-    `\n` +
-    `/**\n` +
-    ` * Programmatic Hive Gateway for this under-the-hood supergraph.\n` +
-    ` * Subgraph hops use standard Gateway transports resolved from \`@transport\`\n` +
-    ` * in the Supergraph (same as Mesh v2 / Hive Gateway).\n` +
-    ` */\n` +
-    `export function createBuiltHiveGateway<\n` +
-    `  TContext extends Record<string, any> = Record<string, any>,\n` +
-    `>(config?: Omit<GatewayConfigSupergraph<TContext>, 'supergraph'>) {\n` +
-    `  return createGatewayRuntime<TContext>({\n` +
-    `    ...(config as GatewayConfigSupergraph<TContext>),\n` +
-    `    supergraph: supergraphSdl,\n` +
-    `  });\n` +
-    `}\n`;
+    `export default /* GraphQL */ \`${escapeForGraphQLTemplateLiteral(supergraphSdl)}\`;\n`;
 
   await Promise.all([
     writeFile(graphqlPath, supergraphSdl),
@@ -55,4 +39,9 @@ export async function writeSupergraphArtifacts(opts: {
 
   opts.log.info(`Under-the-hood supergraph written to ${graphqlTsPath}`);
   return graphqlPath;
+}
+
+/** Escape SDL for embedding in a GraphQL-tagged template literal. */
+function escapeForGraphQLTemplateLiteral(sdl: string): string {
+  return sdl.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${');
 }
