@@ -153,7 +153,7 @@
     "@grpc/grpc-js": "1.14.5",
     "@humanfs/node": "0.16.8",
     "@n1ru4l/in-memory-live-query-store": "0.11.0",
-    "@opentelemetry/core": "^2.8.0",
+    "@opentelemetry/core": "^3.1.1",
     "@opentelemetry/instrumentation-cassandra-driver": "0.66.0",
     "@opentelemetry/instrumentation-knex": "0.65.0",
     "@opentelemetry/instrumentation-mongoose": "0.67.0",
