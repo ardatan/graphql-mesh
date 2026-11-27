@@ -27,6 +27,10 @@ export {
 const NEVER_AUTO_MESH_COMPOSE_DIRECTIVE = new Set<string>([
   ...FEDERATION_V1_DIRECTIVES,
   ...MESH_CORE_DIRECTIVES,
+  // Federation Spec draft lookup family (not Mesh core; stamped via importFederationLookupDirectives)
+  '@lookup',
+  '@is',
+  '@internal',
   '@link',
   '@composeDirective',
   '@stream',

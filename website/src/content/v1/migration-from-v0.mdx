@@ -266,7 +266,7 @@ relevant source, or replace stitching with [Federation](/v1/transforms/federatio
 | `namingConvention`     | `createNamingConventionTransform` | [docs](/v1/transforms/naming-convention)                                             |
 | `hoistField`           | `createHoistFieldTransform`       | v0 array → `{ mapping: [...] }`                                                      |
 | `prune`                | `createPruneTransform`            | [docs](/v1/transforms/prune)                                                         |
-| `federation`           | `createFederationTransform`       | How you declare keys / `@merge` in v1                                                |
+| `federation`           | `createFederationTransform`       | How you declare keys / `@lookup` (Federation Spec) in v1                             |
 | `extend`               | `createExtendTransform(typeDefs)` | `typeDefs` stay in compose; `extend.resolvers` → `gatewayConfig.additionalResolvers` |
 | `typeMerging`          | **manual**                        | Stitching-style merge → Federation / [type merging](/v1/type-merging)                |
 | `cache`                | **manual**                        | Was a transform; now a **gateway** plugin — [response caching](/v1/response-caching) |

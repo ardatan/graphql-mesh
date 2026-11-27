@@ -10,7 +10,10 @@ import {
   type GraphQLInterfaceType,
   type GraphQLObjectType,
 } from 'graphql';
-import { suggestionList } from '@graphql-mesh/fusion-composition';
+import {
+  suggestionList,
+  validateFederationLookupDirectives,
+} from '@graphql-mesh/fusion-composition';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
 import type { ServiceDefinition } from '@theguild/federation-composition';
 
@@ -54,8 +57,12 @@ export function validateSupergraphSdl(supergraphSdl: string, subgraphs: ServiceD
   });
   const graphEnumToName = readJoinGraphEnumToName(schema);
   const errors: GraphQLError[] = [];
+  // Federation Spec draft `@lookup` / `@is` / `@internal` when still native on the SG.
+  // Join-rewritten apps are validated earlier on annotated subgraphs during compose.
+  if (supergraphSdl.includes('@lookup') || supergraphSdl.includes('@internal')) {
+    errors.push(...validateFederationLookupDirectives(schema));
+  }
   const typeMap = schema.getTypeMap();
-
   for (const typeName in typeMap) {
     const type = typeMap[typeName];
     if (!type || typeName.startsWith('__')) {

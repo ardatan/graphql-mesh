@@ -1,6 +1,7 @@
 import type {
   GraphQLArgument,
   GraphQLArgumentConfig,
+  GraphQLFieldConfig,
   GraphQLFieldConfigArgumentMap,
 } from 'graphql';
 import {
@@ -19,6 +20,7 @@ import {
   visit,
 } from 'graphql';
 import { type YamlConfig } from '@graphql-mesh/types';
+import { resolveLookupKeyField } from '@graphql-mesh/utils';
 import type { MergedTypeConfig, SubschemaConfig, Transform } from '@graphql-tools/delegate';
 import {
   astFromField,
@@ -169,6 +171,8 @@ export function handleFederationSubschema({
   interface FieldDirectives {
     additionalField: {};
     merge: {};
+    /** Federation Spec draft entity lookup (preferred over `@merge`). */
+    lookup: Array<Record<string, unknown>>;
     resolveTo: YamlConfig.AdditionalStitchingResolverObject;
     source: SourceDirective;
     hoist: any;
@@ -219,6 +223,15 @@ export function handleFederationSubschema({
     },
     [MapperKind.OBJECT_FIELD]: (fieldConfig, fieldName, typeName, schema) => {
       const fieldDirectives = getDirectiveExtensions<FieldDirectives>(fieldConfig);
+      // Federation Spec `@lookup` (+ `@is`) → stitching `@merge` hop config.
+      if (fieldDirectives.lookup?.length && !fieldDirectives.merge?.length) {
+        const mergeFromLookup = synthesizeMergeFromLookup(fieldConfig, fieldDirectives);
+        if (mergeFromLookup) {
+          fieldDirectives.merge = mergeFromLookup;
+          const fieldExtensions: Record<string, unknown> = (fieldConfig.extensions ||= {});
+          fieldExtensions.directives = fieldDirectives;
+        }
+      }
       if (fieldDirectives.merge?.length) {
         mergeDirectiveUsed = true;
       }
@@ -654,4 +667,41 @@ function renameSelectionSetFieldNames(
   } catch {
     return selectionSet;
   }
+}
+
+/**
+ * Build stitching `@merge` hop args from Federation Spec `@lookup` + `@is`.
+ * Keeps the existing stitching transformer path while preferring `@lookup` on SDL.
+ */
+function synthesizeMergeFromLookup(
+  fieldConfig: GraphQLFieldConfig<any, any>,
+  fieldDirectives: { lookup?: unknown[]; merge?: unknown[] },
+): Array<Record<string, unknown>> | undefined {
+  if (!fieldDirectives.lookup?.length || fieldDirectives.merge?.length) {
+    return undefined;
+  }
+  const args = fieldConfig.args || {};
+  const argNames = Object.keys(args);
+  if (!argNames.length) {
+    // Zero-arg lookup: keyless type merge entry (selection only).
+    return [{}];
+  }
+  const merges: Array<Record<string, unknown>> = [];
+  for (const argName of argNames) {
+    const argConfig = args[argName]!;
+    const argDirs = getDirectiveExtensions(argConfig);
+    const keyField = resolveLookupKeyField(
+      argName,
+      argDirs?.is as Array<{ field?: string }> | undefined,
+    );
+    // Nested paths (`address.id`) are not expressible as a simple stitching keyField;
+    // fall back to the first path segment for hop planning.
+    const simpleKeyField = keyField.split('.')[0] || argName;
+    merges.push({
+      keyArg: argName,
+      keyField: simpleKeyField,
+    });
+  }
+  // Stitching transformer expects one `@merge` app per field; use the first arg mapping.
+  return merges.length ? [merges[0]!] : undefined;
 }

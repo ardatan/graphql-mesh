@@ -128,6 +128,12 @@ subgraphs;
 - Query fields with `TYPENAMEbyKEYNAME(KEYNAME: KEYTYPE): TYPENAME` pattern, and the `KEYNAME` is
   the same as the `KEYNAME` field of the type.
 
+Compose stamps those Query fields with Federation Spec
+[`@lookup`](https://graphql.github.io/graphql-federation-spec/draft) (and `@is(field:)` when the
+argument name differs from the entity field). Hand-authored schemas can use the same directives.
+Older schemas that still carry Mesh `@merge` continue to work at compose/runtime, but new generation
+prefers `@lookup` / `@is` / `@internal` from the Federation Spec draft.
+
 So actually the example above can do the expected work automatically by default without any
 configuration. If your schema doesn't match this pattern, you can use [transforms](/v1/transforms)
 to manipulate the schema to match this pattern. Let's say you don't have `userById` in `Posts` but
@@ -147,9 +153,11 @@ export const composeConfig = defineConfig({
 
 ## Manual and Advanced Type Merging
 
-If you have control over your schema, you can use Federation directives to configure Type Merging,
-using Federation directives;
-[Learn more here](https://www.apollographql.com/docs/federation/federated-types/federated-directives).
+If you have control over your schema, mark entity identity with `@key` and entity recall with
+[`@lookup`](https://graphql.github.io/graphql-federation-spec/draft) (plus `@is` when argument names
+differ, and `@internal` for lookup-only fields/types). See also Apollo Federation directive docs for
+`@key` and related ownership directives:
+[federated directives](https://www.apollographql.com/docs/federation/federated-types/federated-directives).
 
 If you don't have control over your schema, you can use
 [Federation Transform](/v1/transforms/federation) to add the federation directives to your schema,

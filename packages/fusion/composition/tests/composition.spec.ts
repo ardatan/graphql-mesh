@@ -186,7 +186,7 @@ describe('Composition', () => {
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@merge"]) {query:Query}
+schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.3" for:EXECUTION) @link(url:"https://graphql.github.io/graphql-federation-spec/draft" import:["@lookup"]) {query:Query}
 directive @join__enumValue(graph:join__Graph!) repeatable on ENUM_VALUE
 directive @join__graph(name:String! url:String!) on ENUM_VALUE
 directive @join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet
@@ -200,11 +200,10 @@ directive @link(url:String as:String for:link__Purpose import:[link__Import]) re
 scalar link__Import
 enum link__Purpose {"""\`SECURITY\` features provide metadata necessary to securely resolve fields.""" SECURITY """\`EXECUTION\` features provide metadata necessary for operation execution.""" EXECUTION}
 enum join__Graph {BAR @join__graph(name:"Bar" url:"") BAZ @join__graph(name:"Baz" url:"") FOO @join__graph(name:"Foo" url:"")}
-type Query @join__type(graph:BAR) @join__type(graph:BAZ) @join__type(graph:FOO) {foo(id:ID!):Foo! @join__directive(graphs:[BAR] name:"merge" args:{keyField:"id" keyArg:"id"}) @join__directive(graphs:[FOO] name:"merge" args:{keyField:"id" keyArg:"id"}) bar(id:ID!):Bar! @join__directive(graphs:[BAR] name:"merge" args:{keyField:"id" keyArg:"id"}) @join__field(graph:BAR)}
+directive @lookup on FIELD_DEFINITION
+type Query @join__type(graph:BAR) @join__type(graph:BAZ) @join__type(graph:FOO) {foo(id:ID!):Foo! @lookup bar(id:ID!):Bar! @lookup @join__field(graph:BAR)}
 type Foo @join__type(graph:BAR key:"id") @join__type(graph:BAZ key:"id") @join__type(graph:FOO key:"id") {id:ID! bar:Bar! @join__field(graph:BAR) barId:ID! @join__field(graph:FOO)}
 type Bar @join__type(graph:BAR key:"id") {id:ID!}
-directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
-scalar join__DirectiveArguments
 
 `);
     });
@@ -247,7 +246,7 @@ scalar join__DirectiveArguments
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@merge"]) {query:Query}
+schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.3" for:EXECUTION) @link(url:"https://graphql.github.io/graphql-federation-spec/draft" import:["@lookup"]) {query:Query}
 directive @join__enumValue(graph:join__Graph!) repeatable on ENUM_VALUE
 directive @join__graph(name:String! url:String!) on ENUM_VALUE
 directive @join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet
@@ -261,11 +260,10 @@ directive @link(url:String as:String for:link__Purpose import:[link__Import]) re
 scalar link__Import
 enum link__Purpose {"""\`SECURITY\` features provide metadata necessary to securely resolve fields.""" SECURITY """\`EXECUTION\` features provide metadata necessary for operation execution.""" EXECUTION}
 enum join__Graph {BAR @join__graph(name:"Bar" url:"") FOO @join__graph(name:"Foo" url:"")}
-type Query @join__type(graph:BAR) @join__type(graph:FOO) {getFooById(id:ID!):Foo! @join__directive(graphs:[BAR] name:"merge" args:{keyField:"id" keyArg:"id"}) @join__directive(graphs:[FOO] name:"merge" args:{keyField:"id" keyArg:"id"}) getBarById(id:ID!):Bar! @join__directive(graphs:[BAR] name:"merge" args:{keyField:"id" keyArg:"id"}) @join__field(graph:BAR)}
+directive @lookup on FIELD_DEFINITION
+type Query @join__type(graph:BAR) @join__type(graph:FOO) {getFooById(id:ID!):Foo! @lookup getBarById(id:ID!):Bar! @lookup @join__field(graph:BAR)}
 type Foo @join__type(graph:BAR key:"id") @join__type(graph:FOO key:"id") {id:ID! bar:Bar! @join__field(graph:BAR)}
 type Bar @join__type(graph:BAR key:"id") {id:ID!}
-directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
-scalar join__DirectiveArguments
 
 `);
     });
@@ -308,7 +306,7 @@ scalar join__DirectiveArguments
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@merge"]) {query:Query}
+schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.3" for:EXECUTION) @link(url:"https://graphql.github.io/graphql-federation-spec/draft" import:["@lookup"]) {query:Query}
 directive @join__enumValue(graph:join__Graph!) repeatable on ENUM_VALUE
 directive @join__graph(name:String! url:String!) on ENUM_VALUE
 directive @join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet
@@ -322,11 +320,10 @@ directive @link(url:String as:String for:link__Purpose import:[link__Import]) re
 scalar link__Import
 enum link__Purpose {"""\`SECURITY\` features provide metadata necessary to securely resolve fields.""" SECURITY """\`EXECUTION\` features provide metadata necessary for operation execution.""" EXECUTION}
 enum join__Graph {BAR @join__graph(name:"Bar" url:"") FOO @join__graph(name:"Foo" url:"")}
-type Query @join__type(graph:BAR) @join__type(graph:FOO) {fooById(id:ID!):Foo! @join__directive(graphs:[BAR] name:"merge" args:{keyField:"id" keyArg:"id"}) @join__directive(graphs:[FOO] name:"merge" args:{keyField:"id" keyArg:"id"}) barById(id:ID!):Bar! @join__directive(graphs:[BAR] name:"merge" args:{keyField:"id" keyArg:"id"}) @join__field(graph:BAR)}
+directive @lookup on FIELD_DEFINITION
+type Query @join__type(graph:BAR) @join__type(graph:FOO) {fooById(id:ID!):Foo! @lookup barById(id:ID!):Bar! @lookup @join__field(graph:BAR)}
 type Foo @join__type(graph:BAR key:"id") @join__type(graph:FOO key:"id") {id:ID! bar:Bar! @join__field(graph:BAR)}
 type Bar @join__type(graph:BAR key:"id") {id:ID!}
-directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
-scalar join__DirectiveArguments
 
 `);
     });

@@ -19,6 +19,8 @@ import pluralize from 'pluralize';
 import { snakeCase } from 'snake-case';
 import {
   assertSupportedMeshSpecOnSchema,
+  FEDERATION_LOOKUP_DIRECTIVES_SDL,
+  importFederationLookupDirectives,
   MESH_SUPPORTED_SPEC_VERSIONS,
   TRANSPORT_DIRECTIVE_SDL,
   validateMeshDirectives,
@@ -51,6 +53,7 @@ import {
 import { liftExtraSchemaDefinitionDirectives } from './lift-extra-schema-directives.js';
 import { finalizeMeshJoinDirectives } from './mesh-join-supergraph.js';
 import { prepareConnectorsBeforeGuild } from './prepare-connectors-for-guild.js';
+import { validateFederationLookupDirectives } from './validate-federation-lookup.js';
 
 export interface SubgraphConfig {
   name: string;
@@ -226,6 +229,8 @@ export function getAnnotatedSubgraphs(
     }
 
     let mergeDirectiveUsed = false;
+    let lookupDirectiveUsed = false;
+    let isDirectiveUsed = false;
     // Stitching source is only for subgraphs that do not rewrite directive mappings
     // (Connectors `@connect`, protobuf `@protobuf__rpc`, Neo4j `@node` / `@alias`,
     // Mongo `@mongo__*`). Those skip Mesh `@source`.
@@ -415,6 +420,16 @@ export function getAnnotatedSubgraphs(
             if (directiveExtensions.merge) {
               mergeDirectiveUsed = true;
             }
+            if (directiveExtensions.lookup) {
+              lookupDirectiveUsed = true;
+            }
+            if (fieldConfig.args) {
+              for (const aName in fieldConfig.args) {
+                if (getDirectiveExtensions(fieldConfig.args[aName]).is?.length) {
+                  isDirectiveUsed = true;
+                }
+              }
+            }
             return {
               ...fieldConfig,
               extensions: {
@@ -431,6 +446,9 @@ export function getAnnotatedSubgraphs(
           for (const argName in fieldConfig.args) {
             const arg = fieldConfig.args[argName];
             const directives = getDirectiveExtensions(arg);
+            if (directives.is?.length) {
+              isDirectiveUsed = true;
+            }
             const existingSourceDirectives =
               directives[meshSourceDirectiveName] || directives.source || [];
             if (existingSourceDirectives.length > 1) {
@@ -527,6 +545,17 @@ export function getAnnotatedSubgraphs(
             if (directiveExtensions.merge) {
               mergeDirectiveUsed = true;
             }
+            if (directiveExtensions.lookup) {
+              lookupDirectiveUsed = true;
+            }
+            if (fieldConfig.args) {
+              for (const argName in fieldConfig.args) {
+                const argDirs = getDirectiveExtensions(fieldConfig.args[argName]);
+                if (argDirs.is?.length) {
+                  isDirectiveUsed = true;
+                }
+              }
+            }
             return {
               ...fieldConfig,
               extensions: {
@@ -548,11 +577,12 @@ export function getAnnotatedSubgraphs(
     transformedSubgraph = convertSubgraphToFederationv2(transformedSubgraph, {
       hadExplicitFederationLink,
     });
-    // Core Mesh directives (`@merge`, `@hoist`, `@source`, …) under `core/v0.1`.
+    // Core Mesh directives (`@merge` legacy, `@hoist`, `@source`, …) under `core/v0.1`.
     // Connectors: loaders keep `directive @connect` defs (GraphQL.js-valid print)
     // but omit `@composeDirective(name: "@connect")`; Guild gets that stamp via
     // `prepareConnectorsBeforeGuild` only.
     const importedCoreDirectives: MeshDirectiveImport[] = [];
+    // Keep importing `@merge` only when a subgraph still carries it (back-compat).
     if (mergeDirectiveUsed) {
       importedCoreDirectives.push('@merge');
     }
@@ -753,7 +783,7 @@ export function getAnnotatedSubgraphs(
     if (mergeDirectiveUsed) {
       if (!transformedSubgraph.getDirective('merge')) {
         const { mergeDirectiveTypeDefs } = stitchingDirectives();
-        // Add subgraph argument to @merge directive
+        // Legacy `@merge` def for back-compat schemas that still carry it.
         importedDirectivesAST.add(
           mergeDirectiveTypeDefs
             .replace('@merge(', '@merge(subgraph: String, ')
@@ -761,6 +791,20 @@ export function getAnnotatedSubgraphs(
         );
         transformedSubgraph = importFederationDirectives(transformedSubgraph, ['@key']);
       }
+    }
+    if (lookupDirectiveUsed || isDirectiveUsed) {
+      const imports = [
+        ...(lookupDirectiveUsed ? (['@lookup'] as const) : []),
+        ...(isDirectiveUsed ? (['@is'] as const) : []),
+      ];
+      transformedSubgraph = importFederationLookupDirectives(transformedSubgraph, imports);
+      if (
+        !transformedSubgraph.getDirective('lookup') ||
+        (isDirectiveUsed && !transformedSubgraph.getType('FieldSelectionMap'))
+      ) {
+        importedDirectivesAST.add(FEDERATION_LOOKUP_DIRECTIVES_SDL);
+      }
+      transformedSubgraph = importFederationDirectives(transformedSubgraph, ['@key']);
     }
     if (sourceDirectiveUsed) {
       importedDirectivesAST.add(/* GraphQL */ `
@@ -817,6 +861,13 @@ export function getAnnotatedSubgraphs(
     validateMeshDirectives(transformedSubgraph, {
       consumer: `@graphql-mesh/fusion-composition(subgraph: ${subgraphName})`,
     });
+    // Federation Spec draft `@lookup` / `@is` / `@internal` (compose DX).
+    const lookupErrors = validateFederationLookupDirectives(transformedSubgraph);
+    if (lookupErrors.length) {
+      throw lookupErrors.length === 1
+        ? lookupErrors[0]
+        : new AggregateError(lookupErrors, lookupErrors.map(e => e.message).join('\n'));
+    }
 
     let subgraphAST = getDocumentNodeFromSchema(transformedSubgraph);
     if (importedDirectivesAST.size) {
@@ -906,7 +957,8 @@ function addAnnotationsForSemanticConventions({
   directiveExtensions: any;
   subgraphName: string;
 }) {
-  if (directiveExtensions.merge?.length) {
+  // Prefer federation-spec `@lookup`; still honor legacy `@merge` if already present.
+  if (directiveExtensions.merge?.length || directiveExtensions.lookup?.length) {
     return;
   }
   const type = getNamedType(queryFieldConfig.type);
@@ -1099,13 +1151,35 @@ function addAnnotationsForSemanticConventions({
             typeExtensions.directives = typeDirectives;
             return true;
           }
-          // Other non-Connectors subgraphs still use Mesh `@merge` for type merging.
-          directiveExtensions.merge ||= [];
-          directiveExtensions.merge.push({
-            subgraph: subgraphName,
-            keyField: fieldName,
-            keyArg: argName,
-          });
+          // Non-Connectors / non-protobuf: federation-spec `@lookup` for singular
+          // entity entry points. Emit `@is(field:)` when the arg name differs from
+          // the entity field. List-returning batch fields still use legacy `@merge`
+          // for stitching hops (Federation Spec `@lookup` is not list-shaped).
+          const nullableReturn = getNullableType(queryFieldConfig.type);
+          const returnsList = isListType(nullableReturn);
+          if (batchListArg || returnsList) {
+            directiveExtensions.merge ||= [];
+            directiveExtensions.merge.push({
+              subgraph: subgraphName,
+              keyField: fieldName,
+              keyArg: argName,
+            });
+            return true;
+          }
+          directiveExtensions.lookup ||= [];
+          if (!directiveExtensions.lookup.length) {
+            directiveExtensions.lookup.push({});
+          }
+          if (argName !== fieldName && queryFieldConfig.args?.[argName]) {
+            const argConfig = queryFieldConfig.args[argName];
+            const argDirs = getDirectiveExtensions(argConfig);
+            argDirs.is ||= [];
+            if (!argDirs.is.some((d: { field?: string }) => d?.field === fieldName)) {
+              argDirs.is.push({ field: fieldName });
+            }
+            const argExtensions: Record<string, unknown> = (argConfig.extensions ||= {});
+            argExtensions.directives = argDirs;
+          }
           return true;
         };
         switch (queryFieldNameSnakeCase) {

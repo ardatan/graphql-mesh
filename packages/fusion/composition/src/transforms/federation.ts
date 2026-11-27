@@ -11,6 +11,7 @@ import {
   OperationTypeNode,
   parseSchemaCoordinate,
 } from 'graphql';
+import { importFederationLookupDirectives } from '@graphql-mesh/utils';
 import {
   asArray,
   getDefinedRootType,
@@ -290,6 +291,8 @@ export function createFederationTransform(config: FederationTransformConfig): Su
     );
     const usedFederationDirectives = new Set<string>();
     let mergeDirectiveUsed = false;
+    let lookupDirectiveUsed = false;
+    let isDirectiveUsed = false;
     subgraphSchema = mapSchema(subgraphSchema, {
       [MapperKind.TYPE]: type => {
         const configByType = configurationByType.get(type.name);
@@ -462,7 +465,8 @@ export function createFederationTransform(config: FederationTransformConfig): Su
               }));
             }
             // Connectors entity covered — no `@merge`.
-          } else {
+          } else if (argsExpr) {
+            // Complex `argsExpr` stays on legacy `@merge` (no direct `@lookup` mapping).
             const mergeDirectiveExtensions = (fieldDirectives.merge ||= []);
             mergeDirectiveExtensions.push({
               subgraph: subgraphConfig.name,
@@ -472,6 +476,26 @@ export function createFederationTransform(config: FederationTransformConfig): Su
               argsExpr,
             });
             mergeDirectiveUsed = true;
+          } else {
+            // Prefer federation-spec `@lookup` (+ `@is` when arg name ≠ key field).
+            fieldDirectives.lookup ||= [];
+            if (!fieldDirectives.lookup.length) {
+              fieldDirectives.lookup.push({});
+            }
+            lookupDirectiveUsed = true;
+            const keyArg = mergeDirectiveConfig.keyArg;
+            const keyField = mergeDirectiveConfig.keyField;
+            if (keyArg && keyField && keyArg !== keyField && fieldConfig.args?.[keyArg]) {
+              const argConfig = fieldConfig.args[keyArg];
+              const argDirs = getDirectiveExtensions(argConfig) || {};
+              argDirs.is ||= [];
+              if (!argDirs.is.some((d: { field?: string }) => d?.field === keyField)) {
+                argDirs.is.push({ field: keyField });
+              }
+              const argExtensions: Record<string, unknown> = (argConfig.extensions ||= {});
+              argExtensions.directives = argDirs;
+              isDirectiveUsed = true;
+            }
           }
         }
         for (const directiveName of federationDirectiveNames) {
@@ -523,6 +547,12 @@ export function createFederationTransform(config: FederationTransformConfig): Su
     });
     subgraphSchema = addFederation2DirectivesToSubgraph(subgraphSchema);
     subgraphSchema = importFederationDirectives(subgraphSchema, [...usedFederationDirectives]);
+    if (lookupDirectiveUsed || isDirectiveUsed) {
+      subgraphSchema = importFederationLookupDirectives(subgraphSchema, [
+        ...(lookupDirectiveUsed ? (['@lookup'] as const) : []),
+        ...(isDirectiveUsed ? (['@is'] as const) : []),
+      ]);
+    }
     if (mergeDirectiveUsed) {
       subgraphSchema = importMeshDirectives(subgraphSchema, ['@merge']);
       const schemaConfig = subgraphSchema.toConfig();

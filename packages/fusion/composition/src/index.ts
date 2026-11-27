@@ -6,3 +6,4 @@ export * from './mesh-join-supergraph.js';
 export * from './connect-entity.js';
 export * from './transforms.js';
 export * from './suggestionList/index.js';
+export * from './validate-federation-lookup.js';
