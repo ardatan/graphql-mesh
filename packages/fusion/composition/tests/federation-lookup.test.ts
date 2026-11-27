@@ -159,6 +159,33 @@ describe('Federation Spec @lookup / @is / @internal', () => {
     ).toBe(true);
   });
 
+  it('keeps @merge (not @lookup) for multi-arg entity entry fields', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      type Query {
+        productBySkuAndPackage(sku: String!, package: String!): Product
+      }
+      type Product {
+        sku: String!
+        package: String!
+      }
+    `);
+    const transform = createFederationTransform({
+      Product: {
+        key: {
+          fields: 'sku package',
+          resolveReference: {
+            fieldName: 'productBySkuAndPackage',
+          },
+        },
+      },
+    });
+    const result = transform(schema, { name: 'products', schema });
+    const field = result.getQueryType()!.getFields().productBySkuAndPackage!;
+    const dirs = getDirectiveExtensions(field);
+    expect(dirs.merge?.length).toBeGreaterThan(0);
+    expect(dirs.lookup?.length || 0).toBe(0);
+  });
+
   it('keeps @merge (not @lookup) when resolveReference uses nested argsExpr', () => {
     const schema = buildSchema(/* GraphQL */ `
       type Query {

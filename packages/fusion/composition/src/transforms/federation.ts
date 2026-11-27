@@ -478,10 +478,15 @@ export function createFederationTransform(config: FederationTransformConfig): Su
               !!keyArg &&
               !!fieldConfig.args?.[keyArg] &&
               isListType(getNullableType(fieldConfig.args[keyArg].type));
+            // Multi-arg entry fields (multi-field keys, @requires extras) need Mesh
+            // `@merge` / argsExpr — `@lookup` hop synthesis only maps one keyArg today.
+            const argCount = fieldConfig.args ? Object.keys(fieldConfig.args).length : 0;
+            const multiArg = argCount > 1;
             // Keep Mesh `@merge` when:
             // - list / batch (draft `@lookup` must not return a list)
             // - explicit `argsExpr` (nested / composite key mapping)
-            if (returnsList || batchListArg || explicitArgsExpr) {
+            // - more than one argument (multi-key / requires-related args)
+            if (returnsList || batchListArg || explicitArgsExpr || multiArg) {
               const mergeDirectiveExtensions = (fieldDirectives.merge ||= []);
               mergeDirectiveExtensions.push({
                 subgraph: subgraphConfig.name,
@@ -492,7 +497,7 @@ export function createFederationTransform(config: FederationTransformConfig): Su
               });
               mergeDirectiveUsed = true;
             } else {
-              // Entity entry fields that return one object → Federation Spec `@lookup`
+              // Single-arg entity entry that returns one object → Federation Spec `@lookup`
               // (+ `@is` when arg name ≠ key field).
               fieldDirectives.lookup ||= [];
               if (!fieldDirectives.lookup.length) {
