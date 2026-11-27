@@ -513,36 +513,14 @@ export async function processConfig(
     }
   }
 
-  let mergerName = config.merger;
+  let mergerName = config.merger || 'federation';
 
-  // Decide what is the default merger
-  if (!mergerName) {
-    if (config.sources.length > 1) {
-      mergerName = 'stitching';
-    } else {
-      // eslint-disable-next-line no-labels
-      resolversLoop: for (const resolversObj of additionalResolvers || []) {
-        for (const typeName in resolversObj || {}) {
-          const fieldResolvers = resolversObj[typeName];
-          if (typeof fieldResolvers === 'object') {
-            for (const fieldName in fieldResolvers) {
-              const fieldResolveObj = fieldResolvers[fieldName];
-              if (typeof fieldResolveObj === 'object') {
-                // selectionSet needs stitching merger even if there is a single source
-                if (fieldResolveObj.selectionSet != null) {
-                  mergerName = 'stitching';
-                  // eslint-disable-next-line no-labels
-                  break resolversLoop;
-                }
-              }
-            }
-          }
-        }
-      }
-      if (!mergerName) {
-        mergerName = 'bare';
-      }
-    }
+  // Breaking: `merger-bare` / `merger-stitching` removed — federation is the only merger.
+  if (mergerName === 'bare' || mergerName === 'stitching') {
+    log.warn(
+      `merger: ${mergerName} was removed; using federation (under-the-hood Supergraph) instead`,
+    );
+    mergerName = 'federation';
   }
 
   const { resolved: Merger, moduleName: mergerModuleName } = await getPackage<MeshMergerLibrary>({

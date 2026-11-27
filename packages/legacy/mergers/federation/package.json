@@ -1,11 +1,11 @@
 {
-  "name": "@graphql-mesh/merger-bare",
-  "version": "0.108.3",
+  "name": "@graphql-mesh/merger-federation",
+  "version": "0.102.11",
   "type": "module",
   "repository": {
     "type": "git",
     "url": "ardatan/graphql-mesh",
-    "directory": "packages/legacy/mergers/bare"
+    "directory": "packages/legacy/mergers/federation"
   },
   "license": "MIT",
   "engines": {
@@ -35,11 +35,16 @@
     "graphql": "^16.0.0 || ^17.0.0"
   },
   "dependencies": {
-    "@graphql-mesh/merger-stitching": "^0.108.3",
+    "@graphql-hive/logger": "^1.2.0",
+    "@graphql-mesh/fusion-composition": "workspace:*",
+    "@graphql-mesh/fusion-runtime": "workspace:*",
+    "@graphql-mesh/store": "^0.107.3",
+    "@graphql-mesh/transport-common": "workspace:*",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
     "@graphql-tools/schema": "^11.0.9",
     "@graphql-tools/utils": "^13.2.3",
+    "@graphql-tools/wrap": "workspace:*",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

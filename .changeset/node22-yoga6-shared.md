@@ -15,8 +15,6 @@
 "@graphql-mesh/http": minor
 "@graphql-mesh/incontext-sdk-codegen": minor
 "@graphql-mesh/json-schema": minor
-"@graphql-mesh/merger-bare": minor
-"@graphql-mesh/merger-stitching": minor
 "@graphql-mesh/migrate-config-cli": major
 "@graphql-mesh/mongoose": minor
 "@graphql-mesh/mysql": minor

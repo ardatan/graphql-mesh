@@ -164,7 +164,7 @@ export async function generateTsArtifacts(
   {
     unifiedSchema,
     rawSources,
-    mergerType = 'stitching',
+    mergerType = 'federation',
     documents,
     flattenTypes,
     importedModulesSet,
@@ -454,6 +454,21 @@ const baseDir = (() => {
   const jsFilePath = pathModule.join(artifactsDir, 'index.js');
   const dtsFilePath = pathModule.join(artifactsDir, 'index.d.ts');
 
+  const supergraphTsPath = pathModule.join(artifactsDir, 'supergraph.graphql.ts');
+  const supergraphJsPath = pathModule.join(artifactsDir, 'supergraph.graphql.js');
+
+  const compileSupergraphModule = async (moduleKind: ts.ModuleKind) => {
+    if (!(await pathExists(supergraphTsPath))) {
+      return;
+    }
+    log.info(
+      `Compiling supergraph.graphql.ts as ${
+        moduleKind === ts.ModuleKind.CommonJS ? 'CommonJS' : 'ES Module'
+      }`,
+    );
+    compileTS(supergraphTsPath, moduleKind, [supergraphJsPath]);
+  };
+
   const esmJob = (ext: 'mjs' | 'js') => async () => {
     log.info('Writing index.ts for ESM to the disk.');
     await writeFile(
@@ -469,6 +484,7 @@ const baseDir = (() => {
     if (fileType !== 'ts') {
       log.info(`Compiling TS file as ES Module to "index.${ext}"`);
       compileTS(tsFilePath, ts.ModuleKind.ESNext, [jsFilePath, dtsFilePath]);
+      await compileSupergraphModule(ts.ModuleKind.ESNext);
 
       if (ext === 'mjs') {
         const mjsFilePath = pathModule.join(artifactsDir, 'index.mjs');
@@ -493,6 +509,7 @@ const baseDir = (() => {
     if (fileType !== 'ts') {
       log.info('Compiling TS file as CommonJS Module to `index.js`');
       compileTS(tsFilePath, ts.ModuleKind.CommonJS, [jsFilePath, dtsFilePath]);
+      await compileSupergraphModule(ts.ModuleKind.CommonJS);
 
       log.info('Deleting index.ts');
       await fs.promises.unlink(tsFilePath);

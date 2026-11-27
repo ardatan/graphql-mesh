@@ -1,12 +1,10 @@
-/* eslint-disable import/no-nodejs-modules */
-
 /* eslint-disable import/no-extraneous-dependencies */
 import { createSchema, createYoga, Repeater } from 'graphql-yoga';
 import { Logger } from '@graphql-hive/logger';
 import { MemPubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
 import GraphQLHandler from '@graphql-mesh/graphql';
-import StitchingMerger from '@graphql-mesh/merger-stitching';
+import FederationMerger from '@graphql-mesh/merger-federation';
 import { getMesh, type GetMeshOptions } from '@graphql-mesh/runtime';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import { defaultImportFn } from '@graphql-mesh/utils';
@@ -72,11 +70,11 @@ export function getTestMesh(extraOptions?: Partial<GetMeshOptions>) {
     ],
     cache,
     pubsub,
-    merger: new StitchingMerger({
+    merger: new FederationMerger({
       cache,
       pubsub,
       log,
-      store: store.child('Stitching'),
+      store: store.child('Federation'),
     }),
     disposables,
     ...extraOptions,

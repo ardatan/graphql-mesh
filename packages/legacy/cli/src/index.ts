@@ -13,6 +13,10 @@ import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { fakePromise } from '@whatwg-node/promise-helpers';
 import { serveMesh } from './commands/serve/serve.js';
 import { generateTsArtifacts } from './commands/ts-artifacts.js';
+import {
+  SUPERGRAPH_MODULE_IMPORT,
+  writeSupergraphArtifacts,
+} from './commands/write-supergraph-artifacts.js';
 import { findAndParseConfig } from './config.js';
 import { handleFatalError } from './handleFatalError.js';
 import { include, registerTsconfigPaths } from './include.js';
@@ -134,6 +138,22 @@ export async function graphqlMesh(
                 printSchemaWithDirectives(meshInstance.schema),
               ).catch(e => log.error(`An error occured while writing the schema file: `, e));
 
+              const hasSupergraphSdl = Boolean(
+                (meshInstance.schema.extensions as { supergraphSdl?: string } | undefined)
+                  ?.supergraphSdl,
+              );
+              writeSupergraphArtifacts({
+                outputDir,
+                schema: meshInstance.schema,
+                log,
+              }).catch(e =>
+                log.error(`An error occured while writing the under-the-hood supergraph: `, e),
+              );
+
+              const playgroundOffline = resolvePlaygroundConfig(
+                meshConfig.config.serve?.playground,
+                false,
+              ).offline;
               generateTsArtifacts(
                 {
                   unifiedSchema: meshInstance.schema,
@@ -147,7 +167,8 @@ export async function graphqlMesh(
                   meshConfigImportCodes: new Set([
                     `import { findAndParseConfig } from '@graphql-mesh/cli';`,
                     `import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';`,
-                    ...(resolvePlaygroundConfig(meshConfig.config.serve?.playground, false).offline
+                    ...(hasSupergraphSdl ? [SUPERGRAPH_MODULE_IMPORT] : []),
+                    ...(playgroundOffline
                       ? [`import { renderGraphiQL } from '@graphql-yoga/render-graphiql';`]
                       : []),
                   ]),
@@ -169,11 +190,26 @@ export function getMeshOptions() {
 export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandler<TServerContext> {
   return createMeshHTTPHandler<TServerContext>({
     baseDir,
-    getBuiltMesh: ${cliParams.builtMeshFactoryName},
+    getBuiltMesh: ${
+      hasSupergraphSdl
+        ? `async () => {
+      const mesh = await ${cliParams.builtMeshFactoryName}();
+      if (
+        typeof supergraph === 'string' &&
+        supergraph.length > 0 &&
+        !(mesh.schema.extensions as { supergraphSdl?: string } | undefined)?.supergraphSdl
+      ) {
+        mesh.schema.extensions = {
+          ...(mesh.schema.extensions || {}),
+          supergraphSdl: supergraph,
+        };
+      }
+      return mesh;
+    }`
+        : cliParams.builtMeshFactoryName
+    },
     rawServeConfig: ${JSON.stringify(meshConfig.config.serve)},${
-      resolvePlaygroundConfig(meshConfig.config.serve?.playground, false).offline
-        ? '\n    renderGraphiQL,'
-        : ''
+      playgroundOffline ? '\n    renderGraphiQL,' : ''
     }
   })
 }
@@ -401,17 +437,55 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
             pathModule.join(outputDir, 'schema.graphql'),
             printSchemaWithDirectives(schema),
           );
+          const wroteSupergraph = await writeSupergraphArtifacts({
+            outputDir,
+            schema,
+            log,
+          });
 
           log.info(`Generating artifacts`);
           meshConfig.importCodes.add(
             `import { createMeshHTTPHandler, MeshHTTPHandler } from '@graphql-mesh/http';`,
           );
+          if (wroteSupergraph) {
+            // Loadable default-export SDL module (not plain .graphql — that fails under jiti/Node).
+            // HTTP stays createMeshHTTPHandler (Gateway under the hood).
+            meshConfig.importCodes.add(SUPERGRAPH_MODULE_IMPORT);
+          }
           if (resolvePlaygroundConfig(meshConfig.config.serve?.playground, false).offline) {
             meshConfig.importCodes.add(
               `import { renderGraphiQL } from '@graphql-yoga/render-graphiql';`,
             );
           }
-          meshConfig.codes.add(`
+          meshConfig.codes.add(
+            wroteSupergraph
+              ? `
+export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandler<TServerContext> {
+  return createMeshHTTPHandler<TServerContext>({
+    baseDir,
+    getBuiltMesh: async () => {
+      const mesh = await ${cliParams.builtMeshFactoryName}();
+      if (
+        typeof supergraph === 'string' &&
+        supergraph.length > 0 &&
+        !(mesh.schema.extensions as { supergraphSdl?: string } | undefined)?.supergraphSdl
+      ) {
+        mesh.schema.extensions = {
+          ...(mesh.schema.extensions || {}),
+          supergraphSdl: supergraph,
+        };
+      }
+      return mesh;
+    },
+    rawServeConfig: ${JSON.stringify(meshConfig.config.serve)},${
+      resolvePlaygroundConfig(meshConfig.config.serve?.playground, false).offline
+        ? '\n    renderGraphiQL,'
+        : ''
+    }
+  })
+}
+`
+              : `
 export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandler<TServerContext> {
   return createMeshHTTPHandler<TServerContext>({
     baseDir,
@@ -423,7 +497,8 @@ export function createBuiltMeshHTTPHandler<TServerContext = {}>(): MeshHTTPHandl
     }
   })
 }
-`);
+`,
+          );
           await generateTsArtifacts(
             {
               unifiedSchema: schema,

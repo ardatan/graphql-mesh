@@ -4,7 +4,7 @@ import type { YogaServerInstance } from 'graphql-yoga';
 import { WebSocketServer } from 'ws';
 import { MemPubSub } from '@graphql-hive/pubsub';
 import InMemoryLRUCache from '@graphql-mesh/cache-inmemory-lru';
-import BareMerger from '@graphql-mesh/merger-bare';
+import FederationMerger from '@graphql-mesh/merger-federation';
 import { getMesh } from '@graphql-mesh/runtime';
 import { InMemoryStoreStorageAdapter, MeshStore } from '@graphql-mesh/store';
 import SupergraphHandler from '@graphql-mesh/supergraph';
@@ -35,7 +35,7 @@ describe('Supergraph', () => {
       readonly: false,
     });
     const pubsub = new MemPubSub();
-    const merger = new BareMerger({ cache, pubsub, store, log });
+    const merger = new FederationMerger({ cache, pubsub, store, log });
     const fetchFn: MeshFetch = async (url, options) => {
       if (url.includes('authors')) {
         return authorsServer.fetch(url, options);

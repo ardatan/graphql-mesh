@@ -1,4 +1,3 @@
-merger: bare
 sources:
   - name: Pets
     handler:
