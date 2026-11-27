@@ -7,7 +7,7 @@ import {
 } from 'graphql';
 import { getDefDirectives } from '@graphql-mesh/utils';
 import { MapperKind, mapSchema } from '@graphql-tools/utils';
-import { getTypeResolveReference, setTypeResolveReference } from './lookup.js';
+import { getTypeResolveReference, setTypeResolveReference } from './resolve-reference.js';
 
 /**
  * Whether a named type is marked with Federation `@key` (object or interface).

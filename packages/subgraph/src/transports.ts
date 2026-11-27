@@ -3,7 +3,6 @@ import type { Logger } from '@graphql-hive/logger';
 import type { PubSub } from '@graphql-hive/pubsub';
 import {
   createDefaultExecutor,
-  type Transport,
   type TransportContext,
   type TransportEntry,
 } from '@graphql-mesh/transport-common';
@@ -13,40 +12,13 @@ import { getDirectiveExtensions } from '@graphql-tools/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 import type { MaybePromise } from '@whatwg-node/promise-helpers';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
+import {
+  defaultTransportsGetter,
+  unwrapTransport,
+  type TransportsOption,
+} from './transport-loader.js';
 
-export type TransportsOption =
-  | {
-      [key: string]: MaybePromise<Transport | { default: Transport }>;
-    }
-  | ((kind: string) => MaybePromise<Transport | { default: Transport }>);
-
-function defaultTransportsGetter(kind: string): MaybePromise<Transport> {
-  const moduleName = `@graphql-mesh/transport-${kind}`;
-  return handleMaybePromise(
-    () => import(moduleName),
-    transport => {
-      if (!transport) {
-        throw new Error(`${moduleName} module is empty`);
-      }
-      let current: any = transport;
-      while (current && !current.getSubgraphExecutor && current.default) {
-        current = current.default;
-      }
-      if (!current?.getSubgraphExecutor) {
-        throw new Error(`${moduleName} module does not export "getSubgraphExecutor"`);
-      }
-      return current as Transport;
-    },
-  );
-}
-
-function unwrapTransport(transport: Transport | { default: Transport }): Transport {
-  let current: any = transport;
-  while (current && !current.getSubgraphExecutor && current.default) {
-    current = current.default;
-  }
-  return current as Transport;
-}
+export type { TransportsOption } from './transport-loader.js';
 
 /**
  * Read `@transport(kind, subgraph, location, ...)` from schema extensions.

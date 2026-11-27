@@ -103,14 +103,27 @@ function getMeshSourceDirectives(
 }
 
 /**
+ * Resolve the Mesh stitching source directive name for a schema: prefer `@link`
+ * import alias, then fall back to a present `meshSource` / `source` directive def.
+ */
+function resolveMeshSourceDirectiveNameForSchema(schema: GraphQLSchema): string | undefined {
+  const schemaExtensions = schema.extensions as Record<string, any> | undefined;
+  return (
+    getMeshSourceDirectiveName(schemaExtensions) ||
+    (schema.getDirective('meshSource')
+      ? 'meshSource'
+      : schema.getDirective('source')
+        ? 'source'
+        : undefined)
+  );
+}
+
+/**
  * True when the schema carries Mesh stitching `@source` / `@meshSource` rename
  * (or hoist) stamps — not Apollo Connectors SCHEMA `@source`.
  */
 export function schemaHasMeshSourceTransforms(schema: GraphQLSchema): boolean {
-  const schemaExtensions = schema.extensions as Record<string, any> | undefined;
-  const meshSourceDirectiveName =
-    getMeshSourceDirectiveName(schemaExtensions) ||
-    (schema.getDirective('meshSource') ? 'meshSource' : undefined);
+  const meshSourceDirectiveName = resolveMeshSourceDirectiveNameForSchema(schema);
 
   for (const type of Object.values(schema.getTypeMap())) {
     if (type.name.startsWith('__')) continue;
@@ -181,14 +194,9 @@ export function extractMeshSourceTransforms(
     return { schema, transforms: [] };
   }
 
-  const schemaExtensions = (schema.extensions ||= {}) as Record<string, any>;
-  const meshSourceDirectiveName =
-    getMeshSourceDirectiveName(schemaExtensions) ||
-    (schema.getDirective('meshSource')
-      ? 'meshSource'
-      : schema.getDirective('source')
-        ? 'source'
-        : undefined);
+  // Ensure extensions bag exists for downstream consumers that mutate it.
+  schema.extensions ||= {};
+  const meshSourceDirectiveName = resolveMeshSourceDirectiveNameForSchema(schema);
 
   const renameTypeNames: Record<string, string> = {};
   const renameTypeNamesReversed: Record<string, string> = {};

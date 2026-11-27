@@ -4,39 +4,14 @@ import {
   isNonNullType,
   isObjectType,
   type GraphQLField,
-  type GraphQLNamedType,
   type GraphQLObjectType,
-  type GraphQLResolveInfo,
   type GraphQLSchema,
 } from 'graphql';
 import { getDefDirectives } from '@graphql-mesh/utils';
 import { getDirectiveExtensions } from '@graphql-tools/utils';
+import { getTypeResolveReference, setTypeResolveReference } from './resolve-reference.js';
 
-type ResolveReferenceFn = (reference: any, context: any, info: GraphQLResolveInfo) => any;
-
-/**
- * Record `__resolveReference` the way `@apollo/subgraph` expects so
- * `entitiesResolver` can dispatch Federation `_entities`.
- */
-export function setTypeResolveReference(
-  type: GraphQLNamedType,
-  resolveReference: ResolveReferenceFn,
-) {
-  const extensions = (type.extensions ??= {}) as Record<string, any>;
-  const apollo = (extensions.apollo ??= {});
-  const subgraph = (apollo.subgraph ??= {});
-  subgraph.resolveReference = resolveReference;
-  (type as any).resolveReference = resolveReference;
-}
-
-export function getTypeResolveReference(type: GraphQLNamedType): ResolveReferenceFn | undefined {
-  const fromExtensions = (type.extensions as any)?.apollo?.subgraph?.resolveReference;
-  if (typeof fromExtensions === 'function') {
-    return fromExtensions;
-  }
-  const fromType = (type as any).resolveReference;
-  return typeof fromType === 'function' ? fromType : undefined;
-}
+export { getTypeResolveReference, setTypeResolveReference } from './resolve-reference.js';
 
 function unwrapOutputType(type: GraphQLField<any, any>['type']) {
   let t: any = type;
