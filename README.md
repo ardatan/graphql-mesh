@@ -10,59 +10,62 @@
 
 <div align="center">
   &nbsp;<h3>GraphQL Mesh</h3>
-  <h6>GraphQL Federation framework for any API</h6>
-  <a href="https://www.graphql-mesh.com/v1"><b>Go to documentation</b></a>
+  <h6>Federate any API into a GraphQL Supergraph</h6>
+  <a href="https://the-guild.dev/graphql/mesh/v2"><b>Go to documentation</b></a>
+  ·
+  <a href="https://specs.graphql-mesh.dev"><b>Mesh specs</b></a>
 </div>
 
 <br />
 
 <div align="center">
 
-[![npm version](https://badge.fury.io/js/%40graphql-mesh%2Fcli.svg)](https://badge.fury.io/js/%40graphql-mesh%2Fcli)
+[![npm version](https://badge.fury.io/js/%40graphql-mesh%2Fcompose-cli.svg)](https://badge.fury.io/js/%40graphql-mesh%2Fcompose-cli)
 ![CI](https://github.com/ardatan/graphql-mesh/workflows/test/badge.svg)
 [![Discord Chat](https://img.shields.io/discord/625400653321076807)](https://discord.gg/xud7bH9)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
 </div>
 
-GraphQL Mesh is a GraphQL Federation framework and gateway for both GraphQL Federation and
-non-GraphQL Federation subgraphs, non-GraphQL services, such as REST and gRPC, and also databases
-such as MongoDB, MySQL, and PostgreSQL.
+GraphQL Mesh helps you **Federate any API into a GraphQL Supergraph**.
 
-GraphQL Mesh allows you to use GraphQL query language to access data in remote APIs that don't run
-GraphQL (and also ones that do run GraphQL). It can be used as a gateway to other services or run as
-a local GraphQL schema that aggregates data from remote APIs.
+Build Federation-ready Mesh subgraph SDL from GraphQL and non-GraphQL sources — **Generate**,
+**Hand-write**, or **Generate-then-edit** — then compose and serve on any Federation-compatible
+gateway. Mesh is **platform / registry / gateway independent**: keep Hive, Apollo GraphOS, Rover, or
+any other Federation stack; Mesh extends the graph you already run.
 
-The goal of GraphQL Mesh is to let developers easily access services that are written in other APIs
-specs (such as gRPC, OpenAPI/Swagger, OData, SOAP/WSDL, Apache Thrift, Mongoose, PostgreSQL, Neo4j,
-and also GraphQL) with GraphQL queries and mutations.
-
-GraphQL Mesh gives the developer the ability to modify the output schemas, link types across schemas
-and merge schema types. You can even add custom GraphQL types and resolvers that fit your needs.
-
-It allows developers to control the way they fetch data, and overcome issues related to backend
-implementation, legacy API services, chosen schema specification and non-typed APIs.
-
-GraphQL Mesh is acting as a proxy to your data, and uses common libraries to wrap your existing API
-services. You can use this proxy locally in your service or application by running the GraphQL
-schema locally (with GraphQL execute), or you can deploy this as a gateway layer to your internal
-service.
+- Build Federated GraphQL subgraphs from any API (**REST**, **SOAP**, **OData**, **gRPC**, **SQL**,
+  and more)
+- Support any GraphQL Platform incl. **Hive** and **Apollo GraphOS**
+- Run with any Federation Gateway and Router (**Hive Gateway**, **Apollo Router**, and peers)
 
 ## How does it work?
 
-The way GraphQL Mesh works is:
+1. **Generate** (or hand-write) Federation-ready Mesh subgraph SDL from your sources
+2. Optionally **Transform** the subgraph (automatic Compose transforms or edit the `.graphql`)
+3. **Serve Subgraph** when another gateway needs a Mesh-backed Federation URL
+4. **Compose** subgraphs into a supergraph (Mesh Compose, Hive, Rover, or your registry)
+5. **Serve Supergraph** on the Federation gateway you already run
 
-1. Collect API schema specifications from services
-2. Create a runtime instance of fully-typed SDK for the services.
-3. Convert API specs to GraphQL schema
-4. Applies custom schema transformations and schema extensions
-5. Creates a Federation subgraph or a Federation-compatible supergraph
+Same contract whether you Generate or Hand-write: Mesh directives and HTTP/REST Connectors
+(`@connect` / `@source`) stamped in GraphQL SDL. Spec imports live under
+[specs.graphql-mesh.dev](https://specs.graphql-mesh.dev).
 
-[Getting started](https://the-guild.dev/graphql/mesh/v1/getting-started)
+[Mesh v2 docs](https://the-guild.dev/graphql/mesh/v2) ·
+[Generate](https://the-guild.dev/graphql/mesh/v2/paths/generate) ·
+[Hand-write](https://the-guild.dev/graphql/mesh/v2/paths/hand-write) ·
+[Protocols](https://the-guild.dev/graphql/mesh/v2/protocols) ·
+[Mesh specs](https://specs.graphql-mesh.dev)
 
-[Supported Source APIs](https://the-guild.dev/graphql/mesh/v1/source-handlers)
+## Support GraphQL Mesh
 
-[Schema Transformations](https://the-guild.dev/graphql/mesh/v1/transforms)
+GraphQL Mesh is built and maintained in the open for everyone who wants to federate GraphQL and
+non-GraphQL APIs into a Supergraph. If GraphQL Mesh helps you or your team ship with more
+confidence, consider [sponsoring the project](https://github.com/sponsors/ardatan).
+
+Your support helps fund ongoing maintenance, better documentation, performance improvements, and new
+features for the community. Every contribution, large or small, helps keep GraphQL Mesh healthy and
+moving forward.
 
 ## Contributions
 

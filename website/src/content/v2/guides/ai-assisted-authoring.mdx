@@ -1,0 +1,144 @@
+---
+description:
+  Use an AI assistant with Mesh Hand-write -- same SDL contract, context checklist, validation
+---
+
+import { Callout, Cards } from '@theguild/components'
+import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
+
+# AI-assisted authoring
+
+Use an AI assistant to **draft or refine** Mesh subgraph SDL -- not a fourth product journey. Humans
+and models share the [Hand-write](/v2/paths/hand-write) contract: committed `.graphql`, Compose,
+optional registry, Hive Gateway / Apollo Router. There is no `/v2/paths/ai-write` and no separate
+"AI Connectors" dialect.
+
+<Callout type="info">
+  Landing still shows three equal cards -- Generate / Hand-write / Generate-then-edit. This guide
+  only deepens how to drive an assistant against that Hand-write surface.
+</Callout>
+
+## What success looks like
+
+Valid Mesh SDL the assistant (or you) can drop into Compose without custom one-off handlers:
+
+- Spec `@link` imports for every directive family you use
+- Local `directive @...` **definitions** for each `@composeDirective` name
+  ([why](/v2/directives#federation))
+- Binders (`$args`, `$this`, `selection`, protocol `args`) that match
+  [Selection mapping](/v2/guides/selection-mapping)
+- Honest gateway matrix: Connect → native on both; `@sql` / `@protobuf__rpc` / ... → Hive Gateway
+  only
+
+## Context to paste
+
+Give the model **Mesh truth**, not a generic GraphQL tutorial:
+
+| Paste                                                                                       | Why                                                         |
+| ------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| [Hand-write](/v2/paths/hand-write) (or this page + Hand-write)                              | Authoring contract and Compose entry                        |
+| [Reading generated SDL](/v2/guides/reading-generated-sdl)                                   | How to interpret stamps before editing                      |
+| Emitted subgraph SDL (when you have one)                                                    | Concrete `@connect` / `@sql` / ... shapes to mirror or trim |
+| [Directives reference](/v2/directives) excerpt                                              | Arg names and scenario samples                              |
+| Protocol page for the upstream ([Protocols](/v2/protocols))                                 | Apollo Router limits and loader vs hand-write notes         |
+| Target gateway ([Hive Gateway](/v2/serve/hive-gateway) / [Router](/v2/serve/apollo-router)) | Avoid inventing Router support for Mesh-only dirs           |
+
+Optional: one working query you already run against generated SDL, so the model preserves field
+names clients depend on.
+
+## Prompt pattern
+
+Keep prompts boring and checkable:
+
+1. **Role:** "Author Mesh v2 subgraph SDL for Compose + Hive Gateway."
+2. **Inputs:** paste emitted SDL **or** describe the upstream (OpenAPI path, SQL table, proto
+   service).
+3. **Constraints:** list required `@link` URLs, `@composeDirective` names, and that every composed
+   directive needs a local `directive` definition.
+4. **Output:** a single `.graphql` document -- no YAML `.meshrc`, no ad-hoc `sourceHandler`.
+5. **Verify:** "List every `@composeDirective` and confirm a matching `directive @...` exists."
+
+Example constraint block you can paste:
+
+```text
+Output Mesh subgraph SDL only.
+- Import https://specs.graphql-mesh.dev/core/v0.1 and protocol specs as needed.
+- For every @composeDirective(name: "@X"), include directive @X (...).
+- Use $args / $this binders per Mesh selection mapping; do not invent REST paths that ignore OpenAPI.
+- If the subgraph uses @sql or @protobuf__rpc, note Hive Gateway only (not Apollo Router).
+```
+
+## Worked mini-example
+
+Suppose you already generated a Connect ById field and want the assistant to add a type-level
+`$this` entity fill (arg name was `userId`, not `id`):
+
+{/* prettier-ignore */}
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])
+  @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+  @source(name: "rest", http: { baseURL: "https://api.example.com" })
+
+type Query {
+  # Keep client entrypoint -- arg stays userId; no entity: true here
+  getUserById(userId: ID!): User
+    @connect(
+      source: "rest"
+      http: { GET: "/users/{$args.userId}" }
+      selection: """
+        id
+        name
+      """
+    )
+}
+
+# Type-level connector for Federation _entities
+type User
+  @key(fields: "id")
+  @connect(
+    source: "rest"
+    http: { GET: "/users/{$this.id}" }
+    selection: """
+      id
+      name
+    """
+  ) {
+  id: ID!
+  name: String
+}
+```
+
+Ask the model to explain `$args` vs `$this` against [Directives: @connect](/v2/directives#connect)
+-- if it cannot, treat the draft as unsafe.
+
+## Do / don't
+
+| Do                                                      | Don't                                                    |
+| ------------------------------------------------------- | -------------------------------------------------------- |
+| Start from generated SDL when it exists                 | Invent a fourth "AI path" with different directives      |
+| Require `@composeDirective` + matching `directive` defs | Assume `@link` alone is enough for composition           |
+| Re-compose and query after each assistant edit          | Merge unreviewed SDL into production                     |
+| Point at Music Store / protocol examples for shapes     | Copy Apollo Rover/`APOLLO_KEY` as the default Mesh flow  |
+| Prefer Hive Gateway for Mesh protocol dirs              | Claim stock Apollo Router runs `@sql` / `@protobuf__rpc` |
+
+## Validate before you trust it
+
+1. `mesh-compose` (or your Compose config) accepts the file -- composition errors about missing
+   directive definitions mean the assistant skipped defs.
+2. [Reading generated SDL](/v2/guides/reading-generated-sdl) checklist still makes sense on the
+   edited file.
+3. Run one client query on [Hive Gateway](/v2/serve/hive-gateway); run Connect-only slices on
+   [Apollo Router](/v2/serve/apollo-router) when relevant.
+
+## Related
+
+<Cards>
+  <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
+  <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
+  <Cards.Card arrow title="Selection mapping" href="/v2/guides/selection-mapping" />
+  <Cards.Card arrow title="Directives reference" href="/v2/directives" />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="Generate-then-edit" href="/v2/paths/generate-then-edit" />
+</Cards>

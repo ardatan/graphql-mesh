@@ -1,0 +1,214 @@
+---
+description:
+  Composition (Mesh Compose) -- mesh.config.ts, loaders, hand-written SDL, transforms, registry
+  publish
+---
+
+import { Callout, Cards } from '@theguild/components'
+import { ConceptRef, DirectiveRef, ProtocolRef } from '../../components/v2-directive-ref'
+
+# Composition
+
+<ConceptRef name="composition">Composition</ConceptRef> via **Mesh Compose** turns subgraph
+definitions into subgraph or supergraph GraphQL SDL -- the same path for loader emit and
+hand-written files.
+
+## Config shape
+
+Typical `mesh.config.ts`:
+
+- `subgraphs` entries with a `sourceHandler` (loader) **or** a hand-written `schema` file / SDL
+  string.
+- Shared options: optional [Transform Subgraph](/v2/transforms) (Automatic or By hand), additional
+  type defs, output mode (`graphql` / binary formats as supported).
+- Optional `ignoreSemanticConventions` (see below).
+
+```ts
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { loadSqlSubgraph } from '@omnigraph/sql'
+import { loadOpenAPISubgraph } from '@omnigraph/openapi'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadSqlSubgraph('catalog', {
+        endpoint: 'file:chinook.db'
+      })
+    },
+    {
+      sourceHandler: loadOpenAPISubgraph('reviews', {
+        source: './openapi.json',
+        endpoint: 'http://localhost:4001'
+      })
+    },
+    {
+      name: 'referenceResource',
+      schema: './reference-resource.graphql'
+    }
+  ]
+})
+```
+
+Compose to a file, then serve:
+
+Packages (example mix):
+
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @omnigraph/sql @omnigraph/openapi \
+  @graphql-hive/gateway @graphql-mesh/transport-sql @graphql-mesh/transport-connect
+```
+
+```bash
+# Supergraph for local Serve Supergraph
+pnpm exec mesh-compose -o supergraph.graphql
+pnpm exec hive-gateway supergraph
+
+# Or emit one subgraph (Generate / registry / Serve Subgraph)
+pnpm exec mesh-compose --subgraph catalog -o catalog-subgraph.graphql
+pnpm exec mesh-compose --subgraph reviews -o reviews-subgraph.graphql
+```
+
+Generated and hand-written subgraphs share the same compose and
+[schema registry](/v2/concepts/schema-registry) path. [Transform Subgraph](/v2/transforms) is
+optional -- skip it when Hand-write or Generate-then-edit already owns the SDL.
+
+## Hand-written SDL
+
+```ts
+{
+  name: 'referenceResource',
+  schema: './reference-resource.graphql',
+}
+```
+
+Use this for join-only subgraphs, fully authored Connect SDL, and edited loader output. FHIR's
+`reference-resource.graphql` is the canonical join-only example.
+
+<a id="semantic-conventions" />
+
+## Semantic conventions (ById / ByIds)
+
+During composition, Mesh applies **loader / Query semantic conventions** unless you opt out. When
+the same object type appears across subgraphs and a Query field matches a ById / ByIds naming
+pattern with a key arg that lines up with a key field on that type, Compose stamps Federation entity
+wiring automatically -- `@key` plus Connect/protocol `entity: true` (or type-level `$this` maps) on
+HTTP/REST Connectors and protocol subgraphs (<ProtocolRef name="http-rest" />,{' '}
+
+<ProtocolRef name="sql" />, …). GraphQL one-object hops use Federation `@lookup` (+ `@is` when
+needed); list/batch GraphQL hops may use Type Merging `@merge` -- see [Directives:
+@lookup](/v2/directives#lookup) and [Directives: @merge](/v2/directives#merge).
+
+Naming is matched in snake_case. Typical patterns (key field often `id`):
+
+<div className="overflow-x-auto">
+
+| Field / arg (examples)                                 | Intent                 | Result                                              |
+| ------------------------------------------------------ | ---------------------- | --------------------------------------------------- |
+| `Query.bookById` / `Query.bookById(id:)`               | Singular ById          | `entity: true` / `$this` / Federation `@lookup`     |
+| `Query.getCustomer` / `Query.getCustomer(id:)`         | `get_<Type>` + key arg | Same                                                |
+| `Query.getCustomerById` / `Query.getCustomerById(id:)` | Explicit ById suffix   | Same                                                |
+| `Query.customer` / `Query.customer(id:)`               | Type name + key arg    | Same                                                |
+| `Query.customersByIds` / `Query.customersByIds(ids:)`  | Batch ByIds            | Batch maps or Type Merging `@merge` (not `@lookup`) |
+| `Query.getFoosByIds` / `Query.getFoosByIds(ids:)`      | Batch with `get_`      | Same                                                |
+
+</div>
+
+Examples: `Query.bookById`, OpenAPI Billing `getCustomer` (`Query.getCustomer` + `entity: true`).
+
+If your schema almost matches but names differ, use a
+[rename / naming-convention transform](/v2/transforms/automatic) so the field fits the convention --
+or stamp entities yourself with `createFederationTransform` (see
+[Federation](/v2/concepts/federation#entity-resolution)).
+
+Disable with `ignoreSemanticConventions: true` on the compose config when you want full manual
+control:
+
+```ts
+export const composeConfig = defineComposeConfig({
+  ignoreSemanticConventions: true,
+  subgraphs: [
+    // ...
+  ]
+})
+```
+
+## Registry publish
+
+Publish composed **subgraph** SDL to Hive schema registry / GraphOS with the same CLI UX whether the
+SDL came from a loader or a hand-written file. See [Schema registry](/v2/concepts/schema-registry).
+
+### 1. Emit one subgraph SDL
+
+Use `--subgraph` with the subgraph name from your Compose config (loader name or `name:` for a
+file). Output is Federation-compatible subgraph SDL -- same shape for SQL emit, Connect emit, or
+authored `.graphql`. This flag is also the **Generate** emit path -- see
+[Generate: CLI](/v2/paths/generate#cli-mesh-compose):
+
+```bash
+mesh-compose --subgraph catalog -o catalog-subgraph.graphql
+mesh-compose --subgraph reviews -o reviews-subgraph.graphql
+mesh-compose --subgraph recommendations -o recommendations-subgraph.graphql
+```
+
+Or compose the full supergraph for local serve without a registry:
+
+```bash
+mesh-compose -o supergraph.graphql
+```
+
+### 2. Publish to a registry
+
+Example with [Hive CLI](https://the-guild.dev/graphql/hive/docs/api-reference/cli) (GraphOS / Rover
+and other Federation registries use their own publish commands against the same subgraph file):
+
+```bash
+hive schema:publish \
+  --registry.accessToken "$HIVE_TOKEN" \
+  --service="catalog" \
+  --url="http://localhost:4001/graphql" \
+  --author "you" \
+  --commit "catalog-v1" \
+  catalog-subgraph.graphql
+```
+
+Repeat per subgraph (`reviews`, `recommendations`, ...). Hand-written and generated subgraphs share
+this path -- Compose does not care how the SDL was authored.
+
+### 3. Gateway pull
+
+Point [Hive Gateway](/v2/serve/hive-gateway) (or Apollo Router for a Connect-only graph) at the
+registry supergraph, or keep serving the local `supergraph.graphql` file in CI / local demos:
+
+```bash
+hive-gateway supergraph
+# or Apollo Router (Connectors native):
+./router --supergraph supergraph.graphql
+```
+
+**Non-Connect** Mesh directives (and other non-core imports such as draft `@lookup`) must survive
+composition via `@composeDirective` **and** matching `directive` definitions, or they are stripped
+before publish. HTTP/REST Connect `@connect` / `@source` use the **Connect composition path** --
+they do **not** need `@composeDirective`. See [Schema registry](/v2/concepts/schema-registry) and
+[Directives: @composeDirective](/v2/directives#federation).
+
+Worked multi-subgraph config: [Music Store Example](/v2/examples/music-store) (catalog + reviews +
+recommendations, then compose all). Serve the composed graph: [Serve Supergraph](/v2/serve). Serve
+one subgraph as a Federation endpoint: [Serve Subgraph](/v2/serve-subgraph).
+
+<Callout type="info">
+  Stable consumer UX: `mesh-compose` / `mesh-compose --subgraph` emit, then publish or serve. Hand
+  SDL uses `schema:` the same as loader emit. To **execute** Mesh subgraph SDL in your own GraphQL
+  server (Yoga, ...), use `buildSubgraphSchema` from `@graphql-mesh/subgraph` -- same input for
+  Generate, Generate-then-edit, and Hand-write
+  ([buildSubgraphSchema](/v2/guides/build-subgraph-schema) / [Serve Subgraph](/v2/serve-subgraph)).
+</Callout>
+
+<Cards>
+  <Cards.Card arrow title="Composition (concept)" href="/v2/concepts/composition" />
+  <Cards.Card arrow title="buildSubgraphSchema" href="/v2/guides/build-subgraph-schema" />
+  <Cards.Card arrow title="Serve Subgraph" href="/v2/serve-subgraph" />
+  <Cards.Card arrow title="Schema registry" href="/v2/concepts/schema-registry" />
+  <Cards.Card arrow title="Architecture" href="/v2/architecture" />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="Serve Supergraph" href="/v2/serve" />
+</Cards>

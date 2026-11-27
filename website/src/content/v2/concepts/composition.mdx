@@ -1,0 +1,78 @@
+---
+description: What composition is -- combining subgraph SDL into a supergraph
+---
+
+import { Cards } from '@theguild/components'
+import { ApiRef, ConceptRef, ProtocolRef } from '../../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
+
+# Composition
+
+**Composition** combines one or more **subgraph** GraphQL schemas into a **supergraph** (or
+validates a single subgraph for registry publish). Tooling is flexible: <ApiRef name="compose" />,
+Hive composition, Rover, or another Federation-compatible composer.
+
+## Where it lives
+
+<V2FlowDiagram
+  ariaLabel="Composition from subgraph SDL to supergraph"
+  steps={[
+    { title: 'Subgraph SDL' },
+    { title: 'Composition', accent: true },
+    { title: 'Supergraph', accent: true },
+    { title: 'Gateway', lines: ['or registry'] }
+  ]}
+/>
+
+| Piece        | Role                                                                    |
+| ------------ | ----------------------------------------------------------------------- |
+| Inputs       | Loader emit **or** hand-written `.graphql`                              |
+| Mesh Compose | Typical config in `mesh.config.ts`                                      |
+| Outputs      | Supergraph file, subgraph SDL for registry, binary formats as supported |
+
+Composition is **not** serving traffic, **not** executing
+
+<ConceptRef name="transports">transports</ConceptRef>, and **not** the schema registry (though you
+often compose then publish). Inputs may come from <ConceptRef name="loaders">loaders</ConceptRef> or
+hand SDL.
+
+## What Mesh Compose adds
+
+Beyond merging Federation types, Mesh Compose may:
+
+- Stamp **semantic ById / ByIds** entity wiring (`entity: true`, type-level `$this`, Federation
+  `@lookup` for one-object GraphQL hops, or Type Merging `@merge` for list/batch) -- see
+  [Composition](/v2/compose#semantic-conventions), [Directives: @lookup](/v2/directives#lookup), and
+  [Directives: @merge](/v2/directives#merge).
+- Rewrite `$args` inside <ProtocolRef name="http-rest" /> `@connect`,
+  <ProtocolRef name="protobuf" /> `@protobuf__rpc`, and <ProtocolRef name="thrift" /> `@thrift__rpc`
+  when rename transforms change GraphQL arg names.
+- Stamp `@composeDirective` (loaders) so **non-Connect** Mesh directives survive into the supergraph
+  -- hand SDL must pair each stamp with a local `directive` definition. Connect `@connect` /
+  `@source` do **not** need `@composeDirective` ([Directives](/v2/directives#federation)).
+
+Opt out of conventions with `ignoreSemanticConventions: true` when you need full manual control.
+
+## Short example
+
+```ts
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    { sourceHandler: loadSqlSubgraph('catalog', { endpoint: 'file:chinook.db' }) },
+    { name: 'recommendations', schema: './recommendations.graphql' }
+  ]
+})
+```
+
+Mixed loader + hand SDL is the Music Store / FHIR pattern: generate what you can, author join stubs
+and RPCs you own.
+
+Docs: [Composition](/v2/compose) | worked example in
+[Music Store Example](/v2/examples/music-store).
+
+<Cards>
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
+  <Cards.Card arrow title="Schema registry" href="/v2/concepts/schema-registry" />
+  <Cards.Card arrow title="Entity resolution" href="/v2/concepts/federation#entity-resolution" />
+  <Cards.Card arrow title="Concepts overview" href="/v2/concepts" />
+</Cards>

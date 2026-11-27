@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { cn, DecorationIsolation, Heading } from '@theguild/components';
+import { Anchor, cn, DecorationIsolation, Heading } from '@theguild/components';
 import manipulateSectionBlurBackground from './manipulate-section-blur-background.webp';
 
 export function ManipulateDataSection({ className }: { className?: string }) {
@@ -17,29 +17,38 @@ export function ManipulateDataSection({ className }: { className?: string }) {
           className="absolute w-full h-full object-cover object-right"
         />
       </DecorationIsolation>
-      <Heading as="h3" size="md" className="text-white text-center">
-        Manipulate data
+      <Heading as="h3" size="md" className="text-white text-center text-balance">
+        From subgraph SDL to any Federation Gateway
       </Heading>
       <p className="mt-4 text-white/80 text-center text-balance">
-        Transform and tailor your schema within Mesh to meet specific business requirements
-        efficiently.
+        Same order as the docs: generate and optionally transform subgraphs, serve a subgraph peer
+        when needed, compose, then serve the supergraph on the gateway you already run.
       </p>
-      <dl className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-8 mt-8 lg:mt-16 xl:[&>*:not(:first-child)]:pl-8 max-sm:[&>*:not(:first-child)]:pt-4 max-sm:divide-y xl:divide-x divide-green-700">
+      <dl className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4 lg:gap-6 mt-8 lg:mt-16 xl:[&>*:not(:first-child)]:pl-6 max-sm:[&>*:not(:first-child)]:pt-4 max-sm:divide-y xl:divide-x divide-green-700">
         <ListItem
-          title="Naming conventions"
-          description="Customize field names within your GraphQL schema using Mesh's flexible naming conventions."
+          title="Generate"
+          description="Emit Federation-ready Mesh subgraph SDL from REST, SOAP, OData, gRPC, SQL, and more."
+          href="/v2/paths/generate"
         />
         <ListItem
-          title="Modify results"
-          description="Refine and adjust query results directly within Mesh to suit precise user needs."
+          title="Transform"
+          description="Optional reshape: Automatic Compose transforms or edit the .graphql by hand."
+          href="/v2/transforms"
         />
         <ListItem
-          title="Alter resolvers"
-          description="Incorporate middleware into your resolvers with Mesh, enhancing your GraphQL service's functionality."
+          title="Serve Subgraph"
+          description="When a foreign gateway needs a Mesh-backed Federation URL: Hive subgraph or buildSubgraphSchema."
+          href="/v2/serve-subgraph"
         />
         <ListItem
-          title="Schema structure"
-          description="Employ Mesh to merge types and extend sources, structuring your GraphQL schema optimally."
+          title="Compose"
+          description="Mesh Compose (or your registry) turns subgraphs into a supergraph."
+          href="/v2/compose"
+        />
+        <ListItem
+          title="Serve Supergraph"
+          description="Run with any Federation Gateway: Hive Gateway, Apollo Router, and peers."
+          href="/v2/serve"
         />
       </dl>
     </section>
@@ -49,11 +58,16 @@ export function ManipulateDataSection({ className }: { className?: string }) {
 interface ListItemProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
   description: string;
+  href: string;
 }
-function ListItem({ title, description, ...rest }: ListItemProps) {
+function ListItem({ title, description, href, ...rest }: ListItemProps) {
   return (
     <div {...rest}>
-      <dt className="text-white font-medium">{title}</dt>
+      <dt className="text-white font-medium">
+        <Anchor href={href} className="hive-focus rounded-sm underline-offset-4 hover:underline">
+          {title}
+        </Anchor>
+      </dt>
       <dd className="text-white/80 block mt-2">{description}</dd>
     </div>
   );

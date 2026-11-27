@@ -1,0 +1,113 @@
+---
+description: Practical steps to migrate from Mesh v0 YAML or Mesh v1 Compose into Mesh v2 /v2 docs
+---
+
+import { Cards } from '@theguild/components'
+
+# From Mesh v0 / v1
+
+Actionable cutover into **`/v2`**. For the product story (Mesh specification / hand-writable SDL),
+start at [Migration overview](/v2/guides/migration).
+
+| Path    | Era                         | What to keep in mind                                         |
+| ------- | --------------------------- | ------------------------------------------------------------ |
+| `/docs` | Mesh v0                     | YAML `.meshrc`, built-in serve, handlers/plugins             |
+| `/v1`   | Mesh v1                     | Compose CLI + Hive Gateway, still mostly generate-first      |
+| `/v2`   | Mesh today (this docs tree) | SDL + directives; Generate / Hand-write / Generate-then-edit |
+
+## From Mesh v0 (YAML)
+
+1. Treat `.meshrc` sources as **inputs to loaders**, not the long-term contract -- the contract is
+   emitted / authored subgraph SDL.
+2. Move compose into `mesh.config.ts` with `@graphql-mesh/compose-cli` (see
+   [Composition](/v2/compose)).
+3. Serve on [Hive Gateway](/v2/serve/hive-gateway) (JS/TS). Use
+   [Apollo Router](/v2/serve/apollo-router) only for Connect-compatible slices.
+4. Prefer [Generate](/v2/paths/generate) / [Generate-then-edit](/v2/paths/generate-then-edit) /
+   [Hand-write](/v2/paths/hand-write) over a single YAML black box.
+
+### Worked cutover: OpenAPI source
+
+Before (v0 sketch):
+
+```yaml
+# .meshrc.yaml
+sources:
+  - name: reviews
+    handler:
+      openapi:
+        source: http://localhost:4001/openapi.json
+```
+
+After (Compose + Hive Gateway):
+
+```ts filename="mesh.config.ts"
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway'
+import { loadOpenAPISubgraph } from '@omnigraph/openapi'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadOpenAPISubgraph('reviews', {
+        source: 'http://localhost:4001/openapi.json',
+        endpoint: 'http://localhost:4001'
+      })
+    }
+  ]
+})
+
+export const gatewayConfig = defineGatewayConfig({
+  // Connect often ships built-in; add other transports as needed
+})
+```
+
+```bash
+npx mesh-compose -o supergraph.graphql
+hive-gateway supergraph
+```
+
+## From Mesh v1 docs
+
+1. Keep Compose + Hive Gateway -- v2 still uses them.
+2. Add the three paths explicitly: [Generate](/v2/paths/generate),
+   [Generate-then-edit](/v2/paths/generate-then-edit), [Hand-write](/v2/paths/hand-write).
+3. Learn to [read generated SDL](/v2/guides/reading-generated-sdl) before renaming fields.
+4. Prefer the [Music Store Example](/v2/examples/music-store) over Petstore-only tutorials.
+
+## Protocol cutovers
+
+When a v0/v1 handler name differs from today's loader, open the matching [Protocols](/v2/protocols)
+page and copy the `load*Subgraph` + transport pair.
+
+| v0 / older handler flavor       | Today (Compose)                                | Protocol page                          |
+| ------------------------------- | ---------------------------------------------- | -------------------------------------- |
+| OpenAPI / JSON Schema           | `loadOpenAPISubgraph` / JSON Schema            | [HTTP / REST](/v2/protocols/http-rest) |
+| SOAP / WSDL                     | `loadSOAPSubgraph` (Connect + XML)             | [HTTP / REST](/v2/protocols/http-rest) |
+| GraphQL HTTP                    | `loadGraphQLHTTPSubgraph`                      | [GraphQL HTTP](/v2/protocols/graphql)  |
+| SQL / Postgres / MySQL / SQLite | `loadSqlSubgraph` (`@omnigraph/sql`)           | [SQL](/v2/protocols/sql)               |
+| Mongo / Mongoose                | `loadMongoSubgraph`                            | [Mongo](/v2/protocols/mongo)           |
+| gRPC / Protobuf                 | `loadProtobufSubgraph` / hand `@protobuf__rpc` | [Protobuf](/v2/protocols/protobuf)     |
+| Thrift                          | `loadThriftSubgraph`                           | [Thrift](/v2/protocols/thrift)         |
+| Neo4j                           | `loadNeo4jSubgraph`                            | [Neo4j](/v2/protocols/neo4j)           |
+
+Gateway-owned plugins (auth, rate limit, metrics) move with Hive Gateway -- see
+[Authentication](/v2/guides/auth), [Rate limiting](/v2/guides/rate-limit), and
+[Monitoring](/v2/guides/monitoring).
+
+## Coming from Schema Stitching instead?
+
+That is a different starting point (programmatic `stitchSchemas`, not Mesh YAML/v1 docs):
+[From Schema Stitching](/v2/guides/migration/from-stitching).
+
+## Related
+
+<Cards>
+  <Cards.Card arrow title="Migration overview" href="/v2/guides/migration" />
+  <Cards.Card arrow title="From Schema Stitching" href="/v2/guides/migration/from-stitching" />
+  <Cards.Card arrow title="Introduction" href="/v2" />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
+  <Cards.Card arrow title="Protocols" href="/v2/protocols" />
+  <Cards.Card arrow title="FAQ" href="/v2/faq" />
+</Cards>

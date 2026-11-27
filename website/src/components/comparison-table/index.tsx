@@ -4,83 +4,68 @@ import { Table, TableCell, TableHeader, TableRow } from './table';
 type Entry = { text: string; score: number };
 const data: Array<{
   name: string;
-  'Productivity / Maintainability': Entry;
-  'Unified Schema design': Entry;
-  'Sub-services support': Entry;
+  Contract: Entry;
+  'Config level': Entry;
+  Transforms: Entry;
+  Gateway: Entry;
 }> = [
   {
     name: 'GraphQL Mesh',
-    'Productivity / Maintainability': {
-      text: 'Packages with a server, caching, Envelop plugins, and large sub-service types support. Configuration-based with custom resolvers.',
+    Contract: {
+      // Portable subgraph SDL is the product: Mesh directives + Connectors,
+      // generated or authored, then composed like any other Federation peer.
+      text: 'Federation subgraph SDL: Mesh directives for REST, SOAP, OData, gRPC, SQL, and more, plus HTTP/REST Connectors (`@connect` / `@source`). One portable contract for compose and serve.',
       score: 2,
     },
-    'Unified Schema design': {
-      text: 'Flexible Schema design with Transforms and custom resolvers support.',
+    'Config level': {
+      text: 'Subgraph-level. Generate, Hand-write, or Generate-then-edit the SDL; the gateway only serves the composed supergraph (or a Mesh Serve Subgraph peer).',
       score: 2,
     },
-    'Sub-services support': {
-      text: 'Support for a large range of types of sub-services and databases.',
+    Transforms: {
+      text: 'Optional Transform Subgraph (Automatic Compose transforms or edit the .graphql by hand) before Compose.',
       score: 2,
     },
-  },
-  {
-    name: 'GraphQL Tools',
-    'Productivity / Maintainability': {
-      text: 'Programmatic approach at the Gateway level. Type merging makes it easier to deal with sub-services conflicts.',
-      score: 1,
-    },
-    'Unified Schema design': {
-      text: 'Access to all GraphQL Schema building libraries.',
+    Gateway: {
+      text: 'Gateway-independent. Compose once; run on Hive Gateway, Apollo Router, or any Federation-compatible gateway / router.',
       score: 2,
-    },
-    'Sub-services support': {
-      text: 'Only supports GraphQL sub-services out of the box. Other sub-service types can be supported with Schema extensions at the Gateway level.',
-      score: 1,
-    },
-  },
-  {
-    name: 'Apollo Server with DataSources',
-    'Productivity / Maintainability': {
-      text: 'Requires a lot of coding and maintenance work at the DataSources level.',
-      score: 0,
-    },
-    'Unified Schema design': {
-      text: 'Access to all GraphQL Schema building libraries.',
-      score: 2,
-    },
-    'Sub-services support': {
-      text: 'Integrating with some types of sub-services might require some extra work.',
-      score: 1,
     },
   },
   {
     name: 'Apollo Federation',
-    'Productivity / Maintainability': {
-      text: 'Rover CLI and Apollo Studio. Only the Apollo Gateway needs maintenance.',
-      score: 2,
+    Contract: {
+      text: 'Federation subgraph GraphQL SDL. Connectors are Connect-shaped SDL that the Router executes; non-Connect sources need a subgraph process you own (Mesh can supply that SDL).',
+      score: 1,
     },
-    'Unified Schema design': {
-      text: 'Access to all GraphQL Schema building libraries.',
-      score: 2,
+    'Config level': {
+      text: 'Mixed. Entity/subgraph shape lives in each subgraph; Connector execution is gateway/Router-side.',
+      score: 1,
     },
-    'Sub-services support': {
-      text: "Only supports 'Federation compliant' GraphQL sub-services.",
-      score: 0,
+    Transforms: {
+      text: 'Schema shape owned per subgraph codebase; no Mesh-style Automatic / By-hand transform path on composed SDL.',
+      score: 1,
+    },
+    Gateway: {
+      text: 'Strong GraphOS / Router story. Mesh drops in as Federation subgraph peers beside the stack you already run.',
+      score: 1,
     },
   },
   {
-    name: 'Hasura',
-    'Productivity / Maintainability': {
-      text: 'Plug and play solution. Configuration-based with custom resolvers.',
-      score: 2,
+    name: 'Schema Stitching',
+    Contract: {
+      text: 'No portable Federation subgraph contract. Integration is an executor map and type-merge config at the stitch layer.',
+      score: 0,
     },
-    'Unified Schema design': {
-      text: 'The Unified Schema is directly linked to the underlying database schema or sub-services design.',
+    'Config level': {
+      text: 'Gateway-level. stitchSchemas / type merge usually lives in-process with the stitched GraphQLSchema.',
+      score: 0,
+    },
+    Transforms: {
+      text: 'Merge and filter config in the gateway, not a Transform Subgraph step on Federation SDL.',
       score: 1,
     },
-    'Sub-services support': {
-      text: 'Only supports GraphQL and REST sub-services and a set of databases.',
-      score: 1,
+    Gateway: {
+      text: 'Typically one in-process schema. Mesh migrates you to subgraph SDL + Compose + any Federation Gateway.',
+      score: 0,
     },
   },
 ];
@@ -91,15 +76,17 @@ export interface ComparisonTableProps extends React.HTMLAttributes<HTMLDivElemen
 export function ComparisonTable({ children, className, ...rest }: ComparisonTableProps) {
   return (
     <section
+      id="consider-switching-from-other-tools"
       className={cn('py-6 sm:py-12 md:px-6 xl:px-[120px] lg:py-[120px]', className)}
       {...rest}
     >
       <header className="sm:text-center sm:text-balance">
         <Heading as="h3" size="md">
-          Consider switching from other tools?
+          What Mesh adds
         </Heading>
         <p className="mt-4 mb-8 sm:mb-16 text-green-800">
-          Learn the differences between Mesh, Apollo Federation, Hasura and GraphQL Tools
+          The useful contrast is not “can it talk to REST?”. It is where the contract lives, whether
+          config is subgraph-portable, and whether the gateway is locked in.
         </p>
       </header>
       {/* this is focusable (by default) because a keyboard user will scroll through the overflowing table with arrows */}
@@ -108,7 +95,10 @@ export function ComparisonTable({ children, className, ...rest }: ComparisonTabl
           <thead>
             <TableRow>
               {headers.map(header => (
-                <TableHeader className="sm:w-1/4 whitespace-pre" key={header}>
+                <TableHeader
+                  className={cn('whitespace-pre', headers.length > 4 ? 'sm:w-[20%]' : 'sm:w-1/4')}
+                  key={header}
+                >
                   {header === 'name' ? '' : header}
                 </TableHeader>
               ))}

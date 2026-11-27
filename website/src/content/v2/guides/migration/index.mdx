@@ -1,0 +1,88 @@
+---
+description:
+  Migration hub -- Mesh journey v0 to v2, then paths from Mesh v0/v1 or Schema Stitching into /v2
+---
+
+import { Callout, Cards } from '@theguild/components'
+import { ConceptRef, ProtocolRef } from '../../../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../../../components/v2-flow-diagram'
+
+# Migration
+
+One place for **where Mesh came from** and **how to land on `/v2`**. Pick the path that matches your
+starting point.
+
+<V2FlowDiagram
+  ariaLabel="Mesh product journey from v0 to v2"
+  steps={[
+    { title: 'v0', lines: ['YAML gateway'] },
+    { title: 'v1', lines: ['Generate-first', 'Mesh Composition', '+ Hive Gateway'], accent: true },
+    { title: 'v2', lines: ['Mesh SDL', 'HTTP/REST Connectors'], accent: true }
+  ]}
+/>
+
+| Era    | Docs             | Product shape                                                                                                                                                                                                                                                                                                                                                                |
+| ------ | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **v0** | [`/docs`](/docs) | YAML `.meshrc`, built-in serve, handlers / plugins / cache -- config-first gateway                                                                                                                                                                                                                                                                                           |
+| **v1** | [`/v1`](/v1)     | **Generate-first** Mesh-specific <ConceptRef name="composition" label="Composition" /> (Mesh Compose) + <ConceptRef name="gateway" label="Hive Gateway" /> -- loaders emit subgraph / supergraph SDL; serve is a separate runtime                                                                                                                                            |
+| **v2** | [`/v2`](/v2)     | **Mesh specification** (hand-writable `.graphql`) / <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef>-adapted: equal [Generate](/v2/paths/generate) / [Hand-write](/v2/paths/hand-write) / [Generate-then-edit](/v2/paths/generate-then-edit); Federation-ready subgraphs; Hive Gateway + Apollo Router peers under [Serve Supergraph](/v2/serve/hive-gateway) |
+
+## What changed
+
+### v0 -> v1: Mesh meets Federation
+
+v0 was one process: configure sources in YAML, Mesh merged and **served** GraphQL itself.
+
+v1 split that into the Federation shape the ecosystem already used:
+
+- **Mesh-specific Composition** (Mesh Compose) -- loaders and Mesh directives turn sources into
+  **Federation-ready subgraph SDL** (and optionally a supergraph).
+- **Hive Gateway** -- a separate federation gateway runtime that executes the composed graph.
+
+The default story stayed **generate-first**. Hand-authored SDL existed but was not an equal path.
+
+### v1 -> v2: Mesh specification / hand-writable SDL
+
+v2 keeps Composition + Hive Gateway, and keeps generate. What shifts is the **authoring contract**:
+
+- **Hand-writable Mesh SDL:** generated, edited, and scratch-authored `.graphql` share one path
+  through [Composition](/v2/compose), optional [schema registry](/v2/concepts/schema-registry), and
+  [Serve Supergraph](/v2/serve/hive-gateway). The Mesh specification is that directive surface --
+  humans and AI can read and write the same `.graphql` loaders emit.
+- **HTTP/REST Connectors-adapted:** HTTP mapping follows
+  <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef>
+  (`@connect` / `@source`). Connectors run natively on Hive Gateway and Apollo Router; Mesh
+  protocols (<ProtocolRef name="sql" />, <ProtocolRef name="protobuf" />, ...) stay first-class on
+  Hive Gateway (or behind Apollo Router via [Serve Subgraph](/v2/serve-subgraph)).
+- **Hand-write as a first-class skill:** humans and AI write (or edit) the same directive surface
+  loaders emit -- [Hand-write](/v2/paths/hand-write),
+  [Reading generated SDL](/v2/guides/reading-generated-sdl).
+
+In short: v1 brought Mesh into **Federation composition + gateway**; v2 adapts that stack to a
+**hand-writable Mesh specification / HTTP/REST Connectors** model without dropping Mesh-specific
+transports.
+
+<Callout type="info">
+  Use this `/v2` tree for Mesh specification / Federation-ready SDL. Legacy Mesh v0 stays under
+  [`/docs`](/docs); Mesh v1 Compose + Hive Gateway runbooks remain under [`/v1`](/v1) while you cut
+  over.
+</Callout>
+
+## Already on Federation?
+
+You may not be “migrating Mesh versions” at all -- you might only want to **extend** an existing
+Federation graph with REST, SQL, or gRPC via Mesh subgraphs. That path is documented on the
+[Introduction](/v2#enhance-an-existing-federation) and in the
+[FAQ](/v2/faq#can-mesh-drop-into-an-existing-federation-setup).
+
+## Choose a migration path
+
+<Cards>
+  <Cards.Card arrow title="From Mesh v0 / v1" href="/v2/guides/migration/from-v0-v1" />
+  <Cards.Card arrow title="From Schema Stitching" href="/v2/guides/migration/from-stitching" />
+  <Cards.Card arrow title="Enhance existing Federation" href="/v2#enhance-an-existing-federation" />
+  <Cards.Card arrow title="Mesh v2 intro" href="/v2" />
+  <Cards.Card arrow title="FAQ" href="/v2/faq" />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
+</Cards>

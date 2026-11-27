@@ -1,0 +1,290 @@
+---
+description: Automatic Transform Subgraph -- Mesh Compose transforms in mesh.config.ts
+---
+
+import { Cards } from '@theguild/components'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
+
+# Automatic
+
+**Automatic** Transform Subgraph means Compose applies ordered `transforms` from `mesh.config.ts` to
+a subgraph's SDL before it joins the supergraph. You keep the loader emit or committed file as
+input; the public GraphQL names come from config. Prefer this when the rewrite is small and
+repeatable. For editing the `.graphql` itself, see [By hand](/v2/transforms/by-hand).
+
+<V2FlowDiagram
+  ariaLabel="Automatic transforms pipeline inside Mesh Compose"
+  caption="Config-driven rewrites; binders follow GraphQL renames."
+  steps={[
+    { title: 'Input SDL', lines: ['Loader or file'] },
+    { title: 'transforms: []', lines: ['Ordered'], accent: true },
+    { title: 'Annotated SDL', accent: true },
+    { title: 'Composition', lines: ['Supergraph'] }
+  ]}
+/>
+
+1. Compose loads each subgraph (generated or `schema:` file).
+2. If that subgraph lists `transforms`, Compose applies them **in order** to that subgraph's schema
+   before / as it is annotated for composition.
+3. Transformed SDL is what joins the supergraph -- including rewritten `$args` / `$this` inside
+   `@connect`, `@source`, and Mesh protocol directives (`@protobuf__rpc`, `@sql`, ...) so Hive
+   Gateway and Apollo Router Connect compatibility stay valid.
+
+## Concrete example
+
+Loader (or hand SDL) exposes `Query.moviesByYear(year:)`. Public API should say `releaseYear`
+without regenerating or hand-editing every `@protobuf__rpc(args:)` line:
+
+```ts {4-9}
+{
+  name: 'movies',
+  schema: './movies.graphql', // or sourceHandler: load...
+  transforms: [
+    createRenameTransform({
+      argRenamer: ({ fieldName, argName }) =>
+        fieldName === 'moviesByYear' && argName === 'year' ? 'releaseYear' : argName,
+    }),
+  ],
+}
+```
+
+After Compose, the public arg and binder both follow (Compose rewrites `$args` for you):
+
+{/* prettier-ignore */}
+```diff
+type Query {
+-  moviesByYear(year: Int!): [Movie!]!
++  moviesByYear(releaseYear: Int!): [Movie!]!
+     @protobuf__rpc(
+       method: "Movies/ByYear"
+       args: """
+-        year: $args.year
++        year: $args.releaseYear
+       """
+     )
+}
+```
+
+Same idea for OpenAPI / `@connect` emit with `createPrefixTransform` or naming-convention, and for
+hand-written protobuf SDL plus a rename transform.
+
+## When automatic helps
+
+- **Rename / prefix / naming-convention** on output you mostly like (including shaping fields toward
+  [semantic ById conventions](/v2/compose#semantic-conventions)).
+- **Federation transform** (`createFederationTransform`) to annotate a non-federated GraphQL source
+  with `@key` + `resolveReference` -- config keys are `Type` / `Type.field` today; see
+  [Entity resolution](/v2/concepts/federation#entity-resolution).
+- **Filter / wrap** generated noise before a first review. Filter patterns such as `Query.*` or
+  `Type.!User` are Mesh **schema selectors** (globs), not single-element coordinates -- see
+  [Schema Coordinates](/v2/guides/schema-coordinates).
+- Keep Connect compatibility valid when GraphQL names change but directive mappings must follow.
+
+## When to skip (or go By hand)
+
+- You are already **editing** emitted SDL ([Generate-then-edit](/v2/paths/generate-then-edit) or
+  [By hand](/v2/transforms/by-hand)).
+- You are **hand-writing** protocol SDL with the public names you want
+  ([Hand-write](/v2/paths/hand-write)).
+- Selection shape, entity rules, or join logic need real authorship -- transforms will not replace
+  that.
+
+## Applicability matrix
+
+| Transform family                         | Rewrites `@connect` / `@source` binders     | Rewrites Mesh protocol dirs (`@sql`, `@protobuf__rpc`, ...) | Apollo Router impact                                 |
+| ---------------------------------------- | ------------------------------------------- | ----------------------------------------------------------- | ---------------------------------------------------- |
+| Rename / naming-convention / prefix      | Yes (`$args` / `$this` follow)              | Yes where binders exist                                     | Keep Connect-compatible when you only rename GraphQL |
+| Filter / prune                           | Drops fields/types; remaining Connect stays | Same                                                        | Smaller Connect surface still Router-ok              |
+| Federation (`createFederationTransform`) | N/A (adds `@key` / resolveReference)        | Same on GraphQL sources                                     | Hive Gateway entity path; not a Connect rewrite      |
+| Hoist / encapsulate / wrap               | Case-by-case; re-read SDL after             | Case-by-case                                                | Re-check Apollo Router if Connect shape changes      |
+
+Always re-[read the SDL](/v2/guides/reading-generated-sdl) after transforms: binders must still
+match the public GraphQL names.
+
+## Transform catalog
+
+Import every helper from `@graphql-mesh/compose-cli`. Apply them on **`subgraphs[].transforms`**
+(ordered). Compose rewrites `$args` / `$this` / protocol binders when GraphQL names change so
+[Hive Gateway](/v2/serve/hive-gateway) and Apollo Router Connect slices stay valid.
+
+| Helper                            | Job                                                                                   |
+| --------------------------------- | ------------------------------------------------------------------------------------- |
+| `createRenameTransform`           | Rename types, fields, and/or args with callbacks                                      |
+| `createPrefixTransform`           | Prefix type names (and optionally root fields) to avoid clashes across subgraphs      |
+| `createNamingConventionTransform` | camelCase / PascalCase / … bulk renames                                               |
+| `createFilterTransform`           | Keep / drop types, fields, and root fields with predicates                            |
+| `createPruneTransform`            | Drop unreachable types after a filter                                                 |
+| `createFederationTransform`       | Stamp `@key` / related Fed annotations + `resolveReference` on a plain GraphQL source |
+| `createHoistFieldTransform`       | Lift a nested field onto a parent type                                                |
+| `createEncapsulateTransform`      | Wrap the subgraph under a single root field / namespace                               |
+
+Legacy YAML-era transform names map here when you
+[migrate from v0 / v1](/v2/guides/migration/from-v0-v1).
+
+### Rename
+
+```ts filename="mesh.config.ts"
+import {
+  createRenameTransform,
+  defineConfig as defineComposeConfig,
+  loadGraphQLHTTPSubgraph
+} from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadGraphQLHTTPSubgraph('countries', {
+        endpoint: 'https://countries.trevorblades.com'
+      }),
+      transforms: [
+        createRenameTransform({
+          typeRenamer: ({ typeName }) => (typeName === 'Country' ? 'MyCountry' : typeName),
+          fieldRenamer: ({ typeName, fieldName }) =>
+            typeName === 'Country' && fieldName === 'name' ? 'countryName' : fieldName,
+          argRenamer: ({ typeName, fieldName, argName }) =>
+            typeName === 'Query' && fieldName === 'country' && argName === 'code'
+              ? 'countryCode'
+              : argName
+        })
+      ]
+    }
+  ]
+})
+```
+
+Empty-string returns mean “leave unchanged” for some renamers -- prefer returning the original name
+when unsure, then re-[read the SDL](/v2/guides/reading-generated-sdl).
+
+### Prefix
+
+```ts
+createPrefixTransform({
+  // default value is `${subgraphName}_`
+  value: 'Billing_',
+  includeRootOperations: false, // keep Query.customer; prefix object types
+  includeTypes: true,
+  ignore: ['PageInfo'] // leave shared connection types unprefixed
+})
+```
+
+### Naming convention
+
+```ts
+createNamingConventionTransform({
+  typeNames: 'PascalCase',
+  fieldNames: 'camelCase',
+  fieldArgumentNames: 'camelCase',
+  enumValues: 'UPPER_CASE'
+})
+```
+
+Works on Connect and Mesh protocol subgraphs -- binder strings follow the new GraphQL names after
+Compose.
+
+### Filter and prune
+
+```ts
+createFilterTransform({
+  rootFieldFilter: (typeName, fieldName) => !(typeName === 'Query' && fieldName === 'adminDump'),
+  fieldFilter: (typeName, fieldName) => !(typeName === 'Customer' && fieldName === 'internalScore'),
+  typeFilter: typeName => typeName !== 'AdminDumpPayload'
+})
+
+// After filter, drop types that nothing references anymore:
+createPruneTransform()
+```
+
+Predicate filters are **not** Spec Schema Coordinates -- see
+[Schema Coordinates](/v2/guides/schema-coordinates). For one-off deletes in a committed file, prefer
+[By hand](/v2/transforms/by-hand).
+
+### Federation stamp
+
+Turn a plain GraphQL HTTP source into a Federation-ready subgraph without editing SDL:
+
+```ts
+createFederationTransform({
+  // Keys are type / field schema coordinates
+  Product: {
+    key: {
+      fields: 'id',
+      resolveReference: {
+        fieldName: 'productById' // Query.productById(id:)
+      }
+    }
+  }
+})
+```
+
+Serve with [Hive Gateway](/v2/serve/hive-gateway) (or Apollo Router when the rest of the supergraph
+is Connect-compatible). Prefer Federation draft `@lookup` on Hand-write / Generate-then-edit SDL
+when you own the file -- [Directives: @lookup](/v2/directives#lookup).
+
+### Hoist and encapsulate
+
+```ts
+// Lift User.profile.email onto User.email
+createHoistFieldTransform({
+  mapping: [
+    {
+      typeName: 'User',
+      pathConfig: ['profile', 'email'],
+      newFieldName: 'email'
+    }
+  ]
+})
+
+// Wrap the whole subgraph under Query.billing { ... }
+createEncapsulateTransform({
+  name: 'billing',
+  applyTo: { query: true, mutation: false, subscription: false }
+})
+```
+
+Re-read Connect / protocol binders after hoist or encapsulate -- nested `$this` paths may need a By
+hand follow-up if Compose cannot rewrite them.
+
+## Full config sketch
+
+```ts filename="mesh.config.ts"
+import {
+  createFilterTransform,
+  createNamingConventionTransform,
+  createPrefixTransform,
+  defineConfig as defineComposeConfig
+} from '@graphql-mesh/compose-cli'
+import { loadOpenAPISubgraph } from '@omnigraph/openapi'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadOpenAPISubgraph('billing', {
+        source: 'https://billing.example.com/openapi.json',
+        endpoint: 'https://billing.example.com'
+      }),
+      transforms: [
+        createNamingConventionTransform({ fieldNames: 'camelCase' }),
+        createPrefixTransform({ value: 'Billing_' }),
+        createFilterTransform({
+          rootFieldFilter: (_t, fieldName) => !fieldName.startsWith('internal')
+        })
+      ]
+    }
+  ]
+})
+```
+
+```bash
+npx mesh-compose -o supergraph.graphql
+# Hive Gateway -- preferred for full Mesh transports
+hive-gateway supergraph
+```
+
+<Cards>
+  <Cards.Card arrow title="By hand" href="/v2/transforms/by-hand" />
+  <Cards.Card arrow title="Transform Subgraph overview" href="/v2/transforms" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
+  <Cards.Card arrow title="Generate-then-edit" href="/v2/paths/generate-then-edit" />
+  <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
+  <Cards.Card arrow title="Schema Coordinates" href="/v2/guides/schema-coordinates" />
+</Cards>

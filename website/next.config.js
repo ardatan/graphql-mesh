@@ -43,6 +43,12 @@ export default withGuildDocs({
       '/v1/serve': 'https://the-guild.dev/graphql/hive/docs/gateway',
       '/v1/serve/:path*': 'https://the-guild.dev/graphql/hive/docs/gateway/:path*',
       '/v1/introduction': '/v1',
+      '/v2/tutorials': '/v2/examples',
+      '/v2/tutorials/music-store': '/v2/examples/music-store',
+      '/v2/reference': '/v2/directives',
+      '/v2/reference/directives': '/v2/directives',
+      '/v2/guides/mesh-journey': '/v2/guides/migration',
+      '/v2/guides/migrate-from-stitching': '/v2/guides/migration/from-stitching',
     }).map(([from, to]) => ({
       destination: to,
       permanent: true,

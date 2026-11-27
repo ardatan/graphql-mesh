@@ -1,0 +1,218 @@
+---
+description:
+  Federation as standardized type merging -- entities/@key plus a federation gateway runtime
+---
+
+import { Cards } from '@theguild/components'
+import { ConceptRef, DirectiveRef, ProtocolRef } from '../../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
+
+# Federation
+
+**GraphQL Federation** is **standardized type merging**: subgraphs declare shared entities with
+
+<DirectiveRef name="key" /> (and related Federation directives), composition builds a
+**supergraph**, and a **federation gateway** runtime plans queries across subgraphs.
+
+Same underlying idea as [Schema Stitching](/v2/concepts/stitching) -- combine types across services
+-- but Federation is the **standardized entity/`@key` contract** plus composition into a
+**supergraph** served by a **federation gateway**. Schema Stitching is the programmatic
+**type-merging runtime** (`stitchSchemas`); it can also run Federation-shaped merges (similar role
+to Hive Gateway). **Schema Stitching Directives** are a separate optional directive spec to
+configure stitching -- a Fed-directives alternative, not Schema Stitching and not Federation itself.
+Mesh aims to emit and accept **Federation-compatible** subgraph SDL (generated or hand-written).
+
+## Where it lives
+
+<V2FlowDiagram
+  ariaLabel="Federation: subgraphs through composition to federation gateway"
+  caption="Standardized type merging via entities / @key, then a federation gateway runtime."
+  steps={[
+    { title: 'Subgraphs', lines: ['A / B / ...'] },
+    { title: 'Composition', accent: true },
+    { title: 'Supergraph', accent: true },
+    { title: 'Fed gateway', lines: ['Hive / Apollo Router'] }
+  ]}
+/>
+
+| Piece                                   | Role                                                              |
+| --------------------------------------- | ----------------------------------------------------------------- |
+| Subgraph SDL                            | Types, <DirectiveRef name="key" />, Connect / protocol directives |
+| [Composition](/v2/concepts/composition) | Merge subgraphs -> supergraph                                     |
+| [Gateway](/v2/concepts/gateway)         | **Federation gateway** runtime (Hive Gateway / Apollo Router)     |
+
+Federation is **not** Schema Stitching, **not** Schema Stitching Directives, **not** a registry, and
+**not** a transport. See [Schema Stitching](/v2/concepts/stitching).
+
+## Vs Schema Stitching
+
+|                           | <ConceptRef name="federation" />                                        | <ConceptRef name="stitching" />                                                    |
+| ------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| What it is                | Entity/`@key` **contract** + composition + federation **gateway**       | Programmatic **type-merging runtime** (`stitchSchemas`)                            |
+| Typical config            | Federation directives on subgraphs                                      | Programmatic `SubschemaConfig.merge`                                               |
+| Optional directive config | Core of the Federation contract                                         | **Schema Stitching Directives** (Fed-directives alternative; not Schema Stitching) |
+| Runtime peers             | Hive Gateway / Apollo Router (Schema Stitching can also execute merges) | Stitched `GraphQLSchema` + delegation                                              |
+| Mesh v2 story             | Default path                                                            | Migrating off `stitchSchemas` only; still a type-merging engine                    |
+
+<a id="entity-resolution" />
+
+## Entity resolution
+
+Federation needs a way to **fill an entity** from its `@key` when another subgraph contributed
+fields on that type. Mesh covers that in two complementary ways, plus loader **ById / ByIds** naming
+conventions during Composition.
+
+### `entity: true` (and type-level entity maps)
+
+On Connect / protocol Query fields that look up one entity by its key, composition or the loader may
+stamp `entity: true` (or a type-level `@connect` / `@sql` / `@protobuf__rpc` with `$this.<key>`).
+That wires Hive Gateway / Apollo Router `_entities` -> `resolveReference`.
+
+For **hand-written GraphQL** subgraphs, prefer Federation Spec `@lookup` / `@is` / `@internal` for
+an entity entry field that returns **one object**, imported from
+[graphql-federation-spec/draft](https://graphql.github.io/graphql-federation-spec/draft) -- not from
+`specs.graphql-mesh.dev`. For **list/batch** entry fields use Type Merging `@merge` -- see
+[Directives: @lookup](/v2/directives#lookup) and [Directives: @merge](/v2/directives#merge).
+
+| Pattern                                       | What you get                                                                  |
+| --------------------------------------------- | ----------------------------------------------------------------------------- |
+| Arg name **matches** key field (`id` -> `id`) | Query field `@connect(entity: true)` (or protocol equivalent) / `@lookup`     |
+| Arg name **differs** (`petId` -> `id`)        | Type-level `$this` map, or `@lookup` + `@is(field: "id")` on the arg          |
+| Join-only stub (`resolvable: false`)          | `@key` only -- another subgraph owns the resolver                             |
+| Batch ByIds only                              | Batch Connect / protocol maps, or Type Merging `@merge` on a list entry field |
+| Hide lookup from clients                      | `@lookup` + `@internal` on the field (or internal type)                       |
+
+<ProtocolRef name="http-rest" /> Connectors (`getCustomer` matches [ById
+conventions](/v2/compose#semantic-conventions)):
+
+{/* prettier-ignore */}
+```graphql
+type Query {
+  getCustomer(id: String!): Customer
+    @connect(
+      source: "Billing"
+      http: { GET: "/customers/{$args.id}" }
+      selection: """
+        id
+        name
+      """
+      entity: true
+    )
+}
+
+type Customer @key(fields: "id") {
+  id: String!
+  name: String!
+}
+```
+
+<ProtocolRef name="sql" /> type-level entity fill (`$this.id` on `Track`):
+
+{/* prettier-ignore */}
+```graphql
+type Track
+  @key(fields: "id")
+  @sql(
+    table: "tracks"
+    kind: ROW
+    where: """
+      TrackId: $this.id
+    """
+    selection: """
+      id: TrackId
+      name: Name
+    """
+  ) {
+  id: ID!
+  name: String!
+}
+```
+
+See [Selection mapping](/v2/guides/selection-mapping) for `$this` / `$batch` binders, and
+[Directives](/v2/directives) for `entity` on `@connect` / `@sql` / `@protobuf__rpc`
+(<ProtocolRef name="http-rest" />, <ProtocolRef name="sql" />,
+
+<ProtocolRef name="protobuf" />
+).
+
+### Loader ById / ByIds conventions
+
+Composition recognizes Query names like `bookById`, `getCustomer`, `customersByIds` (snake_case
+match) when the key arg lines up with a key field. Connect / protobuf get `entity: true` or
+type-level `$this` maps; GraphQL one-object hops use Federation `@lookup` (+ `@is` when needed), and
+list/batch hops may use Type Merging `@merge`. Full table and opt-out:
+[Composition semantic conventions](/v2/compose#semantic-conventions).
+
+### Federation transform
+
+When a GraphQL (or other) source is **not** already a federated subgraph, use
+`createFederationTransform` on that subgraph to stamp Federation directives and point `@key`
+`resolveReference` at an existing ById field. Config keys are types and fields (`Product`,
+`Type.field` where supported). Argument targeting still uses nested directive config objects today.
+
+```ts
+transforms: [
+  createFederationTransform({
+    Product: {
+      key: {
+        fields: 'id',
+        resolveReference: {
+          // Query.productById
+          fieldName: 'productById'
+        }
+      }
+    }
+  })
+]
+```
+
+API shape and more options:
+[Automatic -- Federation stamp](/v2/transforms/automatic#federation-stamp). Prefer
+loader/composition `entity: true` when Connect / protocol SDL already owns the lookup; use
+`createFederationTransform` when you need to **annotate** an existing GraphQL schema into a
+subgraph.
+
+## Short example
+
+{/* prettier-ignore */}
+```graphql
+# Catalog subgraph (SQL hub)
+
+type Track @key(fields: "id") {
+  id: ID!
+  name: String
+}
+
+# Reviews subgraph -- join stub + field Connect
+
+type Track @key(fields: "id", resolvable: false) {
+  id: ID!
+  reviews: [Review!]
+    @connect(
+      source: "reviews"
+      http: { GET: "/reviews?trackId={$this.id}" }
+      selection: """
+        id
+        rating
+      """
+    )
+}
+```
+
+See [Music Store Example](/v2/examples/music-store) and [FHIR](/v2/examples/fhir) for entity joins.
+Semantic ById conventions: [Composition](/v2/compose#semantic-conventions).
+
+Prefer Federation `@lookup` / `@is` / `@internal` (or `@key` + Connect / protocol `entity: true`)
+for one-object entity entry fields -- [Directives: @lookup](/v2/directives#lookup). Use Type Merging
+
+<DirectiveRef name="merge" /> for list/batch entry fields. <DirectiveRef name="resolveTo" />
+remains for field delegation when entity stubs are not enough.
+
+<Cards>
+  <Cards.Card arrow title="Schema Stitching" href="/v2/concepts/stitching" />
+  <Cards.Card arrow title="Schema Stitching docs" href="https://the-guild.dev/graphql/stitching" />
+  <Cards.Card arrow title="Gateway" href="/v2/concepts/gateway" />
+  <Cards.Card arrow title="Composition" href="/v2/concepts/composition" />
+  <Cards.Card arrow title="Architecture" href="/v2/architecture" />
+  <Cards.Card arrow title="Concepts overview" href="/v2/concepts" />
+</Cards>

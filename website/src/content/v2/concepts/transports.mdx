@@ -1,0 +1,107 @@
+---
+description: What Mesh transports are -- runtime packages that execute subgraph directives
+---
+
+import { Cards } from '@theguild/components'
+import { ConceptRef, DirectiveRef, ProtocolRef } from '../../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
+
+# Transports
+
+A **transport** (`@graphql-mesh/transport-*`) runs at **gateway request time**. It reads Mesh /
+Connect directives on the supergraph (or subgraph) and talks to the upstream -- SQL, HTTP Connect,
+gRPC, Thrift, ... Transports do **not** design schema;
+
+<ConceptRef name="loaders">loaders</ConceptRef> and hand SDL do that earlier.
+
+Hive Gateway loads transports from `@transport(kind: ...)` (and built-in Connect). Stock Apollo
+Router executes Connect-compatible `@connect` / `@source` without Mesh transport packages.
+
+## Where it lives
+
+<V2FlowDiagram
+  ariaLabel="Transport executes directives at the gateway"
+  steps={[
+    { title: 'Supergraph SDL' },
+    { title: 'Gateway', accent: true },
+    { title: 'Transport', lines: ['transport-*'], accent: true },
+    { title: 'Upstream' }
+  ]}
+/>
+
+| Piece                              | Role                                                               |
+| ---------------------------------- | ------------------------------------------------------------------ |
+| <DirectiveRef name="transport" />  | Schema stamp: `kind`, `location`, optional headers / options       |
+| `@graphql-mesh/transport-sql`, ... | Package Hive Gateway imports for that `kind`                       |
+| Connect (`transport-connect`)      | Often built into Hive Gateway; native on Apollo Router when shaped |
+
+Transports are **not** Compose, **not** the schema registry, and **not** Omnigraph loaders.
+
+## Hive Gateway vs Apollo Router
+
+| Surface                                    | Hive Gateway                 | Apollo Router               |
+| ------------------------------------------ | ---------------------------- | --------------------------- |
+| `@connect` / `@source` (JSON HTTP Connect) | Yes (`transport-connect`)    | Yes when Connect-compatible |
+| `@sql`, `@mongo__*`, `@protobuf__rpc`, ... | Yes (matching `transport-*`) | No                          |
+| Thrift TJSON `@connect`                    | Yes                          | Often                       |
+| Binary `@thrift__rpc`                      | Yes (`transport-thrift`)     | No                          |
+
+Register only what your supergraph stamps:
+
+```ts
+export const gatewayConfig = defineGatewayConfig({
+  transports: {
+    sql: import('@graphql-mesh/transport-sql'),
+    protobuf: import('@graphql-mesh/transport-protobuf')
+    // Connect needs no entry when built in
+  }
+})
+```
+
+Serve docs: [Hive Gateway](/v2/serve/hive-gateway) | [Apollo Router](/v2/serve/apollo-router).
+
+## Short example
+
+Emitted / authored SDL:
+
+{/* prettier-ignore */}
+```graphql
+schema @transport(subgraph: "chinook", kind: "sql", location: "file:chinook.db") {
+  query: Query
+}
+
+type Query {
+  track(id: ID!): Track
+    @sql(
+      table: "tracks"
+      kind: ROW
+      where: """
+        TrackId: $args.id
+      """
+      selection: """
+        id: TrackId
+        name: Name
+      """
+    )
+}
+```
+
+At query time Hive Gateway loads `transport-sql` for `kind: "sql"` and executes the `@sql` field.
+Protocol: <ProtocolRef name="sql" />. Reading the stamp:
+[Reading generated SDL](/v2/guides/reading-generated-sdl).
+
+## Related
+
+Pair with <ConceptRef name="loaders">loaders</ConceptRef> (emit) and
+
+<ConceptRef name="composition">composition</ConceptRef> (merge). Full family matrix:
+[Protocols](/v2/protocols).
+
+<Cards>
+  <Cards.Card arrow title="Loaders" href="/v2/concepts/loaders" />
+  <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Protocols" href="/v2/protocols" />
+  <Cards.Card arrow title="Architecture" href="/v2/architecture" />
+  <Cards.Card arrow title="@transport" href="/v2/directives#transport" />
+  <Cards.Card arrow title="Concepts overview" href="/v2/concepts" />
+</Cards>

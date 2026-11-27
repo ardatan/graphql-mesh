@@ -1,0 +1,187 @@
+---
+description: Author Mesh subgraph SDL for Compose and schema registries -- humans and AI
+---
+
+import { Callout, Cards } from '@theguild/components'
+import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
+
+# Hand-write
+
+Author a committed `.graphql` as the source of truth --
+
+<ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> (`@connect` / `@source`) and/or Mesh
+**protocol** directives (SQL, Protobuf, ...), plus
+<ConceptRef name="federation">Federation</ConceptRef> <DirectiveRef name="key" /> where you need
+entities -- then drop that file into **Compose** and a
+<ConceptRef name="schema-registry">schema registry</ConceptRef> the same way generated subgraphs do.
+Humans and AI assistants share **one** authoring contract; there is no separate "AI write" path.
+
+Prefer starting from a [read of generated SDL](/v2/guides/reading-generated-sdl) when one exists.
+Edited generate output and scratch-authored SDL use the same Compose input -- and the same
+`buildSubgraphSchema` call from `@graphql-mesh/subgraph` when you serve the subgraph yourself
+([buildSubgraphSchema](/v2/guides/build-subgraph-schema)).
+
+<Callout type="info">
+  **Using an AI assistant:** same Hand-write contract -- no separate AI journey. For context
+  checklists, prompt patterns, and validation, see [AI-assisted
+  authoring](/v2/guides/ai-assisted-authoring).
+</Callout>
+
+<V2FlowDiagram
+  ariaLabel="Hand-write path from authored SDL to gateway"
+  footnote={{ label: 'Registry (optional)', fromStep: 1, toStep: 2 }}
+  steps={[
+    { title: 'Author .graphql', accent: true },
+    { title: 'Composition', accent: true },
+    { title: 'Gateway', lines: ['Hive / Apollo Router'] }
+  ]}
+/>
+
+## Import directive definitions
+
+Hand SDL imports directive names with <DirectiveRef name="link" /> (Apollo / Mesh spec URLs). For
+**non-Connect** Mesh directives you `@composeDirective`, also include a local `directive @...`
+**definition** -- Federation composition looks up that definition by name; Mesh Compose does **not**
+invent missing defs (loaders stamp both the `@link` / `@composeDirective` apps and the matching
+definitions on generated subgraphs).
+
+**HTTP/REST Connect** `@connect` / `@source` use the Connect composition path -- import them with
+`@link` only; they do **not** need `@composeDirective` or hand-written Connect directive defs for
+composition.
+
+| Family                 | Typical `@link` import                                                                       | `@composeDirective`? |
+| ---------------------- | -------------------------------------------------------------------------------------------- | -------------------- |
+| Connect HTTP           | `https://specs.apollo.dev/connect/v0.4` -> `@connect`, `@source`                             | No                   |
+| Federation             | `https://specs.apollo.dev/federation/v2.6` -> `@key`, ...                                    | No (core)            |
+| Mesh core              | `https://specs.graphql-mesh.dev/core/v0.1` -> `@transport`, ...                              | Yes                  |
+| Mesh protobuf          | `https://specs.graphql-mesh.dev/protobuf/v0.1` -> `@protobuf__rpc`                           | Yes                  |
+| Mesh SQL / others      | `https://specs.graphql-mesh.dev/sql/v0.1`, ... (see [Protocols](/v2/protocols))              | Yes                  |
+| Mesh auth / rate-limit | `https://specs.graphql-mesh.dev/auth/v0.1`, `.../rate-limit/v0.1` (not under core)           | Yes                  |
+| Federation entity hops | `https://graphql.github.io/graphql-federation-spec/draft` -> `@lookup` / `@is` / `@internal` | Yes                  |
+
+Mesh directive TOC + known args: [Directives](/v2/directives). How `selection` / `args` binders
+work: [Selection mapping](/v2/guides/selection-mapping). Deeper Connect arg tables:
+[HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives).
+Mesh protocol map: [Protocols](/v2/protocols).
+
+## Protocol directives (not only join)
+
+Join-only subgraphs (keys + `Reference.resource`) are one hand-write pattern. Stage 3 of Music Store
+Example is the other: **author the RPC surface** with a Mesh protocol directive. Full proto +
+server + SDL walkthrough: [Recommendations gRPC](/v2/examples/music-store/recommendations-grpc).
+
+Sketch -- Music Store Example gRPC / Protobuf slice (field-level `@protobuf__rpc`, not only `@key`):
+
+{/* prettier-ignore */}
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"])
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
+  @link(url: "https://specs.graphql-mesh.dev/protobuf/v0.1", import: ["@protobuf__rpc"])
+  @composeDirective(name: "@transport")
+  @composeDirective(name: "@protobuf__rpc")
+
+directive @transport(
+  subgraph: String!
+  kind: String!
+  location: String
+  headers: [[String]]
+  options: TransportOptions
+) repeatable on SCHEMA
+
+directive @protobuf__rpc(
+  service: String
+  method: String
+  args: String
+  selection: String
+  stream: Boolean
+  entity: Boolean
+) on FIELD_DEFINITION
+
+scalar TransportOptions
+
+# location = upstream gRPC (not the Yoga / Router URL)
+schema
+  @transport(subgraph: "recommendations", kind: "protobuf", location: "http://localhost:50051") {
+  query: Query
+}
+
+type Query {
+  recommendation(trackId: ID!): Recommendation!
+    @protobuf__rpc(
+      service: "Recommendations"
+      method: "GetRecommendation"
+      args: """
+        1(string): $args.trackId
+      """
+      selection: """
+        1(string): id
+        2(string): trackId
+      """
+    )
+}
+
+type Recommendation @key(fields: "id") {
+  id: ID!
+  trackId: ID!
+}
+```
+
+Wire the file as a schema subgraph in Compose. Serve the full multi-protocol graph on **Hive
+Gateway** (JS/TS); **Apollo Router** only for Connect-compatible slices.
+
+Hand-written protobuf SDL follows the same field-number maps as
+[Protobuf / gRPC](/v2/protocols/protobuf). Full Music Store Example stage storyboard:
+[Music Store Example](/v2/examples/music-store). Nested gRPC tutorial:
+[Recommendations gRPC](/v2/examples/music-store/recommendations-grpc).
+
+## Optional: `buildSubgraphSchema` for a subgraph server
+
+When the subgraph should run as its own GraphQL process (Yoga, ...), pass the same hand-written file
+into `buildSubgraphSchema`. It wires `@transport` / protocol / `@connect` executors and entity
+resolvers (Federation `@lookup` for one-object entry fields; Type Merging `@merge` for list/batch):
+
+```ts
+import { createServer } from 'node:http'
+import { createYoga } from 'graphql-yoga'
+import { buildSubgraphSchema } from '@graphql-mesh/subgraph'
+import { readFileSync } from 'node:fs'
+
+const schema = await buildSubgraphSchema(
+  {
+    typeDefs: readFileSync('./recommendations.graphql', 'utf8')
+    // resolvers: { ... } for fields you own in code
+  },
+  {
+    // fetch / pubsub / transport context
+  }
+)
+
+createServer(createYoga({ schema })).listen(4002)
+```
+
+Generate and Generate-then-edit SDL use this **same** export --
+[buildSubgraphSchema](/v2/guides/build-subgraph-schema).
+
+Optional naming / filter passes after authorship live under [Transform Subgraph](/v2/transforms)
+(Automatic or By hand) -- not a required Hand-write step.
+
+<Cards>
+  <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Serve Supergraph" href="/v2/serve" />
+  <Cards.Card arrow title="buildSubgraphSchema" href="/v2/guides/build-subgraph-schema" />
+  <Cards.Card arrow title="AI-assisted authoring" href="/v2/guides/ai-assisted-authoring" />
+  <Cards.Card arrow title="Selection mapping" href="/v2/guides/selection-mapping" />
+  <Cards.Card arrow title="Directives reference" href="/v2/directives" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
+  <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
+  <Cards.Card arrow title="Protocols" href="/v2/protocols" />
+  <Cards.Card
+    arrow
+    title="Recommendations gRPC"
+    href="/v2/examples/music-store/recommendations-grpc"
+  />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+</Cards>

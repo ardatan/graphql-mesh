@@ -1,0 +1,344 @@
+---
+description: Mesh SQL protocol -- @omnigraph/sql, @sql, transport-sql (Hive Gateway)
+---
+
+import { Cards } from '@theguild/components'
+import { DirectiveRef } from '../../../components/v2-directive-ref'
+
+# SQL
+
+Use SQL when tables should become GraphQL types with **typed** query / mutation fields, FK
+navigation, and Federation `@key` entity fill -- without wrapping the DB in REST. This is a **Mesh
+protocol** (not HTTP/REST Connectors). The loader emits <DirectiveRef name="sql" /> with a `kind`
+discriminator; Hive Gateway runs `transport-sql`. Stock Apollo Router does **not** execute `@sql`.
+
+| Piece         | Detail                                                                            |
+| ------------- | --------------------------------------------------------------------------------- |
+| Loader        | `@omnigraph/sql` (`loadSqlSubgraph`)                                              |
+| Directive     | `@sql` (`ROW` / `ROWS` / `CONNECTION` / `COUNT` / `INSERT` / `UPDATE` / `DELETE`) |
+| Transport     | `@graphql-mesh/transport-sql`                                                     |
+| Spec          | `https://specs.graphql-mesh.dev/sql/v0.1`                                         |
+| Dialects      | **PostgreSQL**, **MySQL** (incl. MariaDB URIs), **SQLite**                        |
+| Apollo Router | Via [Serve Subgraph](/v2/serve-subgraph) (Hive Gateway runs `@sql` natively)      |
+| Examples      | Chinook (SQLite); Music Store stage 1; MySQL / Postgres endpoints below           |
+
+## Supported dialects
+
+`@omnigraph/sql` introspects and `@graphql-mesh/transport-sql` executes these dialects
+(`SqlAdapter`: `postgres` | `mysql` | `sqlite`). The adapter is usually inferred from the `endpoint`
+URI; you can set `adapter` explicitly when needed.
+
+| Dialect        | Adapter    | Typical `endpoint`                                               | Notes                                                                                                    |
+| -------------- | ---------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| **PostgreSQL** | `postgres` | `postgres://…` / `postgresql://…`, or host-style URI             | Optional `schema: 'public'` (and `pgPool` for introspection). Env: `DATABASE_URL`, `POSTGRES_URL`, `PG*` |
+| **MySQL**      | `mysql`    | `mysql://…` / `mysql2://…` / `mysqls://…`                        | Uses `mysql2` at runtime. Env: `MYSQL_URL`                                                               |
+| **MariaDB**    | `mysql`    | `mariadb://…` (same MySQL adapter)                               | URI maps to the MySQL dialect -- not a separate adapter                                                  |
+| **SQLite**     | `sqlite`   | `file:./chinook.db`, `sqlite:…`, bare `*.db` path, or `:memory:` | `cwd` resolves relative file paths. Env: `SQLITE_URL`                                                    |
+
+```ts
+import { loadSqlSubgraph } from '@omnigraph/sql'
+
+// PostgreSQL
+loadSqlSubgraph('shop', {
+  endpoint: 'postgres://localhost:5432/shop',
+  schema: 'public'
+})
+
+// MySQL
+loadSqlSubgraph('hr', {
+  endpoint: 'mysql://root@127.0.0.1:3306/employees'
+})
+
+// MariaDB (mysql adapter)
+loadSqlSubgraph('app', {
+  endpoint: 'mariadb://app@127.0.0.1:3306/app'
+})
+
+// SQLite
+loadSqlSubgraph('chinook', {
+  endpoint: 'file:./chinook.db'
+})
+```
+
+## Packages
+
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @omnigraph/sql @graphql-hive/gateway @graphql-mesh/transport-sql
+```
+
+## Generate Chinook
+
+```ts
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { loadSqlSubgraph } from '@omnigraph/sql'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadSqlSubgraph('chinook', {
+        endpoint: 'file:chinook.db'
+      })
+    }
+  ]
+})
+```
+
+## Single row + entity fill
+
+Query by primary key (`kind: ROW` + `$args`). The object type repeats `ROW` with `$this` so
+Federation can resolve the entity:
+
+{/* prettier-ignore */}
+```graphql
+extend schema
+  @link(url: "https://specs.graphql-mesh.dev/sql/v0.1", import: ["@sql"])
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
+
+schema @transport(subgraph: "chinook", kind: "sql", location: "file:chinook.db") {
+  query: Query
+}
+
+type Query {
+  album(id: ID!): Album
+    @sql(
+      table: "albums"
+      kind: ROW
+      where: """
+        AlbumId: $args.id
+      """
+      selection: """
+        id: AlbumId
+        title: Title
+        artistId: ArtistId
+      """
+    )
+}
+
+type Album
+  @key(fields: "id")
+  @sql(
+    table: "albums"
+    kind: ROW
+    where: """
+      AlbumId: $this.id
+    """
+    selection: """
+      id: AlbumId
+      title: Title
+      artistId: ArtistId
+    """
+  ) {
+  id: ID!
+  title: String!
+  artistId: Int!
+}
+```
+
+## FK navigation and lists
+
+Child collections use `kind: ROWS` with `$this` plus optional `$args.where` (Artist -> albums).
+Many-to-many uses `through:` (Playlist -> tracks via `playlist_track` in Chinook):
+
+{/* prettier-ignore */}
+```graphql
+type Artist @key(fields: "id") {
+  id: ID!
+  name: String
+  albums(where: AlbumFilter, orderBy: [AlbumOrderBy!], limit: Int, offset: Int): [Album!]!
+    @sql(
+      table: "albums"
+      kind: ROWS
+      where: """
+        ArtistId: $this.id
+        ...$args.where
+      """
+      orderBy: "$args.orderBy"
+      limit: "$args.limit"
+      offset: "$args.offset"
+      selection: """
+        id: AlbumId
+        title: Title
+        artistId: ArtistId
+      """
+    )
+}
+
+type Playlist {
+  tracks(where: TrackFilter, limit: Int, offset: Int): [Track!]!
+    @sql(
+      table: "tracks"
+      kind: ROWS
+      through: """
+      table: playlist_track
+      local: PlaylistId
+      remote: TrackId
+      parent: $this.id
+      target: TrackId
+      """
+      where: "$args.where"
+      limit: "$args.limit"
+      offset: "$args.offset"
+      selection: """
+        id: TrackId
+        name: Name
+      """
+    )
+}
+```
+
+`albums(...)` list roots, `allAlbums` connections (`kind: CONNECTION`), and `albumsCount`
+(`kind: COUNT`) follow the same table / selection dialect.
+
+## Mutations
+
+`INSERT` / `UPDATE` / `DELETE` bind columns from `$args`:
+
+{/* prettier-ignore */}
+```graphql
+type Mutation {
+  createAlbum(input: CreateAlbumInput!): AlbumPayload!
+    @sql(
+      table: "albums"
+      kind: INSERT
+      set: """
+      Title: $args.input.title
+      ArtistId: $args.input.artistId
+      """
+      selection: """
+        album {
+          id: AlbumId
+          title: Title
+          artistId: ArtistId
+        }
+      """
+    )
+
+  deleteAlbum(id: ID!): DeleteAlbumPayload!
+    @sql(
+      table: "albums"
+      kind: DELETE
+      where: """
+        AlbumId: $args.id
+      """
+      selection: """
+        ok: $affectedRows
+        affectedRows: $affectedRows
+      """
+    )
+}
+```
+
+In `selection`, the loader maps **original SQL columns to GraphQL fields** (e.g. `id: TrackId`,
+`name: Name`). `where` / `set` keep referring to those SQL columns (`TrackId: $args.id`). That
+column-to-field mapping is the loader concern -- not a separate "rename everything to camelCase"
+rule. Binders: [Selection mapping](/v2/guides/selection-mapping). Entity / ById:
+[Composition semantic conventions](/v2/compose#semantic-conventions).
+
+## Use cases
+
+### Cursor connection + count
+
+Offset lists (`kind: ROWS`) are not the only list shape. `CONNECTION` builds Relay-style `nodes` /
+`pageInfo` / `$totalCount` from the same table; `COUNT` returns a scalar:
+
+{/* prettier-ignore */}
+```graphql
+type Query {
+  allAlbums(
+    where: AlbumFilter
+    orderBy: [AlbumOrderBy!]
+    first: Int
+    after: String
+  ): AlbumConnection!
+    @sql(
+      table: "albums"
+      kind: CONNECTION
+      where: "$args.where"
+      orderBy: "$args.orderBy"
+      first: "$args.first"
+      after: "$args.after"
+      selection: """
+        nodes {
+          id: AlbumId # SQL AlbumId -> GraphQL id
+          title: Title
+        }
+        pageInfo {
+          hasNextPage: $hasNextPage
+          endCursor: $endCursor
+        }
+        totalCount: $totalCount
+      """
+    )
+
+  # Scalar count with the same where binder
+  albumsCount(where: AlbumFilter): Int!
+    @sql(table: "albums", kind: COUNT, where: "$args.where", selection: "$")
+}
+```
+
+### FK `$this` plus client filters
+
+Related lists pin the parent key with `$this`, then splice in optional client filters via
+`...$args.where` so callers can still page or filter the related set:
+
+{/* prettier-ignore */}
+```graphql
+type Artist @key(fields: "id") {
+  id: ID!
+  albums(where: AlbumFilter, limit: Int, offset: Int): [Album!]!
+    @sql(
+      table: "albums"
+      kind: ROWS
+      where: """
+        ArtistId: $this.id # always constrain to this artist
+        ...$args.where # optional client filter merged in
+      """
+      limit: "$args.limit"
+      offset: "$args.offset"
+      selection: """
+        id: AlbumId
+        title: Title
+      """
+    )
+}
+```
+
+### Many-to-many `through`
+
+When there is no direct FK on the target table, `through` describes the join table. Playlist tracks
+go through `playlist_track`: `local` is the parent column, `remote` / `target` reach `tracks`:
+
+{/* prettier-ignore */}
+```graphql
+type Playlist {
+  tracks(where: TrackFilter, limit: Int, offset: Int): [Track!]!
+    @sql(
+      table: "tracks"
+      kind: ROWS
+      through: """
+      table: playlist_track
+      local: PlaylistId # column on join table for this Playlist
+      remote: TrackId # column on join table toward tracks
+      parent: $this.id
+      target: TrackId # PK on tracks
+      """
+      where: "$args.where"
+      limit: "$args.limit"
+      offset: "$args.offset"
+      selection: """
+        id: TrackId
+        name: Name
+      """
+    )
+}
+```
+
+Walkthrough: [Music Store Example](/v2/examples/music-store) stage 1 (Chinook SQLite). Dialects
+above: PostgreSQL, MySQL / MariaDB, SQLite.
+
+<Cards>
+  <Cards.Card arrow title="Directives: @sql" href="/v2/directives#sql" />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Protocols overview" href="/v2/protocols" />
+</Cards>

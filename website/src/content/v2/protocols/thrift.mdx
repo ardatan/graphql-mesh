@@ -1,0 +1,268 @@
+---
+description: Mesh Thrift protocol -- @thrift__rpc binary or TJSON @connect
+---
+
+import { Cards } from '@theguild/components'
+import { DirectiveRef } from '../../../components/v2-directive-ref'
+
+# Thrift
+
+Use Thrift when you already have a **`.thrift` IDL** and want GraphQL fields that call those
+functions. Mesh has two emit paths from the same IDL:
+
+| Path            | What you get                                             | On Apollo Router?                                                  |
+| --------------- | -------------------------------------------------------- | ------------------------------------------------------------------ |
+| Binary Thrift   | <DirectiveRef name="thrift__rpc" /> + `transport-thrift` | Via [Serve Subgraph](/v2/serve-subgraph) (Hive Gateway for binary) |
+| TJSON over HTTP | HTTP/REST Connectors `@source` + `@connect`              | Yes when Connect-compatible                                        |
+
+Only the TJSON path emits HTTP/REST Connectors (`@connect` / `@source`). Binary Thrift stays on
+`@thrift__rpc` + `transport-thrift`.
+
+## Packages
+
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @omnigraph/thrift @graphql-hive/gateway @graphql-mesh/transport-thrift
+```
+
+TJSON Connect path also needs:
+
+```sh npm2yarn
+npm i @graphql-mesh/transport-connect
+```
+
+## Generate (binary)
+
+```ts
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadThriftSubgraph } from '@omnigraph/thrift'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadThriftSubgraph('calculator', {
+        source: './services/calculator/calculator.thrift',
+        endpoint: 'http://localhost:4001/thrift',
+        serviceName: 'Calculator',
+        protocol: 'binary'
+      })
+    }
+  ]
+})
+```
+
+IDL (`calculator.thrift` in the e2e):
+
+```thrift
+struct AddRequest {
+  1: required i32 left;
+  2: required i32 right;
+}
+
+service Calculator {
+  i32 add(1: AddRequest request)
+  i32 subtract(1: i32 left, 2: i32 right)
+  i32 divide(1: i32 left, 2: i32 right) throws (1: CalcError error)
+  oneway void zip()
+}
+```
+
+Emitted / hand `@thrift__rpc` -- wire types in `args` / `selection`:
+
+{/* prettier-ignore */}
+```graphql
+extend schema
+  @link(url: "https://specs.graphql-mesh.dev/thrift/v0.1", import: ["@thrift__rpc"])
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
+
+schema @transport(subgraph: "Calc", kind: "thrift", location: "http://localhost:4000/thrift") {
+  query: Query
+}
+
+type Query {
+  add(request: AddRequestInput): Int
+    @thrift__rpc(
+      function: "add"
+      args: """
+        1(struct): $args.request {
+          1(i32): left
+          2(i32): right
+        }
+      """
+      selection: "$(i32)"
+      messageType: CALL
+    )
+
+  zip: Void @thrift__rpc(function: "zip", selection: "$(void)", messageType: ONEWAY)
+}
+```
+
+## Use cases
+
+### `throws` as GraphQL unions
+
+When `ignoreErrorResponses` is false, declared Thrift exceptions become GraphQL union members. The
+success type and each exception share a result union; `@thrift__rpc(throws:)` maps exception names
+to wire field ids:
+
+{/* prettier-ignore */}
+```graphql
+# PostTweetResult = Tweet | TwitterUnavailable (union from throws)
+
+union PostTweetResult = Tweet | TwitterUnavailable
+
+type Query {
+  postTweet(tweet: TweetInput!): PostTweetResult
+    @thrift__rpc(
+      function: "postTweet"
+      args: """
+        1(struct): $args.tweet {
+          1(string): text
+        }
+      """
+      selection: """
+        # success slot -> Tweet fields
+        0(struct): {
+          1(i32): id
+          2(string): text
+        }
+      """
+      # wire id 1 = TwitterUnavailable exception
+      throws: """
+      TwitterUnavailable: 1
+      """
+      messageType: CALL
+    )
+}
+
+type TwitterUnavailable {
+  message: String
+}
+```
+
+### `entityMethods`
+
+Pass `entityMethods: ['add']` (or similar) in the loader options so Compose stamps `entity: true` on
+that `@thrift__rpc`. Federation then uses the field as an entity resolver:
+
+```ts
+loadThriftSubgraph('calculator', {
+  source: './calculator.thrift',
+  endpoint: 'http://localhost:4001/thrift',
+  protocol: 'binary',
+  // Stamp entity: true on add so _entities can call it
+  entityMethods: ['add']
+})
+```
+
+{/* prettier-ignore */}
+```graphql
+type Query {
+  add(request: AddRequestInput): Int
+    @thrift__rpc(
+      function: "add"
+      args: """
+        1(struct): $args.request {
+          1(i32): left
+          2(i32): right
+        }
+      """
+      selection: "$(i32)"
+      messageType: CALL
+      entity: true # from entityMethods: ['add']
+    )
+}
+```
+
+### Rename transforms
+
+If you rename a GraphQL argument, Compose rewrites binders inside `@thrift__rpc` the same way as
+`@connect` / `@protobuf__rpc`. After renaming `request` -> `input`, the `args` string must read
+`$args.input`, not `$args.request`:
+
+{/* prettier-ignore */}
+```diff
+type Query {
+-  add(request: AddRequestInput): Int
++  add(input: AddRequestInput): Int
+     @thrift__rpc(
+       function: "add"
+       args: """
+-        1(struct): $args.request {
++        1(struct): $args.input {
+           1(i32): left
+           2(i32): right
+         }
+       """
+       selection: "$(i32)"
+       messageType: CALL
+     )
+}
+```
+
+## Generate (TJSON -> Connect)
+
+Same IDL, `protocol: 'json'`. Emit switches to Connect with a TJSON request array in `http.body`:
+
+```ts
+loadThriftSubgraph('calculator', {
+  source: './services/calculator/calculator.thrift',
+  endpoint: 'http://localhost:4001/thrift-json',
+  protocol: 'json'
+})
+```
+
+{/* prettier-ignore */}
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+  @source(
+    name: "Calc"
+    http: {
+      baseURL: "http://localhost:4000/thrift-json"
+      headers: [
+        { name: "Content-Type", value: "application/vnd.apache.thrift.json" }
+        { name: "Accept", value: "application/vnd.apache.thrift.json" }
+      ]
+    }
+  )
+
+type Query {
+  add(request: AddRequestInput): Int
+    @connect(
+      source: "Calc"
+      http: {
+        POST: "/"
+        body: """
+        $([1, "add", 1, 1, {
+          "1": {
+            "rec": {
+              "1": { "i32": $args.request.left },
+              "2": { "i32": $args.request.right }
+            }
+          }
+        }])
+        """
+      }
+      selection: """
+        $->get(4)->get("0")->get("i32")
+      """
+    )
+}
+```
+
+### TJSON `isSuccess` / `errors`
+
+JSON emit attaches Connect `isSuccess` / `errors` selections that inspect the TJSON reply array
+(message type, success slot vs exception slot). ONEWAY JSON bodies use message type `4` and void
+success checks. The `add` example above shows the request array shape; reply path
+`$->get(4)->get("0")->get("i32")` walks the success slot of that same TJSON layout.
+
+Dialect: [Selection mapping](/v2/guides/selection-mapping). Catalog:
+[Directives: Thrift](/v2/directives#thrift).
+
+<Cards>
+  <Cards.Card arrow title="Directives: Thrift" href="/v2/directives#thrift" />
+  <Cards.Card arrow title="HTTP / REST" href="/v2/protocols/http-rest" />
+  <Cards.Card arrow title="Protobuf / gRPC" href="/v2/protocols/protobuf" />
+  <Cards.Card arrow title="Protocols overview" href="/v2/protocols" />
+</Cards>

@@ -1,0 +1,98 @@
+---
+description: What a schema registry is -- store and distribute subgraph / supergraph SDL
+---
+
+import { Cards } from '@theguild/components'
+import { ApiRef } from '../../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
+
+# Schema registry
+
+A **schema registry** stores **subgraph** and/or **supergraph** GraphQL SDL, versions it, and lets
+gateways (or CI) pull the schema they should run. Examples: Hive schema registry, Apollo GraphOS,
+and equivalents. Mesh publishes **Federation-compatible subgraph SDL** -- generated or hand-written
+-- with the same Compose -> publish UX.
+
+## Where it lives
+
+<V2FlowDiagram
+  ariaLabel="Schema registry beside Composition and Serve Supergraph"
+  caption="Registry is optional -- gateways can also take Composition output directly."
+  footnote={{ label: 'or file direct', fromStep: 0, toStep: 2 }}
+  steps={[
+    { title: 'Composition', accent: true },
+    { title: 'Registry', accent: true },
+    { title: 'Gateway pull' }
+  ]}
+/>
+
+| Piece      | Role                                                      |
+| ---------- | --------------------------------------------------------- |
+| Publish    | Push subgraph SDL after Compose                           |
+| Distribute | Gateway fetches supergraph / subgraph set                 |
+| Optional   | Gateways can also take a Compose output **file** directly |
+
+A registry is **not** a gateway, **not** a transport, and **not** Mesh Compose -- it sits **beside**
+composition in the stack ([Architecture](/v2/architecture)).
+
+## Short example
+
+1. Compose subgraphs (loader + hand SDL) -- same pipeline for both ([Composition](/v2/compose)).
+2. Emit one subgraph file per service, then publish (same CLI UX whether the SDL came from
+   `loadSqlSubgraph` or a checked-in `.graphql`):
+
+```bash
+mesh-compose --subgraph catalog -o catalog-subgraph.graphql
+
+hive schema:publish \
+  --registry.accessToken "$HIVE_TOKEN" \
+  --service="catalog" \
+  --url="http://localhost:4001/graphql" \
+  --author "you" \
+  --commit "catalog-v1" \
+  catalog-subgraph.graphql
+```
+
+3. Point <ApiRef name="hive-gateway" /> (or Apollo Router for Connect-only) at the registry
+   supergraph -- or at a local `mesh-compose -o supergraph.graphql` file for CI / local demos.
+
+Full step-through (multi-subgraph Music Store names):
+[Composition → Registry publish](/v2/compose#registry-publish).
+
+### Use cases
+
+Publishing does not change gateway rules: a registry supergraph that still carries `@sql` or
+`@protobuf__rpc` needs Hive Gateway; Connect-only graphs can pull into Apollo Router.
+
+Mesh / Connect directives must survive composition via `@composeDirective` **and** a matching
+`directive` definition on the subgraph, or composition fails / the gateway never sees them
+([Directives](/v2/directives#federation)):
+
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
+  # Without this, @transport may be stripped from the published supergraph
+  @composeDirective(name: "@transport")
+
+directive @transport(
+  subgraph: String!
+  kind: String!
+  location: String
+  headers: [[String]]
+  options: TransportOptions
+) repeatable on SCHEMA
+
+scalar TransportOptions
+```
+
+Join-only subgraphs (FHIR `reference-resource.graphql`) are valid registry citizens: `@key` stubs
+and no root `Query`, composed beside loader-emitted patients / observations.
+
+Details expand on [Composition](/v2/compose) (registry publish section).
+
+<Cards>
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
+  <Cards.Card arrow title="Gateway" href="/v2/concepts/gateway" />
+  <Cards.Card arrow title="Concepts overview" href="/v2/concepts" />
+</Cards>

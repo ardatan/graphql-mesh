@@ -1,0 +1,111 @@
+---
+description:
+  Extending a Mesh supergraph -- prefer Federation entities and join SDL over ad-hoc gateway
+  resolvers
+---
+
+import { Callout, Cards } from '@theguild/components'
+import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
+
+# Schema extensions
+
+In Mesh v2 the default way to "extend" across subgraphs is **Federation entities** and hand-written
+join SDL -- not a gateway-only resolver dump. Compose already treats authored `.graphql` the same as
+loader emit ([Hand-write](/v2/paths/hand-write), [Composition](/v2/compose)).
+
+<Callout type="info">
+  Prefer <DirectiveRef name="key" /> stubs +{' '}
+  <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> / protocol entity maps, or
+  Federation `@lookup` / `@is` / `@internal` for one-object GraphQL entry fields. Type Merging{' '}
+  <DirectiveRef name="merge" /> covers list/batch hops; <DirectiveRef name="resolveTo" /> is the SDL
+  form of **additional resolvers** / field delegation -- see [Directives:
+  @lookup](/v2/directives#lookup).
+</Callout>
+
+## Prefer entity joins
+
+1. Own the hub type in one subgraph (Music Store catalog stamps `Track @key`).
+2. Other subgraphs contribute fields with `resolvable: false` stubs or `entity: true` / protocol
+   entity binders ([Entity resolution](/v2/concepts/federation#entity-resolution)).
+3. Optional join-only file (no `Query`) for polymorphic references -- FHIR
+   `reference-resource.graphql` is the supporting example ([FHIR](/v2/examples/fhir)).
+
+{/* prettier-ignore */}
+```graphql
+# reviews.graphql -- extend Track owned by catalog
+type Track @key(fields: "id", resolvable: false) {
+  id: ID!
+  reviews: [Review!]
+    @connect(
+      source: "reviews"
+      http: { GET: "/reviews?trackId={$this.id}" }
+      selection: """
+        id
+        rating
+      """
+    )
+}
+```
+
+## When you still need extra SDL at Compose
+
+Compose config can add `additionalTypeDefs` (often with `@resolveTo` as **additional resolvers**)
+for gateway-local fields that are not owned by an upstream. Prefer that only when entity joins
+cannot express the field. Keep those defs in a checked-in `.graphql` and list them beside other
+subgraphs so registry publish stays the same UX.
+
+{/* prettier-ignore */}
+```graphql
+# extensions.graphql -- gateway-local field delegation
+extend schema
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@resolveTo"])
+
+extend type Book {
+  # Delegate Book.authorId → Query.authorById on the "authors" subgraph
+  author: Author
+    @resolveTo(
+      sourceName: "authors"
+      sourceTypeName: "Query"
+      sourceFieldName: "authorById"
+      sourceArgs: { id: "{root.authorId}" }
+      requiredSelectionSet: "{ authorId }"
+    )
+}
+```
+
+Wire the file as its own Compose subgraph entry (or merge into an existing hand SDL):
+
+```ts filename="mesh.config.ts"
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    { name: 'catalog', schema: './catalog.graphql' },
+    { name: 'authors', schema: './authors.graphql' },
+    // Gateway-local extensions with @resolveTo
+    { name: 'extensions', schema: './extensions.graphql' }
+  ]
+})
+```
+
+```bash
+npx mesh-compose -o supergraph.graphql
+hive-gateway supergraph
+```
+
+Full arg table: [Directives: @resolveTo](/v2/directives#resolveTo). Stitching migrants:
+[From Schema Stitching](/v2/guides/migration/from-stitching#from-delegatetoschema-to-resolveto).
+
+## Related
+
+Type merging vs Federation: [Federation](/v2/concepts/federation) /
+[Schema Stitching](/v2/concepts/stitching). Transforms for rename/filter without inventing new
+fields: [Transform Subgraph](/v2/transforms).
+
+<Cards>
+  <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
+  <Cards.Card arrow title="Federation" href="/v2/concepts/federation" />
+  <Cards.Card arrow title="Directives: @lookup" href="/v2/directives#lookup" />
+  <Cards.Card arrow title="FHIR join example" href="/v2/examples/fhir" />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+</Cards>

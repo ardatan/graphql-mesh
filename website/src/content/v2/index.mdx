@@ -1,0 +1,108 @@
+---
+description: Mesh v2 documentation -- GraphQL SDL, Composition, Hive Gateway, and Apollo Router
+---
+
+import { Callout, Cards } from '@theguild/components'
+import { ConceptRef } from '../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../components/v2-flow-diagram'
+import { V2JourneyCards } from '../../components/v2-journey-cards'
+
+# Mesh v2
+
+<Callout type="info">
+  Mesh v2 docs are actively expanding. Prefer [Mesh v1](/v1) for production runbooks that still use
+  the v1 Compose + Hive Gateway path. Coming from an older Mesh? Start at the [Mesh
+  Migration](/v2/guides/migration) hub (v0 → v1 → v2 and cutover paths).
+</Callout>
+
+<ConceptRef name="mesh">Mesh</ConceptRef> turns GraphQL and non-GraphQL sources into
+<ConceptRef name="federation">Federation</ConceptRef>-ready subgraphs (and optionally a composed
+supergraph). Authors work in GraphQL SDL with Mesh
+<ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> and Mesh protocol directives.
+
+- **Already on Federation?** Extend the graph with REST/SQL/gRPC subgraphs and transforms -- keep
+  Router / Hive / your registry ([why Mesh](/v2/faq#already-have-federation-why-mesh) /
+  [enhance](#enhance-an-existing-federation)).
+- **New to Federation?** Generate Federation-ready SDL from OpenAPI, SQL, and more, then compose and
+  serve on any Federation-compatible gateway ([why Mesh](/v2/faq#new-to-federation-why-mesh)).
+- Platform / registry / gateway **independent**: Compose with Mesh Compose, Hive, Rover, or another
+  composer; publish to any <ConceptRef name="schema-registry">schema registry</ConceptRef> (or
+  none); run on any Federation-compatible <ConceptRef name="gateway">gateway</ConceptRef>.
+- <ConceptRef name="gateway">Gateway</ConceptRef>: **Hive Gateway** (JavaScript / TypeScript) is the
+  preferred runtime for the full Mesh transport surface; **Apollo Router** is a first-class peer for
+  **Connect-compatible** supergraphs.
+
+## Enhance an existing Federation
+
+Already on Apollo GraphOS + Router, Hive Gateway + Registry, or another Federation stack? Mesh
+**extends** that graph -- it does not replace it.
+
+Typical pattern:
+
+1. Keep your current subgraphs, composer, registry, and gateway.
+2. [Build your Subgraph](/v2/paths/generate) for the new surface (REST, SQL, gRPC, …) as Federation
+   SDL -- Generate, Hand-write, or Generate-then-edit.
+3. Publish that SDL to the same registry, **or** [Serve Subgraph](/v2/serve-subgraph) so the
+   existing gateway can call a Mesh-backed Federation URL (`buildSubgraphSchema` / Hive subgraph
+   mode).
+4. Recompose (Rover, Hive composition, or Mesh Compose) and keep [Serve Supergraph](/v2/serve) on
+   the gateway you already run.
+
+Mesh uses [HTTP/REST Connectors](/v2/protocols/http-rest) (`@connect` / `@source`) natively in
+**Apollo Router** and **Hive Gateway**. Non-Connect protocols (SQL, gRPC, …) still work with Apollo
+Router when you [Serve Subgraph](/v2/serve-subgraph) separately --
+[`buildSubgraphSchema`](/v2/guides/build-subgraph-schema) or Hive Gateway in subgraph mode. Short
+answers: [FAQ: existing Federation](/v2/faq#can-mesh-drop-into-an-existing-federation-setup).
+
+<V2FlowDiagram
+  ariaLabel="Mesh v2 stack from sources through Composition to gateway transports"
+  caption="Same path for generated or authored SDL."
+  footnote={{ label: 'Registry / publish / pull', fromStep: 2, toStep: 3 }}
+  steps={[
+    { title: 'Sources', lines: ['REST / SQL / gRPC...'] },
+    { title: 'SDL', lines: ['Loader or authored'], accent: true },
+    { title: 'Composition', lines: ['Subgraph / supergraph'], accent: true },
+    { title: 'Gateway', lines: ['Hive / Apollo Router'], accent: true },
+    { title: 'Transports', lines: ['Execute directives'] }
+  ]}
+/>
+
+## Build your Subgraph
+
+Three equal journeys. No primary funnel.
+
+<V2JourneyCards />
+
+## Transform Subgraph
+
+Optional reshape after you have SDL -- [Automatic](/v2/transforms/automatic) (Compose
+`transforms: []`) or [By hand](/v2/transforms/by-hand) (edit the `.graphql`). Overview:
+[Transform Subgraph](/v2/transforms).
+
+## Serve Subgraph
+
+Run subgraph SDL as its own Federation endpoint --
+[Hive Gateway subgraph](/v2/serve-subgraph#hive-gateway-as-a-subgraph) or
+[`buildSubgraphSchema`](/v2/serve-subgraph#buildsubgraphschema-with-other-graphql-servers) on Yoga
+(or any GraphQL server). That lets the subgraph work with **any Federation-compatible gateway**
+(Apollo Router, Hive Gateway, and others). Overview: [Serve Subgraph](/v2/serve-subgraph). For the
+composed graph, see [Serve Supergraph](/v2/serve).
+
+## Where to go next
+
+<Cards>
+  <Cards.Card arrow title="Build your Subgraph" href="/v2/paths/generate" />
+  <Cards.Card arrow title="Transform Subgraph" href="/v2/transforms" />
+  <Cards.Card arrow title="Serve Subgraph" href="/v2/serve-subgraph" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
+  <Cards.Card arrow title="Serve Supergraph: Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Serve Supergraph: Apollo Router" href="/v2/serve/apollo-router" />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="Protocols" href="/v2/protocols" />
+  <Cards.Card arrow title="Directives" href="/v2/directives" />
+  <Cards.Card arrow title="Migration" href="/v2/guides/migration" />
+  <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
+  <Cards.Card arrow title="Concepts" href="/v2/concepts" />
+  <Cards.Card arrow title="Architecture" href="/v2/architecture" />
+  <Cards.Card arrow title="FAQ" href="/v2/faq" />
+</Cards>

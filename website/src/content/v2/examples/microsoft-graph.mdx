@@ -1,0 +1,293 @@
+---
+description:
+  How we built the Microsoft Graph OData Mesh example -- generate Connect SDL, auth headers, serve
+  on Hive Gateway and Apollo Router
+---
+
+import { Callout, Cards } from '@theguild/components'
+import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
+
+# Microsoft Graph (OData) -- supporting example
+
+<Callout type="info">
+  Supporting how-we-built narrative -- **not** the getting-started kickoff. Prefer [Music Store
+  Example](/v2/examples/music-store) for the staged Generate -> edit -> Hand-write tutorial. TripPin
+  is the small OData primer on [HTTP / REST](/v2/protocols/http-rest#odata-trippin).
+</Callout>
+
+How we built a Mesh subgraph from **Microsoft Graph** OData `$metadata`: load the metadata (or a
+pinned fixture), stamp
+
+<ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> (`@source` / `@connect`), pass a
+Bearer token via `operationHeaders`, compose once, and run the same Connect SDL on **Hive Gateway**
+(JS/TS) and **Apollo Router**.
+
+<V2FlowDiagram
+  ariaLabel="Microsoft Graph how-we-built: metadata to generate to Composition to Serve Supergraph"
+  caption="What existed -> generate -> Composition -> Serve Supergraph."
+  steps={[
+    { title: 'Existed', lines: ['Graph OData API'] },
+    { title: 'Generate', lines: ['loadODataSubgraph'], accent: true },
+    { title: 'Composition', accent: true },
+    { title: 'Serve Supergraph', lines: ['Hive / Apollo Router'] }
+  ]}
+/>
+
+## What you end up with
+
+| Piece               | Detail                                                                        |
+| ------------------- | ----------------------------------------------------------------------------- |
+| Source              | Microsoft Graph OData (`/$metadata` + REST entity sets)                       |
+| Loader              | `@omnigraph/odata` → `@connect` / `@source`                                   |
+| Auth                | `Authorization: Bearer ...` from env / context                                |
+| Apollo Router       | Same Connect SDL on Hive Gateway **and** Apollo Router when Router-compatible |
+| Typical Query roots | `me`, `groups`, `messages`, `drives`, ...                                     |
+
+Clients ask for exactly the Graph resources they need in one GraphQL operation instead of chaining
+REST calls for me → messages → from.
+
+---
+
+## What existed
+
+- Microsoft Graph as an **OData** API (`https://graph.microsoft.com/v1.0/$metadata`).
+- Workload surfaces people care about: signed-in user (`me`), mail (`messages`), groups/members,
+  OneDrive (`drives` / `driveItem`).
+- A need for GraphQL selection + Connectors native in both gateways, without rewriting Graph by
+  hand.
+
+Nothing yet: Mesh subgraph SDL, Compose config, or gateway serve.
+
+---
+
+## 1. Point the OData loader at Graph
+
+Generate from live `$metadata` or a **pinned fixture** (CI / offline). Batch JSON and expand nav
+props match how Graph clients often call the API:
+
+```ts
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { loadODataSubgraph } from '@omnigraph/odata'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadODataSubgraph('MicrosoftGraph', {
+        // Live: 'https://graph.microsoft.com/v1.0' (loader fetches /$metadata)
+        // CI / offline: pin a fixture file next to your compose config
+        source: './metadata.xml',
+        endpoint: 'https://graph.microsoft.com/v1.0',
+        batch: 'json',
+        expandNavProps: true,
+        operationHeaders: {
+          // Hive Gateway / Connect resolve {$env.*} at runtime
+          Authorization: 'Bearer {$env.MSGRAPH_ACCESS_TOKEN}'
+        }
+      })
+    }
+  ]
+})
+```
+
+For local demos without a tenant, run a **mock Graph** that serves the same fixture metadata and a
+handful of entity payloads, and point `endpoint` at that mock. Live `graph.microsoft.com` needs a
+work/school app registration and the Mail / Files / Group permissions your queries use.
+
+Protocol primer (smaller public service): [OData TripPin](/v2/protocols/http-rest#odata-trippin).
+
+---
+
+## 2. Read the emitted Connect SDL
+
+The loader stamps `@source` (base URL + Accept + Authorization) and `@connect` on roots and entity
+types. Abstract OData bases become unions discriminated by `@odata.type` → `__typename`
+(Router-safe; no interface `implements` for those bases).
+
+Emitted shape (abbreviated -- real Graph emit is large):
+
+{/* prettier-ignore */}
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+  @source(
+    name: "MicrosoftGraph"
+    http: {
+      baseURL: "https://graph.microsoft.com/v1.0"
+      headers: [
+        { name: "Accept", value: "application/json;odata.metadata=minimal" }
+        { name: "Authorization", value: "Bearer {$env.MSGRAPH_ACCESS_TOKEN}" }
+      ]
+    }
+  )
+
+type Query {
+  me: user
+    @connect(
+      source: "MicrosoftGraph"
+      http: { GET: "/me" }
+      selection: """
+        id
+        displayName
+        officeLocation
+      """
+    )
+
+  messages(queryOptions: QueryOptions): [message]
+    @connect(
+      source: "MicrosoftGraph"
+      http: {
+        GET: "/messages"
+        queryParams: """
+        "$top": $args.queryOptions.top
+        "$filter": $args.queryOptions.filter
+        """
+      }
+      selection: """
+        $.value {
+          id
+          subject
+          isRead
+          from { emailAddress { name address } }
+        }
+      """
+    )
+}
+
+type message
+  @key(fields: "id")
+  @connect(
+    source: "MicrosoftGraph"
+    http: { GET: "/messages/{$this.id}/" }
+    selection: """
+      id
+      subject
+      isRead
+      from { emailAddress { name address } }
+    """
+    entity: true
+  ) {
+  id: ID!
+  subject: String
+  isRead: Boolean
+}
+```
+
+Reading tips: [Reading generated SDL](/v2/guides/reading-generated-sdl) /
+[Selection mapping](/v2/guides/selection-mapping). OData `$filter` / `$top` land as `queryOptions`
+args on list fields.
+
+Hive Gateway also keeps OData batch / expand knobs on
+`@transport(kind: "connect", options: { odata: ... })` -- Apollo Router runs the Connect apps; those
+transport options stay Mesh-side.
+
+---
+
+## 3. Compose and serve on both gateways
+
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @omnigraph/odata @graphql-hive/gateway \
+  @graphql-mesh/transport-connect
+```
+
+```bash
+pnpm exec mesh-compose -o supergraph.graphql
+# Hive Gateway (JS/TS)
+pnpm exec hive-gateway supergraph
+# Apollo Router -- same Connect-compatible supergraph
+./router --supergraph supergraph.graphql
+```
+
+Set `MSGRAPH_ACCESS_TOKEN` (or your chosen env name) in the gateway process. Gateway matrix:
+[Apollo Router](/v2/serve/apollo-router).
+
+---
+
+## 4. Sample client queries
+
+Same shapes as the classic Mesh Microsoft Graph demo:
+
+**Recent mail for the signed-in user**
+
+```graphql
+query fetchRecentEmails {
+  me {
+    displayName
+    officeLocation
+    messages(queryOptions: { top: 3 }) {
+      subject
+      isRead
+      from {
+        emailAddress {
+          address
+        }
+      }
+    }
+  }
+}
+```
+
+**Groups and members**
+
+```graphql
+query fetchGroupsAndMembers {
+  groups {
+    displayName
+    description
+    members {
+      id
+    }
+  }
+}
+```
+
+**OneDrive files**
+
+```graphql
+query fetchFilesFromOneDrive {
+  me {
+    displayName
+    drive {
+      root {
+        children {
+          name
+          size
+        }
+      }
+    }
+  }
+}
+```
+
+---
+
+## 5. Auth and production notes
+
+| Topic              | Guidance                                                                                                                          |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| Token source       | App-only or delegated Microsoft identity; map into `{$env....}` or gateway context headers                                        |
+| Metadata pin       | Prefer a checked-in `$metadata` snapshot for CI; refresh deliberately when Graph versions change                                  |
+| Scope              | Mail / Files / Group queries need matching Graph permissions                                                                      |
+| Generate-then-edit | Trim the huge emit with [Automatic](/v2/transforms/automatic) transforms or commit edited SDL ([By hand](/v2/transforms/by-hand)) |
+
+---
+
+## Takeaways
+
+- Microsoft Graph is a **large OData → Connect** generate story -- great enterprise proof that
+  Connectors are native in both gateways, not the first tutorial (Music Store still owns Generate →
+  edit → Hand-write).
+- Auth headers and pinned metadata matter as much as the loader one-liner.
+- TripPin teaches the same OData mechanics on a tiny public service; Graph is the scaled-up cousin.
+
+Protocol: [HTTP / REST](/v2/protocols/http-rest). Upstream Graph:
+[Microsoft Graph overview](https://learn.microsoft.com/en-us/graph/overview).
+
+<Cards>
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="FHIR Example" href="/v2/examples/fhir" />
+  <Cards.Card arrow title="HTTP / REST" href="/v2/protocols/http-rest" />
+  <Cards.Card arrow title="Apollo Router" href="/v2/serve/apollo-router" />
+  <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
+</Cards>

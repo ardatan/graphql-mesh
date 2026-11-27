@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import {
   CallToAction,
   CheckIcon,
@@ -19,26 +18,25 @@ export function MeshHero(props: HeroContainerProps) {
         GraphQL Mesh
       </Heading>
       <p className="mx-auto w-[512px] max-w-[80%] text-balance text-center leading-6 text-green-800">
-        Unify your API landscape with Mesh’s federated architecture, integrating any API service
-        into a cohesive graph.
+        Federate any API into a GraphQL Supergraph
       </p>
       <HeroFeatures>
         <li>
-          <CheckIcon className="text-green-800" />
-          Compose any API
+          <CheckIcon className="text-green-800 shrink-0" />
+          Build Federated GraphQL subgraphs from any API (REST, SOAP, OData, gRPC, SQL, and more)
         </li>
         <li>
-          <CheckIcon className="text-green-800" />
-          Granular field access
+          <CheckIcon className="text-green-800 shrink-0" />
+          Support any GraphQL Platform incl. Hive and Apollo GraphOS
         </li>
         <li>
-          <CheckIcon className="text-green-800" />
-          Works with any schema registry
+          <CheckIcon className="text-green-800 shrink-0" />
+          Runs with any Federation Gateway and Router
         </li>
       </HeroFeatures>
       <HeroLinks>
-        <CallToAction variant="primary-inverted" href="/v1/getting-started">
-          Get started
+        <CallToAction variant="primary-inverted" href="/v2">
+          Documentation
         </CallToAction>
         <CallToAction
           variant="secondary"

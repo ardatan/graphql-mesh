@@ -1,0 +1,46 @@
+---
+description:
+  Mesh v2 protocol families -- HTTP/REST Connectors, SQL, Mongo, Neo4j, Thrift, Protobuf, GraphQL
+---
+
+import { Cards } from '@theguild/components'
+
+# Protocols
+
+Each family has an optional loader, directive emit, transport, and Apollo Router notes. Pick the
+page that matches **what the source is for** -- each leads with concrete excerpts and use cases.
+
+**HTTP/REST Connectors** (`@connect` / `@source`) are one family. Mesh protocols such as SQL, Mongo,
+and Protobuf are separate families. **SOAP / WSDL** lives under HTTP/REST (same `@connect` /
+`@source` author API + Mesh XML codec); serve SOAP on **Hive Gateway** (or
+[Serve Subgraph](/v2/serve-subgraph)), not stock Apollo Router.
+
+| Family                                      | When to open it                                                       | Transport                            | On Apollo Router?                                                                   |
+| ------------------------------------------- | --------------------------------------------------------------------- | ------------------------------------ | ----------------------------------------------------------------------------------- |
+| REST / OpenAPI / JSON Schema / RAML / OData | HTTP JSON APIs, entity lookups, FHIR                                  | `transport-connect`                  | Yes (Connect-compatible)                                                            |
+| SOAP / WSDL                                 | WSDL ops as Connect + XML body (under HTTP/REST)                      | `transport-connect` (+ XML codec)    | No -- Hive Gateway / [Serve Subgraph](/v2/serve-subgraph)                           |
+| GraphQL HTTP / Federation                   | Existing GraphQL / Federation subgraphs                               | `http` / federation                  | N/A                                                                                 |
+| SQL                                         | Postgres / MySQL (MariaDB) / SQLite -- tables, FKs, CRUD, entity fill | `transport-sql`                      | No -- [Serve Subgraph](/v2/serve-subgraph) (Hive subgraph or `buildSubgraphSchema`) |
+| Mongo                                       | Collections, find/filter/CRUD, ObjectId entities                      | `transport-mongo`                    | No -- [Serve Subgraph](/v2/serve-subgraph)                                          |
+| Neo4j                                       | Nodes / relationships via Neo4j GraphQL natives                       | `transport-neo4j`                    | No -- [Serve Subgraph](/v2/serve-subgraph)                                          |
+| Thrift                                      | `.thrift` IDL -- binary RPC or TJSON Connect                          | `transport-thrift` / Connect (TJSON) | TJSON `@connect` only; binary via [Serve Subgraph](/v2/serve-subgraph)              |
+| Protobuf / gRPC                             | RPC field-number maps (`@protobuf__rpc`)                              | `transport-protobuf`                 | No -- [Serve Subgraph](/v2/serve-subgraph) (Hive subgraph or `buildSubgraphSchema`) |
+
+Shared skills: [Selection mapping](/v2/guides/selection-mapping),
+[Entity resolution](/v2/concepts/federation#entity-resolution), [Directives](/v2/directives).
+
+## Pages
+
+<Cards>
+  <Cards.Card arrow title="HTTP / REST (incl. SOAP)" href="/v2/protocols/http-rest" />
+  <Cards.Card arrow title="GraphQL HTTP / Federation" href="/v2/protocols/graphql" />
+  <Cards.Card arrow title="SQL" href="/v2/protocols/sql" />
+  <Cards.Card arrow title="Mongo" href="/v2/protocols/mongo" />
+  <Cards.Card arrow title="Neo4j" href="/v2/protocols/neo4j" />
+  <Cards.Card arrow title="Thrift" href="/v2/protocols/thrift" />
+  <Cards.Card arrow title="Protobuf / gRPC" href="/v2/protocols/protobuf" />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="FHIR (JSON Schema)" href="/v2/examples/fhir" />
+  <Cards.Card arrow title="Microsoft Graph (OData)" href="/v2/examples/microsoft-graph" />
+  <Cards.Card arrow title="Community Connectors" href="/v2/examples/community-connectors" />
+</Cards>

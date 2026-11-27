@@ -1,0 +1,56 @@
+---
+description:
+  Mesh v2 concepts -- Mesh, Loaders, Transports, HTTP/REST Connectors, Federation, Schema Stitching,
+  Gateway, Composition, Schema registry
+---
+
+import { Cards } from '@theguild/components'
+import { ProtocolRef } from '../../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
+
+# Concepts
+
+Short definitions for terms that show up across Mesh v2 docs. Each page answers: **what it is**,
+**where it sits in the stack**, and a **tiny example**. Cross-link [Architecture](/v2/architecture),
+[Composition](/v2/compose), and [Serve Supergraph](/v2/serve/hive-gateway).
+
+<V2FlowDiagram
+  ariaLabel="Concepts stack: sources through composition to gateway"
+  footnote={{ label: 'Schema registry', fromStep: 1, toStep: 2 }}
+  steps={[
+    { title: 'Sources / SDL' },
+    { title: 'Composition', accent: true },
+    { title: 'Gateway', accent: true },
+    { title: 'Upstreams' }
+  ]}
+/>
+
+| Concept                  | One line                                                                    | Page                                            |
+| ------------------------ | --------------------------------------------------------------------------- | ----------------------------------------------- |
+| **Mesh**                 | Turns sources + SDL into Federation-ready subgraphs and transports          | [Mesh](/v2/concepts/mesh)                       |
+| **Loaders**              | `@omnigraph/*` packages that emit subgraph SDL (optional; not runtime)      | [Loaders](/v2/concepts/loaders)                 |
+| **Transports**           | `@graphql-mesh/transport-*` packages that execute directives at the gateway | [Transports](/v2/concepts/transports)           |
+| **HTTP/REST Connectors** | HTTP/REST `@connect` / `@source` mapping (not Mesh-only protocols)          | [HTTP/REST Connectors](/v2/concepts/connectors) |
+| **Federation**           | Standardized type merging (entities / `@key`) + federation gateway runtime  | [Federation](/v2/concepts/federation)           |
+| **Schema Stitching**     | Programmatic type-merging runtime (`stitchSchemas`); can run Federation     | [Schema Stitching](/v2/concepts/stitching)      |
+| **Gateway**              | Runtime that executes the graph (federation gateway peers in Mesh v2)       | [Gateway](/v2/concepts/gateway)                 |
+| **Composition**          | Combining subgraph SDL into a supergraph (Mesh Compose, Hive, Rover, ...)   | [Composition](/v2/concepts/composition)         |
+| **Schema registry**      | Stores and distributes subgraph / supergraph SDL                            | [Schema registry](/v2/concepts/schema-registry) |
+
+Protocol families (hover / click): <ProtocolRef name="http-rest" />, <ProtocolRef name="sql" />,
+
+<ProtocolRef name="mongo" />, <ProtocolRef name="neo4j" />, <ProtocolRef name="thrift" />,
+<ProtocolRef name="protobuf" /> -- overview at [Protocols](/v2/protocols).
+
+## Where to go next
+
+<Cards>
+  <Cards.Card arrow title="Architecture" href="/v2/architecture" />
+  <Cards.Card arrow title="Loaders" href="/v2/concepts/loaders" />
+  <Cards.Card arrow title="Transports" href="/v2/concepts/transports" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
+  <Cards.Card arrow title="Protocols" href="/v2/protocols" />
+  <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Apollo Router" href="/v2/serve/apollo-router" />
+  <Cards.Card arrow title="Directives reference" href="/v2/directives" />
+</Cards>

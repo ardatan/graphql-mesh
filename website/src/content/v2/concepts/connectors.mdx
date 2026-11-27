@@ -1,0 +1,79 @@
+---
+description: HTTP/REST Connectors -- @connect / @source mapping (not Mesh-only protocols)
+---
+
+import { Cards } from '@theguild/components'
+import { DirectiveRef, ProtocolRef } from '../../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
+
+# HTTP/REST Connectors
+
+**HTTP/REST Connectors** are an HTTP-mapping style for GraphQL: fields declare how to call REST with
+`@connect` and `@source` (connect/v0.4), plus `selection` / entity flags
+(<DirectiveRef name="connect" /> / <DirectiveRef name="source" />). Mesh OpenAPI, JSON Schema,
+OData, and SOAP-as-Connect loaders **emit** that shape. Hand authors can write the same directives.
+Connectors are native on Hive Gateway and Apollo Router when the SDL is Connect-compatible.
+
+## Where it lives
+
+<V2FlowDiagram
+  ariaLabel="HTTP/REST Connectors path from OpenAPI to Connect SDL to gateways"
+  steps={[
+    { title: 'OpenAPI / REST' },
+    { title: 'Loader or hand', accent: true },
+    { title: '@connect SDL', lines: ['+ @source'], accent: true },
+    { title: 'Gateways', lines: ['Hive / Apollo Router'] }
+  ]}
+/>
+
+| Piece              | Role                                                                                                                    |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| Directive contract | [HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives) (upstream) |
+| Mesh transport     | `@graphql-mesh/transport-connect` on Hive Gateway                                                                       |
+| Apollo Router      | Same Connect SDL on [Apollo Router](/v2/serve/apollo-router) when compatible                                            |
+| Protocol page      | <ProtocolRef name="http-rest" />                                                                                        |
+
+HTTP/REST Connectors are **not** Mesh-only protocol mapping.
+
+<ProtocolRef name="sql" />, <ProtocolRef name="mongo" />, <ProtocolRef name="protobuf" />,
+<ProtocolRef name="thrift" />, and <ProtocolRef name="neo4j" /> use their own Mesh protocol
+directives plus `@transport` -- do not call those "Connectors." Composition itself is also separate.
+
+**Connector coordinates** in error extensions (e.g. `ecomm:Query.products@connect[0]`) are not the
+same as Spec field names like `Query.review` -- see
+[Schema Coordinates](/v2/guides/schema-coordinates).
+
+## Short example
+
+{/* prettier-ignore */}
+```graphql
+type Query {
+  review(id: ID!): Review
+    @connect(
+      source: "reviews"
+      http: { GET: "/reviews/{$args.id}" }
+      selection: """
+        id
+        rating
+        body
+      """
+    )
+}
+```
+
+Arg tables: [Directives reference](/v2/directives#connect) /
+[HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives).
+Binders: [Selection mapping](/v2/guides/selection-mapping).
+
+<Cards>
+  <Cards.Card arrow title="HTTP / REST protocol" href="/v2/protocols/http-rest" />
+  <Cards.Card arrow title="Directives reference" href="/v2/directives#connect" />
+  <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Apollo Router" href="/v2/serve/apollo-router" />
+  <Cards.Card
+    arrow
+    title="HTTP/REST Connectors reference"
+    href="https://www.apollographql.com/docs/graphos/connectors/reference/directives"
+  />
+  <Cards.Card arrow title="Concepts overview" href="/v2/concepts" />
+</Cards>

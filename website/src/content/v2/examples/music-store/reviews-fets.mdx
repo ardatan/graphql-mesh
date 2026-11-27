@@ -1,0 +1,255 @@
+---
+description: Stage 2 of Music Store -- build an OpenAPI Reviews API with feTS for Mesh Connect
+---
+
+import { Callout, Cards } from '@theguild/components'
+
+# Reviews API with feTS
+
+Stage 2 of the [Music Store Example](/v2/examples/music-store) needs a **REST Reviews** server with
+an OpenAPI document. This tutorial builds that server with [feTS](https://fets.dev/) so Mesh can
+load `http://localhost:4001/openapi.json` and emit HTTP/REST Connectors (`@connect` / `@source`).
+
+Skill: [Generate-then-edit](/v2/paths/generate-then-edit) | Protocol:
+[HTTP / REST](/v2/protocols/http-rest) | feTS docs: [OpenAPI](https://fets.dev/server/openapi)
+
+<Callout type="info">
+  Any OpenAPI server works the same for the Mesh loader. feTS is convenient because the route
+  schemas **are** the OpenAPI document -- no separate YAML to keep in sync.
+</Callout>
+
+## 1. Create the folder
+
+```bash
+mkdir reviews-api
+cd reviews-api
+```
+
+## 2. Install feTS (and TypeScript tooling)
+
+```sh npm2yarn
+npm i fets
+```
+
+```sh npm2yarn
+npm i -D typescript tsx @types/node
+```
+
+## 3. Write `server.ts`
+
+Create `reviews-api/server.ts` with an in-memory Reviews API:
+
+- OpenAPI info title **Reviews API**
+- Review shape: `id`, `trackId`, `rating`, `body`
+- `GET /reviews?trackId=` (list, filter by track)
+- `GET /reviews/:id` (by id)
+- `POST /reviews` (create)
+- Listen on **4001**; log `/docs` and `/openapi.json`
+
+```ts filename="reviews-api/server.ts"
+import { createServer } from 'node:http'
+import { createRouter, Response, Type } from 'fets'
+
+type Review = {
+  id: string
+  trackId: string
+  rating: number
+  body: string
+}
+
+const reviews: Review[] = [
+  {
+    id: '1',
+    trackId: '1',
+    rating: 5,
+    body: 'Still the best track on the album.'
+  },
+  {
+    id: '2',
+    trackId: '1',
+    rating: 4,
+    body: 'Great guitar work.'
+  },
+  {
+    id: '3',
+    trackId: '2',
+    rating: 3,
+    body: 'Solid B-side.'
+  }
+]
+
+let nextId = 4
+
+const ReviewSchema = Type.Object({
+  id: Type.String(),
+  trackId: Type.String(),
+  rating: Type.Number(),
+  body: Type.String()
+})
+
+const app = createRouter({
+  openAPI: {
+    info: {
+      title: 'Reviews API',
+      version: '1.0.0'
+    }
+  }
+})
+  .route({
+    method: 'GET',
+    path: '/reviews',
+    operationId: 'listReviews',
+    description: 'List reviews, optionally filtered by trackId',
+    schemas: {
+      request: {
+        query: Type.Object({
+          trackId: Type.Optional(Type.String())
+        })
+      },
+      responses: {
+        200: Type.Array(ReviewSchema)
+      }
+    },
+    handler: req => {
+      const { trackId } = req.query
+      const result = trackId ? reviews.filter(r => r.trackId === trackId) : reviews
+      return Response.json(result)
+    }
+  })
+  .route({
+    method: 'GET',
+    path: '/reviews/:id',
+    operationId: 'getReview',
+    description: 'Get a review by id',
+    schemas: {
+      request: {
+        params: Type.Object({
+          id: Type.String()
+        })
+      },
+      responses: {
+        200: ReviewSchema,
+        404: Type.Object({
+          message: Type.String()
+        })
+      }
+    },
+    handler: req => {
+      const review = reviews.find(r => r.id === req.params.id)
+      if (!review) {
+        return Response.json({ message: 'Review not found' }, { status: 404 })
+      }
+      return Response.json(review)
+    }
+  })
+  .route({
+    method: 'POST',
+    path: '/reviews',
+    operationId: 'createReview',
+    description: 'Create a review',
+    schemas: {
+      request: {
+        json: Type.Object({
+          trackId: Type.String(),
+          rating: Type.Number(),
+          body: Type.String()
+        })
+      },
+      responses: {
+        201: ReviewSchema
+      }
+    },
+    handler: async req => {
+      const input = await req.json()
+      const review: Review = {
+        id: String(nextId++),
+        trackId: input.trackId,
+        rating: input.rating,
+        body: input.body
+      }
+      reviews.push(review)
+      return Response.json(review, { status: 201 })
+    }
+  })
+
+createServer(app).listen(4001, () => {
+  console.log('Reviews API listening on http://localhost:4001')
+  console.log('  OpenAPI: http://localhost:4001/openapi.json')
+  console.log('  Docs:    http://localhost:4001/docs')
+})
+```
+
+feTS serves `/openapi.json` and `/docs` from the route schemas automatically
+([feTS OpenAPI](https://fets.dev/server/openapi)).
+
+## 4. Run the server
+
+```bash
+npx tsx server.ts
+```
+
+You should see the OpenAPI and docs URLs logged.
+
+## 5. Check OpenAPI and a sample request
+
+```bash
+curl -s http://localhost:4001/openapi.json | head
+curl -s 'http://localhost:4001/reviews?trackId=1'
+curl -s http://localhost:4001/reviews/1
+```
+
+Expect JSON reviews for `trackId=1` and the single review with `id=1`.
+
+## 6. Wire Mesh Compose (OpenAPI → Connect)
+
+With the Reviews server running, point `loadOpenAPISubgraph` at the OpenAPI document and HTTP
+endpoint:
+
+```ts filename="mesh.config.ts"
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { loadOpenAPISubgraph } from '@omnigraph/openapi'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadOpenAPISubgraph('reviews', {
+        source: 'http://localhost:4001/openapi.json',
+        endpoint: 'http://localhost:4001'
+      })
+    }
+  ]
+})
+```
+
+Install Compose + OpenAPI loader if you have not already (Music Store
+[Packages](/v2/examples/music-store#packages)):
+
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @omnigraph/openapi
+```
+
+## 7. Emit, edit, recompose
+
+```bash
+pnpm exec mesh-compose --subgraph reviews -o reviews-subgraph.graphql
+```
+
+Open the emitted SDL. You should see `@source` / `@connect` with HTTP paths like `/reviews` and
+`/reviews/{$args.id}` (operationIds become GraphQL field names). That emit is the starting point for
+**Generate-then-edit**.
+
+Next steps live on the Music Store overview:
+
+1. Copy to an owned file (`cp reviews-subgraph.graphql reviews.graphql`).
+2. Dislike / edit field names or the Track join shape ([By hand](/v2/transforms/by-hand)).
+3. Recompose and serve the Connect slice on Hive Gateway **and** Apollo Router.
+
+Full stage storyboard (edit stubs, Track join, two-config shell):
+[Music Store Example -- Stage 2](/v2/examples/music-store#stage-2----generate-reviews-then-edit).
+
+<Cards>
+  <Cards.Card arrow title="Music Store Overview" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="Generate-then-edit" href="/v2/paths/generate-then-edit" />
+  <Cards.Card arrow title="HTTP / REST" href="/v2/protocols/http-rest" />
+  <Cards.Card arrow title="feTS OpenAPI" href="https://fets.dev/server/openapi" />
+</Cards>

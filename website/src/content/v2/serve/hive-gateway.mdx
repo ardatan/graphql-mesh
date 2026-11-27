@@ -1,0 +1,128 @@
+---
+description: Serve Mesh supergraphs with Hive Gateway (JavaScript / TypeScript)
+---
+
+import { Callout, Cards } from '@theguild/components'
+import { ConceptRef, DirectiveRef, ProtocolRef } from '../../../components/v2-directive-ref'
+
+# Hive Gateway
+
+**Hive Gateway** is the preferred gateway runtime for <ConceptRef name="mesh">Mesh</ConceptRef> --
+the **JavaScript / TypeScript** <ConceptRef name="gateway">gateway</ConceptRef>. It executes the
+full Mesh transport surface (HTTP/REST Connectors, SQL, Mongo, Protobuf, Thrift, Neo4j, ...).
+
+## When to use it
+
+- Any Mesh-composed supergraph that uses non-Connect protocol directives
+  (<DirectiveRef name="sql" />, <DirectiveRef name="protobuf__rpc" />,
+  <DirectiveRef name="mongo" />, ...).
+- Connect-compatible supergraphs (alongside or instead of Apollo Router).
+- Serving a Mesh subgraph as a <ConceptRef name="federation">Federation</ConceptRef> subgraph behind
+  another router -- see [Serve Subgraph](/v2/serve-subgraph).
+
+## Compose, then serve
+
+Install Compose CLI, Hive Gateway, loaders, and the transports your SDL needs:
+
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @graphql-hive/gateway @omnigraph/sql @graphql-mesh/transport-sql
+```
+
+Add more loaders/transports as needed (for example `@omnigraph/openapi`,
+`@graphql-mesh/transport-connect`, `@graphql-mesh/transport-protobuf`,
+`@graphql-mesh/transport-mongo`).
+
+Same `mesh.config.ts` can export compose + gateway config. Register Mesh transports the supergraph
+needs:
+
+```ts
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway'
+import { loadSqlSubgraph } from '@omnigraph/sql'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadSqlSubgraph('chinook', {
+        endpoint: 'file:chinook.db'
+      })
+    }
+  ]
+})
+
+export const gatewayConfig = defineGatewayConfig({
+  transports: {
+    sql: import('@graphql-mesh/transport-sql')
+    // protobuf: import('@graphql-mesh/transport-protobuf'),
+    // mongo: import('@graphql-mesh/transport-mongo'),
+  }
+})
+```
+
+```bash
+# Serve Supergraph
+pnpm exec mesh-compose -o supergraph.graphql
+pnpm exec hive-gateway supergraph
+
+# Serve Subgraph (foreign router talks GraphQL to this process)
+pnpm exec mesh-compose --subgraph chinook -o chinook-subgraph.graphql
+pnpm exec hive-gateway subgraph chinook-subgraph.graphql
+```
+
+HTTP/REST Connectors often need no extra transport entry (Connect is built in). Register
+`transport-protobuf` (and other Mesh protocol transports) only when the supergraph stamps those
+kinds. Subgraph mode details: [Serve Subgraph](/v2/serve-subgraph).
+
+## Use cases
+
+Register only the transports your supergraph actually stamps. A mixed Music Store graph needs SQL
+and protobuf; Connect needs no extra entry. Thrift TJSON is Connect, so it does not load
+`transport-thrift`. OpenAPI callback / JSON Schema webhook subscriptions need `webhooks: true` when
+fields use `@pubsubOperation` / `@resolveTo` with `webhook:...` topics. For multi-instance EDFS,
+pass a shared `pubsub` broker -- see [Subscriptions and pubsub](/v2/guides/subscriptions-pubsub):
+
+```ts
+export const gatewayConfig = defineGatewayConfig({
+  // Music Store: SQL catalog + gRPC recommendations (Connect Reviews is built in)
+  transports: {
+    sql: import('@graphql-mesh/transport-sql'),
+    protobuf: import('@graphql-mesh/transport-protobuf')
+    // thrift: only for binary @thrift__rpc -- omit for TJSON @connect
+  },
+  // OpenAPI callback / webhook subscription fields
+  webhooks: true
+})
+```
+
+## In the Music Store Example
+
+After all three stages, serve the **full** SQL + Connect + protobuf supergraph on Hive Gateway. Run
+the Connect Reviews slice on [Apollo Router](/v2/serve/apollo-router) as well (Connectors are native
+in both). See [Music Store Example](/v2/examples/music-store).
+
+## Related
+
+Full Hive Gateway product docs live on the Hive site; this page covers how Mesh Compose output and
+transports plug in. Concept overview: [Gateway](/v2/concepts/gateway). Serve section:
+[Serve Supergraph](/v2/serve).
+
+Gateway-owned cross-cuts (configure on Hive Gateway; annotate SDL in Mesh when directives apply):
+[Authentication](/v2/guides/auth), [Rate limiting](/v2/guides/rate-limit),
+[Monitoring](/v2/guides/monitoring), [Subscriptions and pubsub](/v2/guides/subscriptions-pubsub).
+
+<Cards>
+  <Cards.Card arrow title="Serve Subgraph" href="/v2/serve-subgraph" />
+  <Cards.Card arrow title="Authentication" href="/v2/guides/auth" />
+  <Cards.Card arrow title="Rate limiting" href="/v2/guides/rate-limit" />
+  <Cards.Card arrow title="Monitoring" href="/v2/guides/monitoring" />
+  <Cards.Card
+    arrow
+    title="Hive Gateway docs"
+    href="https://the-guild.dev/graphql/hive/docs/gateway"
+  />
+  <Cards.Card arrow title="Gateway (concept)" href="/v2/concepts/gateway" />
+  <Cards.Card arrow title="Subscriptions and pubsub" href="/v2/guides/subscriptions-pubsub" />
+  <Cards.Card arrow title="Apollo Router (peer)" href="/v2/serve/apollo-router" />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="Protocols" href="/v2/protocols" />
+</Cards>

@@ -1,0 +1,205 @@
+---
+description:
+  Serve Subgraph -- run Mesh subgraph SDL on Hive Gateway or buildSubgraphSchema with any GraphQL
+  server
+---
+
+import { Callout, Cards } from '@theguild/components'
+import { ConceptRef, DirectiveRef } from '../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../components/v2-flow-diagram'
+
+# Serve Subgraph
+
+[Build your Subgraph](/v2/paths) produces Mesh subgraph SDL. [Transform Subgraph](/v2/transforms)
+optionally reshapes it. **Serve Subgraph** is when that SDL runs as its **own Federation subgraph
+process** -- an HTTP GraphQL endpoint a gateway (or another router) can call -- instead of (or in
+addition to) folding everything into one [Serve Supergraph](/v2/serve) runtime.
+
+<V2FlowDiagram
+  ariaLabel="Serve Subgraph between authored SDL and the federation gateway"
+  caption="Subgraph process executes Mesh transports / entity hops; gateway still composes."
+  steps={[
+    { title: 'Subgraph SDL', lines: ['Build / Transform'], accent: true },
+    { title: 'Serve Subgraph', lines: ['Hive or Yoga / …'], accent: true },
+    { title: 'Composition', lines: ['Supergraph'] },
+    { title: 'Gateway', lines: ['Hive / Apollo Router'] }
+  ]}
+/>
+
+<Callout type="info">
+  Serve Subgraph does **not** replace <ConceptRef name="composition">composition</ConceptRef>. The
+  gateway still needs composed supergraph (or registry) SDL. This page is about the **subgraph
+  process** that understands Mesh directives.
+</Callout>
+
+## Why serve a subgraph?
+
+Most Mesh deployments [compose](/v2/compose) and [serve the supergraph](/v2/serve) on Hive Gateway
+(or Apollo Router for Connect-compatible SDL). Serve the subgraph yourself when you need a
+**standalone Federation subgraph URL**:
+
+| Reason                                   | What you get                                                                                         |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Foreign router / mixed fleet             | Apollo Router (or another gateway) talks GraphQL to a Mesh-backed subgraph for non-Connect protocols |
+| Independent deploy / scale               | Ship and scale one subgraph process without redeploying the whole supergraph runtime                 |
+| Local or CI subgraph endpoint checks     | Hit the subgraph GraphQL endpoint before full composition                                            |
+| Code-owned fields beside Mesh directives | Mix directive-driven transports with your own resolvers (e.g. custom `@lookup` entry fields)         |
+
+Default path remains Compose → Serve Supergraph. Serve Subgraph is the opt-in when the subgraph must
+be a real Federation peer.
+
+<Callout type="info">
+  If you [Serve Supergraph](/v2/serve) on **Hive Gateway**, you often **do not** need a separate
+  Serve Subgraph step -- Hive can run Mesh subgraphs under the hood as part of the supergraph
+  runtime. Use this page when another Federation-compatible gateway (Apollo Router, etc.) must call
+  a Mesh-backed subgraph URL, or when you host the subgraph yourself with{' '}
+  <code>buildSubgraphSchema</code>.
+</Callout>
+
+## Hive Gateway as a subgraph
+
+Hive Gateway can run **one Mesh subgraph** (not only a supergraph) so another router can treat it as
+a Federation subgraph. Architecture calls this the
+[Hive Gateway subgraph proxy](/v2/architecture#patterns) pattern: non-Connect Mesh subgraphs stay on
+Hive; a foreign router still speaks GraphQL to that process.
+
+Use this when:
+
+- The subgraph stamps Mesh protocol directives (`@sql`, `@protobuf__rpc`, …) that Apollo Router will
+  not execute.
+- You already operate Hive Gateway and want the same transport registration story as supergraph
+  serve -- see [Hive Gateway](/v2/serve/hive-gateway).
+- Composition / registry still publishes that subgraph's SDL into the supergraph the foreign router
+  runs.
+
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @graphql-hive/gateway @omnigraph/sql @graphql-mesh/transport-sql
+```
+
+```bash
+# Emit subgraph SDL (Generate or owned file via composeConfig)
+pnpm exec mesh-compose --subgraph chinook -o chinook-subgraph.graphql
+
+# Serve that file as a Federation subgraph (foreign router talks here)
+pnpm exec hive-gateway subgraph chinook-subgraph.graphql
+# default http://0.0.0.0:4000 -- point Apollo Router / another gateway at this URL
+```
+
+Register the same Mesh transports in `gatewayConfig` as you would for
+[Serve Supergraph](/v2/serve/hive-gateway). For Connect-only subgraphs you can often skip a Mesh
+subgraph process and let Apollo Router execute `@connect` from the supergraph instead.
+
+## `buildSubgraphSchema` with other GraphQL servers
+
+[`@graphql-mesh/subgraph`](/v2/guides/build-subgraph-schema) exports `buildSubgraphSchema`: turn
+Mesh subgraph SDL into an executable `GraphQLSchema` and host it on **Yoga**, Apollo Server,
+Mercurius, or any GraphQL HTTP stack. It does **what Apollo's** `@apollo/subgraph`
+`buildSubgraphSchema` does for Federation wiring, **plus** Mesh directive / Mesh specification
+execution (protocol transports, Connect in-process, entity hops). Transports and entity hops come
+from the SDL; you optionally pass `resolvers` on the schema module (`{ typeDefs, resolvers }`) for
+fields you own in code. Mesh opts (`fetch`, …) stay in the second argument.
+
+```sh npm2yarn
+npm i graphql graphql-yoga @graphql-mesh/subgraph
+```
+
+Plus transports your SDL uses, for example:
+
+```sh npm2yarn
+npm i @graphql-mesh/transport-connect
+```
+
+```ts {8-14}
+import { createServer } from 'node:http'
+import { createYoga } from 'graphql-yoga'
+import { buildSubgraphSchema } from '@graphql-mesh/subgraph'
+import { readFileSync } from 'node:fs'
+
+const typeDefs = readFileSync('./reviews.graphql', 'utf8')
+
+const schema = await buildSubgraphSchema(
+  {
+    typeDefs,
+    // Optional: code resolvers for fields the SDL does not drive via directives
+    resolvers: {
+      Query: {
+        // Example: hand-owned @lookup entry beside directive-driven fields
+        reviewById: (_root, { id }, ctx) => ctx.reviews.load(id)
+      }
+    }
+  },
+  {
+    // fetch / transport context as supported by the package
+  }
+)
+
+createServer(createYoga({ schema })).listen(4002)
+```
+
+```bash
+# After saving the server entry (e.g. subgraph-server.ts)
+npx tsx subgraph-server.ts
+# curl / GraphQL IDE against http://localhost:4002/graphql
+```
+
+Emit or refresh the SDL the process loads:
+
+```bash
+pnpm exec mesh-compose --subgraph reviews -o reviews.graphql
+```
+
+### Resolvers for `@lookup`
+
+Prefer Federation draft `@lookup` / `@is` / `@internal` for **entity entry fields that return one
+object** (not a list). Type Merging `@merge` stays for **list / batch** entry fields --
+[Directives: @lookup](/v2/directives#lookup) / [Directives: @merge](/v2/directives#merge).
+
+- If the entry field is fully described by Mesh / Connect / protocol directives,
+  `buildSubgraphSchema` wires it -- no resolver required.
+- If you **hand-own** the hop in TypeScript (custom store, auth gate, non-directive fetch), put
+  `@lookup` on the field in SDL and implement it in `resolvers`. Same pattern as a classic
+  Federation subgraph, except Mesh still executes the directive-driven surface beside your code.
+
+```graphql {3,9}
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"])
+  @link(url: "https://graphql.github.io/graphql-federation-spec/draft", import: ["@lookup"])
+  @composeDirective(name: "@lookup")
+
+directive @lookup on FIELD_DEFINITION
+
+type Query {
+  reviewById(id: ID!): Review @lookup
+}
+```
+
+Mesh `buildSubgraphSchema` does the same job as Apollo's `@apollo/subgraph` `buildSubgraphSchema`
+for Federation wiring, plus Mesh directive execution (protocol transports, Connect in-process,
+entity hops). Full package comparison: [buildSubgraphSchema](/v2/guides/build-subgraph-schema).
+
+## When this is useful
+
+| Situation                                                           | Prefer                                                                                                                                             |
+| ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| One Mesh supergraph, all transports on Hive                         | [Serve Supergraph](/v2/serve) -- skip Serve Subgraph                                                                                               |
+| Connect-only graph on Hive Gateway and Apollo Router                | Serve Supergraph; Connectors are native in both; Router executes Connect from composed SDL                                                         |
+| Community Connectors SDL as a Fed peer in an existing fleet         | **Hive Gateway subgraph** or **`buildSubgraphSchema`** -- [Community Connectors](/v2/examples/community-connectors#serve-as-a-federation-subgraph) |
+| Non-Connect Mesh subgraph behind Apollo Router (or another gateway) | **Hive Gateway subgraph** or **`buildSubgraphSchema`** (`@graphql-mesh/subgraph`)                                                                  |
+| Yoga / custom Node server as the Federation subgraph                | **`buildSubgraphSchema`**                                                                                                                          |
+| Mix Mesh directives with code `@lookup` (or other) resolvers        | **`buildSubgraphSchema` + `resolvers`**                                                                                                            |
+| You only need published SDL for composition / registry              | Compose + registry -- no subgraph process                                                                                                          |
+
+Upstream IA: [Build your Subgraph](/v2/paths) → optional [Transform Subgraph](/v2/transforms) →
+**Serve Subgraph** (this page) and/or [Serve Supergraph](/v2/serve).
+
+<Cards>
+  <Cards.Card arrow title="FAQ" href="/v2/faq" />
+  <Cards.Card arrow title="buildSubgraphSchema" href="/v2/guides/build-subgraph-schema" />
+  <Cards.Card arrow title="Community Connectors" href="/v2/examples/community-connectors" />
+  <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Serve Supergraph" href="/v2/serve" />
+  <Cards.Card arrow title="Build your Subgraph" href="/v2/paths/generate" />
+  <Cards.Card arrow title="Transform Subgraph" href="/v2/transforms" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
+  <Cards.Card arrow title="Architecture" href="/v2/architecture" />
+</Cards>

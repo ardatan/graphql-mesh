@@ -1,0 +1,64 @@
+---
+description: What a GraphQL gateway is -- Hive Gateway and Apollo Router as Mesh peers
+---
+
+import { Cards } from '@theguild/components'
+import { ApiRef, ProtocolRef } from '../../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
+
+# Gateway
+
+A **gateway** is the runtime that accepts client GraphQL operations, plans them, and executes
+subgraphs / transports. In Mesh v2 the default story is a **federation gateway** against a
+**supergraph** ([Federation](/v2/concepts/federation)). Another type-merging runtime in the same job
+family is **Schema Stitching** (`stitchSchemas`) -- see [Schema Stitching](/v2/concepts/stitching).
+Two peers share the **Serve Supergraph** nav:
+
+| Gateway                         | Role                                                        |
+| ------------------------------- | ----------------------------------------------------------- |
+| <ApiRef name="hive-gateway" />  | Preferred Mesh runtime (JS/TS); full Mesh transport surface |
+| <ApiRef name="apollo-router" /> | Peer for **Connect-compatible** SDL                         |
+
+## Where it lives
+
+<V2FlowDiagram
+  ariaLabel="Gateway runtime from clients to upstreams"
+  steps={[
+    { title: 'Clients' },
+    { title: 'Gateway', lines: ['Fed runtime'], accent: true },
+    { title: 'Supergraph', accent: true },
+    { title: 'Transports' },
+    { title: 'Upstreams' }
+  ]}
+/>
+
+The gateway is **not** Mesh Compose (that builds SDL), **not** the schema registry (that stores
+SDL), and **not** a loader. It **consumes** composed or registry-sourced supergraph output.
+
+## Short example
+
+Compose once to a GraphQL supergraph file, then serve:
+
+```bash
+mesh-compose -o supergraph.graphql
+
+# Full multi-protocol graph (SQL + Connect + gRPC, ...) -- preferred
+hive-gateway supergraph
+
+# Connect-compatible slice only
+./router --supergraph supergraph.graphql
+```
+
+Run the **full** multi-protocol graph on Hive Gateway (<ProtocolRef name="sql" /> + Connect +
+
+<ProtocolRef name="protobuf" />, ...). Use Apollo Router when the composed SDL stays
+Connect-compatible. See [Music Store Example](/v2/examples/music-store) and
+[Architecture](/v2/architecture).
+
+<Cards>
+  <Cards.Card arrow title="Federation" href="/v2/concepts/federation" />
+  <Cards.Card arrow title="Schema Stitching" href="/v2/concepts/stitching" />
+  <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Apollo Router" href="/v2/serve/apollo-router" />
+  <Cards.Card arrow title="Concepts overview" href="/v2/concepts" />
+</Cards>

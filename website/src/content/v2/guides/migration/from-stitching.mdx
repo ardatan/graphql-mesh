@@ -1,0 +1,372 @@
+---
+description:
+  Migrate from programmatic schema stitching (stitchSchemas / legacy Mesh stitching) to Mesh
+  Federation subgraphs, Compose, and Serve
+---
+
+import { Callout, Cards } from '@theguild/components'
+
+# From Schema Stitching
+
+Leave a programmatic **`stitchSchemas`** (or legacy Mesh stitching / merger) gateway and land on
+**Federation-ready Mesh subgraphs** + [Composition](/v2/compose) +
+[Serve Subgraph](/v2/serve-subgraph) / [Serve Supergraph](/v2/serve).
+
+If you run that gateway on **Yoga** (and Envelop plugins), moving to
+[Hive Gateway](/v2/serve/hive-gateway) stays in the same ecosystem -- Hive Gateway is Yoga /
+Envelop-based.
+
+Product eras and Mesh v0/v1 cutovers live under [Migration](/v2/guides/migration). Concept
+background: [Schema Stitching](/v2/concepts/stitching) vs [Federation](/v2/concepts/federation).
+
+## What changes
+
+| Before (stitching)                                        | After (Mesh Federation)                                                                  |
+| --------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| One process calls `stitchSchemas({ subschemas })`         | Each source is **subgraph SDL**; Compose (or a registry) builds a **supergraph**         |
+| Programmatic `merge: { User: { fieldName, args } }`       | Federation `@key` + `@lookup` (one-object) or Type Merging `@merge` (list/batch) on SDL  |
+| GraphQL Tools Schema Stitching Directives (`@merge`, …)   | Do **not** copy Tools stitching `@merge` -- use Fed `@lookup` or Mesh Type Merging       |
+| Gateway schema is the stitched `GraphQLSchema` in-process | [Serve Supergraph](/v2/serve) on Hive Gateway / Apollo Router, or registry + your router |
+| Remote executors only                                     | Mesh loaders / Hand-write SDL + transports; optional `buildSubgraphSchema` subgraph URLs |
+
+Do not mix up these “merge” / hop ideas:
+
+| Name                                               | What it is                                                                                         | Use in Mesh?                                                                 |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Stitching `merge: { Type: { fieldName, … } }`      | Programmatic config on `stitchSchemas`                                                             | Replace with SDL `@key` + `@lookup` / Type Merging                           |
+| GraphQL Tools Schema Stitching Directives `@merge` | SDL directive from the **stitching package**                                                       | **No** -- do not paste into Mesh subgraph SDL                                |
+| Mesh Type Merging `@merge`                         | Mesh core directive for **list / batch** entry fields ([Directives: @merge](/v2/directives#merge)) | Yes -- only for ByIds-style hops; prefer Federation `@lookup` for one-object |
+| Federation `@lookup`                               | Spec draft entry field that returns **one** object                                                 | Yes -- default for single-id hops                                            |
+
+## Mapping cheat sheet
+
+| Stitching idea                      | Mesh Federation equivalent                                                                       |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `subschemas[].schema` + `executor`  | Subgraph SDL (`schema: './….graphql'` or a loader) + transport / Connect directives              |
+| `merge.Type.selectionSet: '{ id }'` | `type Type @key(fields: "id")`                                                                   |
+| `merge.Type.fieldName: 'userById'`  | `Query.userById(...): User @lookup` (one object) -- [Directives: @lookup](/v2/directives#lookup) |
+| Batch `users(ids:)` merge           | Mesh Type Merging `@merge` on the list entry field -- [Directives: @merge](/v2/directives#merge) |
+| `stitchSchemas` as the gateway      | [Serve Supergraph](/v2/serve) (Hive Gateway preferred; Apollo Router for Connect-compatible SDL) |
+| Keep a foreign router               | [Serve Subgraph](/v2/serve-subgraph) so Router / GraphOS can call Mesh-backed Federation URLs    |
+| Programmatic `delegateToSchema`     | Mesh `@resolveTo` on SDL (field delegation / additional resolvers)                               |
+
+## Before: programmatic stitch
+
+Typical GraphQL Tools pattern -- two GraphQL services, type merge on `User`:
+
+```ts
+import { stitchSchemas } from '@graphql-tools/stitch'
+
+const gatewaySchema = stitchSchemas({
+  subschemas: [
+    {
+      schema: usersSchema,
+      executor: usersExecutor,
+      merge: {
+        User: {
+          selectionSet: '{ id }',
+          fieldName: 'userById',
+          args: ({ id }) => ({ id })
+        }
+      }
+    },
+    {
+      schema: postsSchema,
+      executor: postsExecutor,
+      merge: {
+        User: {
+          selectionSet: '{ id }',
+          fieldName: 'userById',
+          args: ({ id }) => ({ id })
+        }
+      }
+    }
+  ]
+})
+```
+
+Legacy Mesh often wrapped the same idea (handlers + merger / stitching config) inside one process.
+The migration target is the same: **SDL subgraphs**, not an in-process stitch.
+
+## After: Federation subgraphs + Compose
+
+### 1. Express each subschema as Mesh / Federation SDL
+
+Users subgraph -- entity key + one-object `@lookup` entry (prefer this over stitching `merge` for
+single-id hops):
+
+{/* prettier-ignore */}
+```graphql {5-7,13,16}
+extend schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"])
+  @link(
+    url: "https://graphql.github.io/graphql-federation-spec/draft"
+    import: ["@lookup"]
+  )
+  @composeDirective(name: "@lookup")
+
+directive @lookup on FIELD_DEFINITION
+
+type Query {
+  userById(id: ID!): User @lookup
+}
+
+type User @key(fields: "id") {
+  id: ID!
+  name: String
+}
+```
+
+Posts subgraph -- same `User` key; join fields owned here. Use GraphQL HTTP / Connect / protocol
+directives for the upstream, or `buildSubgraphSchema` resolvers when the hop stays in code:
+
+{/* prettier-ignore */}
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])
+
+type Query {
+  postById(id: ID!): Post
+}
+
+type Post @key(fields: "id") {
+  id: ID!
+  title: String
+  author: User
+}
+
+type User @key(fields: "id") {
+  id: ID!
+}
+```
+
+List / batch hops that used stitching multi-key merge become **Mesh Type Merging** `@merge` on a
+list entry field -- see [Directives: @merge](/v2/directives#merge). That is a different directive
+from GraphQL Tools Schema Stitching Directives `@merge`; do not copy the stitching-package directive
+into Mesh SDL.
+
+### 2. Wire Compose (replace `stitchSchemas`)
+
+```ts {5-12}
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      name: 'users',
+      schema: './users.graphql'
+    },
+    {
+      name: 'posts',
+      schema: './posts.graphql'
+    }
+  ]
+})
+```
+
+```bash
+# Supergraph for Hive Gateway / Apollo Router / registry
+mesh-compose -o supergraph.graphql
+
+# Or emit one subgraph SDL for Generate / Serve Subgraph
+mesh-compose --subgraph users -o users-subgraph.graphql
+```
+
+Full options: [Composition](/v2/compose). Authoring paths: [Generate](/v2/paths/generate) /
+[Hand-write](/v2/paths/hand-write) / [Generate-then-edit](/v2/paths/generate-then-edit).
+
+### 3. Serve -- keep or change the gateway
+
+**Same Hive Gateway / Apollo Router / GraphOS stack:** publish subgraph SDL (or the Mesh Compose
+supergraph) into your registry, or point the gateway at `supergraph.graphql`.
+
+```bash
+mesh-compose -o supergraph.graphql
+hive-gateway supergraph
+# or: ./router --supergraph supergraph.graphql   # Connect-compatible SDL
+```
+
+**Mesh protocol subgraphs behind a non-Hive gateway:** Serve Subgraph (Hive subgraph mode or
+`buildSubgraphSchema`), then register that Federation URL -- [Serve Subgraph](/v2/serve-subgraph),
+[FAQ](/v2/faq).
+
+```bash
+mesh-compose --subgraph users -o users-subgraph.graphql
+hive-gateway subgraph users-subgraph.graphql
+# Gateway / GraphOS uses http://… as the users subgraph URL
+```
+
+```ts
+import { buildSubgraphSchema } from '@graphql-mesh/subgraph'
+import { readFileSync } from 'node:fs'
+
+const schema = await buildSubgraphSchema({ typeDefs: readFileSync('./users.graphql', 'utf8') })
+// serve with Yoga / Apollo Server / …
+```
+
+## From `delegateToSchema` to `@resolveTo`
+
+Stitching gateways often hop across subschemas with programmatic `delegateToSchema` (or a custom
+field `resolve` that calls it). In Mesh that hop becomes SDL
+[`@resolveTo`](/v2/directives#resolveTo) -- the directive form of **additional resolvers** / field
+delegation.
+
+Prefer Federation `@key` + `@lookup` / Connect / protocol joins for **entity** hops when you can.
+Use `@resolveTo` when you still need an explicit field-level delegation (gateway
+`additionalTypeDefs`, or a join that is not a clean entity entry).
+
+| Stitching (`delegateToSchema`)                        | Mesh (`@resolveTo`)                               |
+| ----------------------------------------------------- | ------------------------------------------------- |
+| `schema` / subschema config                           | `sourceName` (Compose subgraph name)              |
+| `operation: 'query'` + parent type                    | `sourceTypeName` (usually `Query`)                |
+| `fieldName`                                           | `sourceFieldName`                                 |
+| `args: { id: parent.authorId }`                       | `sourceArgs: { id: "{root.authorId}" }`           |
+| `selectionSet: '{ authorId }'` on the stitching field | `requiredSelectionSet: "{ authorId }"`            |
+| Batch `argsFromKeys` / list arg + DataLoader          | `keyField` + `keysArg` (optional `valueKeyField`) |
+
+### Single-id hop
+
+Before -- field resolver delegates into the authors subschema:
+
+```ts
+import { delegateToSchema } from '@graphql-tools/delegate'
+
+const resolvers = {
+  Book: {
+    author: {
+      selectionSet: '{ authorId }',
+      resolve(book, _args, context, info) {
+        return delegateToSchema({
+          schema: authorsSubschema,
+          operation: 'query',
+          fieldName: 'authorById',
+          args: { id: book.authorId },
+          context,
+          info
+        })
+      }
+    }
+  }
+}
+```
+
+After -- same hop as Mesh core `@resolveTo`:
+
+{/* prettier-ignore */}
+```graphql
+extend schema
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@resolveTo"])
+
+extend type Book {
+  author: Author
+    @resolveTo(
+      sourceName: "authors"
+      sourceTypeName: "Query"
+      sourceFieldName: "authorById"
+      sourceArgs: { id: "{root.authorId}" }
+      requiredSelectionSet: "{ authorId }"
+    )
+}
+```
+
+### Batch hop (N+1 → list arg)
+
+Before -- stitching / DataLoader style that fans many parent keys into one list query:
+
+```ts
+// Conceptual: argsFromKeys / batch delegate into Query.authors(ids: …)
+delegateToSchema({
+  schema: authorsSubschema,
+  operation: 'query',
+  fieldName: 'authors',
+  args: { ids: keys }, // keys collected from book.authorId
+  context,
+  info
+})
+```
+
+After -- `keyField` + `keysArg` (Compose validates names at compose time):
+
+{/* prettier-ignore */}
+```graphql
+extend type Book {
+  author: Author
+    @resolveTo(
+      sourceName: "authors"
+      sourceTypeName: "Query"
+      sourceFieldName: "authors"
+      keyField: "authorId"
+      keysArg: "ids"
+    )
+}
+```
+
+When the upstream returns rows out of key order (or keyed by a different field), set `valueKeyField`
+as well -- see [Directives: @resolveTo](/v2/directives#resolveTo).
+
+{/* prettier-ignore */}
+```diff
+- return delegateToSchema({
+-   schema: authorsSubschema,
+-   fieldName: 'authorById',
+-   args: { id: book.authorId },
+-   …
+- })
++ author: Author @resolveTo(
++   sourceName: "authors"
++   sourceFieldName: "authorById"
++   sourceArgs: { id: "{root.authorId}" }
++ )
+```
+
+## Diff mindset: merge config → SDL
+
+{/* prettier-ignore */}
+```diff
+- merge: {
+-   User: {
+-     selectionSet: '{ id }',
+-     fieldName: 'userById',
+-     args: ({ id }) => ({ id })
+-   }
+- }
++ type User @key(fields: "id") { id: ID! … }
++ type Query { userById(id: ID!): User @lookup }
+```
+
+{/* prettier-ignore */}
+```diff
+- const gatewaySchema = stitchSchemas({ subschemas: […] })
++ // mesh.config.ts subgraphs + …
++ mesh-compose -o supergraph.graphql
++ hive-gateway supergraph
+```
+
+## Checklist
+
+1. Inventory each stitched subschema and its `merge` / stitching-directive annotations.
+2. Map programmatic `delegateToSchema` (or custom field `resolve` hops) to `@resolveTo`, or to
+   Federation `@key` / `@lookup` / Connect when the hop is an entity join
+   ([Directives: @resolveTo](/v2/directives#resolveTo)).
+3. Emit or Hand-write Federation-ready Mesh subgraph SDL per source
+   ([Build your Subgraph](/v2/paths/generate)).
+4. Replace `stitchSchemas` with `composeConfig` + `mesh-compose`.
+5. Serve Supergraph on your Federation gateway, **or** Serve Subgraph for Mesh-backed peers.
+6. Drop in-process stitch / legacy Mesh merger once the supergraph path is green.
+
+## Related
+
+<Cards>
+  <Cards.Card arrow title="FAQ" href="/v2/faq" />
+  <Cards.Card arrow title="Schema Stitching concept" href="/v2/concepts/stitching" />
+  <Cards.Card arrow title="Federation" href="/v2/concepts/federation" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
+  <Cards.Card arrow title="Serve Subgraph" href="/v2/serve-subgraph" />
+  <Cards.Card arrow title="Serve Supergraph" href="/v2/serve" />
+  <Cards.Card arrow title="buildSubgraphSchema" href="/v2/guides/build-subgraph-schema" />
+  <Cards.Card arrow title="Directives: @resolveTo" href="/v2/directives#resolveTo" />
+  <Cards.Card arrow title="Migration overview" href="/v2/guides/migration" />
+  <Cards.Card arrow title="From Mesh v0 / v1" href="/v2/guides/migration/from-v0-v1" />
+</Cards>

@@ -1,0 +1,135 @@
+---
+description: How to read Mesh-generated subgraph SDL -- transports, connect, keys, selection
+---
+
+import { Callout, Cards } from '@theguild/components'
+import { ConceptRef, DirectiveRef, ProtocolRef } from '../../../components/v2-directive-ref'
+
+# Reading generated SDL
+
+Generated <ConceptRef name="mesh">Mesh</ConceptRef> subgraphs are ordinary GraphQL SDL with
+directives. Before you edit or hand-write, learn to recognize the important stamps. This page is a
+**reading guide** -- for arg tables and scenarios see the [Directives reference](/v2/directives) and
+
+<ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> upstream.
+
+## What to look for
+
+| Piece                                                                   | Meaning                                                                                                                                                    | Dig deeper                                                                                                                                          |
+| ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <DirectiveRef name="transport" />                                       | Which Mesh transport executes this subgraph at the gateway.                                                                                                | [Directives](/v2/directives#transport) / [Architecture](/v2/architecture)                                                                           |
+| <DirectiveRef name="connect" /> / <DirectiveRef name="source" />        | HTTP/REST Connectors-style mapping (native on **Hive Gateway** and **Apollo Router** when Connect-compatible).                                             | [Directives](/v2/directives#connect) / [HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives) |
+| Protocol directives                                                     | <DirectiveRef name="sql" />, <DirectiveRef name="mongo" />, <DirectiveRef name="thrift__rpc" />, <DirectiveRef name="protobuf__rpc" />, Neo4j natives, ... | [Directives](/v2/directives) / [Protocols](/v2/protocols)                                                                                           |
+| <DirectiveRef name="key" />                                             | <ConceptRef name="federation">Federation</ConceptRef> entity key; often `resolvable: false` on join stubs.                                                 | [Directives](/v2/directives#federation) / [Entity resolution](/v2/concepts/federation#entity-resolution)                                            |
+| Federation `@lookup` / `@is` / `@internal`                              | One-object entity entry fields (Federation Spec draft URL -- not Mesh-owned).                                                                              | [Directives: @lookup](/v2/directives#lookup)                                                                                                        |
+| <DirectiveRef name="merge" />                                           | Type Merging list/batch entity hop when the entry field returns a list.                                                                                    | [Directives](/v2/directives#merge)                                                                                                                  |
+| <DirectiveRef name="resolveTo" />                                       | Additional resolvers / field delegation -- prefer `@lookup` or `@key` + Connect / protocol maps for entity joins.                                          | [Directives](/v2/directives#resolveTo)                                                                                                              |
+| `entity: true` / type-level entity maps                                 | Wires `_entities` / `resolveReference` for Connect or protocol lookups.                                                                                    | [Federation](/v2/concepts/federation#entity-resolution) / [Semantic conventions](/v2/compose#semantic-conventions)                                  |
+| `selection` / `args`                                                    | How JSON (or rows) map into GraphQL fields and how field args become HTTP / RPC inputs.                                                                    | [Selection mapping](/v2/guides/selection-mapping) / [Connectors mapping](https://www.apollographql.com/docs/graphos/connectors/mapping)             |
+| <DirectiveRef name="link" /> / <DirectiveRef name="composeDirective" /> | Spec imports and which directives survive <ConceptRef name="composition">composition</ConceptRef>.                                                         | [Directives](/v2/directives#link) / [Composition](/v2/compose)                                                                                      |
+
+## Walk a Chinook root field
+
+Start at `Query.album`, then the type:
+
+1. `@transport(kind: "sql", ...)` -- Hive Gateway will load `transport-sql`
+   (<ProtocolRef name="sql" />).
+2. `@sql(kind: ROW, where: AlbumId: $args.id, selection: id: AlbumId ...)` -- GraphQL `id` is mapped
+   **from** SQL `AlbumId` in `selection`; `where` still uses the SQL column.
+3. `type Album @key(fields: "id") @sql(... $this.id ...)` -- Federation can refill the row when
+   another subgraph contributed fields on `Album`.
+
+{/* prettier-ignore */}
+```graphql
+schema @transport(subgraph: "chinook", kind: "sql", location: "file:chinook.db") {
+  query: Query
+}
+
+type Query {
+  album(id: ID!): Album
+    @sql(
+      table: "albums"
+      kind: ROW
+      where: """
+        AlbumId: $args.id
+      """
+      selection: """
+        id: AlbumId
+        title: Title
+      """
+    )
+}
+
+type Album
+  @key(fields: "id")
+  @sql(
+    table: "albums"
+    kind: ROW
+    where: """
+      AlbumId: $this.id
+    """
+    selection: """
+      id: AlbumId
+      title: Title
+    """
+  ) {
+  id: ID!
+  title: String!
+}
+```
+
+## Walk a Connect entity field
+
+1. `@source(name: "Billing", http: { baseURL: ... })` names the HTTP base.
+2. `getCustomer(id:)` with `entity: true` -- ById convention matched; Connect entity fill. Hand
+   GraphQL hops use `@lookup` instead.
+3. If the arg were `userId` instead of `id`, expect **type-level** `@connect` with `$this.id`
+   instead of field-level `entity: true` ([Directives](/v2/directives#connect)).
+
+{/* prettier-ignore */}
+```graphql
+type Query {
+  getCustomer(id: String!): Customer
+    @connect(
+      source: "Billing"
+      http: { GET: "/customers/{$args.id}" }
+      selection: """
+        id
+        name
+      """
+      entity: true
+    )
+}
+```
+
+## Conventions that help
+
+1. Start from a **root field** you already queried (`Query.track`, ...), then follow its `@connect`
+   / protocol directive.
+2. Trace `$args` and `$this` in `selection` before renaming anything -- see
+   [Selection mapping](/v2/guides/selection-mapping).
+3. Treat emitted SDL as the contract you will either keep, edit, or rewrite by hand.
+4. For harder shapes (M2M `through`, streaming RPC, Thrift `throws`, FHIR `->match`), jump to the
+   protocol **Use cases** section or the directives scenarios.
+
+<Callout type="info">
+  Shared by [Generate](/v2/paths/generate), [Generate-then-edit](/v2/paths/generate-then-edit), and
+  [Hand-write](/v2/paths/hand-write). The [Music Store Example](/v2/examples/music-store) practices
+  this on stage 1 output before stage 2 edits.
+</Callout>
+
+## See also
+
+<Cards>
+  <Cards.Card arrow title="Schema Coordinates" href="/v2/guides/schema-coordinates" />
+  <Cards.Card arrow title="Selection mapping" href="/v2/guides/selection-mapping" />
+  <Cards.Card arrow title="Directives reference" href="/v2/directives" />
+  <Cards.Card arrow title="Concepts" href="/v2/concepts" />
+  <Cards.Card
+    arrow
+    title="HTTP/REST Connectors reference"
+    href="https://www.apollographql.com/docs/graphos/connectors/reference/directives"
+  />
+  <Cards.Card arrow title="Protocols overview" href="/v2/protocols" />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+</Cards>

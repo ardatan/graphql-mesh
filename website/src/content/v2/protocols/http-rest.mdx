@@ -1,0 +1,396 @@
+---
+description: HTTP/REST Connectors protocol -- OpenAPI, JSON Schema, OData, SOAP-as-Connect
+---
+
+import { Callout, Cards } from '@theguild/components'
+import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
+
+# HTTP / REST
+
+Use this family when the source speaks **HTTP** and you want GraphQL fields that map to `GET` /
+`POST` / ... with a response `selection`. Mesh loaders for OpenAPI, JSON Schema, OData, and SOAP
+**emit** <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef>
+(<DirectiveRef name="connect" /> / <DirectiveRef name="source" />); you can also hand-write the same
+shape.
+
+| Piece         | Detail                                                                                                                                                  |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Loaders       | `@omnigraph/openapi`, `@omnigraph/json-schema`, OData, SOAP                                                                                             |
+| Transport     | `@graphql-mesh/transport-connect` on Hive Gateway                                                                                                       |
+| Apollo Router | Same Connect SDL on [Apollo Router](/v2/serve/apollo-router) when Connect-compatible; SOAP envelope expects Hive / [Serve Subgraph](/v2/serve-subgraph) |
+| Spec          | `https://specs.apollo.dev/connect/v0.4`                                                                                                                 |
+
+## Packages
+
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @omnigraph/openapi @graphql-hive/gateway @graphql-mesh/transport-connect
+```
+
+JSON Schema / OData loaders as needed: `@omnigraph/json-schema` or the OData package used by Mesh.
+
+SOAP uses the same `@connect` / `@source` author API plus a Mesh JSON↔XML codec -- see
+[SOAP-as-Connect](#soap-as-connect).
+
+## Compatible with HTTP/REST Connectors SDL
+
+Mesh OpenAPI / JSON Schema / OData (and SOAP-as-Connect) emit the same **`@connect` / `@source`**
+**HTTP/REST Connectors** contract that upstream GraphOS Connectors document. Hand-authored Connect
+SDL is a peer input.
+
+| Layer              | Detail                                                                                                                                    |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Directive contract | Upstream [HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives) for full arg tables |
+| Mesh generate      | `@omnigraph/openapi` (and siblings) → Connect emit; Music Store Reviews is the staged edit example                                        |
+| Mesh serve         | Hive Gateway `transport-connect`; Connectors are native on Apollo Router when the surface stays Connect-compatible                        |
+| Mesh-only deltas   | SOAP / XML codec (Hive Gateway only); non-Connect protocols (`@sql`, `@protobuf__rpc`, ...) are separate Mesh protocol families           |
+
+Community `@connect` schemas (Stripe, JSONPlaceholder, ...) can also compose under Mesh Compose +
+Hive Gateway / Apollo Router when the SDL is stock Connect -- Mesh does not require Rover / GraphOS
+for that path. Default local path: Mesh Compose + Hive Gateway. Worked example:
+[Community Connectors](/v2/examples/community-connectors).
+
+## OpenAPI entity lookup
+
+Billing OpenAPI: a ById-shaped Query arg becomes `entity: true` so Federation can fill `Customer`
+from its key ([semantic conventions](/v2/compose#semantic-conventions)):
+
+```ts
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { loadOpenAPISubgraph } from '@omnigraph/openapi'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadOpenAPISubgraph('Billing', {
+        source: './openapi.yaml',
+        endpoint: 'http://localhost:4001'
+      })
+    }
+  ]
+})
+```
+
+Emitted shape:
+
+{/* prettier-ignore */}
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
+  @source(name: "Billing", http: { baseURL: "http://localhost:4001" })
+
+type Query {
+  getCustomer(id: String!): Customer
+    @connect(
+      source: "Billing"
+      http: { GET: "/customers/{$args.id}" }
+      selection: """
+        id
+        name
+      """
+      entity: true
+    )
+}
+```
+
+Music Store stage 2 (Reviews) is the same pattern for REST reviews on tracks -- build the OpenAPI
+server with [Reviews with feTS](/v2/examples/music-store/reviews-fets).
+
+## JSON Schema / FHIR
+
+Point operations at JSON Schema definition pointers; the loader emits `@connect` with an auto
+`selection`. FHIR also shows join-only hand SDL beside generated patients / observations:
+
+```ts
+import { OperationTypeNode } from 'graphql'
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { loadJSONSchemaSubgraph } from '@omnigraph/json-schema'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadJSONSchemaSubgraph('patients', {
+        endpoint: process.env.FHIR_BASE!,
+        scalarMap: {/* date, dateTime, uri, uuid, ... */},
+        operations: [
+          {
+            type: OperationTypeNode.QUERY,
+            field: 'patient',
+            method: 'GET',
+            path: '/Patient/{args.id}?_format=application/json',
+            requiredArgs: ['id'],
+            responseSchema: './fhir.schema.json#/definitions/Patient'
+          }
+        ]
+      })
+    },
+    {
+      name: 'referenceResource',
+      schema: './reference-resource.graphql'
+    }
+  ]
+})
+```
+
+Walkthrough: [FHIR](/v2/examples/fhir).
+
+## OData TripPin
+
+OData becomes Connect with `$this` entity paths and query options. For a large enterprise Graph API
+on the same path, see [Microsoft Graph](/v2/examples/microsoft-graph). Entity fill for `Person`:
+
+```ts
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadODataSubgraph } from '@omnigraph/odata'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadODataSubgraph('Trippin', {
+        endpoint: 'https://services.odata.org/TripPinRESTierService/(S(...))/',
+        batch: 'multipart',
+        expandNavProps: true
+      })
+    }
+  ]
+})
+```
+
+Emitted shape (OData also maps `@odata.type` unions in selection):
+
+{/* prettier-ignore */}
+```graphql
+type Person
+  @key(fields: "UserName")
+  @connect(
+    source: "Trippin"
+    http: { GET: "/People/{$this.UserName}/" }
+    selection: """
+      UserName
+      FirstName
+      LastName
+    """
+    entity: true
+  ) {
+  UserName: String!
+  FirstName: String
+  LastName: String
+  FriendsById(id: ID): IPerson
+    @connect(
+      source: "Trippin"
+      http: { GET: "/People/{$this.UserName}/Friends/{$args.id}/" }
+      selection: """
+        UserName
+        FirstName
+        LastName
+      """
+    )
+}
+```
+
+## SOAP-as-Connect
+
+WSDL operations become `POST` Connect fields whose `body` is a SOAP envelope selection string. Mesh
+owns the JSON↔XML codec on Hive Gateway; the author API is still `@connect` / `@source`.
+
+<Callout type="warning">
+  **Mesh-only / Hive Gateway.** SOAP envelopes are **not** native on stock Apollo Router. Use Hive
+  Gateway for SOAP subgraphs. Placement: under this HTTP/REST Connectors family -- no separate SOAP
+  protocol page.
+</Callout>
+
+```ts
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadSOAPSubgraph } from '@omnigraph/soap'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadSOAPSubgraph('soap-demo', {
+        source: './SOAP.Demo.cls.wsdl',
+        endpoint: 'http://localhost:4001/csp/samples/SOAP.Demo.cls'
+      })
+    }
+  ]
+})
+```
+
+Example field:
+
+```graphql
+type Query {
+  FindPerson(FindPerson: FindPerson_Input): FindPersonResponse
+    @connect(
+      source: "soap-demo"
+      http: {
+        POST: "/csp/samples/SOAP.Demo.cls"
+        headers: [{ name: "SOAPAction", value: "http://tempuri.org/SOAP.Demo.FindPerson" }]
+        body: """
+        "soap:Envelope": {
+          attributes: {
+            "xmlns:soap": $("http://schemas.xmlsoap.org/soap/envelope/")
+            "xmlns:body": $("http://tempuri.org")
+          }
+          "soap:Body": { "body:FindPerson": $args.FindPerson }
+        }
+        """
+      }
+      selection: "$.Envelope.Body.FindPersonResponse"
+    )
+}
+```
+
+## OpenAPI callbacks / subscriptions
+
+Callback-style OpenAPI can emit a mutation that returns subscription info, and stamp subscription
+fields with `@pubsubOperation` for `webhook:method:path` topics. Serve on Hive Gateway with
+`webhooks: true` -- see [Subscriptions and pubsub](/v2/guides/subscriptions-pubsub):
+
+```graphql
+type Mutation {
+  post_streams(input: post_streams_request_Input): SubscriptionInfo
+    @connect(
+      source: "OpenAPICallbackExample"
+      http: { POST: "/streams", body: "$args.input" }
+      selection: "subscriptionId"
+    )
+}
+
+type Subscription {
+  # Loader-emitted from OpenAPI callbacks
+  onStreamEvent: StreamEvent
+    @pubsubOperation(
+      subgraph: "OpenAPICallbackExample"
+      pubsubTopic: "webhook:post:/callbacks/stream"
+    )
+}
+```
+
+## Use cases
+
+### Arg name differs from key -- type-level `$this`
+
+When the Query arg is not the same name as the entity key (e.g. `userId` vs `id`), field-level
+`entity: true` is invalid. Keep the Query as the client entrypoint with `$args.userId`, and put a
+second `@connect` on the **type** that looks the entity up by `$this.id` for Federation `_entities`:
+
+{/* prettier-ignore */}
+```graphql
+type Query {
+  # Client entrypoint -- arg name stays userId; no entity: true here
+  getUserById(userId: ID!): User
+    @connect(
+      source: "rest"
+      http: { GET: "/users/{$args.userId}" }
+      selection: """
+        id
+        name
+      """
+    )
+}
+
+# Type-level connector: Federation fills User from key id
+
+type User
+  @key(fields: "id")
+  @connect(
+    source: "rest"
+    http: { GET: "/users/{$this.id}" }
+    selection: """
+      id
+      name
+    """
+  ) {
+  id: ID!
+  name: String
+}
+```
+
+See [Directives: @connect](/v2/directives#connect).
+
+### Join-only FHIR `Reference.resource`
+
+FHIR `Reference.reference` is a string like `Patient/123`. Hand SDL (no `@source`) splits that
+string and `->match`es the type segment onto abstract `Resource` stubs so other subgraphs can own
+`Patient` / `Observation` roots:
+
+{/* prettier-ignore */}
+```graphql
+type Reference @key(fields: "reference") {
+  reference: String!
+  resource: Resource
+    @connect(
+      selection: """
+        # "Patient/123" -> typename Patient, id 123
+        $this.reference->split("/")->get(0)->match(
+          ["Patient", {
+            __typename: $("Patient")
+            id: $this.reference->split("/")->get(1)
+          }],
+          ["Observation", {
+            __typename: $("Observation")
+            id: $this.reference->split("/")->get(1)
+          }],
+          [@, null]
+        )
+      """
+    )
+}
+```
+
+`Patient` / `Observation` on that join subgraph are `@key(..., resolvable: false)` stubs -- see
+[FHIR](/v2/examples/fhir).
+
+### Rename transforms rewrite `$args` in `@connect`
+
+If you rename a GraphQL argument (e.g. `input` -> `requestBody`), Compose rewrites binders inside
+`@connect` the same way it rewrites `@protobuf__rpc` / `@thrift__rpc`. After rename, the HTTP body
+must read `$args.requestBody`, not `$args.input`:
+
+{/* prettier-ignore */}
+```diff
+type Mutation {
+-  createReview(input: CreateReviewInput!): Review
++  createReview(requestBody: CreateReviewInput!): Review
+     @connect(
+       source: "reviews"
+       http: {
+         POST: "/reviews"
+-        body: "$args.input"
++        body: "$args.requestBody"
+       }
+       selection: """
+         id
+         rating
+       """
+     )
+}
+```
+
+### OData `@odata.type` unions
+
+OData payloads tag polymorphic values with `@odata.type`. Emit uses `->match` on that tag so a
+single nav field can return `Location` / `AirportLocation` / `EventLocation` (and similar for
+people). Run the same Connect SDL on Apollo Router only when the resulting Connect surface stays
+Router-compatible -- see the TripPin section above.
+
+## Dialect and Apollo Router
+
+`selection` / `http.body` / path templates: [Selection mapping](/v2/guides/selection-mapping).
+Upstream arg tables:
+[HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives).
+
+| Surface                            | Hive Gateway | Apollo Router               |
+| ---------------------------------- | ------------ | --------------------------- |
+| JSON OpenAPI / JSON Schema Connect | Yes          | Yes when Connect-compatible |
+| OData Connect                      | Yes          | When Connect-compatible     |
+| SOAP envelope Connect              | Yes          | No (expect Hive)            |
+
+<Cards>
+  <Cards.Card arrow title="HTTP/REST Connectors (concept)" href="/v2/concepts/connectors" />
+  <Cards.Card arrow title="Directives: @connect" href="/v2/directives#connect" />
+  <Cards.Card arrow title="Reviews with feTS" href="/v2/examples/music-store/reviews-fets" />
+  <Cards.Card arrow title="Music Store stage 2" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="Community Connectors" href="/v2/examples/community-connectors" />
+  <Cards.Card arrow title="FHIR" href="/v2/examples/fhir" />
+  <Cards.Card arrow title="Protocols overview" href="/v2/protocols" />
+</Cards>

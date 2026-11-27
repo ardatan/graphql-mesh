@@ -8,6 +8,10 @@ export default {
     type: 'page',
     display: 'hidden',
   },
+  v2: {
+    title: 'v2',
+    type: 'page',
+  },
   v1: {
     title: 'v1',
     type: 'page',

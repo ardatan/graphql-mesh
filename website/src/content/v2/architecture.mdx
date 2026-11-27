@@ -1,0 +1,95 @@
+---
+description: Mesh v2 architecture -- loaders, Composition, registries, Hive Gateway, Apollo Router
+---
+
+import { Cards } from '@theguild/components'
+import { V2ArchitectureDiagram } from '../../components/v2-architecture-diagram'
+import { ConceptRef, DirectiveRef, ProtocolRef } from '../../components/v2-directive-ref'
+
+# Architecture
+
+The product surface is GraphQL SDL: <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef>
+and Mesh protocol directives under <ConceptRef name="mesh">Mesh</ConceptRef>, composed into a real
+supergraph. Authors may generate that SDL from a loader or write it by hand; Compose and the gateway
+treat both the same.
+
+## Stack
+
+<V2ArchitectureDiagram />
+
+**Captions**
+
+- **Sources** feed either a loader or authored `.graphql`.
+- **Subgraph SDL** may come from an **Omnigraph** <ConceptRef name="loaders">loader</ConceptRef>
+  (`@omnigraph/*` packages that emit directive SDL) or a hand-written file -- loaders are optional.
+- **Composition** via **Mesh Compose** is the
+  <ConceptRef name="composition">composition</ConceptRef> step for generated and authored subgraphs.
+- <ConceptRef name="schema-registry">Schema registry</ConceptRef> is optional publish/pull; gateways
+  can also take Compose output directly.
+- <ConceptRef name="gateway">Gateway</ConceptRef> peers: **Hive Gateway** (JS/TS) and **Apollo
+  Router** -- full Mesh transports vs Connect-compatible SDL.
+- <ConceptRef name="transports">Transports</ConceptRef> execute directives (
+  <DirectiveRef name="transport" />, <DirectiveRef name="connect" />, protocol directives) at
+  request time.
+- Protocol families:
+  <ProtocolRef name="http-rest" />, <ProtocolRef name="graphql" />, <ProtocolRef name="sql" />,
+  <ProtocolRef name="mongo" />, <ProtocolRef name="neo4j" />, <ProtocolRef name="thrift" />,
+  <ProtocolRef name="protobuf" /> -- see [Protocols](/v2/protocols).
+
+## Patterns
+
+| Pattern                     | When                                                                                                                                                 |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Enhance existing Federation | Keep GraphOS / Hive / Rover; add Mesh Federation subgraphs for REST, SQL, gRPC, … -- [FAQ](/v2/faq#can-mesh-drop-into-an-existing-federation-setup). |
+| Same Connect SDL on both    | Hive Gateway and Apollo Router both execute the same Connect supergraph.                                                                             |
+| Hive Gateway subgraph proxy | Non-Connect Mesh subgraphs served by Hive Gateway; a foreign router talks GraphQL to that subgraph -- [Serve Subgraph](/v2/serve-subgraph).          |
+| Registry                    | Publish Mesh subgraphs (generated or hand-written); gateway pulls the supergraph.                                                                    |
+
+## Full-stack sketch
+
+```ts filename="mesh.config.ts"
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway'
+import { loadOpenAPISubgraph } from '@omnigraph/openapi'
+import { loadSqlSubgraph } from '@omnigraph/sql'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadSqlSubgraph('catalog', { endpoint: 'file:chinook.db' })
+    },
+    {
+      sourceHandler: loadOpenAPISubgraph('reviews', {
+        source: 'http://localhost:4001/openapi.json',
+        endpoint: 'http://localhost:4001'
+      })
+    }
+    // Hand-written gRPC / join SDL uses schema: './….graphql'
+  ]
+})
+
+export const gatewayConfig = defineGatewayConfig({
+  transports: {
+    sql: import('@graphql-mesh/transport-sql')
+    // protobuf: import('@graphql-mesh/transport-protobuf'), …
+  }
+})
+```
+
+```bash
+npx mesh-compose -o supergraph.graphql
+hive-gateway supergraph
+```
+
+See also: [Introduction: Enhance an existing Federation](/v2#enhance-an-existing-federation) |
+[Concepts](/v2/concepts) | [Composition](/v2/compose) | [Serve Subgraph](/v2/serve-subgraph) |
+[Serve Supergraph](/v2/serve/hive-gateway).
+
+<Cards>
+  <Cards.Card arrow title="Concepts" href="/v2/concepts" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
+  <Cards.Card arrow title="Serve Subgraph" href="/v2/serve-subgraph" />
+  <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Apollo Router" href="/v2/serve/apollo-router" />
+  <Cards.Card arrow title="FAQ" href="/v2/faq" />
+</Cards>

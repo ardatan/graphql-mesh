@@ -1,0 +1,81 @@
+---
+description: Serve Connect-compatible Mesh supergraphs with Apollo Router
+---
+
+import { Callout, Cards } from '@theguild/components'
+import { ConceptRef, DirectiveRef, ProtocolRef } from '../../../components/v2-directive-ref'
+
+# Apollo Router
+
+**Apollo Router** is a peer <ConceptRef name="gateway">gateway</ConceptRef> to Hive Gateway under
+[Serve Supergraph](/v2/serve). Use it when your composed SDL is
+**<ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef>-compatible**
+(<DirectiveRef name="connect" /> / <DirectiveRef name="source" /> on connect/v0.4-style emit).
+
+## Honest limits
+
+Stock Apollo Router executes **Connect** only. It does **not** run Mesh protocol transports:
+
+| Surface                                                                                                                                                       | On Apollo Router?                                                                                                         |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| <ProtocolRef name="http-rest" /> JSON Connect (OpenAPI / JSON Schema / OData when Connect-shaped)                                                             | Yes when Connect-compatible                                                                                               |
+| SOAP-as-Connect (XML envelope)                                                                                                                                | No -- Hive Gateway / [Serve Subgraph](/v2/serve-subgraph)                                                                 |
+| <ProtocolRef name="sql" />, <ProtocolRef name="mongo" />, <ProtocolRef name="protobuf" />, <ProtocolRef name="thrift" /> binary, <ProtocolRef name="neo4j" /> | No -- [Serve Subgraph](/v2/serve-subgraph) (Hive Gateway subgraph or `buildSubgraphSchema` from `@graphql-mesh/subgraph`) |
+
+For multi-protocol Music Store graphs, run the **full** supergraph on
+[Hive Gateway](/v2/serve/hive-gateway); run only the Connect slice here. Non-Connect peers behind
+Apollo Router: [Serve Subgraph](/v2/serve-subgraph).
+
+## Same Connect SDL on both gateways
+
+Compose once to GraphQL SDL, then execute the same file on Hive Gateway and Apollo Router when the
+schema stays on Connect:
+
+```bash
+mesh-compose -o supergraph.graphql
+
+# Hive Gateway
+hive-gateway supergraph
+
+# Apollo Router (Connectors native)
+./router --config ./router.yaml --supergraph supergraph.graphql
+```
+
+Minimal Router config (Connect-compatible Music Store Reviews / FHIR / Graph slice):
+
+```yaml filename="router.yaml"
+supergraph:
+  listen: 0.0.0.0:4000
+# Enable Connectors per your Router / GraphOS version -- see Apollo Router Connectors docs.
+# Keep non-Connect Mesh subgraphs (SQL, gRPC, …) on Hive Gateway or Serve Subgraph peers.
+```
+
+### What runs on Apollo Router
+
+| Example                             | On Apollo Router? | Notes                                                               |
+| ----------------------------------- | ----------------- | ------------------------------------------------------------------- |
+| FHIR (JSON Schema + join SDL)       | Yes               | Connect emit + join-only hand SDL                                   |
+| Microsoft Graph (OData → Connect)   | Yes               | Large Graph `$metadata` emit; auth via `{$env....}`                 |
+| OpenAPI entity stubs                | Yes               | `entity: true` / type-level `$this` Connect                         |
+| Music Store after stage 2           | Reviews only      | REST `@connect` slice; not SQL catalog or gRPC recommendations      |
+| Music Store full (SQL+Connect+gRPC) | No                | Needs Hive Gateway for `@sql` / `@protobuf__rpc`                    |
+| Thrift TJSON                        | Often             | `protocol: 'json'` emits `@connect`; binary `@thrift__rpc` does not |
+| SOAP-as-Connect                     | No                | SOAP envelope Connect is Hive-oriented                              |
+
+Upstream Connect mapping:
+[HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives).
+
+<Callout type="info">
+  Prefer [Hive Gateway](/v2/serve/hive-gateway) whenever any Mesh protocol directive is on the
+  supergraph. Use Apollo Router to prove Connect compatibility, not as the only runtime for mixed
+  graphs.
+</Callout>
+
+<Cards>
+  <Cards.Card arrow title="Gateway (concept)" href="/v2/concepts/gateway" />
+  <Cards.Card arrow title="HTTP/REST Connectors (concept)" href="/v2/concepts/connectors" />
+  <Cards.Card arrow title="Hive Gateway (peer)" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Serve Supergraph" href="/v2/serve" />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="FHIR Example" href="/v2/examples/fhir" />
+</Cards>

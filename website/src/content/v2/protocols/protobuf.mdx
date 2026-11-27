@@ -1,0 +1,356 @@
+---
+description: Mesh Protobuf / gRPC protocol -- @protobuf__rpc, transport-protobuf (Hive Gateway)
+---
+
+import { Cards } from '@theguild/components'
+
+# Protobuf / gRPC
+
+Use Protobuf / gRPC when RPCs should become GraphQL fields with **field-number** `args` /
+`selection` maps (encode request, decode response). This is a **Mesh protocol** (not HTTP/REST
+Connectors). Hand-author or loader-emit `@protobuf__rpc`; Hive Gateway runs `transport-protobuf`.
+Stock Apollo Router does **not** execute `@protobuf__rpc`.
+
+| Piece         | Detail                                                                          |
+| ------------- | ------------------------------------------------------------------------------- |
+| Directive     | `@protobuf__rpc` (`service`, `method`, `args`, `selection`, `stream`, `entity`) |
+| Transport     | `@graphql-mesh/transport-protobuf`                                              |
+| Spec          | `https://specs.graphql-mesh.dev/protobuf/v0.1`                                  |
+| Apollo Router | Via [Serve Subgraph](/v2/serve-subgraph) (Hive Gateway runs `@protobuf__rpc`)   |
+| Examples      | Hand SDL movies subgraph; Music Store recommendations; streaming RPCs           |
+
+## Packages
+
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @graphql-hive/gateway @graphql-mesh/transport-protobuf
+```
+
+Hand SDL needs no loader package. Optional Yoga Federation subgraph peer:
+
+```sh npm2yarn
+npm i graphql graphql-yoga @graphql-mesh/subgraph
+```
+
+## Tutorial
+
+End-to-end Music Store stage 3: `.proto` → Node gRPC server → hand `@protobuf__rpc` SDL → Compose →
+Hive Gateway.
+
+<Cards>
+  <Cards.Card
+    arrow
+    title="Recommendations gRPC (Hand-write)"
+    href="/v2/examples/music-store/recommendations-grpc"
+  />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+</Cards>
+
+## Hand SDL
+
+Compose can load a `.graphql` file (location filled at compose time). Optional rename transform
+rewrites `$args` inside `@protobuf__rpc` the same way it rewrites `@connect`:
+
+```ts
+import { readFileSync } from 'node:fs'
+import {
+  createRenameTransform,
+  defineConfig as defineComposeConfig
+} from '@graphql-mesh/compose-cli'
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      name: 'movies',
+      schema: readFileSync('./subgraphs/movies.graphql', 'utf8'),
+      transforms: [
+        createRenameTransform({
+          argRenamer: ({ fieldName, argName }) =>
+            fieldName === 'moviesByYear' && argName === 'year' ? 'releaseYear' : argName
+        })
+      ]
+    }
+  ]
+})
+
+export const gatewayConfig = defineGatewayConfig({
+  transports: {
+    protobuf: import('@graphql-mesh/transport-protobuf')
+  }
+})
+```
+
+Compact field-number mapping:
+
+{/* prettier-ignore */}
+```graphql
+extend schema
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
+  @link(url: "https://specs.graphql-mesh.dev/protobuf/v0.1", import: ["@protobuf__rpc"])
+
+schema @transport(subgraph: "movies", kind: "protobuf", location: "http://localhost:50051") {
+  query: Query
+}
+
+type Query {
+  moviesByYear(year: Int!): MoviesResult!
+    @protobuf__rpc(
+      service: "Example"
+      method: "GetMovies"
+      args: """
+        1(message): {
+          2(int64): $args.year
+        }
+      """
+      selection: """
+        1(repeated message): result {
+          1(string): name
+          2(int64): year
+          3(float): rating
+          4(repeated string): cast
+          6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
+        }
+      """
+    )
+}
+
+type MoviesResult {
+  result: [Movie!]!
+}
+
+type Movie {
+  name: String!
+  year: Int!
+  rating: Float
+  cast: [String!]
+  genre: Genre
+}
+
+enum Genre {
+  UNSPECIFIED
+  ACTION
+  DRAMA
+}
+```
+
+## Use cases
+
+### Rename transforms rewrite `@protobuf__rpc(args:)`
+
+If a transform renames `moviesByYear(year:)` to `releaseYear`, Compose rewrites the compact `args`
+binder so the wire field still binds the new GraphQL name (same path as `@connect`):
+
+{/* prettier-ignore */}
+```diff
+type Query {
+-  moviesByYear(year: Int!): [Movie]
++  moviesByYear(releaseYear: Int!): [Movie]
+     @protobuf__rpc(
+       service: "Example"
+       method: "MoviesByYear"
+       args: """
+-        1(int32): $args.year
++        1(int32): $args.releaseYear
+       """
+       selection: """
+         1(string): name
+         2(int64): year
+       """
+     )
+}
+```
+
+### Server streaming
+
+`SearchMoviesByCast` is a server-streaming RPC. Emit sets `stream: true` and binds through an Input
+type (`input.castName`), not flat `$args.*`:
+
+{/* prettier-ignore */}
+```graphql
+type Query {
+  exampleSearchMoviesByCast(input: SearchByCastRequest_Input): [Movie]
+    @protobuf__rpc(
+      service: "Example"
+      method: "SearchMoviesByCast"
+      args: """
+        # Field 1 of the request message = castName on the Input type
+        1(string): input.castName
+      """
+      selection: """
+        1(string): name
+        2(int64): year
+        # Enum wire values stay in the selection map
+        6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
+      """
+      stream: true # server streaming -- list of Movie messages
+    )
+}
+```
+
+### ConnectRPC vs Twirp HTTP
+
+The same `@protobuf__rpc` field can talk to ConnectRPC or Twirp. Only `@transport` changes:
+ConnectRPC uses the service root and the default `application/proto` content type; Twirp puts
+`/twirp` on the base URL and sets `Content-Type: application/protobuf`.
+
+**ConnectRPC** -- location is the HTTP root; no header override (transport default
+`application/proto`):
+
+{/* prettier-ignore */}
+```graphql
+extend schema
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
+  @link(url: "https://specs.graphql-mesh.dev/protobuf/v0.1", import: ["@protobuf__rpc"])
+
+# ConnectRPC: root location; default Content-Type application/proto
+schema @transport(subgraph: "movies", kind: "protobuf", location: "https://movies.example.com") {
+  query: Query
+}
+
+type Query {
+  moviesByYear(year: Int!): MoviesResult!
+    @protobuf__rpc(
+      service: "Example"
+      method: "GetMovies"
+      args: """
+        1(message): {
+          2(int64): $args.year
+        }
+      """
+      selection: """
+        1(repeated message): result {
+          1(string): name
+          2(int64): year
+          3(float): rating
+          4(repeated string): cast
+          6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
+        }
+      """
+    )
+}
+
+type MoviesResult {
+  result: [Movie!]!
+}
+
+type Movie {
+  name: String!
+  year: Int!
+  rating: Float
+  cast: [String!]
+  genre: Genre
+}
+
+enum Genre {
+  UNSPECIFIED
+  ACTION
+  DRAMA
+}
+```
+
+**Twirp** -- same `@protobuf__rpc` body; `/twirp` on `location` plus an explicit protobuf header:
+
+{/* prettier-ignore */}
+```graphql
+extend schema
+  @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
+  @link(url: "https://specs.graphql-mesh.dev/protobuf/v0.1", import: ["@protobuf__rpc"])
+
+# Twirp: /twirp base path + application/protobuf (not the ConnectRPC default)
+schema
+  @transport(
+    subgraph: "movies"
+    kind: "protobuf"
+    location: "https://movies.example.com/twirp"
+    headers: [["Content-Type", "application/protobuf"]]
+  ) {
+  query: Query
+}
+
+type Query {
+  # Identical RPC mapping -- only @transport differs from ConnectRPC
+  moviesByYear(year: Int!): MoviesResult!
+    @protobuf__rpc(
+      service: "Example"
+      method: "GetMovies"
+      args: """
+        1(message): {
+          2(int64): $args.year
+        }
+      """
+      selection: """
+        1(repeated message): result {
+          1(string): name
+          2(int64): year
+          3(float): rating
+          4(repeated string): cast
+          6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
+        }
+      """
+    )
+}
+
+type MoviesResult {
+  result: [Movie!]!
+}
+
+type Movie {
+  name: String!
+  year: Int!
+  rating: Float
+  cast: [String!]
+  genre: Genre
+}
+
+enum Genre {
+  UNSPECIFIED
+  ACTION
+  DRAMA
+}
+```
+
+### Nested message / timestamp / enum maps
+
+Nested messages and well-known types are not flat scalars. Field-number maps nest inside `args` /
+`selection` (e.g. `@Movie` blocks, `@google_protobuf_Timestamp`):
+
+{/* prettier-ignore */}
+```graphql
+type Query {
+  exampleGetMovie(input: GetMovieRequest_Input): Movie
+    @protobuf__rpc(
+      service: "Example"
+      method: "GetMovie"
+      args: """
+        1(string): input.name
+      """
+      selection: """
+        1(string): name
+        2(int64): year
+        # Nested message: field 3 is a Timestamp
+        3(message): released {
+          1(int64): seconds
+          2(int32): nanos
+        }
+        6(enum{UNSPECIFIED=0,ACTION=1,DRAMA=2}): genre
+      """
+    )
+}
+```
+
+Dialect: [Selection mapping](/v2/guides/selection-mapping). Music Store stage 3 uses unary
+`@protobuf__rpc` for recommendations over gRPC -- full walkthrough:
+[Recommendations gRPC](/v2/examples/music-store/recommendations-grpc).
+
+<Cards>
+  <Cards.Card arrow title="Directives: @protobuf__rpc" href="/v2/directives#protobuf" />
+  <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
+  <Cards.Card
+    arrow
+    title="Recommendations gRPC"
+    href="/v2/examples/music-store/recommendations-grpc"
+  />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="Transform Subgraph" href="/v2/transforms" />
+  <Cards.Card arrow title="Protocols overview" href="/v2/protocols" />
+</Cards>

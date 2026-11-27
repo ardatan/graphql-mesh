@@ -1,0 +1,94 @@
+---
+description: What Mesh loaders are -- Omnigraph packages that emit subgraph SDL
+---
+
+import { Cards } from '@theguild/components'
+import { ConceptRef, DirectiveRef, ProtocolRef } from '../../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
+
+# Loaders
+
+A **loader** turns an upstream description -- OpenAPI, SQL database, `.thrift` IDL, `$metadata`, ...
+-- into **subgraph GraphQL SDL** stamped with
+
+<ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> and/or Mesh protocol directives.
+Loaders do **not** serve traffic; they only emit (or supply) schema for
+<ConceptRef name="composition">composition</ConceptRef>.
+
+**Omnigraph** is the Mesh package family for those loaders (`@omnigraph/openapi`, `@omnigraph/sql`,
+`@omnigraph/soap`, ...). Omnigraph packages emit source → subgraph SDL for Mesh Compose; they are
+not a separate runtime from Mesh Compose or Hive Gateway.
+
+Hand-written `.graphql` is the other input to Compose -- same pipeline, no loader required
+([Hand-write](/v2/paths/hand-write)). Existing GraphQL HTTP / Federation upstreams use
+`loadGraphQLHTTPSubgraph` from `@graphql-mesh/compose-cli` (not an `@omnigraph/*` package) -- see
+[GraphQL HTTP](/v2/protocols/graphql).
+
+## Where it lives
+
+<V2FlowDiagram
+  ariaLabel="Loader emits subgraph SDL into Composition"
+  steps={[
+    { title: 'Upstream', lines: ['API / DB / IDL'] },
+    { title: 'Loader', lines: ['@omnigraph/*'], accent: true },
+    { title: 'Subgraph SDL', accent: true },
+    { title: 'Composition' }
+  ]}
+/>
+
+| Piece                            | Role                                                       |
+| -------------------------------- | ---------------------------------------------------------- |
+| `@omnigraph/openapi`, `sql`, ... | Introspect / read source → emit directives + often `@key`  |
+| `sourceHandler: load...`         | Compose config entry that runs a loader                    |
+| Output                           | Subgraph SDL (readable GraphQL -- not a runtime black box) |
+
+Loaders are **optional**. Authored SDL and loader emit are peers at Compose time.
+
+## What loaders stamp
+
+Typical emit (family-dependent):
+
+- Protocol or Connect directives (`@sql`, `@connect` / `@source`, `@protobuf__rpc`, ...)
+- <DirectiveRef name="transport" /> for Hive Gateway transport kind / location
+- Federation <DirectiveRef name="key" /> / `entity: true` when conventions match
+- `@link` + `@composeDirective` so Mesh directives survive composition (with matching `directive`
+  definitions)
+
+Read the result with [Reading generated SDL](/v2/guides/reading-generated-sdl). Per-family pages:
+[Protocols](/v2/protocols).
+
+## Short example
+
+```ts
+import { defineConfig } from '@graphql-mesh/compose-cli'
+import { loadSqlSubgraph } from '@omnigraph/sql'
+
+export const composeConfig = defineConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadSqlSubgraph('catalog', {
+        endpoint: 'file:chinook.db'
+      })
+    }
+  ]
+})
+```
+
+That is Journey A ([Generate](/v2/paths/generate)): loader → SDL → Compose → serve. Stage 1 of
+[Music Store Example](/v2/examples/music-store) uses the same pattern for Chinook SQL
+(<ProtocolRef name="sql" />).
+
+## Related
+
+Loaders are not <ConceptRef name="transports">transports</ConceptRef> (runtime) and not the gateway.
+After emit, [Composition](/v2/concepts/composition) owns merging; transports execute at request time
+on [Hive Gateway](/v2/serve/hive-gateway).
+
+<Cards>
+  <Cards.Card arrow title="Transports" href="/v2/concepts/transports" />
+  <Cards.Card arrow title="Composition" href="/v2/concepts/composition" />
+  <Cards.Card arrow title="Protocols" href="/v2/protocols" />
+  <Cards.Card arrow title="Generate" href="/v2/paths/generate" />
+  <Cards.Card arrow title="Architecture" href="/v2/architecture" />
+  <Cards.Card arrow title="Concepts overview" href="/v2/concepts" />
+</Cards>

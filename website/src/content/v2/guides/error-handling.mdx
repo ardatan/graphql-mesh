@@ -1,0 +1,98 @@
+---
+description:
+  Errors on Mesh supergraphs -- Connect error mapping, transport errors, Hive Gateway masking
+---
+
+import { Callout, Cards } from '@theguild/components'
+import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
+
+# Error handling
+
+Errors show up in three layers: **upstream HTTP / protocol** responses, **GraphQL field errors**
+after transport mapping, and **gateway** masking / logging. Mesh Compose stamps the mapping; Hive
+Gateway (or Apollo Router for Connect-only) executes it.
+
+## HTTP/REST Connectors
+
+Map upstream failure bodies with Connect `errors` on <DirectiveRef name="connect" /> when you need
+typed GraphQL errors instead of a generic transport failure:
+
+{/* prettier-ignore */}
+```graphql
+type Query {
+  review(id: ID!): Review
+    @connect(
+      source: "reviews"
+      http: { GET: "/reviews/{$args.id}" }
+      selection: """
+        id
+        body
+      """
+      # Map non-2xx JSON bodies into GraphQL errors
+      errors: {
+        message: "$.message"
+        extensions: [{ name: "code", value: "$.code" }]
+      }
+    )
+}
+```
+
+Full arg tables:
+[HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives)
+(`errors` / `message` / `extensions`). Mesh summary: [Directives: @connect](/v2/directives#connect).
+OpenAPI / JSON Schema loaders can also emit distinct response shapes per status -- see
+[HTTP / REST](/v2/protocols/http-rest).
+
+## Mesh protocol transports
+
+SQL / Mongo / protobuf / Thrift / Neo4j transports surface upstream failures as GraphQL errors with
+transport-specific extensions. Prefer fixing binders (`where`, `args`, `selection`) when the error
+is a mapping mistake -- [Reading generated SDL](/v2/guides/reading-generated-sdl) and
+[Selection mapping](/v2/guides/selection-mapping).
+
+Example: a bad `@sql` `where` binder often shows up as a field error with a SQL transport extension
+rather than empty data -- re-read the emitted `where` / `selection` before changing gateway masking.
+
+## Gateway masking and logging
+
+Redacting stack traces, setting `maskError`, and correlating logs with traces are **Hive Gateway**
+features:
+
+```ts filename="gateway.config.ts"
+import { defineConfig as defineGatewayConfig } from '@graphql-hive/gateway'
+
+export const gatewayConfig = defineGatewayConfig({
+  // Hide internal stack traces from clients; keep detail in gateway logs / traces
+  maskedErrors: {
+    maskError: (error, message) => ({
+      message,
+      extensions: { code: error.extensions?.code }
+    })
+  }
+})
+```
+
+Product docs:
+[Logging and error handling](https://the-guild.dev/graphql/hive/docs/gateway/logging-and-error-handling)
+· [Monitoring and tracing](/v2/guides/monitoring).
+
+<Callout type="info">
+  Auth failures (`UNAUTHORIZED_FIELD_OR_TYPE`, complete protection) are configured with the auth
+  plugins -- see [Authentication](/v2/guides/auth). Rate-limit exceed messages come from
+  <DirectiveRef name="rateLimit" /> / programmatic rules -- [Rate limiting](/v2/guides/rate-limit).
+</Callout>
+
+## Related
+
+<Cards>
+  <Cards.Card arrow title="Directives: @connect" href="/v2/directives#connect" />
+  <Cards.Card arrow title="Authentication" href="/v2/guides/auth" />
+  <Cards.Card arrow title="Rate limiting" href="/v2/guides/rate-limit" />
+  <Cards.Card arrow title="Monitoring" href="/v2/guides/monitoring" />
+  <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card
+    arrow
+    title="Hive Gateway logging (external)"
+    href="https://the-guild.dev/graphql/hive/docs/gateway/logging-and-error-handling"
+  />
+</Cards>

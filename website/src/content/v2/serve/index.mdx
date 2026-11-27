@@ -1,0 +1,59 @@
+---
+description: Serve Supergraph -- run Mesh-composed SDL on Hive Gateway or Apollo Router
+---
+
+import { Callout, Cards } from '@theguild/components'
+import { ConceptRef, ProtocolRef } from '../../../components/v2-directive-ref'
+
+# Serve Supergraph
+
+After [Composition](/v2/compose) you have subgraph or supergraph GraphQL SDL. **Serve Supergraph**
+means running the **composed** SDL on a <ConceptRef name="gateway">federation gateway</ConceptRef>
+runtime. Mesh is gateway-independent: use Hive Gateway, Apollo Router, or another
+Federation-compatible gateway -- including the one that already serves your base Federation graph
+when you [enhance it with Mesh subgraphs](/v2#enhance-an-existing-federation). To run one Mesh
+subgraph as its own Federation endpoint, see [Serve Subgraph](/v2/serve-subgraph).
+
+| Runtime                                        | Role                            | What it executes                                                                                                                                                                                                |
+| ---------------------------------------------- | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Hive Gateway](/v2/serve/hive-gateway) (JS/TS) | Preferred Mesh runtime          | Full Mesh transport surface (HTTP/REST Connectors, <ProtocolRef name="sql" />, <ProtocolRef name="mongo" />, <ProtocolRef name="protobuf" />, <ProtocolRef name="thrift" />, <ProtocolRef name="neo4j" />, ...) |
+| [Apollo Router](/v2/serve/apollo-router)       | Peer for Connect-compatible SDL | HTTP/REST Connectors (`@connect` / `@source`) only -- <ProtocolRef name="http-rest" />                                                                                                                          |
+
+Compose once, then choose the runtime that matches your directive surface:
+
+```bash
+# Compose
+mesh-compose -o supergraph.graphql
+
+# Hive Gateway (full Mesh transports)
+hive-gateway supergraph
+
+# Apollo Router (Connectors native; non-Connect peers via Serve Subgraph)
+./router --supergraph supergraph.graphql
+```
+
+| Your SDL surface                                                | Prefer                                                                                                |
+| --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| HTTP/REST Connectors only (`@connect` / `@source`)              | Hive Gateway **or** Apollo Router (Connectors native in both)                                         |
+| Any Mesh protocol (`@sql`, `@protobuf__rpc`, ...)               | Hive Gateway for the supergraph, **or** [Serve Subgraph](/v2/serve-subgraph) behind Apollo Router     |
+| Mixed Music Store (<ProtocolRef name="sql" /> + Connect + gRPC) | Hive Gateway for the full supergraph; Connectors on Router/Hive; non-Connect peers via Serve Subgraph |
+
+<Callout type="info">
+  Mesh uses **Connectors** natively in Apollo Router and Hive Gateway. Non-Connect protocols (SQL,
+  etc.) still work on Apollo Router by serving the subgraph separately -- typically
+  [`buildSubgraphSchema`](/v2/guides/build-subgraph-schema) from `@graphql-mesh/subgraph` (Yoga /
+  any GraphQL server), or Hive Gateway in subgraph mode. Point Apollo Router (or another gateway) at
+  that subgraph URL. Details: [Serve Subgraph](/v2/serve-subgraph) and the [FAQ](/v2/faq).
+</Callout>
+
+Concept overview: [Gateway](/v2/concepts/gateway). Worked example:
+[Music Store Example](/v2/examples/music-store). Protocol map: [Protocols](/v2/protocols).
+
+<Cards>
+  <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Apollo Router" href="/v2/serve/apollo-router" />
+  <Cards.Card arrow title="Serve Subgraph" href="/v2/serve-subgraph" />
+  <Cards.Card arrow title="FAQ" href="/v2/faq" />
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
+  <Cards.Card arrow title="HTTP/REST Connectors" href="/v2/concepts/connectors" />
+</Cards>

@@ -1,0 +1,207 @@
+---
+description:
+  Run community HTTP/REST Connectors SDL on Mesh Compose, Serve Supergraph, Hive Gateway subgraph,
+  or buildSubgraphSchema
+---
+
+import { Callout, Cards } from '@theguild/components'
+import { ConceptRef, DirectiveRef } from '../../../components/v2-directive-ref'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
+
+# Community Connectors example
+
+<Callout type="info">
+  Supporting example -- **not** the getting-started kickoff. Prefer [Music Store
+  Example](/v2/examples/music-store) for the staged Generate -> edit -> Hand-write tutorial. This
+  page proves stock community <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> SDL
+  runs on Mesh without Rover / GraphOS -- as a supergraph **or** as a Federation subgraph peer.
+</Callout>
+
+[connectors-community](https://github.com/apollographql/connectors-community) publishes working
+`@connect` / `@source` schemas (JSONPlaceholder, Stripe, Google Maps, ...). Mesh already vendors
+several under the Connect transport test fixtures. Drop the same SDL into Mesh Compose, then
+[Serve Supergraph](/v2/serve) (Connectors native on Hive Gateway and Apollo Router) **or**
+[Serve Subgraph](/v2/serve-subgraph) (Hive Gateway subgraph / `buildSubgraphSchema`) when another
+gateway must call that URL.
+
+<V2FlowDiagram
+  ariaLabel="Community Connectors on Mesh: community SDL to Compose to supergraph or subgraph serve"
+  caption="Community Connect SDL -> Mesh Compose -> Serve Supergraph or Serve Subgraph."
+  steps={[
+    { title: 'Community SDL', lines: ['@connect / @source'] },
+    { title: 'Composition', lines: ['Mesh Compose'], accent: true },
+    { title: 'Serve', lines: ['Supergraph or subgraph'], accent: true }
+  ]}
+/>
+
+## What you end up with
+
+| Piece            | Detail                                                               |
+| ---------------- | -------------------------------------------------------------------- |
+| Source           | Public JSONPlaceholder REST (`https://jsonplaceholder.typicode.com`) |
+| Authoring        | Hand-checked community `.graphql` (or copy from the fixture)         |
+| Serve Supergraph | Hive Gateway **and** Apollo Router (Connectors native in both)       |
+| Serve Subgraph   | Hive Gateway subgraph **or** `buildSubgraphSchema` as a Fed peer     |
+| No Rover         | Mesh Compose + Hive Gateway is enough for local serve                |
+
+## Compose community SDL
+
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @graphql-hive/gateway @graphql-mesh/transport-connect
+```
+
+Optional Yoga Federation subgraph peer:
+
+```sh npm2yarn
+npm i graphql graphql-yoga @graphql-mesh/subgraph
+```
+
+Point a subgraph at the `.graphql` file (same hand-write Compose path as Music Store stage 3):
+
+```ts
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      name: 'jsonplaceholder',
+      schema: './jsonplaceholder-users.graphql'
+    }
+  ]
+})
+```
+
+Minimal excerpt (full fixture lives in the Mesh Connect transport tests /
+`JSONPlaceholder/users.graphql`):
+
+{/* prettier-ignore */}
+```graphql
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.10", import: ["@key"])
+  @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"])
+  @source(name: "JSONPlaceholder", http: { baseURL: "https://jsonplaceholder.typicode.com/" })
+
+type User @key(fields: "id") {
+  id: ID!
+  name: String
+  username: String
+  email: String
+}
+
+type Query {
+  getUser(id: ID!): User
+    @connect(
+      source: "JSONPlaceholder"
+      http: { GET: "/users/{$args.id}" }
+      selection: """
+        id
+        name
+        username
+        email
+      """
+      entity: true
+    )
+}
+```
+
+```bash
+pnpm exec mesh-compose -o supergraph.graphql
+pnpm exec hive-gateway supergraph
+./router --supergraph supergraph.graphql # Apollo Router (Connectors native)
+```
+
+Same `supergraph.graphql` can run on [Apollo Router](/v2/serve/apollo-router) when you stay on stock
+Connect (no `@sql` / `@protobuf__rpc` / SOAP beside it).
+
+## Serve as a Federation subgraph
+
+Community Connect SDL is still Mesh subgraph SDL. When you need a **standalone Federation subgraph
+URL** (existing GraphOS / Router fleet, mixed gateway, or exercise the connector alone), use
+[Serve Subgraph](/v2/serve-subgraph) instead of (or beside) Serve Supergraph.
+
+### Hive Gateway subgraph
+
+Emit one subgraph file, then run Hive in subgraph mode -- foreign routers talk GraphQL to this URL:
+
+```bash
+pnpm exec mesh-compose --subgraph jsonplaceholder -o jsonplaceholder-subgraph.graphql
+pnpm exec hive-gateway subgraph jsonplaceholder-subgraph.graphql
+# default http://0.0.0.0:4000 -- register this URL in GraphOS / your supergraph
+```
+
+Same transport registration story as [Serve Supergraph: Hive Gateway](/v2/serve/hive-gateway).
+Connect-only peers can often stay on Apollo Router alone; use Hive subgraph when you want Mesh to
+execute `@connect` in that process, or when you will later mix Mesh protocol directives beside
+Connect.
+
+### `buildSubgraphSchema` (`@graphql-mesh/subgraph`)
+
+Host the community `.graphql` on Yoga (or any GraphQL server) as a Federation peer:
+
+```ts
+import { createServer } from 'node:http'
+import { readFileSync } from 'node:fs'
+import { createYoga } from 'graphql-yoga'
+import { buildSubgraphSchema } from '@graphql-mesh/subgraph'
+
+const typeDefs = readFileSync('./jsonplaceholder-users.graphql', 'utf8')
+const schema = await buildSubgraphSchema({ typeDefs })
+
+createServer(createYoga({ schema })).listen(4002)
+```
+
+```bash
+# optional: refresh via Compose emit
+mesh-compose --subgraph jsonplaceholder -o jsonplaceholder-users.graphql
+npx tsx subgraph-server.ts
+```
+
+Hive Gateway vs `buildSubgraphSchema`:
+[FAQ](/v2/faq#hive-gateway-subgraph-vs-buildsubgraphschema-which) /
+[buildSubgraphSchema](/v2/guides/build-subgraph-schema).
+
+## Use cases
+
+### Prove Connectors on both gateways with a public API
+
+JSONPlaceholder needs no API key. Compose, query `getUser(id: "1")` on Hive Gateway, then point
+Apollo Router at the same supergraph file for a Connect-only smoke.
+
+### Drop a community connector into an existing Federation
+
+Serve Subgraph (Hive or `buildSubgraphSchema`), publish or register the subgraph URL, recompose on
+Rover / Hive / Mesh Compose -- keep the gateway you already run.
+[Enhance an existing Federation](/v2#enhance-an-existing-federation).
+
+### Bring another community connector
+
+Copy a connectors-community schema (Stripe, USGS, ...), swap secrets into `@source` headers or
+`operationHeaders` via env interpolation, and keep Mesh Compose as the composer. Prefer fixtures
+that use recreatable endpoints -- same bar as the community repo.
+
+### After Music Store Connect slice
+
+When Reviews `@connect` is working, community schemas are optional next steps for richer Connect
+vocabulary -- selection, entity, errors -- without changing Mesh product identity. See
+[Selection mapping](/v2/guides/selection-mapping) and
+[Directives: @connect](/v2/directives#connect).
+
+## Related
+
+Upstream catalog:
+[apollographql/connectors-community](https://github.com/apollographql/connectors-community). Mesh
+vendored copies: Connect transport `connectors-community` fixtures (used in Connect smoke tests on
+both gateways).
+
+<Cards>
+  <Cards.Card arrow title="Serve Subgraph" href="/v2/serve-subgraph" />
+  <Cards.Card arrow title="buildSubgraphSchema" href="/v2/guides/build-subgraph-schema" />
+  <Cards.Card arrow title="Serve Supergraph" href="/v2/serve" />
+  <Cards.Card arrow title="FAQ" href="/v2/faq" />
+  <Cards.Card arrow title="HTTP / REST" href="/v2/protocols/http-rest" />
+  <Cards.Card arrow title="Directives: @connect" href="/v2/directives#connect" />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+  <Cards.Card arrow title="Apollo Router" href="/v2/serve/apollo-router" />
+  <Cards.Card arrow title="Hive Gateway" href="/v2/serve/hive-gateway" />
+  <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
+</Cards>

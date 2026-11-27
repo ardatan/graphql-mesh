@@ -5,7 +5,8 @@ import MeshFAQ from './faq.mdx';
 
 export const metadata = {
   title: 'GraphQL Mesh',
-  description: 'A fully-featured GraphQL gateway framework',
+  description:
+    'Federate any API into a GraphQL Supergraph. Build Federated GraphQL subgraphs, compose, and run with any Federation Gateway and Router.',
   alternates: {
     canonical: '.',
   },

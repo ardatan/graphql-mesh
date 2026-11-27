@@ -1,0 +1,235 @@
+---
+description:
+  Convert existing sources into Federation-ready Mesh subgraphs -- mesh.config.ts composeConfig and
+  mesh-compose CLI
+---
+
+import { Callout, Cards } from '@theguild/components'
+import { V2FlowDiagram } from '../../../components/v2-flow-diagram'
+
+# Generate
+
+Turn the APIs and databases you already have into **Federation-ready subgraphs**. Point a Mesh
+loader at a source in `composeConfig`, run **`mesh-compose`**, and read the emitted GraphQL SDL
+(stamped with Mesh / Connect / Federation directives). Query it on **Hive Gateway** (and on **Apollo
+Router** when the SDL is Connect-compatible). You do not have to write directive args by hand to get
+a first working query.
+
+Emitted SDL is yours. You can always edit it and feed the file back into Compose, a schema registry,
+and the gateway -- that path is [Generate-then-edit](/v2/paths/generate-then-edit). The **same**
+subgraph SDL is valid input to `buildSubgraphSchema` from `@graphql-mesh/subgraph` when you want to
+serve the subgraph on Yoga (or any GraphQL server) yourself -- see
+[buildSubgraphSchema](/v2/guides/build-subgraph-schema).
+
+<V2FlowDiagram
+  ariaLabel="Generate path from source to reading emitted SDL"
+  caption="Optional next step: edit and re-compose (Generate-then-edit)."
+  steps={[
+    { title: 'Source' },
+    { title: 'Generate SDL', accent: true },
+    { title: 'Composition', lines: ['+ query'], accent: true },
+    { title: 'Read SDL', accent: true }
+  ]}
+/>
+
+<Callout type="info">
+  v2 Generate uses **`mesh.config.ts`** + `export const composeConfig` + the **`mesh-compose`** CLI.
+  YAML **`.meshrc`** is the Mesh v0 gateway config -- migrate it rather than authoring new Generate
+  flows there ([Migration](/v2/guides/migration/from-v0-v1)).
+</Callout>
+
+## Config: `composeConfig` in `mesh.config.ts`
+
+Install Compose CLI, the loader for your source, Hive Gateway, and the matching transport(s):
+
+SQL example:
+
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @omnigraph/sql @graphql-hive/gateway @graphql-mesh/transport-sql
+```
+
+OpenAPI / Connect example:
+
+```sh npm2yarn
+npm i @graphql-mesh/compose-cli @omnigraph/openapi @graphql-hive/gateway @graphql-mesh/transport-connect
+```
+
+Export **`composeConfig`** with `defineConfig` (docs often alias it as `defineComposeConfig`):
+
+### SQL catalog
+
+```ts filename="mesh.config.ts" {7-9}
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { loadSqlSubgraph } from '@omnigraph/sql'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      // First argument becomes the subgraph name (use with --subgraph)
+      sourceHandler: loadSqlSubgraph('chinook', {
+        endpoint: 'file:chinook.db'
+      })
+    }
+  ]
+})
+```
+
+### OpenAPI / REST (Connect emit)
+
+```ts filename="mesh.config.ts" {7-10}
+import { defineConfig as defineComposeConfig } from '@graphql-mesh/compose-cli'
+import { loadOpenAPISubgraph } from '@omnigraph/openapi'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      sourceHandler: loadOpenAPISubgraph('reviews', {
+        source: 'http://localhost:4001/openapi.json',
+        endpoint: 'http://localhost:4001'
+      })
+    }
+  ]
+})
+```
+
+Optional [Automatic](/v2/transforms/automatic) transforms hang on the same subgraph entry
+(`transforms: [createRenameTransform(...)]`). Hand-written `.graphql` uses `schema:` instead of
+`sourceHandler` -- [Hand-write](/v2/paths/hand-write) / [Composition](/v2/compose).
+
+## CLI: `mesh-compose`
+
+The Generate **emit** surface today is Compose CLI flags -- there is no separate `mesh generate`
+binary. Default config discovery looks for `mesh.config.ts` (also `.mts` / `.cts` / `.js` / `.mjs` /
+`.cjs`) in the cwd, or pass `-c` / `--config-path`.
+
+### Emit one subgraph SDL (Generate)
+
+`--subgraph <name>` prints (or writes) **that** subgraph's annotated SDL -- Federation-ready, with
+`@transport` always stamped. `<name>` matches the loader name (`'chinook'`, `'reviews'`) or an
+explicit `name:` on a `schema:` entry:
+
+```bash
+# Assumes install above (compose-cli + loader)
+
+# stdout
+pnpm exec mesh-compose --subgraph chinook
+
+# file (typical Generate → read / commit / registry publish)
+pnpm exec mesh-compose --subgraph chinook -o chinook-subgraph.graphql
+pnpm exec mesh-compose --subgraph reviews -o reviews-subgraph.graphql
+
+# custom config path
+pnpm exec mesh-compose -c ./configs/mesh.config.ts --subgraph chinook -o chinook-subgraph.graphql
+
+# skim the emit
+less chinook-subgraph.graphql
+# or: $EDITOR chinook-subgraph.graphql
+```
+
+Open the file and practice [Reading generated SDL](/v2/guides/reading-generated-sdl). Next path if
+you own the file: [Generate-then-edit](/v2/paths/generate-then-edit).
+
+### Compose the supergraph (serve next)
+
+When every subgraph is listed in `composeConfig`, compose them together for
+[Serve Supergraph](/v2/serve):
+
+```bash
+# Assumes install above (hive-gateway + matching transport packages)
+pnpm exec mesh-compose -o supergraph.graphql
+pnpm exec hive-gateway supergraph
+
+# Apollo Router (Connectors native)
+./router --supergraph supergraph.graphql
+```
+
+Registry publish uses the same `--subgraph` files --
+[Composition: registry](/v2/compose#registry-publish) /
+[Schema registry](/v2/concepts/schema-registry).
+
+## In the Music Store Example
+
+Stage 1 of the [Music Store Example](/v2/examples/music-store) generates the **Chinook SQL catalog**
+first -- the federation hub -- then asks you to read the emitted SDL (especially Track `@key`)
+before anything else is authored.
+
+| What you generate   | Why it leads                                                 |
+| ------------------- | ------------------------------------------------------------ |
+| Chinook SQL catalog | Domain starts with catalog; generate-first lesson stays true |
+
+```bash
+pnpm exec mesh-compose --subgraph chinook -o chinook-subgraph.graphql
+```
+
+After emit (or full compose), query a Track (`Query.track` / `Query.track(id:)`), then open the SDL
+and find `@transport`, `@sql`, and `Track @key(fields: "id")`. Shape to expect:
+[SQL protocol](/v2/protocols/sql) / [Music Store Example](/v2/examples/music-store) stage 1.
+
+## What to look for after generate
+
+1. Root fields you queried (`Query.track`, ...).
+2. Protocol or HTTP/REST Connectors directives that backed them.
+3. Entity stamps (`@key`, `entity: true`, type-level `$this` maps) -- see
+   [Entity resolution](/v2/concepts/federation#entity-resolution).
+4. Binders in `selection` / `where` / `args` -- [Selection mapping](/v2/guides/selection-mapping).
+
+Reading guide: [Reading generated SDL](/v2/guides/reading-generated-sdl).
+
+## Optional: run the subgraph yourself
+
+Compose + Hive Gateway / Apollo Router is the default Mesh story. When you need a **subgraph
+process** that executes Mesh transports from the generated SDL (for example Yoga beside other
+services), pass the `--subgraph` file into `buildSubgraphSchema`:
+
+```sh npm2yarn
+npm i graphql graphql-yoga @graphql-mesh/subgraph
+```
+
+Plus the transport(s) your SDL uses, for example:
+
+```sh npm2yarn
+npm i @graphql-mesh/transport-sql
+```
+
+```ts {1,4}
+import { buildSubgraphSchema } from '@graphql-mesh/subgraph'
+import { readFileSync } from 'node:fs'
+
+const schema = await buildSubgraphSchema(
+  { typeDefs: readFileSync('./chinook-subgraph.graphql', 'utf8') },
+  {
+    // fetch / transport context as needed
+  }
+)
+```
+
+Same helper for [Generate-then-edit](/v2/paths/generate-then-edit) and
+[Hand-write](/v2/paths/hand-write). Full guide:
+[buildSubgraphSchema](/v2/guides/build-subgraph-schema) / [Serve Subgraph](/v2/serve-subgraph).
+
+## Loaders (reference)
+
+Point a Mesh loader at a source; the product story is the emitted subgraph SDL.
+
+| Family                    | Loader / package                | Protocol page                          |
+| ------------------------- | ------------------------------- | -------------------------------------- |
+| SQL                       | `@omnigraph/sql`                | [SQL](/v2/protocols/sql)               |
+| OpenAPI / REST            | `@omnigraph/openapi`            | [HTTP / REST](/v2/protocols/http-rest) |
+| JSON Schema               | `@omnigraph/json-schema`        | [HTTP / REST](/v2/protocols/http-rest) |
+| Mongo                     | `@omnigraph/mongo`              | [Mongo](/v2/protocols/mongo)           |
+| Thrift                    | `@omnigraph/thrift`             | [Thrift](/v2/protocols/thrift)         |
+| Neo4j                     | `@omnigraph/neo4j`              | [Neo4j](/v2/protocols/neo4j)           |
+| Protobuf (often hand SDL) | hand `@protobuf__rpc` or loader | [Protobuf](/v2/protocols/protobuf)     |
+
+FHIR how-we-built (JSON Schema generate + join SDL): [FHIR](/v2/examples/fhir).
+
+<Cards>
+  <Cards.Card arrow title="Composition" href="/v2/compose" />
+  <Cards.Card arrow title="Generate-then-edit" href="/v2/paths/generate-then-edit" />
+  <Cards.Card arrow title="Reading generated SDL" href="/v2/guides/reading-generated-sdl" />
+  <Cards.Card arrow title="buildSubgraphSchema" href="/v2/guides/build-subgraph-schema" />
+  <Cards.Card arrow title="Serve Subgraph" href="/v2/serve-subgraph" />
+  <Cards.Card arrow title="FAQ" href="/v2/faq" />
+  <Cards.Card arrow title="Protocols" href="/v2/protocols" />
+  <Cards.Card arrow title="Music Store Example" href="/v2/examples/music-store" />
+</Cards>

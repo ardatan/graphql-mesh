@@ -1,0 +1,15 @@
+export default {
+  index: 'Introduction',
+  paths: 'Build your Subgraph',
+  transforms: 'Transform Subgraph',
+  'serve-subgraph': 'Serve Subgraph',
+  compose: 'Composition',
+  serve: 'Serve Supergraph',
+  examples: 'Examples',
+  protocols: 'Protocols',
+  directives: 'Directives',
+  guides: 'Guides',
+  concepts: 'Concepts',
+  architecture: 'Architecture',
+  faq: 'FAQ',
+};
