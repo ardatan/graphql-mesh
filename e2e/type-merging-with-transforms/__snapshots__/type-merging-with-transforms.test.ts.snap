@@ -17,8 +17,8 @@ scalar join__FieldSet
 scalar link__Import
 enum link__Purpose {"""\`SECURITY\` features provide metadata necessary to securely resolve fields.""" SECURITY """\`EXECUTION\` features provide metadata necessary for operation execution.""" EXECUTION}
 enum join__Graph {AUTHORS @join__graph(name:"authors" url:"http://localhost:<authors_port>/graphql") BOOKS @join__graph(name:"books" url:"http://localhost:<books_port>/graphql")}
-type Query @join__type(graph:AUTHORS) @join__type(graph:BOOKS) {author(id:ID!):Author @join__directive(graphs:[AUTHORS] name:"lookup" args:{}) @join__directive(graphs:[BOOKS] name:"lookup" args:{}) @join__directive(graphs:[BOOKS] name:"source" args:{name:"authorWithBooks"
-type:"AuthorWithBooks" subgraph:"books"}) writers(ids:[ID]):[Author] @join__directive(graphs:[AUTHORS] name:"source" args:{name:"authors"
+type Query @join__type(graph:AUTHORS) @join__type(graph:BOOKS) {author(id:ID!):Author @join__directive(graphs:[AUTHORS] name:"lookup" args:{}) @join__directive(graphs:[BOOKS] name:"source" args:{name:"authorWithBooks"
+type:"AuthorWithBooks" subgraph:"books"}) @join__directive(graphs:[BOOKS] name:"lookup" args:{}) writers(ids:[ID]):[Author] @join__directive(graphs:[AUTHORS] name:"source" args:{name:"authors"
 type:"[Author]" subgraph:"authors"}) @join__field(graph:AUTHORS) book(id:ID!):Book @join__directive(graphs:[BOOKS] name:"lookup" args:{}) @join__field(graph:BOOKS) books(ids:[ID]):[Book!]! @join__directive(graphs:[BOOKS] name:"merge" args:{keyField:"id" keyArg:"ids"}) @join__field(graph:BOOKS)}
 type Author @join__directive(graphs:[BOOKS] name:"source" args:{name:"AuthorWithBooks" subgraph:"books"}) @join__type(graph:AUTHORS key:"id") @join__type(graph:BOOKS key:"id") {id:ID! name:String! @join__field(graph:AUTHORS) books:[Book!]! @join__field(graph:BOOKS)}
 type Book @join__type(graph:BOOKS key:"id") {id:ID! title:String! authorId:ID! author:Author @resolveTo(sourceName:"authors" sourceTypeName:"Query" sourceFieldName:"writers" keyField:"authorId" keysArg:"ids") @additionalField}

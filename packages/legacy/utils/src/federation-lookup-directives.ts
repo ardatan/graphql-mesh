@@ -137,7 +137,7 @@ export function importFederationLookupDirectives(
     const existingLookup = directiveDefs.find(d => d.name === 'lookup');
     if (!existingLookup) {
       toAdd.push(LookupDirective);
-    } else if (!existingLookup.args['subgraph']) {
+    } else if (!existingLookup.args.some(a => a.name === 'subgraph')) {
       // Retained Fed-draft `directive @lookup on FIELD_DEFINITION` cannot accept
       // Mesh compose `subgraph:` stamps — replace with the Mesh def that does.
       directiveDefs = directiveDefs.map(d => (d.name === 'lookup' ? LookupDirective : d));
