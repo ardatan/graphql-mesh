@@ -80,6 +80,17 @@ come from the SDL. Use Mesh `@merge` only for **list / batch** entry fields.
 All three produce subgraph SDL that Compose, registries, and `buildSubgraphSchema` accept the same
 way. Overview: [Build your Subgraph](/v2/paths/generate).
 
+## How do I Generate from the CLI?
+
+Put loaders in `mesh.config.ts` as `export const composeConfig`, then:
+
+```bash
+mesh-compose --subgraph chinook -o chinook-subgraph.graphql
+```
+
+That **is** the Generate emit surface (not `.meshrc`). Full compose:
+`mesh-compose -o supergraph.graphql`. Concrete configs: [Generate](/v2/paths/generate).
+
 ## Automatic transform or edit the SDL by hand?
 
 | Approach                              | When                                                                                          |
