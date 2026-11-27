@@ -99,8 +99,8 @@ wins when the prune is one-off or you want the slim file reviewed in git.
 ## Worked example: stamp Federation by editing SDL
 
 Plain GraphQL source, no entity annotations -- add `@key` and a Federation draft `@lookup` entry
-field for one-object hops (Mesh `@merge` only if the entry field returns a **list** / batch --
-[Directives](/v2/directives#lookup)):
+field for one-object hops (Type Merging `@merge` only if the entry field returns a **list** / batch
+-- [Directives](/v2/directives#lookup)):
 
 {/* prettier-ignore */}
 ```diff

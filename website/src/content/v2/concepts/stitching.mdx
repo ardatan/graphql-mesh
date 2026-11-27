@@ -76,10 +76,11 @@ an optional **directive spec** from **GraphQL Tools** to configure Schema Stitch
 config -- not as Schema Stitching itself, and not as Apollo Federation directives.
 
 <Callout type="info">
-  Stitching `@merge` below is from `@graphql-tools/stitching-directives` -- **not** Mesh core
-  (`specs.graphql-mesh.dev/core`). Mesh core `@merge` is a separate runtime hop used for
-  **list/batch** entry fields; prefer Federation `@lookup` for one-object entry fields -- see
-  [Directives: @lookup](/v2/directives#lookup) and [Directives: @merge](/v2/directives#merge).
+  Stitching `@merge` below is from `@graphql-tools/stitching-directives` -- **not** Type Merging
+  `@merge` from Mesh core (`specs.graphql-mesh.dev/core`). Type Merging `@merge` is a separate
+  runtime hop for **list/batch** entry fields; prefer Federation `@lookup` for one-object entry
+  fields -- see [Directives: @lookup](/v2/directives#lookup) and [Directives:
+  @merge](/v2/directives#merge).
 </Callout>
 
 ```graphql

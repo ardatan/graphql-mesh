@@ -47,7 +47,7 @@ the jobs differ:
 | Job                 | Make a **hand-coded** GraphQL schema Federation-compatible                                                | Make **Mesh subgraph SDL** executable (transports + entity hops)                                                                   |
 | Typical input       | `[{ typeDefs, resolvers }]` or SDL + your resolver map                                                    | Generated / edited / hand Mesh SDL (`string` / `DocumentNode` / `GraphQLSchema`)                                                   |
 | What you write      | Field resolvers + `__resolveReference` for entities                                                       | Mostly directives on SDL; optional `resolvers` for fields you own in code                                                          |
-| Federation plumbing | Adds Fed types / directives (`_Entity`, `_Any`, ...) and wires `_entities` from your `__resolveReference` | Wires entity entry from Fed `@lookup` / `@is` / `@internal` (one-object) and Mesh `@merge` (list/batch)                            |
+| Federation plumbing | Adds Fed types / directives (`_Entity`, `_Any`, ...) and wires `_entities` from your `__resolveReference` | Wires entity entry from Fed `@lookup` / `@is` / `@internal` (one-object) and Type Merging `@merge` (list/batch)                    |
 | HTTP/REST Connect   | `@connect` / `@source` may appear in SDL; **Router executes** Connectors, not this library                | `@connect` / `@source` run via Mesh transports in **this** subgraph process (and still dual-run on Router when Connect-compatible) |
 | Mesh protocols      | Not in scope (`@sql`, `@protobuf__rpc`, `@transport`, ...)                                                | First-class: `@transport` + protocol / Connect directive executors                                                                 |
 | When to use         | Pure GraphQL subgraph with code resolvers                                                                 | Mesh Generate / Generate-then-edit / Hand-write SDL as a Yoga (or any) Federation subgraph                                         |
@@ -110,7 +110,7 @@ From the SDL directives, `buildSubgraphSchema` builds executable behavior:
 | <DirectiveRef name="connect" /> / <DirectiveRef name="source" /> | HTTP/REST Connectors mapping                                             |
 | Protocol directives (`@sql`, `@protobuf__rpc`, ...)              | Protocol transports                                                      |
 | Federation `@lookup` / `@is` / `@internal`                       | Entity entry fields that return **one object**                           |
-| Mesh <DirectiveRef name="merge" />                               | **List / batch** entity entry fields (when `@lookup` is one-object only) |
+| Type Merging <DirectiveRef name="merge" />                       | **List / batch** entity entry fields (when `@lookup` is one-object only) |
 | Federation <DirectiveRef name="key" />                           | Entity keys for Federation                                               |
 
 Prefer Federation `@lookup` / `@is` / `@internal` for one-object entity entry fields. Use Mesh

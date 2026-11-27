@@ -1,7 +1,7 @@
 ---
 description:
   Mesh subgraph directive reference -- HTTP/REST Connectors, Mesh protocols, Federation @lookup /
-  @is / @internal, Mesh @merge (list/batch), @resolveTo
+  @is / @internal, Type Merging @merge (list/batch), @resolveTo (additional resolvers)
 ---
 
 import { Callout, Cards } from '@theguild/components'
@@ -11,9 +11,9 @@ import { DirectiveRef, ProtocolRef } from '../../components/v2-directive-ref'
 
 **Directive reference** for Mesh subgraph SDL -- [HTTP/REST Connectors](/v2/concepts/connectors)
 (`@connect` / `@source`), Mesh protocol directives, Federation entity hops (`@lookup` / `@is` /
-`@internal`), Mesh `@merge` for list/batch hops, **Federation core** (`@key`, `@requires`, …) plus
-`@composeDirective` for non-core names, and `@link` / `@transport`. Full `@connect` / `@source` arg
-tables:
+`@internal`), Type Merging `@merge` for list/batch hops, **Federation core** (`@key`, `@requires`,
+…) plus `@composeDirective` for non-core names, and `@link` / `@transport`. Full `@connect` /
+`@source` arg tables:
 [HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives).
 
 Use this page when [reading generated SDL](/v2/guides/reading-generated-sdl) or
@@ -28,8 +28,8 @@ not just arg lists. Binders: [Selection mapping](/v2/guides/selection-mapping). 
 | HTTP/REST Connectors   | `@connect`, `@source`                                        | Entity ById, type-level `$this`, nested `$this`, SOAP/OData  |
 | Mesh core              | `@transport`                                                 | Kind / location stamp                                        |
 | Federation entity hops | `@lookup`, `@is`, `@internal`                                | One-object entry field; arg rename; hide lookup from clients |
-| Mesh list/batch hops   | `@merge`                                                     | List/batch entity entry when `@lookup` is one-object only    |
-| Mesh field delegation  | `@resolveTo`                                                 | Batch keysArg / valueKeyField / pubsubTopic                  |
+| Type Merging `@merge`  | `@merge`                                                     | List/batch entity entry when `@lookup` is one-object only    |
+| Additional resolvers   | `@resolveTo`                                                 | Field delegation / `additionalTypeDefs` (batch, pubsubTopic) |
 | Event-driven (EDFS)    | `@pubsubOperation`, `@pubsubPublish`                         | Subgraph subscribe / publish; webhooks                       |
 | SQL                    | `@sql`                                                       | ROW/entity, ROWS, through, INSERT/DELETE                     |
 | Mongo                  | `@mongo__*`                                                  | findOne/entity, find filter, insert/update                   |
@@ -219,9 +219,10 @@ schema directive (not rewritten to `@join__directive` the way `@connect` / `@sou
 extend schema @link(url: "https://specs.graphql-mesh.dev/core/v0.1", import: ["@transport"])
 ```
 
-Shared Mesh core also exports `@hoist`, `@resolveTo`, `@merge` (list/batch entity hops), and pubsub
-helpers under the same `core/v0.1` URL when needed -- import the names you use. For an entity entry
-field that returns **one object**, prefer Federation `@lookup` / `@is` / `@internal` from the
+Shared Mesh core also exports `@hoist`, `@resolveTo` (additional resolvers), Type Merging `@merge`
+(list/batch entity hops), and pubsub helpers under the same `core/v0.1` URL when needed -- import
+the names you use. For an entity entry field that returns **one object**, prefer Federation
+`@lookup` / `@is` / `@internal` from the
 [Federation Spec draft](https://graphql.github.io/graphql-federation-spec/draft) (not Mesh core).
 
 | Arg        | Meaning                                          |
@@ -339,7 +340,8 @@ Hand-written GraphQL subgraphs that need an entity entry field should stamp `@lo
 
 <Callout type="info">
   Spec `@lookup` marks an entity entry field that returns one object (not a list). For list/batch
-  entry points use Mesh <DirectiveRef name="merge" />, or batched Connect / protocol fields /
+  entry points use Type Merging <DirectiveRef name="merge" />, or batched Connect / protocol fields
+  /
   <DirectiveRef name="resolveTo" /> when that fits better.
 </Callout>
 
@@ -347,15 +349,16 @@ Hand-written GraphQL subgraphs that need an entity entry field should stamp `@lo
 
 <a id="merge" />
 
-## Mesh `@merge`
+## Type Merging `@merge`
 
 `@merge`
 
-Mesh core entity hop for **list / batch** entry fields (a Query that takes many keys and returns a
-list). Hive Gateway parses and executes `@merge` at runtime. Prefer Federation `@lookup` / `@is` /
-`@internal` when the entry field returns **one object**; use `@merge` when you need a list-shaped
-hop (ByIds) that `@lookup` does not cover. Connect / protocol `entity: true` remains the loader path
-for HTTP/REST and protocol subgraphs.
+Type Merging entity hop for **list / batch** entry fields (a Query that takes many keys and returns
+a list). Imported from Mesh core (`specs.graphql-mesh.dev/core`); Hive Gateway parses and executes
+`@merge` at runtime. Prefer Federation `@lookup` / `@is` / `@internal` when the entry field returns
+**one object**; use Type Merging `@merge` when you need a list-shaped hop (ByIds) that `@lookup`
+does not cover. Connect / protocol `entity: true` remains the loader path for HTTP/REST and protocol
+subgraphs.
 
 **Import**
 
@@ -391,15 +394,15 @@ See [Entity resolution](/v2/concepts/federation#entity-resolution) and
 
 <a id="resolveTo" />
 
-## Mesh `@resolveTo`
+## Additional resolvers (`@resolveTo`)
 
 `@resolveTo`
 
-Mesh field-level **delegation / join**: resolve this field by calling another subgraph's Query (or
-type) field, optionally with batched args. Still valid Mesh core; for new entity joins prefer
-Federation `@key` stubs plus Connect / protocol directives, or `@lookup` on an entry field that
-returns one object (Music Store / FHIR). Compose validates `sourceName` / field / arg names at
-compose time.
+SDL form of **additional resolvers** / field-level **delegation**: resolve this field by calling
+another subgraph's Query (or type) field, optionally with batched args. Still valid Mesh core; for
+new entity joins prefer Federation `@key` stubs plus Connect / protocol directives, or `@lookup` on
+an entry field that returns one object (Music Store / FHIR). Compose validates `sourceName` / field
+/ arg names at compose time.
 
 **Import**
 
@@ -1178,8 +1181,8 @@ type Track @key(fields: "id", resolvable: false) {
 }
 ```
 
-Combine with Connect / protocol fields for nested data -- not Mesh `@resolveTo` for new work. See
-[Entity resolution](/v2/concepts/federation#entity-resolution).
+Combine with Connect / protocol fields for nested data -- not `@resolveTo` / additional resolvers
+for new work. See [Entity resolution](/v2/concepts/federation#entity-resolution).
 
 ### Scenario: `@requires` + `@external`
 

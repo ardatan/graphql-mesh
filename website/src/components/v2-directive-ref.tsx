@@ -20,7 +20,7 @@ const DIRECTIVES = {
     label: '@merge',
     anchor: 'merge',
     description:
-      'Mesh core list/batch entity hop (keyField / keyArg); prefer Federation @lookup for one-object entry fields.',
+      'Type Merging list/batch entity hop (keyField / keyArg); prefer Federation @lookup for one-object entry fields.',
   },
   lookup: {
     label: '@lookup',
@@ -99,7 +99,7 @@ const DIRECTIVES = {
     label: '@resolveTo',
     anchor: 'resolveTo',
     description:
-      'Mesh field delegation / join helper (sourceName, sourceFieldName, ...); prefer @key + HTTP/REST Connect or protocol entity maps for new work.',
+      'Additional resolvers / field delegation (sourceName, sourceFieldName, ...); prefer @key + HTTP/REST Connect or protocol entity maps for new work.',
   },
   pubsubOperation: {
     label: '@pubsubOperation',

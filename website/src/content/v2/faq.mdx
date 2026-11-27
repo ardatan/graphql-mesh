@@ -99,7 +99,7 @@ Both produce a Federation subgraph peer. Neither replaces [Composition](/v2/comp
 
 Stamp Federation draft `@lookup` on an entity entry field that returns **one object**, then pass a
 matching resolver into `buildSubgraphSchema({ resolvers: { ... } })`. Directive-driven fields still
-come from the SDL. Use Mesh `@merge` only for **list / batch** entry fields.
+come from the SDL. Use Type Merging `@merge` only for **list / batch** entry fields.
 
 - [Serve Subgraph: resolvers for `@lookup`](/v2/serve-subgraph#resolvers-for-lookup)
 - [Directives: @lookup](/v2/directives#lookup) / [Directives: @merge](/v2/directives#merge)
@@ -145,11 +145,11 @@ Concrete configs: [Generate](/v2/paths/generate). After you edit the file, switc
 Skip transforms when Generate-then-edit or Hand-write already owns the public names.
 [Transform Subgraph](/v2/transforms).
 
-## Does Mesh `@merge` replace Federation `@lookup`?
+## Does Type Merging `@merge` replace Federation `@lookup`?
 
 No. Prefer Federation draft `@lookup` / `@is` / `@internal` for **one-object** entity entry fields.
-Keep Mesh `@merge` for **list / batch** hops. They are not deprecated synonyms -- different shapes.
-[Directives](/v2/directives#lookup).
+Keep Type Merging `@merge` for **list / batch** hops. They are not deprecated synonyms -- different
+shapes. [Directives](/v2/directives#lookup).
 
 ## Can I use Mesh Compose with Hive / Rover composition?
 
