@@ -20,10 +20,14 @@ import { V2JourneyCards } from '../../components/v2-journey-cards'
 supergraph). Authors work in GraphQL SDL with Mesh
 <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> and Mesh protocol directives.
 
-- Platform / registry / gateway **independent**: Mesh fits any Federation environment -- Compose
-  with Mesh Compose, Hive, Rover, or another Federation-compatible composer; publish to any
-  <ConceptRef name="schema-registry">schema registry</ConceptRef> (or none); run on any
-  Federation-compatible <ConceptRef name="gateway">gateway</ConceptRef>.
+- **Already on Federation?** Extend the graph with REST/SQL/gRPC subgraphs and transforms -- keep
+  Router / Hive / your registry ([why Mesh](/v2/faq#already-have-federation-why-mesh) /
+  [enhance](#enhance-an-existing-federation)).
+- **New to Federation?** Generate Federation-ready SDL from OpenAPI, SQL, and more, then compose and
+  serve on any Federation-compatible gateway ([why Mesh](/v2/faq#new-to-federation-why-mesh)).
+- Platform / registry / gateway **independent**: Compose with Mesh Compose, Hive, Rover, or another
+  composer; publish to any <ConceptRef name="schema-registry">schema registry</ConceptRef> (or
+  none); run on any Federation-compatible <ConceptRef name="gateway">gateway</ConceptRef>.
 - <ConceptRef name="gateway">Gateway</ConceptRef>: **Hive Gateway** (JavaScript / TypeScript) is the
   preferred runtime for the full Mesh transport surface; **Apollo Router** is a first-class peer for
   **Connect-compatible** supergraphs.
