@@ -158,6 +158,22 @@ subgraphs to a [schema registry](/v2/concepts/schema-registry) and let Hive comp
 another Federation composer build the supergraph. Mesh docs center on Mesh Compose; the SDL contract
 is what matters. [Composition](/v2/compose).
 
+## Can Mesh drop into an existing Federation setup?
+
+Yes. Mesh is platform / registry / gateway **independent**. Keep Apollo GraphOS + Router, Hive
+Gateway + Registry, or any other Federation-compatible stack. Add Mesh where it helps:
+
+- **Drop in subgraphs** -- emit or Hand-write Mesh Federation subgraph SDL, publish to your
+  registry, or [Serve Subgraph](/v2/serve-subgraph) (`buildSubgraphSchema` / Hive subgraph mode) so
+  the existing gateway can call those URLs.
+- **Compose** -- use Mesh Compose for some or all subgraphs, or keep Rover / Hive composition and
+  only supply Mesh subgraph SDL.
+
+You do **not** need to replace the whole gateway, registry, or CI. Hive Gateway remains preferred
+when Mesh protocol transports must run inside the supergraph process; otherwise Mesh peers as normal
+Federation subgraphs. See [Serve Supergraph](/v2/serve),
+[Migrate from Schema Stitching](/v2/guides/migrate-from-stitching).
+
 ## How is `@graphql-mesh/subgraph` different from `@apollo/subgraph`?
 
 Same export name (`buildSubgraphSchema`), different jobs: Apollo's package Federation-wraps
@@ -176,11 +192,21 @@ executable. Not drop-in replacements.
 Read [Mesh journey (v0 → v1 → v2)](/v2/guides/mesh-journey) and [Migration](/v2/guides/migration).
 v2 docs are draft; prefer [Mesh v1](/v1) for production until this section ships.
 
+## Coming from programmatic Schema Stitching?
+
+Replace `stitchSchemas` / legacy Mesh stitching with Federation subgraph SDL + Compose + Serve.
+Guide: [Migrate from Schema Stitching](/v2/guides/migrate-from-stitching).
+
 <Cards>
   <Cards.Card arrow title="Build your Subgraph" href="/v2/paths/generate" />
   <Cards.Card arrow title="Transform Subgraph" href="/v2/transforms" />
   <Cards.Card arrow title="Serve Subgraph" href="/v2/serve-subgraph" />
   <Cards.Card arrow title="Serve Supergraph" href="/v2/serve" />
+  <Cards.Card
+    arrow
+    title="Migrate from Schema Stitching"
+    href="/v2/guides/migrate-from-stitching"
+  />
   <Cards.Card arrow title="Architecture" href="/v2/architecture" />
   <Cards.Card arrow title="buildSubgraphSchema" href="/v2/guides/build-subgraph-schema" />
   <Cards.Card arrow title="Directives" href="/v2/directives" />
