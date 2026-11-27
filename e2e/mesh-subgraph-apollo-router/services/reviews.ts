@@ -25,47 +25,50 @@ const reviewsByProduct: Record<string, (typeof reviewsById)[string][]> = {
 };
 
 async function main() {
-  const schema = await buildSubgraphSchema(loadSubgraphSdl('reviews'), {
-    skipTransports: true,
-    resolvers: {
-      Query: {
-        review: (_: unknown, { id }: { id: string }) => {
-          const row = reviewsById[id];
-          return row
-            ? {
-                id: row.id,
-                body: row.body,
-                product: { id: row.productId },
-                author: { id: row.authorId },
-              }
-            : null;
+  const schema = await buildSubgraphSchema(
+    {
+      typeDefs: loadSubgraphSdl('reviews'),
+      resolvers: {
+        Query: {
+          review: (_: unknown, { id }: { id: string }) => {
+            const row = reviewsById[id];
+            return row
+              ? {
+                  id: row.id,
+                  body: row.body,
+                  product: { id: row.productId },
+                  author: { id: row.authorId },
+                }
+              : null;
+          },
+          product: (_: unknown, { id }: { id: string }) => ({
+            id,
+            reviews: (reviewsByProduct[id] || []).map(row => ({
+              id: row.id,
+              body: row.body,
+              product: { id: row.productId },
+              author: { id: row.authorId },
+            })),
+          }),
         },
-        product: (_: unknown, { id }: { id: string }) => ({
-          id,
-          reviews: (reviewsByProduct[id] || []).map(row => ({
-            id: row.id,
-            body: row.body,
-            product: { id: row.productId },
-            author: { id: row.authorId },
-          })),
-        }),
-      },
-      Product: {
-        reviews: (parent: { id: string; reviews?: unknown[] }) =>
-          parent.reviews ||
-          (reviewsByProduct[parent.id] || []).map(row => ({
-            id: row.id,
-            body: row.body,
-            product: { id: row.productId },
-            author: { id: row.authorId },
-          })),
-      },
-      Review: {
-        product: (parent: { product: { id: string } }) => parent.product,
-        author: (parent: { author: { id: string } }) => parent.author,
+        Product: {
+          reviews: (parent: { id: string; reviews?: unknown[] }) =>
+            parent.reviews ||
+            (reviewsByProduct[parent.id] || []).map(row => ({
+              id: row.id,
+              body: row.body,
+              product: { id: row.productId },
+              author: { id: row.authorId },
+            })),
+        },
+        Review: {
+          product: (parent: { product: { id: string } }) => parent.product,
+          author: (parent: { author: { id: string } }) => parent.author,
+        },
       },
     },
-  });
+    { skipTransports: true },
+  );
 
   const yoga = createYoga({ schema, logging: false, graphqlEndpoint: '/graphql' });
   createServer((req, res) => {

@@ -2,6 +2,9 @@ export { buildSubgraphSchema } from './buildSubgraphSchema.js';
 export type {
   BuildSubgraphSchemaInput,
   BuildSubgraphSchemaOptions,
+  BuildSubgraphSchemaTypeDefs,
+  BuildSubgraphTypeDefs,
+  GraphQLSchemaModule,
 } from './buildSubgraphSchema.js';
 export { wireLookupEntityResolvers } from './lookup.js';
 export { collectEntityObjectTypes, wireResolveReferenceFromResolvers } from './entities.js';

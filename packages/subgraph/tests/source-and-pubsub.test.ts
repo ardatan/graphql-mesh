@@ -81,17 +81,20 @@ describe('buildSubgraphSchema Mesh @source transforms', () => {
     `;
 
     // Resolvers are authored against the public stamped names (as a subgraph host would).
-    const schema = await buildSubgraphSchema(typeDefs, {
-      skipTransports: true,
-      resolvers: {
-        Query: {
-          user: () => ({ user_id: 'u1' }),
-        },
-        User: {
-          id: (parent: { user_id?: string; id?: string }) => parent.user_id ?? parent.id,
+    const schema = await buildSubgraphSchema(
+      {
+        typeDefs: typeDefs,
+        resolvers: {
+          Query: {
+            user: () => ({ user_id: 'u1' }),
+          },
+          User: {
+            id: (parent: { user_id?: string; id?: string }) => parent.user_id ?? parent.id,
+          },
         },
       },
-    });
+      { skipTransports: true },
+    );
 
     // Public surface keeps stamped names.
     expect(schema.getType('User')).toBeDefined();
@@ -197,18 +200,21 @@ describe('buildSubgraphSchema Mesh @source transforms', () => {
     expect(getApolloConnectorsSourceDirectiveName(linkExtensions(raw))).toBe('source');
     expect(schemaHasMeshSourceTransforms(raw)).toBe(true);
 
-    const schema = await buildSubgraphSchema(typeDefs, {
-      skipTransports: true,
-      resolvers: {
-        Query: {
-          user: () => ({ user_id: 'u1' }),
-          hello: () => 'world',
-        },
-        User: {
-          id: (parent: { user_id?: string; id?: string }) => parent.user_id ?? parent.id,
+    const schema = await buildSubgraphSchema(
+      {
+        typeDefs: typeDefs,
+        resolvers: {
+          Query: {
+            user: () => ({ user_id: 'u1' }),
+            hello: () => 'world',
+          },
+          User: {
+            id: (parent: { user_id?: string; id?: string }) => parent.user_id ?? parent.id,
+          },
         },
       },
-    });
+      { skipTransports: true },
+    );
 
     expect(schema.getType('User')).toBeDefined();
     expect(schema.getType('MyUser')).toBeUndefined();
@@ -261,15 +267,18 @@ describe('buildSubgraphSchema pubsub option', () => {
   `;
 
   it('no-ops @pubsubOperation / @pubsubPublish when pubsub is omitted', async () => {
-    const schema = await buildSubgraphSchema(typeDefs, {
-      skipTransports: true,
-      resolvers: {
-        Query: { hello: () => 'world' },
-        Mutation: {
-          createProduct: (_r, { name }) => ({ id: '1', name }),
+    const schema = await buildSubgraphSchema(
+      {
+        typeDefs: typeDefs,
+        resolvers: {
+          Query: { hello: () => 'world' },
+          Mutation: {
+            createProduct: (_r, { name }) => ({ id: '1', name }),
+          },
         },
       },
-    });
+      { skipTransports: true },
+    );
 
     const subscriptionType = schema.getSubscriptionType() as GraphQLObjectType;
     const newProduct = subscriptionType.getFields().newProduct;
@@ -294,16 +303,18 @@ describe('buildSubgraphSchema pubsub option', () => {
 
   it('wires @pubsubPublish and @pubsubOperation when pubsub is provided', async () => {
     await using pubsub = new MemPubSub();
-    const schema = await buildSubgraphSchema(typeDefs, {
-      skipTransports: true,
-      pubsub,
-      resolvers: {
-        Query: { hello: () => 'world' },
-        Mutation: {
-          createProduct: (_r, { name }) => ({ id: '9', name }),
+    const schema = await buildSubgraphSchema(
+      {
+        typeDefs: typeDefs,
+        resolvers: {
+          Query: { hello: () => 'world' },
+          Mutation: {
+            createProduct: (_r, { name }) => ({ id: '9', name }),
+          },
         },
       },
-    });
+      { skipTransports: true, pubsub },
+    );
 
     const subscriptionType = schema.getSubscriptionType() as GraphQLObjectType;
     expect(subscriptionType.getFields().newProduct.subscribe).toBeDefined();

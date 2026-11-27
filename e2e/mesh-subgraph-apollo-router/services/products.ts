@@ -18,9 +18,8 @@ const upstreamUrl = `http://127.0.0.1:${upstreamPort}/graphql`;
 
 async function main() {
   const schema = await buildSubgraphSchema(
-    loadSubgraphSdl('products', { PRODUCTS_UPSTREAM_URL: upstreamUrl }),
     {
-      fetch,
+      typeDefs: loadSubgraphSdl('products', { PRODUCTS_UPSTREAM_URL: upstreamUrl }),
       resolvers: {
         Product: {
           __resolveReference: async (ref: { id: string }) => {
@@ -47,6 +46,7 @@ async function main() {
         },
       },
     },
+    { fetch },
   );
 
   const yoga = createYoga({ schema, logging: false, graphqlEndpoint: '/graphql' });

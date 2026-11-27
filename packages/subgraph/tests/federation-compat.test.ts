@@ -1,10 +1,10 @@
 /**
  * Federation subgraph behavior adapted from subgraph-js
  * `src/__tests__/buildSubgraphSchema.test.ts` / `printSubgraphSchema.test.ts`
- * for the Mesh `buildSubgraphSchema` API (single SDL + options.resolvers).
+ * for the Mesh `buildSubgraphSchema` API (`{ typeDefs, resolvers }` modules).
  *
- * Skipped Apollo-only pieces: multi-module merge, Federation @link version
- * namespaces / rename imports / version gates (Mesh SDL carries directive defs).
+ * Skipped Apollo-only pieces: Federation @link version namespaces / rename
+ * imports / version gates (Mesh SDL carries directive defs).
  */
 import { execute, graphql, parse, type GraphQLUnionType } from 'graphql';
 import { buildSubgraphSchema } from '../src/index.js';
@@ -140,16 +140,19 @@ describe('entity resolution', () => {
   `;
 
   it('resolves references through __resolveReference', async () => {
-    const schema = await buildSubgraphSchema(parse(typeDefs), {
-      skipTransports: true,
-      resolvers: {
-        Product: {
-          __resolveReference(reference: { id: string }) {
-            return { id: reference.id, name: `Product ${reference.id}` };
+    const schema = await buildSubgraphSchema(
+      {
+        typeDefs: parse(typeDefs),
+        resolvers: {
+          Product: {
+            __resolveReference(reference: { id: string }) {
+              return { id: reference.id, name: `Product ${reference.id}` };
+            },
           },
         },
       },
-    });
+      { skipTransports: true },
+    );
 
     const result = await graphql({
       schema,
@@ -198,14 +201,13 @@ describe('entity resolution', () => {
 
   it('resolves interface entities to their runtime type', async () => {
     const schema = await buildSubgraphSchema(
-      parse(`
-        ${fed2()}
-        type Query { hello: String }
-        interface Media @key(fields: "id") { id: ID! }
-        type Book implements Media { id: ID! title: String }
-      `),
       {
-        skipTransports: true,
+        typeDefs: parse(`
+          ${fed2()}
+          type Query { hello: String }
+          interface Media @key(fields: "id") { id: ID! }
+          type Book implements Media { id: ID! title: String }
+        `),
         resolvers: {
           Media: {
             __resolveReference(reference: { id: string }) {
@@ -214,6 +216,7 @@ describe('entity resolution', () => {
           },
         },
       },
+      { skipTransports: true },
     );
 
     const result = await graphql({
@@ -237,17 +240,16 @@ describe('entity resolution', () => {
 });
 
 describe('resolvers', () => {
-  it('applies resolvers from options.resolvers', async () => {
+  it('applies resolvers from schema modules', async () => {
     const schema = await buildSubgraphSchema(
-      parse(`
-        ${fed2()}
-        type Query {
-          hello: String
-          goodbye: String
-        }
-      `),
       {
-        skipTransports: true,
+        typeDefs: parse(`
+          ${fed2()}
+          type Query {
+            hello: String
+            goodbye: String
+          }
+        `),
         resolvers: {
           Query: {
             hello: () => 'hi',
@@ -255,6 +257,7 @@ describe('resolvers', () => {
           },
         },
       },
+      { skipTransports: true },
     );
 
     const result = await graphql({ schema, source: '{ hello goodbye }' });
@@ -325,10 +328,13 @@ describe('validation', () => {
 
 describe('execute smoke', () => {
   it('serves _service and hello together', async () => {
-    const schema = await buildSubgraphSchema(parse(`${fed2()} type Query { hello: String }`), {
-      skipTransports: true,
-      resolvers: { Query: { hello: () => 'world' } },
-    });
+    const schema = await buildSubgraphSchema(
+      {
+        typeDefs: parse(`${fed2()} type Query { hello: String }`),
+        resolvers: { Query: { hello: () => 'world' } },
+      },
+      { skipTransports: true },
+    );
     const result = await execute({
       schema,
       document: parse(`{ hello _service { sdl } }`),

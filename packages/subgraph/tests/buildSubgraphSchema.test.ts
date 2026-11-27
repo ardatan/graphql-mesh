@@ -61,14 +61,17 @@ describe('buildSubgraphSchema', () => {
       }
     `;
 
-    const schema = await buildSubgraphSchema(typeDefs, {
-      skipTransports: true,
-      resolvers: {
-        Query: {
-          product: (_root, { sku }) => ({ id: sku, name: `Product ${sku}` }),
+    const schema = await buildSubgraphSchema(
+      {
+        typeDefs: typeDefs,
+        resolvers: {
+          Query: {
+            product: (_root, { sku }) => ({ id: sku, name: `Product ${sku}` }),
+          },
         },
       },
-    });
+      { skipTransports: true },
+    );
 
     const result = await execute({
       schema,
@@ -103,15 +106,18 @@ describe('buildSubgraphSchema', () => {
       }
     `;
 
-    const schema = await buildSubgraphSchema(typeDefs, {
-      skipTransports: true,
-      resolvers: {
-        Query: {
-          hello: () => 'world',
-          secret: () => 'nope',
+    const schema = await buildSubgraphSchema(
+      {
+        typeDefs: typeDefs,
+        resolvers: {
+          Query: {
+            hello: () => 'world',
+            secret: () => 'nope',
+          },
         },
       },
-    });
+      { skipTransports: true },
+    );
 
     const result = await execute({
       schema,
@@ -163,15 +169,18 @@ describe('buildSubgraphSchema', () => {
       }
     `;
 
-    const schema = await buildSubgraphSchema(typeDefs, {
-      skipTransports: true,
-      resolvers: {
-        Query: {
-          product: (_: unknown, { id }: { id: string }) => ({ id, name: `P-${id}` }),
-          catalog: () => 'ok',
+    const schema = await buildSubgraphSchema(
+      {
+        typeDefs: typeDefs,
+        resolvers: {
+          Query: {
+            product: (_: unknown, { id }: { id: string }) => ({ id, name: `P-${id}` }),
+            catalog: () => 'ok',
+          },
         },
       },
-    });
+      { skipTransports: true },
+    );
 
     const result = await execute({
       schema,
@@ -279,14 +288,17 @@ describe('buildSubgraphSchema', () => {
       }
     `);
 
-    const schema = await buildSubgraphSchema(schemaIn, {
-      skipTransports: true,
-      resolvers: {
-        Query: {
-          ping: () => 'pong',
+    const schema = await buildSubgraphSchema(
+      {
+        typeDefs: schemaIn,
+        resolvers: {
+          Query: {
+            ping: () => 'pong',
+          },
         },
       },
-    });
+      { skipTransports: true },
+    );
 
     const result = await execute({
       schema,
@@ -309,19 +321,80 @@ describe('buildSubgraphSchema', () => {
       }
     `;
 
-    const schema = await buildSubgraphSchema(typeDefs, {
-      skipTransports: true,
-      resolvers: {
-        Query: {
-          products: () => [{ id: '1' }],
+    const schema = await buildSubgraphSchema(
+      {
+        typeDefs: typeDefs,
+        resolvers: {
+          Query: {
+            products: () => [{ id: '1' }],
+          },
         },
       },
-    });
+      { skipTransports: true },
+    );
 
     // List `@lookup` must not wire resolveReference; `@key` still installs `_entities`
     // (representation pass-through) for Federation entity types.
     const product = schema.getType('Product') as any;
     expect(product.extensions?.apollo?.subgraph?.resolveReference).toBeUndefined();
     expect(schema.getQueryType()!.getFields()._entities).toBeDefined();
+  });
+
+  it('accepts Apollo-style object and array schema modules', async () => {
+    const typeDefs = /* GraphQL */ `
+      ${FEDERATION_AND_LOOKUP_DIRECTIVES}
+      type Query {
+        hello: String!
+        goodbye: String!
+      }
+    `;
+
+    const objectForm = await buildSubgraphSchema(
+      {
+        typeDefs,
+        resolvers: {
+          Query: {
+            hello: () => 'hi',
+            goodbye: () => 'bye',
+          },
+        },
+      },
+      { skipTransports: true },
+    );
+    const objectResult = await execute({
+      schema: objectForm,
+      document: parse('{ hello goodbye }'),
+    });
+    expect(objectResult.errors).toBeUndefined();
+    expect(objectResult.data).toEqual({ hello: 'hi', goodbye: 'bye' });
+
+    const arrayForm = await buildSubgraphSchema(
+      [
+        {
+          typeDefs: parse(/* GraphQL */ `
+            ${FEDERATION_AND_LOOKUP_DIRECTIVES}
+            type Query {
+              hello: String!
+            }
+          `),
+          resolvers: { Query: { hello: () => 'hi' } },
+        },
+        {
+          typeDefs: parse(/* GraphQL */ `
+            extend type Query {
+              goodbye: String!
+            }
+          `),
+          resolvers: { Query: { goodbye: () => 'bye' } },
+        },
+      ],
+      { skipTransports: true },
+    );
+    const arrayResult = await execute({
+      schema: arrayForm,
+      document: parse('{ hello goodbye }'),
+    });
+    expect(arrayResult.errors).toBeUndefined();
+    expect(arrayResult.data).toEqual({ hello: 'hi', goodbye: 'bye' });
   });
 });

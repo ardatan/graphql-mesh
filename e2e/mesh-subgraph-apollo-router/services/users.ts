@@ -18,17 +18,20 @@ const users: Record<string, { id: string; name: string }> = {
 };
 
 async function main() {
-  const schema = await buildSubgraphSchema(loadSubgraphSdl('users'), {
-    skipTransports: true,
-    resolvers: {
-      Query: {
-        user: (_: unknown, { id }: { id: string }) => users[id] || null,
-      },
-      User: {
-        __resolveReference: (ref: { id: string }) => users[ref.id] || null,
+  const schema = await buildSubgraphSchema(
+    {
+      typeDefs: loadSubgraphSdl('users'),
+      resolvers: {
+        Query: {
+          user: (_: unknown, { id }: { id: string }) => users[id] || null,
+        },
+        User: {
+          __resolveReference: (ref: { id: string }) => users[ref.id] || null,
+        },
       },
     },
-  });
+    { skipTransports: true },
+  );
 
   const yoga = createYoga({ schema, logging: false, graphqlEndpoint: '/graphql' });
   createServer((req, res) => {
