@@ -16,7 +16,6 @@ import { pathExists } from '@graphql-mesh/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import type { GraphQLMeshCLIParams } from '../../index.js';
 import { getMaxConcurrency } from './getMaxConcurency.js';
-import { createInProcessMeshTransport } from './mesh-transport.js';
 import { startNodeHttpServer } from './node-http.js';
 import type { MeshOrGatewayHTTPHandler } from './types.js';
 
@@ -173,8 +172,10 @@ export async function serveMesh(
     });
 
     // Under the hood: when underthehood compose wrote a join SG, serve via Hive
-    // Gateway + federation. User-facing APIs (`createMeshHTTPHandler`, generated
-    // `createBuiltMeshHTTPHandler`, `getBuiltMesh`) stay unchanged.
+    // Gateway on that Supergraph (same as Mesh v2). No custom in-process Mesh
+    // transport — Gateway resolves standard transports from `@transport` in the SG.
+    // User-facing APIs (`createMeshHTTPHandler`, generated `createBuiltMeshHTTPHandler`,
+    // `getBuiltMesh`) stay unchanged.
     const artifactsDir = pathModule.join(baseDir, cliParams.artifactsDir);
     const supergraphGraphqlPath = pathModule.join(artifactsDir, 'supergraph.graphql');
     const hasSupergraph = await pathExists(supergraphGraphqlPath);
@@ -185,7 +186,6 @@ export async function serveMesh(
 
     if (hasSupergraph) {
       log.info(`Starting Hive Gateway with under-the-hood supergraph (${supergraphGraphqlPath})`);
-      const mesh = await getBuiltMesh();
       gateway = createGatewayRuntime({
         supergraph: supergraphGraphqlPath,
         graphqlEndpoint: graphqlPath,
@@ -193,12 +193,6 @@ export async function serveMesh(
         graphiql: playgroundTitle ? { title: playgroundTitle } : true,
         logging: log,
         ...(renderGraphiQL ? { renderGraphiQL } : {}),
-        transportEntries: {
-          '*': { kind: 'mesh' },
-        },
-        transports: {
-          mesh: createInProcessMeshTransport(mesh.rawSources),
-        },
       });
       meshHTTPHandler = gateway;
       graphqlWsOptions = getGatewayGraphQLWSOptions(gateway, () => ({}));

@@ -129,8 +129,10 @@ describe('runtime', () => {
       );
 
       expect(supergraphGraphql).toContain('join__Graph');
-      expect(supergraphGraphql).toContain('mesh://legacy/');
+      expect(supergraphGraphql).not.toContain('mesh://legacy/');
       expect(supergraphGraphqlTs).toContain('export const supergraphSdl');
+      expect(supergraphGraphqlTs).toContain('createBuiltHiveGateway');
+      expect(supergraphGraphqlTs).toContain('createGatewayRuntime');
       expect(supergraphGraphqlTs).toContain('join__Graph');
     });
   });

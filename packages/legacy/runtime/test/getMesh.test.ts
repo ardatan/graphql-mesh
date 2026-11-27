@@ -394,7 +394,8 @@ type Subscription {waveLarge:String wave0:String wave1:String}
       ?.supergraphSdl;
     expect(supergraphSdl).toEqual(expect.any(String));
     expect(supergraphSdl).toContain('join__Graph');
-    expect(supergraphSdl).toContain('mesh://legacy/');
+    // No invented mesh:// transport URLs — join URLs come from `@transport` / compose.
+    expect(supergraphSdl).not.toContain('mesh://legacy/');
 
     const result = await mesh.execute(
       /* GraphQL */ `

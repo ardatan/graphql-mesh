@@ -8,9 +8,9 @@
 '@graphql-mesh/cli': minor
 ---
 
-Legacy multi-source Mesh now uses a **federation merger** (`@graphql-mesh/merger-federation`) as the only multi-source merger: `composeSubgraphs` + `handleFederationSupergraph` with in-process subgraph executors. Classic `stitchSchemas` is removed. `@graphql-mesh/merger-stitching` re-exports the federation merger for back-compat with `merger: stitching`.
+Legacy multi-source Mesh now uses a **federation merger** (`@graphql-mesh/merger-federation`) as the only multi-source merger: sources → subgraphs via `composeSubgraphs` (like Mesh v2), then `handleFederationSupergraph` with in-process source executors for the Mesh UX path. Classic `stitchSchemas` is removed. `@graphql-mesh/merger-stitching` re-exports the federation merger for back-compat with `merger: stitching`.
 
-User-facing APIs stay the same (`getMesh`, `createMeshHTTPHandler`, generated `createBuiltMeshHTTPHandler`, `.meshrc`). Default `merger` for multi-source configs is `federation` (single-source still defaults to `bare`). Under the hood, `mesh build` / `mesh dev` write `.mesh/supergraph.graphql.ts` (and plain `.mesh/supergraph.graphql`), and `mesh start` / `mesh dev` feed that supergraph to Hive Gateway when present.
+User-facing APIs stay the same (`getMesh`, `createMeshHTTPHandler`, generated `createBuiltMeshHTTPHandler`, `.meshrc`). Default `merger` for multi-source configs is `federation` (single-source still defaults to `bare`). Under the hood, `mesh build` / `mesh dev` write `.mesh/supergraph.graphql.ts` (SDL + programmatic `createBuiltHiveGateway`) and plain `.mesh/supergraph.graphql`. `mesh start` / `mesh dev` feed that Supergraph to Hive Gateway when present — **no custom `mesh://` in-process transport**; Gateway uses standard transports from `@transport` in the Supergraph.
 
 `transform-type-merging` now stamps Fed `@key(fields)` / Mesh `@merge` (and Fed `@requires` for computed fields) instead of stitch `subschemaConfig.merge`.
 

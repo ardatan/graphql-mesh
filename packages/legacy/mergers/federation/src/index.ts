@@ -10,16 +10,17 @@ import type {
   RawSourceOutput,
 } from '@graphql-mesh/types';
 import { omitIntrospectionTypes } from '@graphql-mesh/utils';
-import type { Executor } from '@graphql-tools/utils';
+import { getDirectiveExtensions, type Executor } from '@graphql-tools/utils';
 import { wrapSchema } from '@graphql-tools/wrap';
 
 /**
  * Default multi-source merger for legacy Mesh.
  *
- * Composes sources into a federation/join-style supergraph (Mesh compose) and
- * consumes that supergraph with in-process subgraph executors, so `.meshrc` /
- * `getMesh` / `createMeshHTTPHandler` keep working while the runtime path matches
- * Compose + Hive Gateway.
+ * Sources → subgraphs like Mesh v2 (`composeSubgraphs`), then:
+ * - `getMesh` / `createMeshHTTPHandler`: `handleFederationSupergraph` with in-process
+ *   source executors (legacy Mesh UX unchanged).
+ * - CLI / artifacts: emit Supergraph SDL for Hive Gateway, which resolves standard
+ *   transports from `@transport` on subgraphs (no custom Mesh transport layer).
  *
  * Classic `stitchSchemas` is no longer used — composition errors surface so
  * sources/transforms can be fixed for federation.
@@ -52,8 +53,9 @@ export default class FederationMerger implements MeshMerger {
       subgraphs.push({
         name: rawSource.name,
         schema: schemaForCompose,
-        // Placeholder join__graph URL; execution stays in-process via executors below.
-        url: `mesh://legacy/${encodeURIComponent(rawSource.name)}`,
+        // Prefer loader-stamped `@transport(location)` (compose also reads it).
+        // Never invent mesh:// placeholders — Hive Gateway uses real transports.
+        url: getTransportLocation(rawSource.schema) ?? getTransportLocation(schemaForCompose),
       });
     }
 
@@ -76,6 +78,7 @@ export default class FederationMerger implements MeshMerger {
       assumeValidSDL: true,
     });
 
+    // Mesh UX path: in-process executors (not a Gateway custom transport).
     const { unifiedGraph: executableUnifiedGraph } = handleFederationSupergraph({
       unifiedGraph,
       getUnifiedGraphSDL: () => supergraphSdl,
@@ -120,6 +123,38 @@ export default class FederationMerger implements MeshMerger {
   }
 }
 
+function getTransportLocation(schema: GraphQLSchema): string | undefined {
+  const transport = getDirectiveExtensions(schema)?.transport?.[0] as
+    { location?: string } | undefined;
+  return typeof transport?.location === 'string' && transport.location.length > 0
+    ? transport.location
+    : undefined;
+}
+
+/**
+ * Keep loader-stamped schema directive extensions (`@transport`, `@link`, …) when
+ * wrap-transforms rebuild the schema, so compose / Hive Gateway still see them.
+ */
+function preserveSchemaDirectiveExtensions(from: GraphQLSchema, to: GraphQLSchema): GraphQLSchema {
+  const fromDirs = (from.extensions as { directives?: Record<string, unknown> } | undefined)
+    ?.directives;
+  if (!fromDirs || typeof fromDirs !== 'object') {
+    return to;
+  }
+  const extensions: Record<string, any> = (to.extensions ||= {});
+  const existing =
+    extensions.directives && typeof extensions.directives === 'object'
+      ? { ...extensions.directives }
+      : {};
+  for (const [key, value] of Object.entries(fromDirs)) {
+    if (existing[key] == null) {
+      existing[key] = value;
+    }
+  }
+  extensions.directives = existing;
+  return to;
+}
+
 function getSchemaForCompose(rawSource: RawSourceOutput): GraphQLSchema {
   if (!rawSource.transforms?.length && rawSource.executor == null) {
     return rawSource.schema;
@@ -128,15 +163,16 @@ function getSchemaForCompose(rawSource: RawSourceOutput): GraphQLSchema {
     // Executor-only remote schema: compose against the client schema shape.
     return rawSource.schema;
   }
-  // Bake wrap-transforms into a local schema for compose + in-process execution.
+  // Bake wrap-transforms into a local schema for compose + in-process Mesh execution.
   // Do NOT pass Mesh `createProxyingResolver` — that delegates back into the
   // unified gateway and recurses under federation underthehood execution.
-  return wrapSchema({
+  const wrapped = wrapSchema({
     schema: rawSource.schema,
     executor: rawSource.executor ?? createDefaultExecutor(rawSource.schema),
     transforms: rawSource.transforms,
     batch: rawSource.batch,
   });
+  return preserveSchemaDirectiveExtensions(rawSource.schema, wrapped);
 }
 
 function getSourceExecutor(rawSource: RawSourceOutput, schemaForCompose: GraphQLSchema): Executor {
