@@ -171,7 +171,7 @@ export function handleFederationSubschema({
   interface FieldDirectives {
     additionalField: {};
     merge: {};
-    /** Federation Spec draft `@lookup` entity entry (preferred over `@merge`). */
+    /** Federation Spec draft `@lookup` entity entry (single-object; list/batch stay on `@merge`). */
     lookup: Array<Record<string, unknown>>;
     resolveTo: YamlConfig.AdditionalStitchingResolverObject;
     source: SourceDirective;

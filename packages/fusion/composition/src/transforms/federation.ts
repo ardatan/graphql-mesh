@@ -1,7 +1,12 @@
 import {
+  DirectiveLocation,
   getNamedType,
   getNullableType,
+  GraphQLDirective,
+  GraphQLList,
+  GraphQLNonNull,
   GraphQLSchema,
+  GraphQLString,
   isListType,
   isObjectType,
   Kind,
@@ -22,6 +27,7 @@ import { hasEquivalentTypeConnect, toTypeLevelEntityConnect } from '../connect-e
 import {
   addFederation2DirectivesToSubgraph,
   importFederationDirectives,
+  importMeshDirectives,
 } from '../federation-utils.js';
 import { suggestionList } from '../suggestionList/index.js';
 import { TransformValidationError } from './utils.js';
@@ -286,6 +292,7 @@ export function createFederationTransform(config: FederationTransformConfig): Su
       ]),
     );
     const usedFederationDirectives = new Set<string>();
+    let mergeDirectiveUsed = false;
     let lookupDirectiveUsed = false;
     let isDirectiveUsed = false;
     subgraphSchema = mapSchema(subgraphSchema, {
@@ -411,6 +418,26 @@ export function createFederationTransform(config: FederationTransformConfig): Su
           }
         }
         if (mergeDirectiveConfig) {
+          let argsExpr = mergeDirectiveConfig.argsExpr;
+          if (!argsExpr && fieldConfig.args && !mergeDirectiveConfig.keyArg) {
+            const argsExprElems: string[] = [];
+            const returnNamedType = getNamedType(fieldConfig.type);
+            if ('getFields' in returnNamedType) {
+              const returnFields = returnNamedType.getFields();
+              for (const argName in fieldConfig.args) {
+                const arg = fieldConfig.args[argName];
+                const argType = getNamedType(arg.type);
+                const returnField = returnFields[argName];
+                if (returnField) {
+                  const returnFieldType = getNamedType(returnField.type);
+                  if (argType.name === returnFieldType.name) {
+                    argsExprElems.push(`${argName}: $key.${argName}`);
+                  }
+                }
+              }
+              argsExpr = argsExprElems.join(', ');
+            }
+          }
           // Federation Connectors entity patterns:
           // - keyArg === keyField → Query `@connect(entity: true)`
           // - keyArg !== keyField → type-level `@connect` with `$this.<keyField>`
@@ -439,28 +466,46 @@ export function createFederationTransform(config: FederationTransformConfig): Su
                 entity: true,
               }));
             }
-          } else if (!isListType(getNullableType(fieldConfig.type))) {
-            // Federation Spec draft `@lookup` (+ `@is` when arg name ≠ key field)
-            // on entity entry fields that return one object (not a list). List
-            // returns cannot use `@lookup` (draft); leave unstamped — hand-authored
-            // `@merge` remains a runtime fallback only.
-            fieldDirectives.lookup ||= [];
-            if (!fieldDirectives.lookup.length) {
-              fieldDirectives.lookup.push({});
-            }
-            lookupDirectiveUsed = true;
+            // Connectors entity covered — no `@merge` / `@lookup`.
+          } else {
             const keyArg = mergeDirectiveConfig.keyArg;
             const keyField = mergeDirectiveConfig.keyField;
-            if (keyArg && keyField && keyArg !== keyField && fieldConfig.args?.[keyArg]) {
-              const argConfig = fieldConfig.args[keyArg];
-              const argDirs = getDirectiveExtensions(argConfig) || {};
-              argDirs.is ||= [];
-              if (!argDirs.is.some((d: { field?: string }) => d?.field === keyField)) {
-                argDirs.is.push({ field: keyField });
+            const returnsList = isListType(getNullableType(fieldConfig.type));
+            const batchListArg =
+              !!keyArg &&
+              !!fieldConfig.args?.[keyArg] &&
+              isListType(getNullableType(fieldConfig.args[keyArg].type));
+            if (returnsList || batchListArg) {
+              // List / batch stay on Mesh `@merge` (Federation Spec draft `@lookup`
+              // must not return a list; do not extend `@lookup` for batch).
+              const mergeDirectiveExtensions = (fieldDirectives.merge ||= []);
+              mergeDirectiveExtensions.push({
+                subgraph: subgraphConfig.name,
+                key: mergeDirectiveConfig.key,
+                keyField: mergeDirectiveConfig.keyField,
+                keyArg: mergeDirectiveConfig.keyArg,
+                argsExpr,
+              });
+              mergeDirectiveUsed = true;
+            } else {
+              // Entity entry fields that return one object → Federation Spec `@lookup`
+              // (+ `@is` when arg name ≠ key field).
+              fieldDirectives.lookup ||= [];
+              if (!fieldDirectives.lookup.length) {
+                fieldDirectives.lookup.push({});
               }
-              const argExtensions: Record<string, unknown> = (argConfig.extensions ||= {});
-              argExtensions.directives = argDirs;
-              isDirectiveUsed = true;
+              lookupDirectiveUsed = true;
+              if (keyArg && keyField && keyArg !== keyField && fieldConfig.args?.[keyArg]) {
+                const argConfig = fieldConfig.args[keyArg];
+                const argDirs = getDirectiveExtensions(argConfig) || {};
+                argDirs.is ||= [];
+                if (!argDirs.is.some((d: { field?: string }) => d?.field === keyField)) {
+                  argDirs.is.push({ field: keyField });
+                }
+                const argExtensions: Record<string, unknown> = (argConfig.extensions ||= {});
+                argExtensions.directives = argDirs;
+                isDirectiveUsed = true;
+              }
             }
           }
         }
@@ -518,6 +563,40 @@ export function createFederationTransform(config: FederationTransformConfig): Su
         ...(lookupDirectiveUsed ? (['@lookup'] as const) : []),
         ...(isDirectiveUsed ? (['@is'] as const) : []),
       ]);
+    }
+    if (mergeDirectiveUsed) {
+      subgraphSchema = importMeshDirectives(subgraphSchema, ['@merge']);
+      const schemaConfig = subgraphSchema.toConfig();
+      subgraphSchema = new GraphQLSchema({
+        ...schemaConfig,
+        directives: [
+          ...schemaConfig.directives,
+          new GraphQLDirective({
+            name: 'merge',
+            locations: [DirectiveLocation.FIELD_DEFINITION],
+            args: {
+              subgraph: {
+                type: new GraphQLNonNull(GraphQLString),
+              },
+              argsExpr: {
+                type: GraphQLString,
+              },
+              keyArg: {
+                type: GraphQLString,
+              },
+              keyField: {
+                type: GraphQLString,
+              },
+              key: {
+                type: new GraphQLList(GraphQLString),
+              },
+              additionalArgs: {
+                type: GraphQLString,
+              },
+            },
+          }),
+        ],
+      });
     }
     return subgraphSchema;
   };

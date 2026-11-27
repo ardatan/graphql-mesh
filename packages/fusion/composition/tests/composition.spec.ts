@@ -370,7 +370,7 @@ scalar join__DirectiveArguments
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.3" for:EXECUTION) {query:Query}
+schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@merge"]) {query:Query}
 directive @join__enumValue(graph:join__Graph!) repeatable on ENUM_VALUE
 directive @join__graph(name:String! url:String!) on ENUM_VALUE
 directive @join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet
@@ -384,9 +384,11 @@ directive @link(url:String as:String for:link__Purpose import:[link__Import]) re
 scalar link__Import
 enum link__Purpose {"""\`SECURITY\` features provide metadata necessary to securely resolve fields.""" SECURITY """\`EXECUTION\` features provide metadata necessary for operation execution.""" EXECUTION}
 enum join__Graph {BAR @join__graph(name:"Bar" url:"") FOO @join__graph(name:"Foo" url:"")}
-type Query @join__type(graph:BAR) @join__type(graph:FOO) {foos(ids:[ID!]!):[Foo!]! bars(ids:[ID!]!):[Bar!]! @join__field(graph:BAR)}
+type Query @join__type(graph:BAR) @join__type(graph:FOO) {foos(ids:[ID!]!):[Foo!]! @join__directive(graphs:[BAR] name:"merge" args:{keyField:"id" keyArg:"ids"}) @join__directive(graphs:[FOO] name:"merge" args:{keyField:"id" keyArg:"ids"}) bars(ids:[ID!]!):[Bar!]! @join__directive(graphs:[BAR] name:"merge" args:{keyField:"id" keyArg:"ids"}) @join__field(graph:BAR)}
 type Foo @join__type(graph:BAR key:"id") @join__type(graph:FOO key:"id") {id:ID! bar:Bar! @join__field(graph:BAR)}
 type Bar @join__type(graph:BAR key:"id") {id:ID!}
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION | ARGUMENT_DEFINITION
+scalar join__DirectiveArguments
 
 `);
     });
@@ -429,7 +431,7 @@ type Bar @join__type(graph:BAR key:"id") {id:ID!}
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.3" for:EXECUTION) {query:Query}
+schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@merge"]) {query:Query}
 directive @join__enumValue(graph:join__Graph!) repeatable on ENUM_VALUE
 directive @join__graph(name:String! url:String!) on ENUM_VALUE
 directive @join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet
@@ -443,9 +445,11 @@ directive @link(url:String as:String for:link__Purpose import:[link__Import]) re
 scalar link__Import
 enum link__Purpose {"""\`SECURITY\` features provide metadata necessary to securely resolve fields.""" SECURITY """\`EXECUTION\` features provide metadata necessary for operation execution.""" EXECUTION}
 enum join__Graph {BAR @join__graph(name:"Bar" url:"") FOO @join__graph(name:"Foo" url:"")}
-type Query @join__type(graph:BAR) @join__type(graph:FOO) {getFoosByIds(ids:[ID!]!):[Foo!]! getBarsByIds(ids:[ID!]!):[Bar!]! @join__field(graph:BAR)}
+type Query @join__type(graph:BAR) @join__type(graph:FOO) {getFoosByIds(ids:[ID!]!):[Foo!]! @join__directive(graphs:[BAR] name:"merge" args:{keyField:"id" keyArg:"ids"}) @join__directive(graphs:[FOO] name:"merge" args:{keyField:"id" keyArg:"ids"}) getBarsByIds(ids:[ID!]!):[Bar!]! @join__directive(graphs:[BAR] name:"merge" args:{keyField:"id" keyArg:"ids"}) @join__field(graph:BAR)}
 type Foo @join__type(graph:BAR key:"id") @join__type(graph:FOO key:"id") {id:ID! bar:Bar! @join__field(graph:BAR)}
 type Bar @join__type(graph:BAR key:"id") {id:ID!}
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION | ARGUMENT_DEFINITION
+scalar join__DirectiveArguments
 
 `);
     });
@@ -488,7 +492,7 @@ type Bar @join__type(graph:BAR key:"id") {id:ID!}
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.3" for:EXECUTION) {query:Query}
+schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@merge"]) {query:Query}
 directive @join__enumValue(graph:join__Graph!) repeatable on ENUM_VALUE
 directive @join__graph(name:String! url:String!) on ENUM_VALUE
 directive @join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet
@@ -502,9 +506,11 @@ directive @link(url:String as:String for:link__Purpose import:[link__Import]) re
 scalar link__Import
 enum link__Purpose {"""\`SECURITY\` features provide metadata necessary to securely resolve fields.""" SECURITY """\`EXECUTION\` features provide metadata necessary for operation execution.""" EXECUTION}
 enum join__Graph {BAR @join__graph(name:"Bar" url:"") FOO @join__graph(name:"Foo" url:"")}
-type Query @join__type(graph:BAR) @join__type(graph:FOO) {foosByIds(ids:[ID!]!):[Foo!]! barsByIds(ids:[ID!]!):[Bar!]! @join__field(graph:BAR)}
+type Query @join__type(graph:BAR) @join__type(graph:FOO) {foosByIds(ids:[ID!]!):[Foo!]! @join__directive(graphs:[BAR] name:"merge" args:{keyField:"id" keyArg:"ids"}) @join__directive(graphs:[FOO] name:"merge" args:{keyField:"id" keyArg:"ids"}) barsByIds(ids:[ID!]!):[Bar!]! @join__directive(graphs:[BAR] name:"merge" args:{keyField:"id" keyArg:"ids"}) @join__field(graph:BAR)}
 type Foo @join__type(graph:BAR key:"id") @join__type(graph:FOO key:"id") {id:ID! bar:Bar! @join__field(graph:BAR)}
 type Bar @join__type(graph:BAR key:"id") {id:ID!}
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION | ARGUMENT_DEFINITION
+scalar join__DirectiveArguments
 
 `);
     });
@@ -547,7 +553,7 @@ type Bar @join__type(graph:BAR key:"id") {id:ID!}
         throw errors[0];
       }
       expect(supergraphSdl).toMatchInlineSnapshot(`
-schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.3" for:EXECUTION) {query:Query}
+schema @link(url:"https://specs.apollo.dev/link/v1.0") @link(url:"https://specs.apollo.dev/join/v0.5" for:EXECUTION) @link(url:"https://specs.graphql-mesh.dev/core/v0.1" import:["@merge"]) {query:Query}
 directive @join__enumValue(graph:join__Graph!) repeatable on ENUM_VALUE
 directive @join__graph(name:String! url:String!) on ENUM_VALUE
 directive @join__field(graph:join__Graph requires:join__FieldSet provides:join__FieldSet
@@ -561,9 +567,11 @@ directive @link(url:String as:String for:link__Purpose import:[link__Import]) re
 scalar link__Import
 enum link__Purpose {"""\`SECURITY\` features provide metadata necessary to securely resolve fields.""" SECURITY """\`EXECUTION\` features provide metadata necessary for operation execution.""" EXECUTION}
 enum join__Graph {BAR @join__graph(name:"Bar" url:"") FOO @join__graph(name:"Foo" url:"")}
-type Query @join__type(graph:BAR) @join__type(graph:FOO) {foosByIdsList(ids:[ID!]!):[Foo!]! barsByIdsList(ids:[ID!]!):[Bar!]! @join__field(graph:BAR)}
+type Query @join__type(graph:BAR) @join__type(graph:FOO) {foosByIdsList(ids:[ID!]!):[Foo!]! @join__directive(graphs:[BAR] name:"merge" args:{keyField:"id" keyArg:"ids"}) @join__directive(graphs:[FOO] name:"merge" args:{keyField:"id" keyArg:"ids"}) barsByIdsList(ids:[ID!]!):[Bar!]! @join__directive(graphs:[BAR] name:"merge" args:{keyField:"id" keyArg:"ids"}) @join__field(graph:BAR)}
 type Foo @join__type(graph:BAR key:"id") @join__type(graph:FOO key:"id") {id:ID! bar:Bar! @join__field(graph:BAR)}
 type Bar @join__type(graph:BAR key:"id") {id:ID!}
+directive @join__directive(graphs:[join__Graph!] name:String! args:join__DirectiveArguments) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION | ARGUMENT_DEFINITION
+scalar join__DirectiveArguments
 
 `);
     });

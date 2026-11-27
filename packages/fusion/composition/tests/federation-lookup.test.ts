@@ -154,7 +154,26 @@ describe('Federation Spec @lookup / @is / @internal', () => {
     ).toBe(true);
   });
 
-  it('still accepts legacy @merge on annotated subgraphs (back-compat)', () => {
+  it('stamps @merge for list/batch entity entry fields (not @lookup)', () => {
+    const books = buildSchema(/* GraphQL */ `
+      type Query {
+        book(id: ID!): Book
+        books(ids: [ID]): [Book!]!
+      }
+      type Book {
+        id: ID!
+        title: String!
+      }
+    `);
+    const { errors, annotatedSubgraphs } = composeSubgraphs([{ name: 'Books', schema: books }]);
+    expect(errors ?? []).toEqual([]);
+    const printed = print(annotatedSubgraphs.find(s => s.name === 'Books')!.typeDefs);
+    expect(printed).toMatch(/book\([^)]*\)[^\n]*@lookup/);
+    expect(printed).toMatch(/books\([^)]*\)[^\n]*@merge/);
+    expect(printed).not.toMatch(/books\([^)]*\)[^\n]*@lookup/);
+  });
+
+  it('still accepts hand-authored @merge on annotated subgraphs', () => {
     const schema = buildSchema(/* GraphQL */ `
       directive @merge(subgraph: String, keyField: String, keyArg: String) on FIELD_DEFINITION
       type Query {

@@ -577,12 +577,12 @@ export function getAnnotatedSubgraphs(
     transformedSubgraph = convertSubgraphToFederationv2(transformedSubgraph, {
       hadExplicitFederationLink,
     });
-    // Core Mesh directives (`@merge` legacy, `@hoist`, `@source`, …) under `core/v0.1`.
+    // Core Mesh directives (`@merge`, `@hoist`, `@source`, …) under `core/v0.1`.
     // Connectors: loaders keep `directive @connect` defs (GraphQL.js-valid print)
     // but omit `@composeDirective(name: "@connect")`; Guild gets that stamp via
     // `prepareConnectorsBeforeGuild` only.
     const importedCoreDirectives: MeshDirectiveImport[] = [];
-    // Keep importing `@merge` only when a subgraph still carries it (back-compat).
+    // `@merge` for list/batch entity entry (and any hand-authored / legacy apps).
     if (mergeDirectiveUsed) {
       importedCoreDirectives.push('@merge');
     }
@@ -783,7 +783,7 @@ export function getAnnotatedSubgraphs(
     if (mergeDirectiveUsed) {
       if (!transformedSubgraph.getDirective('merge')) {
         const { mergeDirectiveTypeDefs } = stitchingDirectives();
-        // Legacy `@merge` def for back-compat schemas that still carry it.
+        // Mesh `@merge` def (list/batch stamps + hand-authored apps).
         importedDirectivesAST.add(
           mergeDirectiveTypeDefs
             .replace('@merge(', '@merge(subgraph: String, ')
@@ -957,7 +957,7 @@ function addAnnotationsForSemanticConventions({
   directiveExtensions: any;
   subgraphName: string;
 }) {
-  // Prefer federation-spec `@lookup`; still honor legacy `@merge` if already present.
+  // Prefer federation-spec `@lookup` for single-object entry; honor `@merge` if already present.
   if (directiveExtensions.merge?.length || directiveExtensions.lookup?.length) {
     return;
   }
@@ -1033,7 +1033,7 @@ function addAnnotationsForSemanticConventions({
         };
         // Non-resolvable @key is only for Connectors/protobuf batch RPCs that lack an
         // entity entry field that returns one object (not a list). Non-connect batch
-        // fields that stay unstamped keep the default key.
+        // fields keep Mesh `@merge` and the default resolvable key.
         const isConnectOrProtobufField = !!(
           directiveExtensions.connect?.length ||
           directiveExtensions.protobuf__rpc?.length ||
@@ -1152,16 +1152,21 @@ function addAnnotationsForSemanticConventions({
             typeExtensions.directives = typeDirectives;
             return true;
           }
-          // Non-Connectors / non-protobuf: Federation Spec draft `@lookup` (+
-          // `@is` when the arg name differs from the entity field) on entity
-          // entry fields that return one object (not a list). Do not stamp Mesh
-          // `@merge` here — runtime still accepts hand-authored / legacy `@merge`.
-          // List returns / batch list key args cannot be `@lookup` (draft: lookup
-          // fields must not return a list), so leave them unstamped.
+          // Non-Connectors / non-protobuf:
+          // - Entity entry fields that return one object (not a list) → Federation
+          //   Spec draft `@lookup` (+ `@is` when arg name ≠ entity field).
+          // - List returns / batch list key args stay on Mesh `@merge` (draft
+          //   forbids `@lookup` returning a list; do not extend `@lookup` for batch).
           const nullableReturn = getNullableType(queryFieldConfig.type);
           const returnsList = isListType(nullableReturn);
           if (batchListArg || returnsList) {
-            return false;
+            directiveExtensions.merge ||= [];
+            directiveExtensions.merge.push({
+              subgraph: subgraphName,
+              keyField: fieldName,
+              keyArg: argName,
+            });
+            return true;
           }
           directiveExtensions.lookup ||= [];
           if (!directiveExtensions.lookup.length) {
@@ -1211,7 +1216,7 @@ function addAnnotationsForSemanticConventions({
             const hasSingularEntity = markConnectEntityOrMerge();
             // Batch Connectors/protobuf Query fields keep field-level RPC only; a resolvable
             // @key would claim `_entities` without a non-list lookup field. Plain GraphQL
-            // list/batch fields stay unstamped (`@lookup` must not return a list).
+            // list/batch fields keep Mesh `@merge` (not `@lookup`).
             ensureKey(
               isConnectOrProtobufField && (batchListArg || !hasSingularEntity)
                 ? { resolvable: false }
