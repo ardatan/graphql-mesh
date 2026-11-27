@@ -42,7 +42,7 @@
     "@graphql-mesh/transport-common": "workspace:*",
     "@graphql-mesh/types": "^0.107.3",
     "@graphql-mesh/utils": "^0.107.3",
-    "@graphql-tools/utils": "^13.2.2",
+    "@graphql-tools/utils": "^13.2.3",
     "@graphql-tools/wrap": "workspace:*",
     "tslib": "^2.4.0"
   },

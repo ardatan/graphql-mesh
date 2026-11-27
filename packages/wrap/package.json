@@ -53,7 +53,7 @@
   "dependencies": {
     "@graphql-tools/delegate": "workspace:*",
     "@graphql-tools/schema": "^11.0.9",
-    "@graphql-tools/utils": "^13.2.2",
+    "@graphql-tools/utils": "^13.2.3",
     "@whatwg-node/promise-helpers": "^2.0.2",
     "tslib": "^2.9.1"
   },
