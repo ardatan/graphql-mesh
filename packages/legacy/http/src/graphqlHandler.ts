@@ -1,5 +1,4 @@
-import type { CORSOptions } from 'graphql-yoga';
-import { createYoga } from 'graphql-yoga';
+import type { CORSOptions, Plugin } from 'graphql-yoga';
 import { createGatewayRuntime, type GatewayRuntime } from '@graphql-hive/gateway-runtime';
 import { handleFederationSupergraph } from '@graphql-mesh/fusion-runtime';
 import type { MeshInstance } from '@graphql-mesh/runtime';
@@ -34,72 +33,27 @@ export const graphqlHandler = ({
   extraParamNames?: string[];
   renderGraphiQL?: (options?: any) => string | Promise<string>;
 }) => {
-  const getYogaForMesh = memoize1(function getYogaForMesh(mesh: MeshInstance) {
+  const getRuntimeForMesh = memoize1(function getRuntimeForMesh(mesh: MeshInstance) {
     const supergraphSdl = (mesh.schema.extensions as { supergraphSdl?: string } | undefined)
       ?.supergraphSdl;
     const onSubgraphExecute = (
       mesh.schema.extensions as { onSubgraphExecute?: UnderthehoodOnSubgraphExecute } | undefined
     )?.onSubgraphExecute;
 
-    // Under the hood: when underthehood compose produced a Supergraph, serve via
-    // Hive Gateway. Public entry remains createMeshHTTPHandler (CLI serve unchanged).
-    // Skip Gateway when root transforms changed the executable field set after compose
-    // — Gateway would still serve the pre-transform Supergraph SDL.
+    // Skip Supergraph planning when root transforms / additionalTypeDefs|Resolvers
+    // changed the executable field set after compose — serve mesh.schema instead.
     const skipUnderthehoodGateway = Boolean(
       (mesh.schema.extensions as { skipUnderthehoodGateway?: boolean } | undefined)
         ?.skipUnderthehoodGateway,
     );
-    if (typeof supergraphSdl === 'string' && supergraphSdl.length > 0 && !skipUnderthehoodGateway) {
-      const gateway = createGatewayRuntime({
-        supergraph: supergraphSdl,
-        logging: mesh.log,
-        maskedErrors: false,
-        graphiql: playgroundEnabled && {
-          title: playgroundTitle,
-        },
-        cors: corsConfig,
-        graphqlEndpoint,
-        landingPage: false,
-        batching: batchingLimit ? { limit: batchingLimit } : false,
-        healthCheckEndpoint,
-        // Preserve Mesh plugins (context hooks, user plugins). Gateway owns schema
-        // planning; useSchema/useEngine from getMesh stay harmless alongside that.
-        plugins: () => [...mesh.plugins] as any,
-        ...(playgroundEnabled && playgroundOffline
-          ? {
-              renderGraphiQL: requireOfflineRenderGraphiQL(renderGraphiQLFn),
-            }
-          : {}),
-        ...(typeof onSubgraphExecute === 'function'
-          ? {
-              unifiedGraphHandler(opts) {
-                return handleFederationSupergraph({
-                  ...opts,
-                  onSubgraphExecute,
-                  log: mesh.log,
-                });
-              },
-            }
-          : {}),
-      });
-      mesh.deferDispose(() =>
-        handleMaybePromise(
-          () => (gateway as AsyncDisposable)[Symbol.asyncDispose](),
-          () => undefined,
-        ),
-      );
-      return gateway as GatewayRuntime;
-    }
+    const useSupergraph =
+      typeof supergraphSdl === 'string' && supergraphSdl.length > 0 && !skipUnderthehoodGateway;
 
-    const yogaOptions: Parameters<typeof createYoga>[0] = {
-      plugins: [...mesh.plugins],
-      extraParamNames,
+    const gateway = createGatewayRuntime({
+      // Supergraph SDL when underthehood compose matches the served field set;
+      // otherwise pass the executable Mesh schema and short-circuit planning.
+      supergraph: useSupergraph ? supergraphSdl : mesh.schema,
       logging: mesh.log,
-      // whatwg-node fetch no longer re-exports `crypto`; platform crypto is required
-      // for request-id generation and digest helpers still reading `fetchAPI.crypto`.
-      fetchAPI: {
-        crypto: globalThis.crypto,
-      } as any,
       maskedErrors: false,
       graphiql: playgroundEnabled && {
         title: playgroundTitle,
@@ -109,26 +63,87 @@ export const graphqlHandler = ({
       landingPage: false,
       batching: batchingLimit ? { limit: batchingLimit } : false,
       healthCheckEndpoint,
-      disposeOnProcessTerminate: true,
-    };
-
-    if (playgroundEnabled && playgroundOffline) {
-      yogaOptions.renderGraphiQL = requireOfflineRenderGraphiQL(renderGraphiQLFn);
-    }
-
-    const yoga = createYoga(yogaOptions);
-    // Dispose Yoga instance when the Mesh instance is destroyed
+      fetchAPI: {
+        crypto: globalThis.crypto,
+      } as any,
+      // Preserve Mesh plugins (context hooks, user plugins).
+      plugins: () =>
+        [
+          ...(extraParamNames?.length ? [useAllowExtraParamNames(extraParamNames)] : []),
+          ...mesh.plugins,
+        ] as any,
+      ...(playgroundEnabled && playgroundOffline
+        ? {
+            renderGraphiQL: requireOfflineRenderGraphiQL(renderGraphiQLFn),
+          }
+        : {}),
+      ...(useSupergraph && typeof onSubgraphExecute === 'function'
+        ? {
+            unifiedGraphHandler(opts) {
+              return handleFederationSupergraph({
+                ...opts,
+                onSubgraphExecute,
+                log: mesh.log,
+              });
+            },
+          }
+        : !useSupergraph
+          ? {
+              // Executable Mesh schema path (former createYoga fallback).
+              unifiedGraphHandler() {
+                return {
+                  unifiedGraph: mesh.schema,
+                  getSubgraphSchema: () => mesh.schema,
+                };
+              },
+            }
+          : {}),
+    });
     mesh.deferDispose(() =>
       handleMaybePromise(
-        () => yoga.dispose(),
+        () => (gateway as AsyncDisposable)[Symbol.asyncDispose](),
         () => undefined,
       ),
     );
-    return yoga;
+    return gateway as GatewayRuntime;
   });
   return (request: Request, ctx: any) =>
-    getBuiltMesh().then(mesh => getYogaForMesh(mesh).handleRequest(request, ctx));
+    getBuiltMesh().then(mesh => getRuntimeForMesh(mesh).handleRequest(request, ctx));
 };
+
+/**
+ * Hive Gateway's Yoga does not expose `extraParamNames`. Strip allow-listed
+ * extras during parse so the built-in param check does not reject them
+ * (same UX as createYoga({ extraParamNames })).
+ */
+function useAllowExtraParamNames(extraParamNames: string[]): Plugin {
+  return {
+    onRequestParse() {
+      return {
+        onRequestParseDone({ requestParserResult, setRequestParserResult }) {
+          if (
+            requestParserResult == null ||
+            typeof requestParserResult !== 'object' ||
+            Array.isArray(requestParserResult)
+          ) {
+            return;
+          }
+          const next = { ...requestParserResult };
+          let changed = false;
+          for (const name of extraParamNames) {
+            if (Object.prototype.hasOwnProperty.call(next, name)) {
+              delete next[name];
+              changed = true;
+            }
+          }
+          if (changed) {
+            setRequestParserResult(next);
+          }
+        },
+      };
+    },
+  };
+}
 
 function requireOfflineRenderGraphiQL(
   renderGraphiQLFn?: (options?: any) => string | Promise<string>,
