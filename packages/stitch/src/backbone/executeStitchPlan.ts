@@ -997,11 +997,122 @@ function collectEntitiesAtPath(data: any, path: PathSegment[]): Array<Record<str
   return current;
 }
 
+function extractResolveToResult(value: any, resultPath: string | undefined): any {
+  if (resultPath == null || resultPath === '') {
+    return value;
+  }
+  let cur = value;
+  for (const part of resultPath.split('.')) {
+    if (cur == null) {
+      return null;
+    }
+    cur = cur[part];
+  }
+  return cur === undefined ? null : cur;
+}
+
 function executeFetchNode(
   node: Extract<StitchPlanNode, { kind: 'Fetch' }>,
   ctx: BackboneExecutionContext,
 ): MaybePromise<void> {
   const executor = getSubschemaExecutor(node.subschema);
+
+  // First-class `@resolveTo`: fetch a subgraph root field for each parent at
+  // flattenPaths and write into parent[responseKey] (optional resultPath).
+  if (node.resolveToWrite && node.rootField && node.flattenPaths?.length) {
+    const { responseKey, argsFromParent, argsFromFieldArgs, clientFieldNode, resultPath } =
+      node.resolveToWrite;
+    const sourceField = node.rootField;
+    const parents: Array<Record<string, any>> = [];
+    const seen = new Set<Record<string, any>>();
+    for (const path of node.flattenPaths) {
+      for (const p of collectEntitiesAtPath(ctx.data, path)) {
+        if (p != null && typeof p === 'object' && !seen.has(p)) {
+          seen.add(p);
+          parents.push(p);
+        }
+      }
+    }
+    if (!parents.length) {
+      return;
+    }
+    let fieldArgs: Record<string, any> = {};
+    if (argsFromFieldArgs && clientFieldNode && Object.keys(argsFromFieldArgs).length) {
+      const parentTypeForArgs = ctx.schema.getType(
+        // Best-effort: resolve against root when path is empty (root Island continue).
+        node.flattenPaths[0]?.length
+          ? undefined
+          : getDefinedRootType(ctx.schema, ctx.operation.operation)?.name,
+      );
+      void parentTypeForArgs;
+      // Walk schema for the gateway field that carries the client args.
+      // Prefer matching by response key on any object type that has it.
+      let gatewayField: { type: any; args?: any } | undefined;
+      for (const t of Object.values(ctx.schema.getTypeMap())) {
+        if (!isObjectType(t) && !isInterfaceType(t)) {
+          continue;
+        }
+        const f = t.getFields()[clientFieldNode.name.value];
+        if (f) {
+          gatewayField = f;
+          break;
+        }
+      }
+      if (gatewayField) {
+        fieldArgs = getArgumentValues(
+          gatewayField as any,
+          clientFieldNode,
+          asGetArgumentValuesVariables(ctx.variableValues),
+        );
+      }
+    }
+    const jobs = parents.map(parent => {
+      const args: Record<string, any> = {};
+      if (argsFromParent) {
+        for (const [argName, parentKey] of Object.entries(argsFromParent)) {
+          args[argName] = parent[parentKey];
+        }
+      }
+      if (argsFromFieldArgs) {
+        for (const [argName, argsKey] of Object.entries(argsFromFieldArgs)) {
+          args[argName] = fieldArgs[argsKey];
+        }
+      }
+      const info = {
+        ...(ctx.infoStub as any),
+        schema: ctx.schema,
+        parentType: getDefinedRootType(ctx.schema, ctx.operation.operation),
+        fieldName: sourceField.name.value,
+        fieldNodes: [sourceField],
+        fragments: ctx.fragments,
+        operation: ctx.operation,
+        variableValues: ctx.variableValues,
+        path: { typename: undefined, key: responseKey, prev: undefined },
+        rootValue: ctx.rootValue,
+      };
+      return handleMaybePromise(
+        () =>
+          delegateToSchema({
+            schema: node.subschema,
+            operation: 'query',
+            fieldName: sourceField.name.value,
+            args,
+            selectionSet: sourceField.selectionSet,
+            context: ctx.contextValue,
+            info: info as any,
+            skipTypeMerging: true,
+          }),
+        value => {
+          parent[responseKey] = extractResolveToResult(unwrapNullabilityAliases(value), resultPath);
+        },
+        err => {
+          ctx.errors.push(errorFromFetchThrow(err, node.subschema, responseKey, sourceField));
+          parent[responseKey] = null;
+        },
+      );
+    });
+    return awaitMaybePromises(jobs);
+  }
 
   if (node.rootField) {
     const responseKey = node.rootField.alias?.value ?? node.rootField.name.value;

@@ -95,6 +95,23 @@ export type StitchPlanNode =
        * Execute may copy by representation hash and skip HTTP.
        */
       reuseFrom?: string[];
+      /**
+       * `@resolveTo` into parent objects at `flattenPaths`: fetch a subgraph
+       * root field per parent, write `responseKey` (optional `resultPath`).
+       * `argsFromParent` maps subgraph arg name -> parent property (`{root.id}`).
+       */
+      resolveToWrite?: {
+        responseKey: string;
+        /** Subgraph arg name -> parent property (`{root.id}`). */
+        argsFromParent?: Record<string, string>;
+        /** Subgraph arg name -> gateway field arg path (`{args.id}`). */
+        argsFromFieldArgs?: Record<string, string>;
+        /** Gateway field node (for `{args.*}` via getArgumentValues). */
+        clientFieldNode?: FieldNode;
+        resultPath?: string;
+      };
+      /** Nested hops after this Fetch completes (same dataflow barrier as Island). */
+      continue?: StitchPlanNode;
     }
   | {
       kind: 'BatchFetch';
