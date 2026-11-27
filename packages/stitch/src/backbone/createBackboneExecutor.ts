@@ -1,5 +1,11 @@
-import { GraphQLError, Kind, type GraphQLSchema } from 'graphql';
-import { createDefaultExecutor } from '@graphql-tools/delegate';
+import {
+  GraphQLError,
+  Kind,
+  getVariableValues as schemaGetVariableValues,
+  type GraphQLSchema,
+  type OperationDefinitionNode,
+} from 'graphql';
+import { createDefaultExecutor, getCoercedVariableValues } from '@graphql-tools/delegate';
 import { getFragmentsFromDocument } from '@graphql-tools/executor';
 import {
   getOperationASTFromRequest,
@@ -9,11 +15,47 @@ import {
   type Executor,
 } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
+import { coerceGetVariableValuesResult } from '../variableValues.js';
 import { buildStitchPlan, coerceOperationVariables } from './buildStitchPlan.js';
 import { executeStitchPlan } from './executeStitchPlan.js';
 import { projectDataToOperation } from './projectResult.js';
-import { installRootProxyingResolvers } from './rootProxyingResolvers.js';
+import {
+  BACKBONE_VARIABLES_ALREADY_COERCED,
+  installRootProxyingResolvers,
+} from './rootProxyingResolvers.js';
 import type { BackboneExecutorOptions, StitchPlan } from './types.js';
+
+/**
+ * Schema-aware coercion for **direct** backbone entry (Hive Gateway executor).
+ * Uses GraphQL Tools helpers for dual GQL16/17 shapes
+ * (`coerceGetVariableValuesResult` + `getCoercedVariableValues`).
+ * On failure → errors, zero hops. Skip when already marked coerced (trampoline).
+ */
+function schemaCoerceRequestVariables(
+  schema: GraphQLSchema,
+  operation: OperationDefinitionNode,
+  rawVariables: Record<string, unknown> | null | undefined,
+): { variables: Record<string, any>; errors?: readonly GraphQLError[] } {
+  const raw = schemaGetVariableValues(
+    schema,
+    operation.variableDefinitions ?? [],
+    rawVariables ?? {},
+    { maxErrors: 50 },
+  );
+  const normalized = coerceGetVariableValuesResult(raw);
+  if ('errors' in normalized) {
+    return { variables: {}, errors: normalized.errors };
+  }
+  const variables = {
+    ...(getCoercedVariableValues(normalized.variableValues) ?? {}),
+  };
+  for (const key of Object.keys(variables)) {
+    if (variables[key] === undefined) {
+      delete variables[key];
+    }
+  }
+  return { variables };
+}
 
 /** Full SDL introspection - schema execute (Hive also special-cases these). */
 function isSchemaIntrospectionOperation(request: ExecutionRequest): boolean {
@@ -156,13 +198,33 @@ export function createBackboneExecutor(
       return schemaExecutor(request);
     }
 
-    const plan = getCachedPlan(request);
-    const op = operation ?? plan.operation;
-    const coerced = coerceOperationVariables(op, request.variables ?? {});
-    const requestWithCoercedVars: ExecutionRequest = {
+    // Variables: coerce once at the true entry.
+    // - Direct executor (Hive Gateway): schema getVariableValues here.
+    // - graphql-js trampoline (root proxies): already coerced + marked
+    //   BACKBONE_VARIABLES_ALREADY_COERCED - defaults-only, no re-coerce.
+    const op = operation;
+    const alreadyCoerced = (request as any)[BACKBONE_VARIABLES_ALREADY_COERCED] === true;
+    let coerced: Record<string, any>;
+    if (op && !alreadyCoerced) {
+      const validated = schemaCoerceRequestVariables(schema, op, request.variables ?? {});
+      if (validated.errors != null) {
+        return { data: null, errors: [...validated.errors] };
+      }
+      coerced = validated.variables;
+    } else if (op) {
+      coerced = coerceOperationVariables(op, request.variables ?? {});
+    } else {
+      coerced = { ...(request.variables ?? {}) };
+    }
+    const requestWithVars: ExecutionRequest = {
       ...request,
       variables: coerced,
     };
+    // Do not re-coerce on hops; mark so nested/re-entrant paths stay flat.
+    (requestWithVars as any)[BACKBONE_VARIABLES_ALREADY_COERCED] = true;
+
+    const plan = getCachedPlan(requestWithVars);
+    const planOp = op ?? plan.operation;
 
     if (plan.incomplete) {
       return {
@@ -177,7 +239,7 @@ export function createBackboneExecutor(
     }
 
     return handleMaybePromise(
-      () => executeStitchPlan(schema, plan, requestWithCoercedVars),
+      () => executeStitchPlan(schema, plan, requestWithVars),
       (result: ExecutionResult) => {
         if (isAsyncIterable(result)) {
           return result;
@@ -186,7 +248,7 @@ export function createBackboneExecutor(
           ...result,
           data: projectDataToOperation(
             schema,
-            op,
+            planOp,
             plan.fragments,
             coerced,
             result.data as any,

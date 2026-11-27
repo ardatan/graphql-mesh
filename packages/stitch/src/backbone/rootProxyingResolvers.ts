@@ -21,6 +21,15 @@ const PROXYING_INSTALLED = Symbol.for('graphql-tools.stitch.backboneRootProxying
 /** Set on context while backbone execute runs so root Islands skip proxying. */
 export const BACKBONE_EXECUTING = Symbol.for('graphql-tools.stitch.backboneExecuting');
 
+/**
+ * Set on ExecutionRequest when root proxies trampoline from stock graphql-js
+ * execute with already schema-coerced variables (`getCoercedVariableValues`).
+ * Direct gateway/executor entry must NOT set this - backbone coerces once.
+ */
+export const BACKBONE_VARIABLES_ALREADY_COERCED = Symbol.for(
+  'graphql-tools.stitch.backboneVariablesAlreadyCoerced',
+);
+
 const ORIGINAL_RESOLVE = Symbol.for('graphql-tools.stitch.backboneOriginalResolve');
 
 function selectionHasDeferOrStream(selections: readonly SelectionNode[]): boolean {
@@ -137,9 +146,10 @@ export function installRootProxyingResolvers(schema: GraphQLSchema, runBackbone:
 
         let pending = (context as any)[CONTEXT_PLAN_PROMISE] as MaybePromise<any> | undefined;
         if (!pending) {
-          // GraphQL 17: info.variableValues is `{ coerced, sources }` — unwrap
+          // GraphQL 17: info.variableValues is `{ coerced, sources }` - unwrap
           // so File/upload scalars and other runtime values reach subgraphs
-          // (same as classic delegate/createRequest).
+          // (same as classic delegate/createRequest). Mark already-coerced so
+          // the backbone does not re-run getVariableValues (custom scalars).
           const request: ExecutionRequest = {
             document: {
               kind: Kind.DOCUMENT,
@@ -150,6 +160,7 @@ export function installRootProxyingResolvers(schema: GraphQLSchema, runBackbone:
             rootValue: root,
             operationName: info.operation.name?.value,
           };
+          (request as any)[BACKBONE_VARIABLES_ALREADY_COERCED] = true;
           // Sync backbone results stay sync (fakePromise) - no Promise.resolve
           // microtask. Share one MaybePromise across sibling root fields.
           pending = handleMaybePromise(

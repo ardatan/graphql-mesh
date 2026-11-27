@@ -14,6 +14,7 @@ export { isLocalField } from './localFields.js';
 export { projectDataToOperation } from './projectResult.js';
 export {
   BACKBONE_EXECUTING,
+  BACKBONE_VARIABLES_ALREADY_COERCED,
   getOriginalRootResolve,
   installRootProxyingResolvers,
 } from './rootProxyingResolvers.js';
