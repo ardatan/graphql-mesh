@@ -1,14 +1,5 @@
-import Image from 'next/image';
-import {
-  CallToAction,
-  CheckIcon,
-  cn,
-  DecorationIsolation,
-  GitHubIcon,
-  Heading,
-  MeshIcon,
-} from '@theguild/components';
-import { HeroContainer, HeroContainerProps, HeroFeatures, HeroLinks } from './hero';
+import { CallToAction, cn, DecorationIsolation, Heading, MeshIcon } from '@theguild/components';
+import { HeroContainer, HeroContainerProps, HeroLinks } from './hero';
 
 export function MeshHero(props: HeroContainerProps) {
   return (
@@ -19,34 +10,14 @@ export function MeshHero(props: HeroContainerProps) {
         GraphQL Mesh
       </Heading>
       <p className="mx-auto w-[512px] max-w-[80%] text-balance text-center leading-6 text-green-800">
-        Unify your API landscape with Mesh’s federated architecture, integrating any API service
-        into a cohesive graph.
+        Federation Framework for any API
       </p>
-      <HeroFeatures>
-        <li>
-          <CheckIcon className="text-green-800" />
-          Compose any API
-        </li>
-        <li>
-          <CheckIcon className="text-green-800" />
-          Granular field access
-        </li>
-        <li>
-          <CheckIcon className="text-green-800" />
-          Works with any schema registry
-        </li>
-      </HeroFeatures>
       <HeroLinks>
-        <CallToAction variant="primary-inverted" href="/v1/getting-started">
-          Get started
+        <CallToAction variant="primary-inverted" href="/v2/paths/generate">
+          Build Subgraph
         </CallToAction>
-        <CallToAction
-          variant="secondary"
-          target="_blank"
-          href="https://github.com/ardatan/graphql-mesh"
-        >
-          <GitHubIcon className="size-6" />
-          GitHub
+        <CallToAction variant="secondary" href="/v2/serve">
+          Serve Supergraph
         </CallToAction>
       </HeroLinks>
     </HeroContainer>

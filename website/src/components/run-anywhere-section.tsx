@@ -63,10 +63,10 @@ export function RunAnywhereSection(props: RunAnywhereSectionProps) {
         <ListItemAnchor href="https://the-guild.dev/graphql/hive/docs/gateway/deployment/node-frameworks/express">
           Express
         </ListItemAnchor>
-        <ListItemAnchor href="https://the-guild.dev/graphql/mesh/v1/local-execution">
-          as platform
+        <ListItemAnchor href="/v2/serve">
+          Serve
           <br />
-          agnostic SDK
+          Supergraph
         </ListItemAnchor>
         <ListItemAnchor href="https://the-guild.dev/graphql/hive/docs/gateway/deployment/node-frameworks/fastify">
           Fastify
