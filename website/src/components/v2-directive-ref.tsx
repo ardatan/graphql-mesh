@@ -87,7 +87,8 @@ const DIRECTIVES = {
   composeDirective: {
     label: '@composeDirective',
     anchor: 'federation',
-    description: 'Which imported directives survive composition.',
+    description:
+      'Non-core imported directives that survive composition (always pair with a matching directive @… definition).',
   },
   link: {
     label: '@link',

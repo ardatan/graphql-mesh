@@ -76,7 +76,7 @@ Suppose you already generated a Connect ById field and want the assistant to add
 ```graphql
 extend schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
-  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"])
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])
   @link(url: "https://specs.apollo.dev/connect/v0.4", import: ["@connect", "@source"])
   @source(name: "rest", http: { baseURL: "https://api.example.com" })
 

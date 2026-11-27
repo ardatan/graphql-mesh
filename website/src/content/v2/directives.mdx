@@ -11,8 +11,9 @@ import { DirectiveRef, ProtocolRef } from '../../components/v2-directive-ref'
 
 **Directive reference** for Mesh subgraph SDL -- [HTTP/REST Connectors](/v2/concepts/connectors)
 (`@connect` / `@source`), Mesh protocol directives, Federation entity hops (`@lookup` / `@is` /
-`@internal`), Mesh `@merge` for list/batch hops, Federation `@key`, and `@link` / `@transport`. Full
-`@connect` / `@source` arg tables:
+`@internal`), Mesh `@merge` for list/batch hops, **Federation core** (`@key`, `@requires`, …) plus
+`@composeDirective` for non-core names, and `@link` / `@transport`. Full `@connect` / `@source` arg
+tables:
 [HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives).
 
 Use this page when [reading generated SDL](/v2/guides/reading-generated-sdl) or
@@ -35,7 +36,7 @@ not just arg lists. Binders: [Selection mapping](/v2/guides/selection-mapping). 
 | Protobuf / gRPC        | `@protobuf__rpc`                                             | Unary hand SDL, streaming SearchMoviesByCast                 |
 | Thrift                 | `@thrift__rpc`                                               | Binary CALL/ONEWAY, TJSON `@connect`                         |
 | Neo4j                  | `@node`, `@relationship`, `@relationshipProperties` (native) | Mesh stamp vs Neo4j GraphQL natives                          |
-| Federation / join      | `@key`, `@composeDirective`                                  | Join stubs + composeDirective                                |
+| Federation / join      | `@key`, `@requires`, `@external`, … + `@composeDirective`    | Core Fed directives; composeDirective for non-core           |
 | Gateway auth           | `@authenticated`, `@requiresScopes`, `@policy`, `@skipAuth`  | Field protect / complete-protection opt-out                  |
 | Gateway rate limit     | `@rateLimit`                                                 | Field budgets on subgraph SDL                                |
 | Spec imports           | `@link`                                                      | Spec URL table                                               |
@@ -267,7 +268,8 @@ Full normative text:
 [GraphQL Federation Spec draft](https://graphql.github.io/graphql-federation-spec/draft) (`@lookup`,
 `@is`, `@internal`).
 
-**Import** (plus `@composeDirective` so composition keeps them):
+**Import** (plus `@composeDirective` **and** matching `directive` definitions -- composition looks
+them up by name):
 
 ```graphql
 extend schema
@@ -280,6 +282,12 @@ extend schema
   @composeDirective(name: "@lookup")
   @composeDirective(name: "@is")
   @composeDirective(name: "@internal")
+
+directive @lookup on FIELD_DEFINITION
+directive @is(field: FieldSelectionMap!) on ARGUMENT_DEFINITION
+directive @internal on OBJECT | FIELD_DEFINITION
+
+scalar FieldSelectionMap
 ```
 
 | Directive   | Role                                                                                             |
@@ -1109,20 +1117,56 @@ type Movie @node {
 
 ## Federation / join
 
-`@key` / `@composeDirective`
+Federation **core** directives come from the Apollo Federation `@link` (e.g. `federation/v2.6`).
+Mesh subgraphs use them the same way any Federation subgraph does -- Compose and Hive Gateway /
+Apollo Router treat them as shared Federation vocabulary. Mesh docs only summarize what authors hit
+most often; full normative definitions live upstream:
 
-**Import**
+- [Apollo GraphOS -- Federation directives](https://www.apollographql.com/docs/graphos/schema-design/federated-schemas/reference/directives)
+- [GraphQL Federation Spec](https://graphql.github.io/graphql-federation-spec/) (shared entity /
+  composition rules; draft also covers `@lookup` / `@is` / `@internal` -- see
+  [Federation `@lookup`](#lookup))
+
+**Import** (pull in every core name you use -- not only `@key`):
 
 ```graphql
 extend schema
   @link(url: "https://specs.apollo.dev/link/v1.0")
-  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"])
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.6"
+    import: [
+      "@key"
+      "@requires"
+      "@provides"
+      "@external"
+      "@shareable"
+      "@override"
+      "@inaccessible"
+      "@tag"
+      "@interfaceObject"
+      "@composeDirective"
+    ]
+  )
 ```
 
-| Directive           | Role                                                              |
-| ------------------- | ----------------------------------------------------------------- |
-| `@key`              | Entity key; often `resolvable: false` on join stubs               |
-| `@composeDirective` | Which imported directives survive composition into the supergraph |
+### Core Federation directives (Mesh-oriented)
+
+| Directive           | Role in Mesh subgraphs                                                                                       |
+| ------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `@key`              | Entity key; `resolvable: false` on join stubs another subgraph fills                                         |
+| `@requires`         | Field needs sibling fields from other subgraphs before this subgraph can resolve                             |
+| `@external`         | Field (or key field) owned elsewhere; paired with `@requires` / `@provides`                                  |
+| `@provides`         | This resolver returns `@external` fields so the gateway need not fetch them again                            |
+| `@shareable`        | Same field definition may appear on multiple subgraphs                                                       |
+| `@override`         | This subgraph takes ownership of a field from another (`from: "otherSubgraph"`)                              |
+| `@inaccessible`     | Hide from the client API (still usable for composition / planning)                                           |
+| `@tag`              | Metadata for contracts / tooling                                                                             |
+| `@interfaceObject`  | Type is an entity interface implemented as an object in this subgraph                                        |
+| `@composeDirective` | **Non-core** imported directives that must survive into the supergraph (Mesh, Connect extras, draft hops, …) |
+
+Auth-related Federation directives (`@authenticated`, `@requiresScopes`, `@policy`) are covered
+under [Gateway auth](#auth). Entity **entry** hops that return one object use draft `@lookup` /
+`@is` / `@internal` ([Federation `@lookup`](#lookup)), not Mesh core.
 
 ### Scenario: join-only stub (FHIR / Music Store)
 
@@ -1137,10 +1181,45 @@ type Track @key(fields: "id", resolvable: false) {
 Combine with Connect / protocol fields for nested data -- not Mesh `@resolveTo` for new work. See
 [Entity resolution](/v2/concepts/federation#entity-resolution).
 
-### Scenario: `@composeDirective` for Mesh transports
+### Scenario: `@requires` + `@external`
 
-After importing Mesh directives, list each local name that must survive into the supergraph **and**
-keep a matching `directive` definition (loaders stamp both):
+Catalog owns `shippingEstimate`; it needs `size` / `weight` that Shipping contributes. Classic
+Federation pattern (same on Mesh-authored GraphQL subgraphs):
+
+```graphql
+type Product @key(fields: "id") {
+  id: ID!
+  size: Int @external
+  weight: Int @external
+  shippingEstimate: String @requires(fields: "size weight")
+}
+```
+
+Full arg rules and edge cases:
+[Apollo -- `@requires`](https://www.apollographql.com/docs/graphos/schema-design/federated-schemas/reference/directives#requires)
+/ [Federation Spec](https://graphql.github.io/graphql-federation-spec/).
+
+### Scenario: `@shareable` / `@override`
+
+When two subgraphs define the same field, mark it `@shareable`, or use `@override(from: "…")` on the
+subgraph that should win. Mesh loaders rarely emit these; hand-written GraphQL subgraphs and
+Federation transform stamps do -- same semantics as any Federation subgraph.
+
+### `@composeDirective` for non-core directives
+
+Federation **core** names from the federation `@link` do **not** need `@composeDirective`. Use
+`@composeDirective` for **everything else** you import that must remain on the supergraph so Hive
+Gateway / Apollo Router (or Mesh transports) can read it:
+
+| Family                      | Examples                                         | Needs `@composeDirective`?      |
+| --------------------------- | ------------------------------------------------ | ------------------------------- |
+| Federation core             | `@key`, `@requires`, `@external`, …              | No                              |
+| Federation draft hops       | `@lookup`, `@is`, `@internal`                    | **Yes**                         |
+| Mesh core / protocol / auth | `@transport`, `@sql`, `@merge`, `@skipAuth`, …   | **Yes**                         |
+| HTTP/REST Connect           | `@connect`, `@source` (Connect composition path) | Follow Connect / composer rules |
+
+After importing the non-core directive, list each local name **and** keep a matching `directive`
+definition (loaders stamp both; hand SDL must include defs):
 
 ```graphql
 extend schema
@@ -1162,7 +1241,26 @@ scalar TransportOptions
 
 Without that definition, Mesh Compose reports
 `Could not find matching directive definition for argument to @composeDirective "@transport"`. Mongo
-loaders also `@composeDirective` every `@mongo__*` op they emit (with defs).
+loaders also `@composeDirective` every `@mongo__*` op they emit (with defs). Draft entity hops (same
+rule -- apps + defs):
+
+```graphql
+extend schema
+  @link(
+    url: "https://graphql.github.io/graphql-federation-spec/draft"
+    import: ["@lookup", "@is", "@internal"]
+  )
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective"])
+  @composeDirective(name: "@lookup")
+  @composeDirective(name: "@is")
+  @composeDirective(name: "@internal")
+
+directive @lookup on FIELD_DEFINITION
+directive @is(field: FieldSelectionMap!) on ARGUMENT_DEFINITION
+directive @internal on OBJECT | FIELD_DEFINITION
+
+scalar FieldSelectionMap
+```
 
 ---
 
@@ -1312,6 +1410,16 @@ definitions -- Mesh Compose does not invent them (it only special-cases a few st
   <Cards.Card arrow title="Hand-write" href="/v2/paths/hand-write" />
   <Cards.Card arrow title="Protocols" href="/v2/protocols" />
   <Cards.Card arrow title="Entity resolution" href="/v2/concepts/federation#entity-resolution" />
+  <Cards.Card
+    arrow
+    title="Apollo Federation directives"
+    href="https://www.apollographql.com/docs/graphos/schema-design/federated-schemas/reference/directives"
+  />
+  <Cards.Card
+    arrow
+    title="GraphQL Federation Spec"
+    href="https://graphql.github.io/graphql-federation-spec/"
+  />
   <Cards.Card
     arrow
     title="Federation Spec draft (@lookup)"

@@ -130,7 +130,14 @@ object** (not a list). Mesh `@merge` stays for **list / batch** entry fields --
   `@lookup` on the field in SDL and implement it in `resolvers`. Same pattern as a classic
   Federation subgraph, except Mesh still executes the directive-driven surface beside your code.
 
-```graphql {2}
+```graphql {5-7,9-13}
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key", "@composeDirective"])
+  @link(url: "https://graphql.github.io/graphql-federation-spec/draft", import: ["@lookup"])
+  @composeDirective(name: "@lookup")
+
+directive @lookup on FIELD_DEFINITION
+
 type Query {
   reviewById(id: ID!): Review @lookup
 }
