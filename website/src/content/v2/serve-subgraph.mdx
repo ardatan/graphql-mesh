@@ -76,7 +76,7 @@ Mesh subgraph SDL into an executable `GraphQLSchema` and host it on **Yoga**, Ap
 Mercurius, or any GraphQL HTTP stack. Transports and entity hops come from the SDL; you optionally
 pass `resolvers` for fields you own in code.
 
-```ts
+```ts {9-15}
 import { createServer } from 'node:http'
 import { createYoga } from 'graphql-yoga'
 import { buildSubgraphSchema } from '@graphql-mesh/subgraph'
@@ -110,7 +110,7 @@ object** (not a list). Mesh `@merge` stays for **list / batch** entry fields --
   `@lookup` on the field in SDL and implement it in `resolvers`. Same pattern as a classic
   Federation subgraph, except Mesh still executes the directive-driven surface beside your code.
 
-```graphql
+```graphql {2}
 type Query {
   reviewById(id: ID!): Review @lookup
 }

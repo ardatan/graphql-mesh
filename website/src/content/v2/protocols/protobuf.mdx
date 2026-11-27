@@ -115,21 +115,22 @@ If a transform renames `moviesByYear(year:)` to `releaseYear`, Compose rewrites 
 binder so the wire field still binds the new GraphQL name (same path as `@connect`):
 
 {/* prettier-ignore */}
-```graphql
+```diff
 type Query {
-  # After rename: GraphQL arg is releaseYear, binder must follow
-  moviesByYear(releaseYear: Int!): [Movie]
-    @protobuf__rpc(
-      service: "Example"
-      method: "MoviesByYear"
-      args: """
-        1(int32): $args.releaseYear # was $args.year before rename
-      """
-      selection: """
-        1(string): name
-        2(int64): year
-      """
-    )
+-  moviesByYear(year: Int!): [Movie]
++  moviesByYear(releaseYear: Int!): [Movie]
+     @protobuf__rpc(
+       service: "Example"
+       method: "MoviesByYear"
+       args: """
+-        1(int32): $args.year
++        1(int32): $args.releaseYear
+       """
+       selection: """
+         1(string): name
+         2(int64): year
+       """
+     )
 }
 ```
 
