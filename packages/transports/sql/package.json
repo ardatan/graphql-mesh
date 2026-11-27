@@ -1,6 +1,6 @@
 {
   "name": "@graphql-mesh/transport-sql",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -40,8 +40,8 @@
   "dependencies": {
     "@apollo/subgraph": "^2.16.0",
     "@dataplan/pg": "^1.2.1",
-    "@graphql-mesh/transport-common": "^2.0.0",
-    "@graphql-mesh/utils": "^0.107.3",
+    "@graphql-mesh/transport-common": "^3.0.0",
+    "@graphql-mesh/utils": "^1.0.0",
     "@graphql-tools/utils": "^13.2.3",
     "@whatwg-node/disposablestack": "^0.1.0",
     "@whatwg-node/promise-helpers": "^2.0.2",

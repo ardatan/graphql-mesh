@@ -3,8 +3,8 @@
   "private": true,
   "dependencies": {
     "@graphql-hive/gateway": "^3.0.0",
-    "@graphql-mesh/transport-mongo": "0.1.0",
-    "@omnigraph/mongo": "0.1.0",
+    "@graphql-mesh/transport-mongo": "1.0.0",
+    "@omnigraph/mongo": "1.0.0",
     "graphql": "^16.14.0",
     "mongoose": "^9.0.0"
   }

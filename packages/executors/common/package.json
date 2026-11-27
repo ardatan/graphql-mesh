@@ -1,6 +1,6 @@
 {
   "name": "@graphql-tools/executor-common",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "type": "module",
   "description": "Shared utilities for GraphQL executors",
   "repository": {

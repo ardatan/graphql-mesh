@@ -1,6 +1,6 @@
 {
   "name": "@omnigraph/mongo",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -36,10 +36,10 @@
     "mongoose": "*"
   },
   "dependencies": {
-    "@graphql-mesh/cross-helpers": "^0.4.18",
-    "@graphql-mesh/transport-mongo": "0.1.0",
-    "@graphql-mesh/types": "^0.107.3",
-    "@graphql-mesh/utils": "^0.107.3",
+    "@graphql-mesh/cross-helpers": "^0.4.19",
+    "@graphql-mesh/transport-mongo": "1.0.0",
+    "@graphql-mesh/types": "^1.0.0",
+    "@graphql-mesh/utils": "^1.0.0",
     "@graphql-tools/utils": "^13.2.3",
     "graphql-compose": "^9.3.0",
     "graphql-scalars": "^2.0.1",

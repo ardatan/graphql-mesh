@@ -1,6 +1,6 @@
 {
   "name": "@graphql-tools/stitching-directives",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "type": "module",
   "description": "SDL directives for GraphQL schema stitching",
   "repository": {

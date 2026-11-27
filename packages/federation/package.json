@@ -1,6 +1,6 @@
 {
   "name": "@graphql-tools/federation",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "type": "module",
   "description": "Apollo Federation utilities for GraphQL tools",
   "repository": {
