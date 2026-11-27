@@ -103,6 +103,8 @@ hive-gateway subgraph chinook-subgraph.graphql
 
 Details: [Serve Subgraph](/v2/serve-subgraph).
 
+<a id="hive-gateway-subgraph-vs-buildsubgraphschema-which" />
+
 ## Hive Gateway subgraph vs `buildSubgraphSchema` -- which?
 
 | Choice                                                                 | Prefer when                                                                                          |
@@ -111,6 +113,10 @@ Details: [Serve Subgraph](/v2/serve-subgraph).
 | [`buildSubgraphSchema`](/v2/guides/build-subgraph-schema)              | You want Yoga / Apollo Server / Mercurius / any GraphQL HTTP stack; or custom `resolvers` beside SDL |
 
 Both produce a Federation subgraph peer. Neither replaces [Composition](/v2/compose).
+
+Community Connectors schemas use the same choice -- Serve Supergraph for dual-run, or Serve Subgraph
+(Hive / `buildSubgraphSchema`) to drop a Connect SDL file into an existing Federation fleet:
+[Community Connectors: Serve as a Federation subgraph](/v2/examples/community-connectors#serve-as-a-federation-subgraph).
 
 ## How do I add a custom `@lookup` resolver?
 
@@ -216,6 +222,8 @@ executable. Not drop-in replacements.
 - [Music Store Example](/v2/examples/music-store) -- SQL + Connect + Protobuf, dual-run
 - [FHIR](/v2/examples/fhir) -- JSON Schema + Connect join
 - [Microsoft Graph](/v2/examples/microsoft-graph) -- OData → Connect
+- [Community Connectors](/v2/examples/community-connectors) -- stock `@connect` SDL; supergraph
+  dual-run **or** Hive subgraph / `buildSubgraphSchema`
 
 ## Coming from Mesh v1?
 
@@ -234,6 +242,7 @@ Guide: [From Schema Stitching](/v2/guides/migration/from-stitching).
   <Cards.Card arrow title="Serve Subgraph" href="/v2/serve-subgraph" />
   <Cards.Card arrow title="Serve Supergraph" href="/v2/serve" />
   <Cards.Card arrow title="Migration" href="/v2/guides/migration" />
+  <Cards.Card arrow title="Community Connectors" href="/v2/examples/community-connectors" />
   <Cards.Card arrow title="Architecture" href="/v2/architecture" />
   <Cards.Card arrow title="buildSubgraphSchema" href="/v2/guides/build-subgraph-schema" />
   <Cards.Card arrow title="Directives" href="/v2/directives" />
