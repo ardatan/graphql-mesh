@@ -16,6 +16,23 @@ story.
   Subgraph](/v2/transforms) → [Serve Subgraph](/v2/serve-subgraph) → [Serve Supergraph](/v2/serve)).
 </Callout>
 
+<a id="already-have-federation-why-mesh" />
+
+## Already have Federation: why Mesh?
+
+Bring **non-GraphQL** sources (OpenAPI, SQL, gRPC, …) in as real Federation subgraphs, reshape them
+with [Transform Subgraph](/v2/transforms), and drop into the Router / Hive / registry you already
+run -- without replacing the stack.
+[Enhance an existing Federation](/v2#enhance-an-existing-federation).
+
+<a id="new-to-federation-why-mesh" />
+
+## New to Federation: why Mesh?
+
+[Generate](/v2/paths/generate) Federation-ready subgraphs from OpenAPI, SQL, and more instead of
+hand-writing every subgraph. Compose and [Serve Supergraph](/v2/serve) on any Federation-compatible
+gateway. Lower barrier than starting from blank Federation SDL alone.
+
 ## I have Apollo Router but a SQL subgraph -- what do I do?
 
 Apollo Router executes **HTTP/REST Connectors** (`@connect` / `@source`) from composed SDL. It does
