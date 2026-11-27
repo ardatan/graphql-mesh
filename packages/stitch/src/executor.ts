@@ -18,13 +18,13 @@ import {
 } from '@graphql-tools/delegate';
 import { getFragmentsFromDocument } from '@graphql-tools/executor';
 import {
-  asGetArgumentValuesVariables,
   collectFields,
   getDefinedRootType,
   getOperationASTFromRequest,
   getRootTypeMap,
   type ExecutionRequest,
 } from '@graphql-tools/utils';
+import { asGetArgumentValuesVariables } from './variableValues.js';
 
 /**
  * Creates an executor that uses the schema created by stitching together multiple subschemas.

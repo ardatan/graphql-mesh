@@ -1,5 +1,4 @@
 import {
-  isEnumType,
   Kind,
   parse,
   visit,
@@ -8,7 +7,6 @@ import {
   type ObjectTypeDefinitionNode,
 } from 'graphql';
 import { LegacyLogger, Logger } from '@graphql-hive/logger';
-import type { PubSub } from '@graphql-hive/pubsub';
 import { type YamlConfig } from '@graphql-mesh/types';
 import {
   getInContextSDK,
@@ -16,9 +14,10 @@ import {
   resolveAdditionalResolversWithoutImport,
   type PubSubOperationOptions,
 } from '@graphql-mesh/utils';
-import { defaultMergedResolver, type SubschemaConfig } from '@graphql-tools/delegate';
+import { createDefaultExecutor, type SubschemaConfig } from '@graphql-tools/delegate';
 import { getStitchedSchemaFromSupergraphSdl } from '@graphql-tools/federation';
 import { mergeTypeDefs } from '@graphql-tools/merge';
+import { getBackboneExecutor } from '@graphql-tools/stitch';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import {
   asArray,
@@ -30,7 +29,8 @@ import {
   type IResolvers,
   type TypeSource,
 } from '@graphql-tools/utils';
-import { handleMaybePromise, isPromise } from '@whatwg-node/promise-helpers';
+import { wrapExecutorWithPubsubPublish } from '../pubsubPublish.js';
+import { getRealSubgraphNameMap } from '../realSubgraphNameMap.js';
 import type { UnifiedGraphHandlerOpts, UnifiedGraphHandlerResult } from '../unifiedGraphManager.js';
 import { compareSubgraphNames } from '../utils.js';
 import { handleFederationSubschema } from './subgraph.js';
@@ -125,13 +125,6 @@ export function isSubgraphDeferEnabled(
   return false;
 }
 
-interface EnumDirectives {
-  [key: string]: any;
-  join__graph?: {
-    name: string;
-  };
-}
-
 // the @resolveTo directive definition, needed when additionalTypeDefs with @resolveTo are
 // provided only at the gateway level and were never composed into the supergraph SDL
 // TODO: same definition is also present in mesh, deduplicate and use the one from mesh
@@ -220,22 +213,7 @@ export const handleFederationSupergraph = function ({
   const additionalResolvers = [...asArray(additionalResolversFromConfig)];
   let subschemas: SubschemaConfig[] = [];
   const stitchingDirectivesTransformer = getStitchingDirectivesTransformerForSubschema();
-  // Workaround to get the real name of the subschema
-  const realSubgraphNameMap = new Map<string, string>();
-  const joinGraphType = unifiedGraph.getType('join__Graph');
-  if (isEnumType(joinGraphType)) {
-    for (const enumValue of joinGraphType.getValues()) {
-      const enumValueDirectives = getDirectiveExtensions<EnumDirectives>(enumValue);
-      const joinGraphDirectives = enumValueDirectives?.join__graph;
-      if (joinGraphDirectives?.length) {
-        for (const joinGraphDirective of joinGraphDirectives) {
-          if (joinGraphDirective) {
-            realSubgraphNameMap.set(enumValue.name, joinGraphDirective.name);
-          }
-        }
-      }
-    }
-  }
+  const realSubgraphNameMap = getRealSubgraphNameMap(unifiedGraph);
 
   // register pubsub resolvers before stitching so local merged-type results get wrapped for hydration
   const subscriptionType = unifiedGraph.getSubscriptionType();
@@ -259,7 +237,7 @@ export const handleFederationSupergraph = function ({
 
   const unifiedGraphDirectives = getDirectiveExtensions(unifiedGraph);
 
-  let executableUnifiedGraph = getStitchedSchemaFromSupergraphSdl({
+  const executableUnifiedGraph = getStitchedSchemaFromSupergraphSdl({
     supergraphSdl: getDocumentNodeFromSchema(unifiedGraph),
     batchDelegateOptions,
     /**
@@ -337,37 +315,6 @@ export const handleFederationSupergraph = function ({
     LegacyLogger.from(rootLog),
     onDelegateHooks || [],
   );
-  if (executableUnifiedGraph.getDirective('pubsubPublish')) {
-    executableUnifiedGraph = mapSchema(executableUnifiedGraph, {
-      [MapperKind.ROOT_FIELD](fieldConfig) {
-        const directiveExtensions = getDirectiveExtensions<{
-          pubsubPublish: PubSubOperationOptions;
-        }>(fieldConfig, executableUnifiedGraph);
-        if (directiveExtensions.pubsubPublish?.length) {
-          const originalResolve = fieldConfig.resolve || defaultMergedResolver;
-          fieldConfig.resolve = function (root, args, context: { pubsub?: PubSub }, info) {
-            return handleMaybePromise(
-              () => originalResolve(root, args, context, info),
-              payload => {
-                const jobs: Promise<void>[] = [];
-                for (const pubsubPublishArgs of directiveExtensions.pubsubPublish!) {
-                  const job = context.pubsub?.publish(pubsubPublishArgs.pubsubTopic, payload);
-                  if (isPromise(job)) {
-                    jobs.push(job);
-                  }
-                }
-                if (jobs.length) {
-                  return Promise.all(jobs).then(() => payload);
-                }
-                return payload;
-              },
-            );
-          };
-        }
-        return fieldConfig;
-      },
-    });
-  }
   function getSubschema(subgraphName: string): SubschemaConfig {
     const subgraph = subschemas.find(s => s.name && compareSubgraphNames(s.name, subgraphName));
     if (!subgraph) {
@@ -377,8 +324,16 @@ export const handleFederationSupergraph = function ({
   }
   const overrideLabels = executableUnifiedGraph.extensions?.overrideLabels as
     Set<string> | undefined;
+
+  // @pubsubPublish is Mesh/fusion concern: wrap the backbone executor (do not
+  // mapSchema Mutation fields - that replaces the schema and drops attach).
+  const backboneOrSchema =
+    getBackboneExecutor(executableUnifiedGraph) ?? createDefaultExecutor(executableUnifiedGraph);
+  const executor = wrapExecutorWithPubsubPublish(executableUnifiedGraph, backboneOrSchema);
+
   return {
     unifiedGraph: executableUnifiedGraph,
+    executor,
     inContextSDK,
     getSubgraphSchema(subgraphName) {
       const subschema = getSubschema(subgraphName);

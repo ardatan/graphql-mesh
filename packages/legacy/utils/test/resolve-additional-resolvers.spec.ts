@@ -7,7 +7,12 @@ import { getInContextSDK, resolveAdditionalResolversWithoutImport } from '@graph
 import type { SubschemaConfig } from '@graphql-tools/delegate';
 import { execute, subscribe } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { stitchSchemas, ValidationLevel } from '@graphql-tools/stitch';
+import {
+  buildStitchPlan,
+  createBackboneExecutor,
+  stitchSchemas,
+  ValidationLevel,
+} from '@graphql-tools/stitch';
 import { assertAsyncIterable } from '../../testing/utils';
 
 function makeReviews() {
@@ -796,6 +801,333 @@ describe('@resolveTo result path when the source field is missing from the gatew
           { id: 'empty', complexDataItem: null },
           { id: 'full', complexDataItem: { key: 'key1', value: 'value1' } },
         ],
+      },
+    });
+  });
+
+  it('backbone plans and executes nested @resolveTo with result path (9435)', async () => {
+    const variants: Record<
+      string,
+      { count: number; items: { key: string; value: string }[] } | null
+    > = {
+      nullish: null,
+      empty: { count: 0, items: [] },
+      full: {
+        count: 3,
+        items: [
+          { key: 'key1', value: 'value1' },
+          { key: 'key2', value: 'value2' },
+          { key: 'key3', value: 'value3' },
+        ],
+      },
+    };
+
+    const sourceSchema = makeExecutableSchema({
+      typeDefs: parse(/* GraphQL */ `
+        type SubComplexDataFieldType {
+          key: String
+          value: String
+        }
+        type ComplexDataType {
+          count: Int!
+          items: [SubComplexDataFieldType!]!
+        }
+        type Query {
+          _encapsulated_Subgraph1_complexData(id: String!): ComplexDataType
+        }
+      `),
+      resolvers: {
+        Query: {
+          _encapsulated_Subgraph1_complexData: (_: unknown, { id }: { id: string }) => variants[id],
+        },
+      },
+    });
+
+    const parentSchema = makeExecutableSchema({
+      typeDefs: parse(/* GraphQL */ `
+        type TargetType {
+          id: String
+        }
+        type TargetQuery {
+          targets: [TargetType]
+        }
+        type Query {
+          targetQuery: TargetQuery
+        }
+      `),
+      resolvers: {
+        Query: {
+          targetQuery: () => ({}),
+        },
+        TargetQuery: {
+          targets: () => [{ id: 'nullish' }, { id: 'empty' }, { id: 'full' }],
+        },
+      },
+    });
+
+    const sourceRaw: RawSourceOutput = {
+      name: 'Subgraph1',
+      schema: sourceSchema,
+      transforms: [],
+      contextVariables: {},
+      handler: {} as RawSourceOutput['handler'],
+      batch: true,
+      createProxyingResolver: () => undefined as any,
+    };
+    const inContextSDK = getInContextSDK(
+      sourceSchema,
+      [sourceRaw],
+      new Logger({ prefix: 'test' }),
+      [],
+    );
+
+    const additionalResolvers = resolveAdditionalResolversWithoutImport({
+      targetTypeName: 'TargetType',
+      targetFieldName: 'complexDataItem',
+      requiredSelectionSet: '{ id }',
+      sourceName: 'Subgraph1',
+      sourceTypeName: 'Query',
+      sourceFieldName: '_encapsulated_Subgraph1_complexData',
+      sourceArgs: { id: '{root.id}' },
+      result: 'items[0]',
+    });
+
+    const stitched = stitchSchemas({
+      subschemas: [{ schema: parentSchema }] as SubschemaConfig[],
+      typeDefs: parse(/* GraphQL */ `
+        type SubComplexDataFieldType {
+          key: String
+          value: String
+        }
+        extend type TargetType {
+          complexDataItem: SubComplexDataFieldType
+        }
+      `),
+      resolvers: additionalResolvers,
+    });
+
+    const stitchingInfo = stitched.extensions?.['stitchingInfo'] as {
+      localFields?: Map<string, Set<string>>;
+    };
+    expect(stitchingInfo.localFields?.get('TargetType')?.has('complexDataItem')).toBe(true);
+
+    const document = parse(/* GraphQL */ `
+      {
+        targetQuery {
+          targets {
+            id
+            complexDataItem {
+              key
+              value
+            }
+          }
+        }
+      }
+    `);
+    const plan = buildStitchPlan(stitched, document.definitions[0] as any, {}, {});
+    expect(plan.incompleteReasons).toEqual([]);
+    const hasComplexIsland = (n: any): boolean => {
+      if (!n) return false;
+      if (n.kind === 'Island' && n.fieldNode?.name?.value === 'complexDataItem') return true;
+      if (n.continue && hasComplexIsland(n.continue)) return true;
+      if (n.nodes) return n.nodes.some(hasComplexIsland);
+      return false;
+    };
+    expect(hasComplexIsland(plan.root)).toBe(true);
+
+    const executor = createBackboneExecutor(stitched);
+    const result = (await executor({
+      document,
+      context: { ...inContextSDK },
+    })) as ExecutionResult;
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      targetQuery: {
+        targets: [
+          { id: 'nullish', complexDataItem: null },
+          { id: 'empty', complexDataItem: null },
+          { id: 'full', complexDataItem: { key: 'key1', value: 'value1' } },
+        ],
+      },
+    });
+  });
+
+  it('backbone executes nested @resolveTo under encapsulate (9435 e2e shape)', async () => {
+    const variants: Record<
+      string,
+      { count: number; items: { key: string; value: string }[] } | null
+    > = {
+      nullish: null,
+      empty: { count: 0, items: [] },
+      full: {
+        count: 3,
+        items: [
+          { key: 'key1', value: 'value1' },
+          { key: 'key2', value: 'value2' },
+          { key: 'key3', value: 'value3' },
+        ],
+      },
+    };
+
+    const sourceSchema = makeExecutableSchema({
+      typeDefs: parse(/* GraphQL */ `
+        type SubComplexDataFieldType {
+          key: String
+          value: String
+        }
+        type ComplexDataType {
+          count: Int!
+          items: [SubComplexDataFieldType!]!
+        }
+        type Query {
+          _encapsulated_Subgraph1_complexData(id: String!): ComplexDataType
+        }
+      `),
+      resolvers: {
+        Query: {
+          _encapsulated_Subgraph1_complexData: (_: unknown, { id }: { id: string }) => variants[id],
+        },
+      },
+    });
+
+    const parentSchema = makeExecutableSchema({
+      typeDefs: parse(/* GraphQL */ `
+        type TargetType {
+          id: String
+        }
+        type TargetQuery {
+          targets: [TargetType]
+        }
+        type Query {
+          _encapsulated_Subgraph2_targetQuery: TargetQuery
+        }
+      `),
+      resolvers: {
+        Query: {
+          _encapsulated_Subgraph2_targetQuery: () => ({
+            targets: [{ id: 'nullish' }, { id: 'empty' }, { id: 'full' }],
+          }),
+        },
+      },
+    });
+
+    const sourceRaw: RawSourceOutput = {
+      name: 'Subgraph1',
+      schema: sourceSchema,
+      transforms: [],
+      contextVariables: {},
+      handler: {} as RawSourceOutput['handler'],
+      batch: true,
+      createProxyingResolver: () => undefined as any,
+    };
+    const parentRaw: RawSourceOutput = {
+      name: 'Subgraph2',
+      schema: parentSchema,
+      transforms: [],
+      contextVariables: {},
+      handler: {} as RawSourceOutput['handler'],
+      batch: true,
+      createProxyingResolver: () => undefined as any,
+    };
+    const inContextSDK = getInContextSDK(
+      parentSchema,
+      [sourceRaw, parentRaw],
+      new Logger({ prefix: 'test' }),
+      [],
+    );
+
+    // Encapsulate stamps Query.Subgraph2 -> __typename, Subgraph2.targetQuery ->
+    // _encapsulated_Subgraph2_targetQuery, plus the additionalTypeDefs resolveTo.
+    const encapsulateResolvers = [
+      resolveAdditionalResolversWithoutImport({
+        targetTypeName: 'Query',
+        targetFieldName: 'Subgraph2',
+        sourceName: 'Subgraph2',
+        sourceTypeName: 'Query',
+        sourceFieldName: '__typename',
+      }),
+      resolveAdditionalResolversWithoutImport({
+        targetTypeName: 'Subgraph2',
+        targetFieldName: 'targetQuery',
+        sourceName: 'Subgraph2',
+        sourceTypeName: 'Query',
+        sourceFieldName: '_encapsulated_Subgraph2_targetQuery',
+      }),
+      resolveAdditionalResolversWithoutImport({
+        targetTypeName: 'TargetType',
+        targetFieldName: 'complexDataItem',
+        requiredSelectionSet: '{ id }',
+        sourceName: 'Subgraph1',
+        sourceTypeName: 'Query',
+        sourceFieldName: '_encapsulated_Subgraph1_complexData',
+        sourceArgs: { id: '{root.id}' },
+        result: 'items[0]',
+      }),
+    ];
+
+    const stitched = stitchSchemas({
+      subschemas: [{ schema: parentSchema }, { schema: sourceSchema }] as SubschemaConfig[],
+      typeDefs: parse(/* GraphQL */ `
+        type SubComplexDataFieldType {
+          key: String
+          value: String
+        }
+        type Subgraph2 {
+          targetQuery: TargetQuery
+        }
+        extend type Query {
+          Subgraph2: Subgraph2
+        }
+        extend type TargetType {
+          complexDataItem: SubComplexDataFieldType
+        }
+      `),
+      resolvers: encapsulateResolvers,
+    });
+
+    const document = parse(/* GraphQL */ `
+      {
+        Subgraph2 {
+          targetQuery {
+            targets {
+              id
+              complexDataItem {
+                key
+                value
+              }
+            }
+          }
+        }
+      }
+    `);
+    const plan = buildStitchPlan(stitched, document.definitions[0] as any, {}, {});
+    expect(plan.incompleteReasons).toEqual([]);
+    const hasComplexIsland = (n: any): boolean => {
+      if (!n) return false;
+      if (n.kind === 'Island' && n.fieldNode?.name?.value === 'complexDataItem') return true;
+      if (n.continue && hasComplexIsland(n.continue)) return true;
+      if (n.nodes) return n.nodes.some(hasComplexIsland);
+      return false;
+    };
+    expect(hasComplexIsland(plan.root)).toBe(true);
+
+    const executor = createBackboneExecutor(stitched);
+    const result = (await executor({
+      document,
+      context: { ...inContextSDK },
+    })) as ExecutionResult;
+
+    expect(result.errors).toBeUndefined();
+    expect(result.data).toEqual({
+      Subgraph2: {
+        targetQuery: {
+          targets: [
+            { id: 'nullish', complexDataItem: null },
+            { id: 'empty', complexDataItem: null },
+            { id: 'full', complexDataItem: { key: 'key1', value: 'value1' } },
+          ],
+        },
       },
     });
   });

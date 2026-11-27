@@ -74,3 +74,108 @@ jobs:
           name: bench-results-${{ matrix.runner }}
           path: bench/results.json
           if-no-files-found: ignore
+
+  # Sticky PR comment (same marocchino pattern as Gateway snapshot / Guild website preview).
+  comment:
+    name: sticky PR comment
+    needs: bench
+    # Same-repo PRs only: fork GITHUB_TOKEN is read-only for comments and would
+    # fail this reporting check even when benches succeed (website.yml pattern).
+    if: >
+      github.event_name == 'pull_request' && always() &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Download bench artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: bench-results-*
+          path: bench-artifacts
+          merge-multiple: false
+      - name: Format bench markdown
+        id: md
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const root = 'bench-artifacts';
+            if (!fs.existsSync(root)) {
+              core.setOutput('body', '### 📊 Federation / stitch benches\n\n_No bench artifacts uploaded._');
+              return;
+            }
+            function load(runner) {
+              const p = path.join(root, `bench-results-${runner}`, 'results.json');
+              if (!fs.existsSync(p)) return null;
+              return JSON.parse(fs.readFileSync(p, 'utf8'));
+            }
+            function isFiniteNumber(n) {
+              return typeof n === 'number' && Number.isFinite(n);
+            }
+            function rows(data) {
+              const out = [];
+              if (!data?.files) return out;
+              for (const file of data.files) {
+                const suite = (file.filepath || file.name || '')
+                  .split('/')
+                  .slice(-2)
+                  .join('/')
+                  .replace(/\.bench\.ts$/, '');
+                for (const group of file.groups || []) {
+                  for (const b of group.benchmarks || []) {
+                    out.push({
+                      suite,
+                      name: b.name,
+                      hz: b.hz,
+                      rme: b.rme,
+                      complete: isFiniteNumber(b.hz) && isFiniteNumber(b.rme),
+                    });
+                  }
+                }
+              }
+              return out;
+            }
+            const node = rows(load('node'));
+            const bun = rows(load('bun'));
+            const byKey = new Map();
+            for (const r of node) byKey.set(`${r.suite}::${r.name}`, { suite: r.suite, name: r.name, node: r });
+            for (const r of bun) {
+              const k = `${r.suite}::${r.name}`;
+              const cur = byKey.get(k) || { suite: r.suite, name: r.name };
+              cur.bun = r;
+              byKey.set(k, cur);
+            }
+            const fmt = (r) =>
+              r == null || !r.complete ? '—' : `${r.hz.toFixed(2)} Hz ±${r.rme.toFixed(2)}%`;
+            let table = `| Suite | Benchmark | Node | Bun |\n|---|---|---:|---:|\n`;
+            for (const row of byKey.values()) {
+              table += `| \`${row.suite}\` | ${row.name} | ${fmt(row.node)} | ${fmt(row.bun)} |\n`;
+            }
+            const stitchNode = node.find((r) => r.name === 'Stitching' && r.complete);
+            const apolloNode = node.find((r) => r.name === 'Apollo Gateway' && r.complete);
+            let ratio = '';
+            if (stitchNode && apolloNode && apolloNode.hz > 0) {
+              ratio = `\n**Stitching / Apollo (node):** **${(stitchNode.hz / apolloNode.hz).toFixed(2)}×**\n`;
+            }
+            const sha = context.payload.pull_request?.head?.sha || context.sha;
+            const short = String(sha).slice(0, 7);
+            const body = [
+              '### 📊 Federation / stitch benches',
+              '',
+              `Tip \`${short}\` · [workflow run](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`,
+              '',
+              table.trim(),
+              ratio,
+              '',
+              '_Updated by the Bench workflow (sticky)._',
+            ].join('\n');
+            core.setOutput('body', body);
+      - name: Sticky PR comment
+        uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
+        with:
+          header: federation-bench
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          message: ${{ steps.md.outputs.body }}
