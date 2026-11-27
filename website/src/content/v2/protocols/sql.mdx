@@ -12,14 +12,14 @@ navigation, and Federation `@key` entity fill -- without wrapping the DB in REST
 protocol** (not HTTP/REST Connectors). The loader emits <DirectiveRef name="sql" /> with a `kind`
 discriminator; Hive Gateway runs `transport-sql`. Stock Apollo Router does **not** execute `@sql`.
 
-| Piece     | Detail                                                                            |
-| --------- | --------------------------------------------------------------------------------- |
-| Loader    | `@omnigraph/sql` (`loadSqlSubgraph`)                                              |
-| Directive | `@sql` (`ROW` / `ROWS` / `CONNECTION` / `COUNT` / `INSERT` / `UPDATE` / `DELETE`) |
-| Transport | `@graphql-mesh/transport-sql`                                                     |
-| Spec      | `https://specs.graphql-mesh.dev/sql/v0.1`                                         |
-| Dual-run  | Hive Gateway; Apollo Router via [Serve Subgraph](/v2/serve-subgraph)              |
-| Examples  | Chinook (SQLite); Music Store stage 1; MySQL / Postgres                           |
+| Piece         | Detail                                                                            |
+| ------------- | --------------------------------------------------------------------------------- |
+| Loader        | `@omnigraph/sql` (`loadSqlSubgraph`)                                              |
+| Directive     | `@sql` (`ROW` / `ROWS` / `CONNECTION` / `COUNT` / `INSERT` / `UPDATE` / `DELETE`) |
+| Transport     | `@graphql-mesh/transport-sql`                                                     |
+| Spec          | `https://specs.graphql-mesh.dev/sql/v0.1`                                         |
+| Apollo Router | Via [Serve Subgraph](/v2/serve-subgraph) (Hive Gateway runs `@sql` natively)      |
+| Examples      | Chinook (SQLite); Music Store stage 1; MySQL / Postgres                           |
 
 ## Packages
 

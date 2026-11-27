@@ -174,11 +174,11 @@ this path -- Compose does not care how the SDL was authored.
 ### 3. Gateway pull
 
 Point [Hive Gateway](/v2/serve/hive-gateway) (or Apollo Router for a Connect-only graph) at the
-registry supergraph, or keep serving the local `supergraph.graphql` file in CI / dual-run demos:
+registry supergraph, or keep serving the local `supergraph.graphql` file in CI / local demos:
 
 ```bash
 hive-gateway supergraph
-# or Connect-only dual-run:
+# or Apollo Router (Connectors native):
 ./router --supergraph supergraph.graphql
 ```
 

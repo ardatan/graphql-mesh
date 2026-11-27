@@ -23,10 +23,10 @@ Stock Apollo Router executes **Connect** only. It does **not** run Mesh protocol
 | <ProtocolRef name="sql" />, <ProtocolRef name="mongo" />, <ProtocolRef name="protobuf" />, <ProtocolRef name="thrift" /> binary, <ProtocolRef name="neo4j" /> | No -- [Serve Subgraph](/v2/serve-subgraph) (Hive Gateway subgraph or `buildSubgraphSchema` from `@graphql-mesh/subgraph`) |
 
 For multi-protocol Music Store graphs, run the **full** supergraph on
-[Hive Gateway](/v2/serve/hive-gateway); dual-run only the Connect slice here. Non-Connect peers
-behind Apollo Router: [Serve Subgraph](/v2/serve-subgraph).
+[Hive Gateway](/v2/serve/hive-gateway); run only the Connect slice here. Non-Connect peers behind
+Apollo Router: [Serve Subgraph](/v2/serve-subgraph).
 
-## Dual-run
+## Same Connect SDL on both gateways
 
 Compose once to GraphQL SDL, then execute the same file on Hive Gateway and Apollo Router when the
 schema stays on Connect:
@@ -37,21 +37,21 @@ mesh-compose -o supergraph.graphql
 # Hive Gateway
 hive-gateway supergraph
 
-# Apollo Router (Connect-compatible SDL only)
+# Apollo Router (Connectors native)
 ./router --supergraph supergraph.graphql
 ```
 
-### What dual-runs
+### What runs on Apollo Router
 
-| Example                             | Dual-run?    | Notes                                                               |
-| ----------------------------------- | ------------ | ------------------------------------------------------------------- |
-| FHIR (JSON Schema + join SDL)       | Yes          | Connect emit + join-only hand SDL                                   |
-| Microsoft Graph (OData → Connect)   | Yes          | Large Graph `$metadata` emit; auth via `{$env....}`                 |
-| OpenAPI entity stubs                | Yes          | `entity: true` / type-level `$this` Connect                         |
-| Music Store after stage 2           | Reviews only | REST `@connect` slice; not SQL catalog or gRPC recommendations      |
-| Music Store full (SQL+Connect+gRPC) | No           | Needs Hive Gateway for `@sql` / `@protobuf__rpc`                    |
-| Thrift TJSON                        | Often        | `protocol: 'json'` emits `@connect`; binary `@thrift__rpc` does not |
-| SOAP-as-Connect                     | No           | SOAP envelope Connect is Hive-oriented                              |
+| Example                             | On Apollo Router? | Notes                                                               |
+| ----------------------------------- | ----------------- | ------------------------------------------------------------------- |
+| FHIR (JSON Schema + join SDL)       | Yes               | Connect emit + join-only hand SDL                                   |
+| Microsoft Graph (OData → Connect)   | Yes               | Large Graph `$metadata` emit; auth via `{$env....}`                 |
+| OpenAPI entity stubs                | Yes               | `entity: true` / type-level `$this` Connect                         |
+| Music Store after stage 2           | Reviews only      | REST `@connect` slice; not SQL catalog or gRPC recommendations      |
+| Music Store full (SQL+Connect+gRPC) | No                | Needs Hive Gateway for `@sql` / `@protobuf__rpc`                    |
+| Thrift TJSON                        | Often             | `protocol: 'json'` emits `@connect`; binary `@thrift__rpc` does not |
+| SOAP-as-Connect                     | No                | SOAP envelope Connect is Hive-oriented                              |
 
 Upstream Connect mapping:
 [HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives).

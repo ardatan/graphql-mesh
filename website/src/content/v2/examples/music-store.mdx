@@ -53,8 +53,8 @@ seen real emitted directive SDL. Stages 2-3 extend Track (<DirectiveRef name="co
 
 | Slice                     | Hive Gateway (JS/TS) | Apollo Router                                                                               |
 | ------------------------- | -------------------- | ------------------------------------------------------------------------------------------- |
-| Full multi-protocol graph | Yes                  | No stock dual-run -- use [Serve Subgraph](/v2/serve-subgraph) for SQL/protobuf peers        |
-| Connect Reviews slice     | Yes                  | Yes (dual-run)                                                                              |
+| Full multi-protocol graph | Yes                  | No -- use [Serve Subgraph](/v2/serve-subgraph) for SQL/protobuf peers                       |
+| Connect Reviews slice     | Yes                  | Yes (Connectors native)                                                                     |
 | gRPC slice                | Yes                  | No -- Hive Gateway subgraph or `buildSubgraphSchema` ([Serve Subgraph](/v2/serve-subgraph)) |
 
 ## Packages
@@ -174,7 +174,7 @@ Skill: [Generate-then-edit](/v2/paths/generate-then-edit) | Protocol:
 4. **Dislike** something concrete (field names, noisy types, Track join shape).
 5. Edit the emitted `.graphql` ([By hand](/v2/transforms/by-hand)) or apply optional
    [Automatic](/v2/transforms/automatic) transforms for rename-only cases.
-6. Re-compose. Dual-run the Connect slice on **Hive Gateway** and **Apollo Router**.
+6. Re-compose. Run the Connect slice on **Hive Gateway** and **Apollo Router**.
 
 Two-config shell (details: [Generate-then-edit](/v2/paths/generate-then-edit#two-configs)):
 
@@ -190,7 +190,7 @@ cp reviews-subgraph.graphql reviews.graphql
 # Config 2: schema: './reviews.graphql' (+ chinook still loaded or owned)
 pnpm exec mesh-compose -o supergraph.graphql
 pnpm exec hive-gateway supergraph
-./router --supergraph supergraph.graphql # Connect Reviews slice dual-run
+./router --supergraph supergraph.graphql # Apollo Router (Connect Reviews; Connectors native)
 ```
 
 ```ts
@@ -341,7 +341,7 @@ Skill: [Composition](/v2/compose) | Serve Supergraph: [Hive Gateway](/v2/serve/h
 1. List all three subgraphs in one `mesh.config.ts` (catalog + reviews + recommendations).
 2. Compose to a supergraph GraphQL file (`mesh-compose -o supergraph.graphql`).
 3. Run the **full** graph on Hive Gateway (JS/TS) -- SQL + Connect + protobuf transports.
-4. Dual-run the **Connect Reviews** slice on Apollo Router when demonstrating Connect compatibility.
+4. Run the **Connect Reviews** slice on Apollo Router when demonstrating Connect compatibility.
 5. Optional: publish each subgraph SDL to a schema registry with the same UX as generated subgraphs.
 
 ```ts
@@ -377,14 +377,14 @@ export const gatewayConfig = defineGatewayConfig({
 # Packages listed under Packages (compose-cli, loaders, hive gateway, transports)
 pnpm exec mesh-compose -o supergraph.graphql
 pnpm exec hive-gateway supergraph
-# Connect Reviews dual-run only:
+# Connect Reviews on Apollo Router only (Connectors native):
 ./router --supergraph supergraph.graphql
 ```
 
 ## Further / what else you can do next
 
 - Supporting how-we-builts: [FHIR](/v2/examples/fhir) (JSON Schema + Connect join),
-  [Microsoft Graph](/v2/examples/microsoft-graph) (OData → Connect dual-run).
+  [Microsoft Graph](/v2/examples/microsoft-graph) (OData → Connect on both gateways).
 - Dig into binders and entity wiring: [Selection mapping](/v2/guides/selection-mapping) /
   [Entity resolution](/v2/concepts/federation#entity-resolution) /
   [Semantic conventions](/v2/compose#semantic-conventions).

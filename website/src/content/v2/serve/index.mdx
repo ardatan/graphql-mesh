@@ -28,23 +28,22 @@ mesh-compose -o supergraph.graphql
 # Hive Gateway (full Mesh transports)
 hive-gateway supergraph
 
-# Apollo Router (Connect-compatible SDL only) -- dual-run peer
+# Apollo Router (Connectors native; non-Connect peers via Serve Subgraph)
 ./router --supergraph supergraph.graphql
 ```
 
-| Your SDL surface                                                | Prefer                                                                                                       |
-| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| HTTP/REST Connectors only (`@connect` / `@source`)              | Hive Gateway **or** Apollo Router (dual-run)                                                                 |
-| Any Mesh protocol (`@sql`, `@protobuf__rpc`, ...)               | Hive Gateway for the supergraph, **or** [Serve Subgraph](/v2/serve-subgraph) behind Apollo Router            |
-| Mixed Music Store (<ProtocolRef name="sql" /> + Connect + gRPC) | Hive Gateway for the full supergraph; Connect slice can still dual-run; non-Connect peers via Serve Subgraph |
+| Your SDL surface                                                | Prefer                                                                                                |
+| --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| HTTP/REST Connectors only (`@connect` / `@source`)              | Hive Gateway **or** Apollo Router (Connectors native in both)                                         |
+| Any Mesh protocol (`@sql`, `@protobuf__rpc`, ...)               | Hive Gateway for the supergraph, **or** [Serve Subgraph](/v2/serve-subgraph) behind Apollo Router     |
+| Mixed Music Store (<ProtocolRef name="sql" /> + Connect + gRPC) | Hive Gateway for the full supergraph; Connectors on Router/Hive; non-Connect peers via Serve Subgraph |
 
 <Callout type="info">
-  If the gateway is **not** Hive Gateway, Mesh protocol subgraphs still need a Federation subgraph
-  process that understands Mesh SDL -- typically
+  Mesh uses **Connectors** natively in Apollo Router and Hive Gateway. Non-Connect protocols (SQL,
+  etc.) still work on Apollo Router by serving the subgraph separately -- typically
   [`buildSubgraphSchema`](/v2/guides/build-subgraph-schema) from `@graphql-mesh/subgraph` (Yoga /
   any GraphQL server), or Hive Gateway in subgraph mode. Point Apollo Router (or another gateway) at
-  that subgraph URL. Connect-only subgraphs can often stay on the Router alone. Details: [Serve
-  Subgraph](/v2/serve-subgraph) and the [FAQ](/v2/faq).
+  that subgraph URL. Details: [Serve Subgraph](/v2/serve-subgraph) and the [FAQ](/v2/faq).
 </Callout>
 
 Concept overview: [Gateway](/v2/concepts/gateway). Worked example:

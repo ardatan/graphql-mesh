@@ -1,7 +1,7 @@
 ---
 description:
-  How we built the Microsoft Graph OData Mesh example -- generate Connect SDL, auth headers,
-  dual-run
+  How we built the Microsoft Graph OData Mesh example -- generate Connect SDL, auth headers, serve
+  on Hive Gateway and Apollo Router
 ---
 
 import { Callout, Cards } from '@theguild/components'
@@ -20,8 +20,8 @@ How we built a Mesh subgraph from **Microsoft Graph** OData `$metadata`: load th
 pinned fixture), stamp
 
 <ConceptRef name="connectors">HTTP/REST Connectors</ConceptRef> (`@source` / `@connect`), pass a
-Bearer token via `operationHeaders`, compose once, and dual-run the same Connect SDL on **Hive
-Gateway** (JS/TS) and **Apollo Router**.
+Bearer token via `operationHeaders`, compose once, and run the same Connect SDL on **Hive Gateway**
+(JS/TS) and **Apollo Router**.
 
 <V2FlowDiagram
   ariaLabel="Microsoft Graph how-we-built: metadata to generate to Composition to Serve Supergraph"
@@ -36,13 +36,13 @@ Gateway** (JS/TS) and **Apollo Router**.
 
 ## What you end up with
 
-| Piece               | Detail                                                                              |
-| ------------------- | ----------------------------------------------------------------------------------- |
-| Source              | Microsoft Graph OData (`/$metadata` + REST entity sets)                             |
-| Loader              | `@omnigraph/odata` → `@connect` / `@source`                                         |
-| Auth                | `Authorization: Bearer ...` from env / context                                      |
-| Dual-run            | Hive Gateway **and** Apollo Router when the Connect surface stays Router-compatible |
-| Typical Query roots | `me`, `groups`, `messages`, `drives`, ...                                           |
+| Piece               | Detail                                                                        |
+| ------------------- | ----------------------------------------------------------------------------- |
+| Source              | Microsoft Graph OData (`/$metadata` + REST entity sets)                       |
+| Loader              | `@omnigraph/odata` → `@connect` / `@source`                                   |
+| Auth                | `Authorization: Bearer ...` from env / context                                |
+| Apollo Router       | Same Connect SDL on Hive Gateway **and** Apollo Router when Router-compatible |
+| Typical Query roots | `me`, `groups`, `messages`, `drives`, ...                                     |
 
 Clients ask for exactly the Graph resources they need in one GraphQL operation instead of chaining
 REST calls for me → messages → from.
@@ -54,7 +54,8 @@ REST calls for me → messages → from.
 - Microsoft Graph as an **OData** API (`https://graph.microsoft.com/v1.0/$metadata`).
 - Workload surfaces people care about: signed-in user (`me`), mail (`messages`), groups/members,
   OneDrive (`drives` / `driveItem`).
-- A need for GraphQL selection + Connect dual-run, without rewriting Graph by hand.
+- A need for GraphQL selection + Connectors native in both gateways, without rewriting Graph by
+  hand.
 
 Nothing yet: Mesh subgraph SDL, Compose config, or gateway serve.
 
@@ -182,7 +183,7 @@ transport options stay Mesh-side.
 
 ---
 
-## 3. Compose and dual-run
+## 3. Compose and serve on both gateways
 
 ```bash
 # Packages:
@@ -197,7 +198,7 @@ pnpm exec hive-gateway supergraph
 ./router --supergraph supergraph.graphql
 ```
 
-Set `MSGRAPH_ACCESS_TOKEN` (or your chosen env name) in the gateway process. Dual-run matrix:
+Set `MSGRAPH_ACCESS_TOKEN` (or your chosen env name) in the gateway process. Gateway matrix:
 [Apollo Router](/v2/serve/apollo-router).
 
 ---
@@ -273,8 +274,9 @@ query fetchFilesFromOneDrive {
 
 ## Takeaways
 
-- Microsoft Graph is a **large OData → Connect** generate story -- great enterprise dual-run proof,
-  not the first tutorial (Music Store still owns Generate → edit → Hand-write).
+- Microsoft Graph is a **large OData → Connect** generate story -- great enterprise proof that
+  Connectors are native in both gateways, not the first tutorial (Music Store still owns Generate →
+  edit → Hand-write).
 - Auth headers and pinned metadata matter as much as the loader one-liner.
 - TripPin teaches the same OData mechanics on a tiny public service; Graph is the scaled-up cousin.
 

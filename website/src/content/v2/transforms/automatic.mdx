@@ -28,7 +28,7 @@ repeatable. For editing the `.graphql` itself, see [By hand](/v2/transforms/by-h
    before / as it is annotated for composition.
 3. Transformed SDL is what joins the supergraph -- including rewritten `$args` / `$this` inside
    `@connect`, `@source`, and Mesh protocol directives (`@protobuf__rpc`, `@sql`, ...) so Hive
-   Gateway and Apollo Router dual-run stay valid.
+   Gateway and Apollo Router Connect compatibility stay valid.
 
 ## Concrete example
 
@@ -78,7 +78,7 @@ hand-written protobuf SDL plus a rename transform.
 - **Filter / wrap** generated noise before a first review. Filter patterns such as `Query.*` or
   `Type.!User` are Mesh **schema selectors** (globs), not single-element coordinates -- see
   [Schema Coordinates](/v2/guides/schema-coordinates).
-- Keep dual-run valid when GraphQL names change but directive mappings must follow.
+- Keep Connect compatibility valid when GraphQL names change but directive mappings must follow.
 
 ## When to skip (or go By hand)
 
@@ -91,7 +91,7 @@ hand-written protobuf SDL plus a rename transform.
 
 ## Applicability matrix
 
-| Transform family                         | Rewrites `@connect` / `@source` binders     | Rewrites Mesh protocol dirs (`@sql`, `@protobuf__rpc`, ...) | Dual-run impact                                      |
+| Transform family                         | Rewrites `@connect` / `@source` binders     | Rewrites Mesh protocol dirs (`@sql`, `@protobuf__rpc`, ...) | Apollo Router impact                                 |
 | ---------------------------------------- | ------------------------------------------- | ----------------------------------------------------------- | ---------------------------------------------------- |
 | Rename / naming-convention / prefix      | Yes (`$args` / `$this` follow)              | Yes where binders exist                                     | Keep Connect-compatible when you only rename GraphQL |
 | Filter / prune                           | Drops fields/types; remaining Connect stays | Same                                                        | Smaller Connect surface still Router-ok              |

@@ -29,11 +29,11 @@ Router executes Connect-compatible `@connect` / `@source` without Mesh transport
   ]}
 />
 
-| Piece                              | Role                                                                 |
-| ---------------------------------- | -------------------------------------------------------------------- |
-| <DirectiveRef name="transport" />  | Schema stamp: `kind`, `location`, optional headers / options         |
-| `@graphql-mesh/transport-sql`, ... | Package Hive Gateway imports for that `kind`                         |
-| Connect (`transport-connect`)      | Often built into Hive Gateway; dual-run on Apollo Router when shaped |
+| Piece                              | Role                                                               |
+| ---------------------------------- | ------------------------------------------------------------------ |
+| <DirectiveRef name="transport" />  | Schema stamp: `kind`, `location`, optional headers / options       |
+| `@graphql-mesh/transport-sql`, ... | Package Hive Gateway imports for that `kind`                       |
+| Connect (`transport-connect`)      | Often built into Hive Gateway; native on Apollo Router when shaped |
 
 Transports are **not** Compose, **not** the schema registry, and **not** Omnigraph loaders.
 

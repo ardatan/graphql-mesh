@@ -13,12 +13,12 @@ Use this family when the source speaks **HTTP** and you want GraphQL fields that
 (<DirectiveRef name="connect" /> / <DirectiveRef name="source" />); you can also hand-write the same
 shape.
 
-| Piece     | Detail                                                                                                                                                  |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Loaders   | `@omnigraph/openapi`, `@omnigraph/json-schema`, OData, SOAP                                                                                             |
-| Transport | `@graphql-mesh/transport-connect` on Hive Gateway                                                                                                       |
-| Dual-run  | Same Connect SDL on [Apollo Router](/v2/serve/apollo-router) when Connect-compatible; SOAP envelope expects Hive / [Serve Subgraph](/v2/serve-subgraph) |
-| Spec      | `https://specs.apollo.dev/connect/v0.4`                                                                                                                 |
+| Piece         | Detail                                                                                                                                                  |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Loaders       | `@omnigraph/openapi`, `@omnigraph/json-schema`, OData, SOAP                                                                                             |
+| Transport     | `@graphql-mesh/transport-connect` on Hive Gateway                                                                                                       |
+| Apollo Router | Same Connect SDL on [Apollo Router](/v2/serve/apollo-router) when Connect-compatible; SOAP envelope expects Hive / [Serve Subgraph](/v2/serve-subgraph) |
+| Spec          | `https://specs.apollo.dev/connect/v0.4`                                                                                                                 |
 
 ## Packages
 
@@ -41,7 +41,7 @@ SDL is a peer input.
 | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | Directive contract | Upstream [HTTP/REST Connectors reference](https://www.apollographql.com/docs/graphos/connectors/reference/directives) for full arg tables |
 | Mesh generate      | `@omnigraph/openapi` (and siblings) → Connect emit; Music Store Reviews is the staged edit example                                        |
-| Mesh serve         | Hive Gateway `transport-connect`; Apollo Router dual-run when the surface stays Connect-compatible                                        |
+| Mesh serve         | Hive Gateway `transport-connect`; Connectors are native on Apollo Router when the surface stays Connect-compatible                        |
 | Mesh-only deltas   | SOAP / XML codec (Hive Gateway only); non-Connect protocols (`@sql`, `@protobuf__rpc`, ...) are separate Mesh protocol families           |
 
 Community `@connect` schemas (Stripe, JSONPlaceholder, ...) can also compose under Mesh Compose +
@@ -192,7 +192,7 @@ WSDL operations become `POST` Connect fields whose `body` is a SOAP envelope sel
 owns the JSON↔XML codec on Hive Gateway; the author API is still `@connect` / `@source`.
 
 <Callout type="warning">
-  **Mesh-only / Hive Gateway.** SOAP envelopes are **not** dual-run on stock Apollo Router. Use Hive
+  **Mesh-only / Hive Gateway.** SOAP envelopes are **not** native on stock Apollo Router. Use Hive
   Gateway for SOAP subgraphs. Placement: under this HTTP/REST Connectors family -- no separate SOAP
   protocol page.
 </Callout>
@@ -369,10 +369,10 @@ type Mutation {
 
 OData payloads tag polymorphic values with `@odata.type`. Emit uses `->match` on that tag so a
 single nav field can return `Location` / `AirportLocation` / `EventLocation` (and similar for
-people). Dual-run only when the resulting Connect surface stays Router-compatible -- see the TripPin
-section above.
+people). Run the same Connect SDL on Apollo Router only when the resulting Connect surface stays
+Router-compatible -- see the TripPin section above.
 
-## Dialect and dual-run
+## Dialect and Apollo Router
 
 `selection` / `http.body` / path templates: [Selection mapping](/v2/guides/selection-mapping).
 Upstream arg tables:

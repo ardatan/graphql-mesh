@@ -11,13 +11,13 @@ Use Protobuf / gRPC when RPCs should become GraphQL fields with **field-number**
 Connectors). Hand-author or loader-emit `@protobuf__rpc`; Hive Gateway runs `transport-protobuf`.
 Stock Apollo Router does **not** execute `@protobuf__rpc`.
 
-| Piece     | Detail                                                                          |
-| --------- | ------------------------------------------------------------------------------- |
-| Directive | `@protobuf__rpc` (`service`, `method`, `args`, `selection`, `stream`, `entity`) |
-| Transport | `@graphql-mesh/transport-protobuf`                                              |
-| Spec      | `https://specs.graphql-mesh.dev/protobuf/v0.1`                                  |
-| Dual-run  | Hive Gateway; Apollo Router via [Serve Subgraph](/v2/serve-subgraph)            |
-| Examples  | Hand SDL movies subgraph; Music Store recommendations; streaming RPCs           |
+| Piece         | Detail                                                                          |
+| ------------- | ------------------------------------------------------------------------------- |
+| Directive     | `@protobuf__rpc` (`service`, `method`, `args`, `selection`, `stream`, `entity`) |
+| Transport     | `@graphql-mesh/transport-protobuf`                                              |
+| Spec          | `https://specs.graphql-mesh.dev/protobuf/v0.1`                                  |
+| Apollo Router | Via [Serve Subgraph](/v2/serve-subgraph) (Hive Gateway runs `@protobuf__rpc`)   |
+| Examples      | Hand SDL movies subgraph; Music Store recommendations; streaming RPCs           |
 
 ## Packages
 

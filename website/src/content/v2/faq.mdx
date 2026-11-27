@@ -67,14 +67,16 @@ mesh-compose --subgraph chinook -o chinook-subgraph.graphql
 npx tsx subgraph-server.ts # Yoga + buildSubgraphSchema loading that file
 ```
 
-Same answer for other non-Connect protocols (Protobuf, Mongo, Neo4j, binary Thrift, ...).
-Connect-only slices can still dual-run on Apollo Router beside a Hive-served Mesh surface --
+Same answer for other non-Connect protocols (Protobuf, Mongo, Neo4j, binary Thrift, ...). Mesh uses
+**Connectors** natively in Apollo Router and Hive Gateway; non-Connect protocols still work on
+Apollo Router by serving those subgraphs separately (`buildSubgraphSchema` / Hive subgraph serve) --
 [Music Store Example](/v2/examples/music-store).
 
 ## Do I need Hive Gateway if everything is Connect?
 
-No. For Connect-compatible supergraphs you can serve on **Apollo Router**, **Hive Gateway**, or both
-(dual-run). Hive Gateway remains preferred when any Mesh protocol transport is in the supergraph.
+No. Connectors run natively on **Apollo Router** and **Hive Gateway** (you can run either or both).
+Prefer Hive Gateway -- or Serve Subgraph peers -- when any Mesh protocol transport is in the
+supergraph.
 
 ```bash
 mesh-compose -o supergraph.graphql
@@ -114,8 +116,9 @@ Details: [Serve Subgraph](/v2/serve-subgraph).
 
 Both produce a Federation subgraph peer. Neither replaces [Composition](/v2/compose).
 
-Community Connectors schemas use the same choice -- Serve Supergraph for dual-run, or Serve Subgraph
-(Hive / `buildSubgraphSchema`) to drop a Connect SDL file into an existing Federation fleet:
+Community Connectors schemas use the same choice -- Serve Supergraph to run the same Connect SDL on
+Hive Gateway and Apollo Router, or Serve Subgraph (Hive / `buildSubgraphSchema`) to drop a Connect
+SDL file into an existing Federation fleet:
 [Community Connectors: Serve as a Federation subgraph](/v2/examples/community-connectors#serve-as-a-federation-subgraph).
 
 ## How do I add a custom `@lookup` resolver?
@@ -202,7 +205,7 @@ Hive, Rover, or your CI.
 
 | What you add                         | With your existing gateway                                                                                         |
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| HTTP/REST Connectors only            | Often dual-run on Apollo Router / Hive -- no stack swap                                                            |
+| HTTP/REST Connectors only            | Connectors are native in both Apollo Router and Hive Gateway -- no stack swap                                      |
 | Mesh protocols (`@sql`, protobuf, …) | Serve Subgraph (Hive or `buildSubgraphSchema`) as a Federation peer, **or** Hive Gateway for that supergraph slice |
 
 You do **not** need to replace the whole gateway, registry, or CI. See also
@@ -212,18 +215,21 @@ You do **not** need to replace the whole gateway, registry, or CI. See also
 
 ## How is `@graphql-mesh/subgraph` different from `@apollo/subgraph`?
 
-Same export name (`buildSubgraphSchema`), different jobs: Apollo's package Federation-wraps
-**code-first** resolvers; Mesh's package makes **Mesh subgraph SDL** (transports + entity hops)
-executable. Not drop-in replacements.
+Same export name (`buildSubgraphSchema`) on purpose. Mesh's package does **what Apollo's does** for
+Federation subgraph wiring, **plus** Mesh directive / Mesh specification execution (protocol
+transports, Connect in-process, entity hops) on Mesh subgraph SDL. Apollo's package Federation-wraps
+**code-first** resolvers. Not drop-in replacements -- pick Mesh when the SDL already carries Mesh /
+Connect / protocol directives.
 [buildSubgraphSchema: vs `@apollo/subgraph`](/v2/guides/build-subgraph-schema#vs-apollosubgraph).
 
 ## Where is the Music Store / FHIR / Microsoft Graph walkthrough?
 
-- [Music Store Example](/v2/examples/music-store) -- SQL + Connect + Protobuf, dual-run
+- [Music Store Example](/v2/examples/music-store) -- SQL + Connect + Protobuf; Connectors native on
+  Hive / Apollo Router, non-Connect via Serve Subgraph
 - [FHIR](/v2/examples/fhir) -- JSON Schema + Connect join
 - [Microsoft Graph](/v2/examples/microsoft-graph) -- OData → Connect
-- [Community Connectors](/v2/examples/community-connectors) -- stock `@connect` SDL; supergraph
-  dual-run **or** Hive subgraph / `buildSubgraphSchema`
+- [Community Connectors](/v2/examples/community-connectors) -- stock `@connect` SDL; Serve
+  Supergraph **or** Hive subgraph / `buildSubgraphSchema`
 
 ## Coming from Mesh v1?
 

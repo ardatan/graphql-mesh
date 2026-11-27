@@ -14,15 +14,15 @@ subgraph. Mesh loads the schema (introspection or a `.graphql` / URL source), st
 Omnigraph-generated or hand-written subgraphs.
 
 This is **not** HTTP/REST Connectors. There is no `@connect` emit unless you also author Connect
-fields. Dual-run on Apollo Router applies only when the **composed** supergraph is Connect-shaped; a
+fields. Apollo Router Connectors apply only when the **composed** supergraph is Connect-shaped; a
 pure GraphQL-HTTP subgraph is a normal Federation peer.
 
-| Piece     | Detail                                                       |
-| --------- | ------------------------------------------------------------ |
-| Loader    | `loadGraphQLHTTPSubgraph` from `@graphql-mesh/compose-cli`   |
-| Transport | `kind: "http"` (default) on Hive Gateway                     |
-| Dual-run  | N/A as a Connect family -- Federation / GraphQL upstream     |
-| Options   | `federation: true` when the source is already a Fed subgraph |
+| Piece         | Detail                                                       |
+| ------------- | ------------------------------------------------------------ |
+| Loader        | `loadGraphQLHTTPSubgraph` from `@graphql-mesh/compose-cli`   |
+| Transport     | `kind: "http"` (default) on Hive Gateway                     |
+| Apollo Router | N/A as a Connect family -- Federation / GraphQL upstream     |
+| Options       | `federation: true` when the source is already a Fed subgraph |
 
 ## Generate
 

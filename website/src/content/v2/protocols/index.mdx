@@ -7,16 +7,15 @@ import { Cards } from '@theguild/components'
 
 # Protocols
 
-Each family has an optional loader, directive emit, transport, and Apollo Router dual-run notes.
-Pick the page that matches **what the source is for** -- each leads with concrete excerpts and use
-cases.
+Each family has an optional loader, directive emit, transport, and Apollo Router notes. Pick the
+page that matches **what the source is for** -- each leads with concrete excerpts and use cases.
 
 **HTTP/REST Connectors** (`@connect` / `@source`) are one family. Mesh protocols such as SQL, Mongo,
 and Protobuf are separate families. **SOAP / WSDL** lives under HTTP/REST (same `@connect` /
 `@source` author API + Mesh XML codec); serve SOAP on **Hive Gateway** (or
-[Serve Subgraph](/v2/serve-subgraph)), not stock Apollo Router dual-run.
+[Serve Subgraph](/v2/serve-subgraph)), not stock Apollo Router.
 
-| Family                                      | When to open it                                  | Transport                            | Apollo Router dual-run                                                              |
+| Family                                      | When to open it                                  | Transport                            | On Apollo Router?                                                                   |
 | ------------------------------------------- | ------------------------------------------------ | ------------------------------------ | ----------------------------------------------------------------------------------- |
 | REST / OpenAPI / JSON Schema / RAML / OData | HTTP JSON APIs, entity lookups, FHIR             | `transport-connect`                  | Yes (Connect-compatible)                                                            |
 | SOAP / WSDL                                 | WSDL ops as Connect + XML body (under HTTP/REST) | `transport-connect` (+ XML codec)    | No -- Hive Gateway / [Serve Subgraph](/v2/serve-subgraph)                           |
