@@ -20,6 +20,15 @@ import {
 import type { StitchingInfo, Subschema } from '@graphql-tools/delegate';
 import { handleOverrideByDelegation, leftOverByDelegationPlan } from '@graphql-tools/delegate';
 import { getDefinedRootType } from '@graphql-tools/utils';
+import {
+  buildContextArgumentsForFetch,
+  getContextProviders,
+  injectContextBridgesIntoSelections,
+  parseContextSelectionPath,
+  selectionHasContextArguments,
+  typeMatchesContextProvider,
+  typeNamesAlongFlattenPath,
+} from './contextArguments.js';
 import { isLocalField } from './localFields.js';
 import { getBatchedMergeEntry, inferMergeArgName } from './mergeEntry.js';
 import { buildPlanSchedule, collectExecutableHops, planHasCondition } from './planSchedule.js';
@@ -52,6 +61,13 @@ function selectionSetOf(selections: readonly SelectionNode[]): SelectionSetNode 
  * threading context through every recursive plan helper.
  */
 let planningContext: any;
+
+/** Gateway schema for the in-flight plan (provider type walks in dependsOn). */
+let planningSchema: GraphQLSchema | undefined;
+
+/** Operation + fragments for alias-aware provider path walks during dependsOn. */
+let planningOperation: OperationDefinitionNode | undefined;
+let planningFragments: Record<string, FragmentDefinitionNode> | undefined;
 
 /**
  * Fill omitted operation variables from their GraphQL default values so
@@ -668,6 +684,11 @@ function fieldFetchableOnSubschema(
   // NOT block reading a locally-owned key - Hive QP still fetches Book.upc
   // from A without id.
   const mergeField = subschema.merge?.[typeName]?.fields?.[fieldName];
+  // Federation `@fromContext` always needs a later entity hop after the
+  // ancestor context value exists (even in the same subgraph).
+  if (mergeField?.contextArguments?.length) {
+    return false;
+  }
   if (!mergeField?.selectionSet && !mergeField?.computed) {
     return true;
   }
@@ -2262,6 +2283,8 @@ function planRootField(
   // Flattening into field nodes would drop those directives (provides-scope).
   // Merge deps into same-name fields so shallow client selections (data {
   // __typename }) absorb deeper @requires bridges (data { foo ... on Bar }).
+  // Also inject Federation `@fromContext` bridges onto `@context` ancestors
+  // (e.g. User.currency for Transaction.amount).
   const selectionSetForPartition: SelectionSetNode | undefined =
     fieldNode.selectionSet && returnTypeName
       ? (() => {
@@ -2283,7 +2306,13 @@ function planRootField(
               merged.push(dep);
             }
           }
-          return selectionSetOf(merged);
+          const withContextBridges = injectContextBridgesIntoSelections(
+            schema,
+            stitchingInfo,
+            returnTypeName,
+            merged,
+          );
+          return selectionSetOf(withContextBridges);
         })()
       : undefined;
 
@@ -2325,10 +2354,21 @@ function planRootField(
         parentTypeName: rootType.name,
         parentFieldName: fieldName,
       };
+      // Inject `@fromContext` bridges into the fragment-preserving client
+      // selection — do not feed selectionSetForPartition (which may promote
+      // fragment-only fields to bare abstract selections).
+      const abstractWithBridges = selectionSetOf(
+        injectContextBridgesIntoSelections(
+          schema,
+          stitchingInfo,
+          returnTypeName!,
+          fieldNode.selectionSet.selections,
+        ),
+      );
       const expanded = expandAbstractSelectionsForSubschema(
         owner,
         returnTypeName!,
-        fieldNode.selectionSet,
+        abstractWithBridges,
         fragments,
         stitchingInfo,
         schema,
@@ -2654,18 +2694,23 @@ function planRootField(
               remnantFields.push(fn);
               continue;
             }
-            // Field already fetched (animals via @provides id/name) - only keep
-            // nested type-conditioned remnants (`... on Cat { age }`).
+            // Field already fetched (animals via @provides id/name). Keep nested
+            // type-conditioned remnants (`... on Cat { age }`) and nested
+            // unavailable leaves from the partition (Transaction.fromInterface
+            // under Other.transactions) so `@fromContext` entity hops still plan.
             if (!fn.selectionSet) {
               continue;
             }
-            const onlyFragments = fn.selectionSet.selections.filter(
-              s => s.kind === Kind.INLINE_FRAGMENT || s.kind === Kind.FRAGMENT_SPREAD,
-            );
-            if (onlyFragments.length) {
+            const nestedRemnants = fn.selectionSet.selections.filter(s => {
+              if (s.kind === Kind.INLINE_FRAGMENT || s.kind === Kind.FRAGMENT_SPREAD) {
+                return true;
+              }
+              return s.kind === Kind.FIELD && s.name.value !== '__typename';
+            });
+            if (nestedRemnants.length) {
               remnantFields.push({
                 ...fn,
-                selectionSet: selectionSetOf(onlyFragments),
+                selectionSet: selectionSetOf(nestedRemnants),
               });
             }
           }
@@ -3298,7 +3343,13 @@ export function buildStitchPlan(
   const coercedVariables = coerceOperationVariables(operation, variableValues);
 
   const previousPlanningContext = planningContext;
+  const previousPlanningSchema = planningSchema;
+  const previousPlanningOperation = planningOperation;
+  const previousPlanningFragments = planningFragments;
   planningContext = options.context;
+  planningSchema = schema;
+  planningOperation = operation;
+  planningFragments = fragments;
   try {
     if (incompleteReasons.length > 0) {
       // Still attempt a best-effort plan for warming, but never throw out of here.
@@ -3334,6 +3385,9 @@ export function buildStitchPlan(
     );
   } finally {
     planningContext = previousPlanningContext;
+    planningSchema = previousPlanningSchema;
+    planningOperation = previousPlanningOperation;
+    planningFragments = previousPlanningFragments;
   }
 }
 
@@ -3427,7 +3481,7 @@ function findMergeFieldConfig(
   fieldName: string,
 ) {
   const direct = subschema.merge?.[typeName]?.fields?.[fieldName];
-  if (direct?.selectionSet || direct?.computed) {
+  if (direct?.selectionSet || direct?.computed || direct?.contextArguments?.length) {
     return direct;
   }
   for (const s of stitchingInfo.subschemaMap.values()) {
@@ -3435,11 +3489,11 @@ function findMergeFieldConfig(
       continue;
     }
     const field = s.merge?.[typeName]?.fields?.[fieldName];
-    if (field?.selectionSet || field?.computed) {
+    if (field?.selectionSet || field?.computed || field?.contextArguments?.length) {
       return field;
     }
   }
-  return undefined;
+  return direct;
 }
 
 /** @requires bridge field nodes for one client field on a merge target. */
@@ -3834,6 +3888,11 @@ function fetchDependsOn(
   if (nestedEntityKeyDependsOn(stitchingInfo, later, earlier)) {
     return true;
   }
+  // `@fromContext`: earlier hop must produce the provider selection (e.g.
+  // User.currency) before later's contextual entity field (Transaction.amount).
+  if (contextProviderDependsOn(stitchingInfo, later, earlier)) {
+    return true;
+  }
 
   const reqDeps = collectRequiresDeps(stitchingInfo, later).filter(
     d => d.name.value !== '__typename',
@@ -3886,6 +3945,214 @@ function fetchDependsOn(
     }
   }
   return false;
+}
+
+/**
+ * True when `later` has `@fromContext` fields whose context selection is
+ * produced by `earlier` on the declared provider occurrence (e.g. User.currency
+ * before Transaction.amount) — not a same-named field under a non-provider
+ * parent (Order.preferences ≠ User.preferences).
+ */
+function contextProviderDependsOn(
+  stitchingInfo: StitchingInfo,
+  later: Extract<StitchPlanNode, { kind: 'Fetch' }>,
+  earlier: Extract<StitchPlanNode, { kind: 'Fetch' }>,
+): boolean {
+  const schema = planningSchema;
+  if (!schema || !later.entityTypeName || !later.selectionSet || !earlier.selectionSet) {
+    return false;
+  }
+  if (
+    !selectionHasContextArguments(
+      stitchingInfo,
+      later.subschema,
+      later.entityTypeName,
+      later.selectionSet,
+    )
+  ) {
+    return false;
+  }
+  const needs = collectContextNeeds(
+    schema,
+    stitchingInfo,
+    later.subschema,
+    later.entityTypeName,
+    later.selectionSet,
+  );
+  if (!needs.length) {
+    return false;
+  }
+  const laterPaths = fetchFlattenPaths(later);
+  const earlierPaths = fetchFlattenPaths(earlier);
+  const provided = collectSelectedFieldNames(earlier.selectionSet);
+
+  for (const need of needs) {
+    for (const lp of laterPaths) {
+      const providerPath = contextProviderPathPrefix(schema, lp, need.providers);
+      if (!providerPath) {
+        continue;
+      }
+      if (earlier.rootField) {
+        const rk = earlier.rootField.alias?.value ?? earlier.rootField.name.value;
+        const rootPath: PathSegment[] = [rk];
+        if (earlierProvidesContextAtProvider(rootPath, providerPath, need.path, provided)) {
+          return true;
+        }
+      }
+      for (const ep of earlierPaths) {
+        if (earlierProvidesContextAtProvider(ep, providerPath, need.path, provided)) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+/**
+ * Flatten-path prefix ending at the nearest declared `@context` provider for
+ * `laterPath` (types along the path: index i ↔ path.slice(0, i)).
+ * Passes the in-flight operation so response-key aliases (`people: users`)
+ * resolve to the real field and the User provider is still found.
+ */
+function contextProviderPathPrefix(
+  schema: GraphQLSchema,
+  laterPath: PathSegment[],
+  providers: readonly string[],
+): PathSegment[] | null {
+  if (!providers.length) {
+    return null;
+  }
+  const operation = planningOperation;
+  const rootType =
+    operation?.operation === 'mutation'
+      ? schema.getMutationType()
+      : operation?.operation === 'subscription'
+        ? schema.getSubscriptionType()
+        : schema.getQueryType();
+  const typeNames = typeNamesAlongFlattenPath(schema, laterPath, {
+    rootType,
+    operation,
+    fragments: planningFragments,
+  });
+  // typeNames[0] is the root; skip the entity at the end.
+  for (let i = typeNames.length - 2; i >= 0; i--) {
+    if (typeMatchesContextProvider(schema, typeNames[i]!, providers)) {
+      return laterPath.slice(0, i);
+    }
+  }
+  return null;
+}
+
+/**
+ * True when `earlier` sits on the declared provider occurrence and selects the
+ * context path: at the provider selecting the root key, or under
+ * provider/…/ctxPrefix selecting the next segment.
+ */
+function earlierProvidesContextAtProvider(
+  earlier: PathSegment[],
+  providerPath: PathSegment[],
+  ctxPath: readonly string[],
+  provided: ReadonlySet<string>,
+): boolean {
+  if (!ctxPath.length) {
+    return false;
+  }
+  if (pathsEqual(earlier, providerPath)) {
+    // At User: `preferences { isoCode }` → top-level name `preferences`.
+    return provided.has(ctxPath[0]!);
+  }
+  if (!(pathIsPrefix(providerPath, earlier) && earlier.length > providerPath.length)) {
+    return false;
+  }
+  const intoCtx = earlier.slice(providerPath.length);
+  if (intoCtx.length > ctxPath.length) {
+    return false;
+  }
+  for (let i = 0; i < intoCtx.length; i++) {
+    if (String(intoCtx[i]) !== ctxPath[i]) {
+      return false;
+    }
+  }
+  // At provider/preferences: need isoCode (next segment). Full ctx path means
+  // earlier is the leaf selection hop — scalars are not entity Fetches.
+  if (intoCtx.length >= ctxPath.length) {
+    return false;
+  }
+  return provided.has(ctxPath[intoCtx.length]!);
+}
+
+/** Context Key sequences + declared provider type names for `@fromContext` fields. */
+function collectContextNeeds(
+  schema: GraphQLSchema,
+  stitchingInfo: StitchingInfo,
+  subschema: Subschema,
+  typeName: string,
+  selectionSet: SelectionSetNode,
+  out: Array<{ path: string[]; providers: string[] }> = [],
+): Array<{ path: string[]; providers: string[] }> {
+  for (const sel of selectionSet.selections) {
+    if (sel.kind === Kind.INLINE_FRAGMENT) {
+      collectContextNeeds(
+        schema,
+        stitchingInfo,
+        subschema,
+        sel.typeCondition?.name.value ?? typeName,
+        sel.selectionSet,
+        out,
+      );
+      continue;
+    }
+    if (sel.kind !== Kind.FIELD || sel.name.value === '__typename') {
+      continue;
+    }
+    const cfg = findMergeFieldConfig(stitchingInfo, subschema, typeName, sel.name.value);
+    if (!cfg?.contextArguments?.length) {
+      continue;
+    }
+    for (const ca of cfg.contextArguments) {
+      const providers = getContextProviders(schema, stitchingInfo, ca.context);
+      if (!providers.length) {
+        continue;
+      }
+      const paths: string[][] = [];
+      addKeyPathsFromContextPath(parseContextSelectionPath(ca.selection), paths);
+      for (const path of paths) {
+        out.push({ path, providers });
+      }
+    }
+  }
+  return out;
+}
+
+function addKeyPathsFromContextPath(
+  path: import('./types.js').StitchContextPathSegment[],
+  out: string[][],
+  prefix: string[] = [],
+): void {
+  if (!path.length) {
+    if (prefix.length) {
+      out.push([...prefix]);
+    }
+    return;
+  }
+  const [head, ...rest] = path;
+  if (!head) {
+    return;
+  }
+  if ('Key' in head) {
+    addKeyPathsFromContextPath(rest, out, [...prefix, head.Key]);
+    return;
+  }
+  if ('TypenameEquals' in head) {
+    addKeyPathsFromContextPath(rest, out, prefix);
+    return;
+  }
+  if ('Alternatives' in head) {
+    for (const alt of head.Alternatives) {
+      addKeyPathsFromContextPath([...alt, ...rest], out, prefix);
+    }
+  }
 }
 
 /**
@@ -5361,9 +5628,25 @@ function buildCompletePlan(
   // Wave fold: same dependsOn wave + same subgraph → one BatchFetch
   // (or covering Fetch). Runs after reuse so reuse edges affect wave layers.
   const folded = isMutation ? withReuse : foldSameWaveSubgraphFetches(withReuse, stitchingInfo);
+  // Stamp Federation `@fromContext` rewrites onto entity hops before docs.
+  const rootType =
+    operation.operation === 'mutation'
+      ? schema.getMutationType()
+      : operation.operation === 'subscription'
+        ? schema.getSubscriptionType()
+        : schema.getQueryType();
+  const reservedVariableNames = new Set(
+    (operation.variableDefinitions ?? []).map(d => d.variable.name.value),
+  );
+  const withContext = attachContextArgumentsToPlan(folded, schema, stitchingInfo, {
+    operation,
+    rootType,
+    fragments,
+    reservedVariableNames,
+  });
   const withDocs = isMutation
-    ? folded
-    : preparePlanDocuments(folded, {
+    ? withContext
+    : preparePlanDocuments(withContext, {
         operation,
         fragments,
         fieldNodesByField: stitchingInfo.fieldNodesByField,
@@ -5386,6 +5669,160 @@ function buildCompletePlan(
     incomplete: incompleteReasons.length > 0,
     incompleteReasons,
   };
+}
+
+/**
+ * Attach `contextArguments` to entity Fetches whose selection includes
+ * Federation `@fromContext` fields. parentDepth is derived from flattenPaths.
+ */
+function attachContextArgumentsToPlan(
+  node: StitchPlanNode,
+  schema: GraphQLSchema,
+  stitchingInfo: StitchingInfo,
+  planCtx: {
+    operation: OperationDefinitionNode;
+    rootType: GraphQLObjectType | null | undefined;
+    fragments?: Record<string, FragmentDefinitionNode>;
+    reservedVariableNames?: ReadonlySet<string>;
+  },
+  variableCounter: { n: number } = { n: 0 },
+): StitchPlanNode {
+  if (node.kind === 'Sequence' || node.kind === 'Parallel') {
+    return {
+      kind: node.kind,
+      nodes: node.nodes.map(n =>
+        attachContextArgumentsToPlan(n, schema, stitchingInfo, planCtx, variableCounter),
+      ),
+    };
+  }
+  if (node.kind === 'Condition') {
+    return {
+      ...node,
+      ifClause: node.ifClause
+        ? attachContextArgumentsToPlan(
+            node.ifClause,
+            schema,
+            stitchingInfo,
+            planCtx,
+            variableCounter,
+          )
+        : undefined,
+      elseClause: node.elseClause
+        ? attachContextArgumentsToPlan(
+            node.elseClause,
+            schema,
+            stitchingInfo,
+            planCtx,
+            variableCounter,
+          )
+        : undefined,
+    };
+  }
+  if (node.kind === 'Island') {
+    return node.continue
+      ? {
+          ...node,
+          continue: attachContextArgumentsToPlan(
+            node.continue,
+            schema,
+            stitchingInfo,
+            planCtx,
+            variableCounter,
+          ),
+        }
+      : node;
+  }
+  if (node.kind === 'BatchFetch') {
+    // Contextual aliases must not share the raw BatchFetch document (no arg
+    // injection). Expand them to Fetch hops that carry contextArguments.
+    // Preserve BatchFetch id/dependsOn on each expanded Fetch so dataflow
+    // schedule stays valid (completesIds covers the original batch id).
+    const ordinary: typeof node.aliases = [];
+    const contextual: StitchPlanNode[] = [];
+    for (const alias of node.aliases) {
+      if (
+        !selectionHasContextArguments(
+          stitchingInfo,
+          node.subschema,
+          alias.entityTypeName,
+          alias.selectionSet,
+        )
+      ) {
+        ordinary.push(alias);
+        continue;
+      }
+      const path = alias.flattenPaths[0] ?? [];
+      const contextArguments = buildContextArgumentsForFetch(
+        schema,
+        stitchingInfo,
+        node.subschema,
+        alias.entityTypeName,
+        alias.selectionSet,
+        path,
+        variableCounter,
+        {
+          operation: planCtx.operation,
+          rootType: planCtx.rootType,
+          fragments: planCtx.fragments,
+          reservedVariableNames: planCtx.reservedVariableNames,
+        },
+      );
+      contextual.push({
+        kind: 'Fetch',
+        id: node.id,
+        completesIds: node.completesIds ?? (node.id ? [node.id] : undefined),
+        dependsOn: node.dependsOn,
+        subschema: node.subschema,
+        entityTypeName: alias.entityTypeName,
+        selectionSet: alias.selectionSet,
+        flattenPaths: alias.flattenPaths,
+        runIf: alias.runIf,
+        ...(contextArguments ? { contextArguments } : {}),
+      });
+    }
+    if (!contextual.length) {
+      return node;
+    }
+    if (!ordinary.length) {
+      return contextual.length === 1 ? contextual[0]! : { kind: 'Parallel', nodes: contextual };
+    }
+    const batchRest: StitchPlanNode = { ...node, aliases: ordinary };
+    return { kind: 'Parallel', nodes: [batchRest, ...contextual] };
+  }
+  if (node.kind === 'Fetch') {
+    if (
+      !node.entityTypeName ||
+      !node.flattenPaths?.length ||
+      !selectionHasContextArguments(
+        stitchingInfo,
+        node.subschema,
+        node.entityTypeName,
+        node.selectionSet,
+      )
+    ) {
+      return node;
+    }
+    // Representative parentDepth from flattenPaths[0]; execute resolves the
+    // nearest provider per entity via providerTypeNames (multi-path safe).
+    const path = node.flattenPaths[0]!;
+    const contextArguments = buildContextArgumentsForFetch(
+      schema,
+      stitchingInfo,
+      node.subschema,
+      node.entityTypeName,
+      node.selectionSet,
+      path,
+      variableCounter,
+      {
+        operation: planCtx.operation,
+        rootType: planCtx.rootType,
+        fragments: planCtx.fragments,
+        reservedVariableNames: planCtx.reservedVariableNames,
+      },
+    );
+    return contextArguments ? { ...node, contextArguments } : node;
+  }
+  return node;
 }
 
 function collectExecutableFetches(
@@ -5955,6 +6392,46 @@ function collapseSameSubschemaEntityFetches(
     return covering;
   }
 
+  // Keep contextual hops out of shared BatchFetch (no arg injection there).
+  const ordinary: EntityFetchHop[] = [];
+  const contextual: EntityFetchHop[] = [];
+  for (const g of collapsed) {
+    if (
+      selectionHasContextArguments(stitchingInfo, g.subschema, g.entityTypeName, g.selectionSet)
+    ) {
+      contextual.push(g);
+    } else {
+      ordinary.push(g);
+    }
+  }
+  if (contextual.length && ordinary.length === 0) {
+    return contextual.length === 1 ? contextual[0]! : { kind: 'Parallel', nodes: contextual };
+  }
+  if (contextual.length && ordinary.length) {
+    const batchOrdinary =
+      ordinary.length === 1
+        ? ordinary[0]!
+        : ({
+            kind: 'BatchFetch' as const,
+            subschema: ordinary[0]!.subschema,
+            aliases: ordinary.map((g, i) => ({
+              alias: `_e${i}`,
+              entityTypeName: g.entityTypeName,
+              selectionSet: g.selectionSet,
+              flattenPaths: fetchFlattenPaths(g),
+              runIf: g.runIf,
+            })),
+            runIf: ordinary.reduce(
+              (acc: ReturnType<typeof orRunIf>, g) => orRunIf(acc, g.runIf),
+              ordinary[0]!.runIf as ReturnType<typeof orRunIf>,
+            ),
+          } satisfies StitchPlanNode);
+    return {
+      kind: 'Parallel',
+      nodes: [batchOrdinary, ...contextual],
+    };
+  }
+
   return {
     kind: 'BatchFetch',
     subschema: collapsed[0]!.subschema,
@@ -6026,6 +6503,35 @@ function withFoldScheduleMeta(
       id: completesIds[0] ?? collapsed.id,
       completesIds: completesIds.length ? completesIds : collapsed.completesIds,
       dependsOn: depList.length ? depList : collapsed.dependsOn,
+    };
+  }
+  if (collapsed.kind === 'Parallel') {
+    // Late fold may return Parallel(ordinary BatchFetch, contextual Fetches).
+    // Stamp schedule metadata onto each child so downstream dependsOn ids stay valid.
+    return {
+      kind: 'Parallel',
+      nodes: collapsed.nodes.map((child, i) => {
+        if (child.kind !== 'Fetch' && child.kind !== 'BatchFetch') {
+          return child;
+        }
+        const childCompletes =
+          child.completesIds ??
+          (child.id ? [child.id] : i === 0 && completesIds.length ? completesIds : undefined);
+        return {
+          ...child,
+          id: child.id ?? completesIds[i] ?? completesIds[0] ?? child.id,
+          completesIds: childCompletes?.length
+            ? childCompletes
+            : completesIds.length
+              ? completesIds
+              : child.completesIds,
+          dependsOn: child.dependsOn?.length
+            ? child.dependsOn
+            : depList.length
+              ? depList
+              : child.dependsOn,
+        };
+      }),
     };
   }
   return collapsed;

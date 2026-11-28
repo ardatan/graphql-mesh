@@ -497,8 +497,8 @@ exports[`should consistently explain the query plan 1`] = `
         "variables": {},
       },
       {
-        "query": "query TestQuery($representations: [_Any!]!) {
-  _entities(representations: $representations) {
+        "query": "query TestQuery($__mesh_nxt: [_Any!]!) {
+  _entities(representations: $__mesh_nxt) {
     ... on Product {
       __typename
       inStock
@@ -508,7 +508,7 @@ exports[`should consistently explain the query plan 1`] = `
 }",
         "subgraphName": "inventory",
         "variables": {
-          "representations": [
+          "__mesh_representations": [
             {
               "__typename": "Product",
               "price": 899,
@@ -531,8 +531,8 @@ exports[`should consistently explain the query plan 1`] = `
         },
       },
       {
-        "query": "query TestQuery($representations: [_Any!]!) {
-  _entities(representations: $representations) {
+        "query": "query TestQuery($__mesh_nxt: [_Any!]!) {
+  _entities(representations: $__mesh_nxt) {
     ... on Product {
       __typename
       name
@@ -543,7 +543,7 @@ exports[`should consistently explain the query plan 1`] = `
 }",
         "subgraphName": "products",
         "variables": {
-          "representations": [
+          "__mesh_representations": [
             {
               "__typename": "Product",
               "upc": "1",
@@ -560,8 +560,8 @@ exports[`should consistently explain the query plan 1`] = `
         },
       },
       {
-        "query": "query TestQuery($representations: [_Any!]!) {
-  _entities(representations: $representations) {
+        "query": "query TestQuery($__mesh_nxt: [_Any!]!) {
+  _entities(representations: $__mesh_nxt) {
     ... on User {
       __typename
       reviews {
@@ -647,7 +647,7 @@ exports[`should consistently explain the query plan 1`] = `
 }",
         "subgraphName": "reviews",
         "variables": {
-          "representations": [
+          "__mesh_representations": [
             {
               "__typename": "User",
               "id": "1",
@@ -672,8 +672,8 @@ exports[`should consistently explain the query plan 1`] = `
         },
       },
       {
-        "query": "query TestQuery($representations: [_Any!]!) {
-  _entities(representations: $representations) {
+        "query": "query TestQuery($__mesh_nxt: [_Any!]!) {
+  _entities(representations: $__mesh_nxt) {
     ... on User {
       __typename
       username
@@ -683,7 +683,7 @@ exports[`should consistently explain the query plan 1`] = `
 }",
         "subgraphName": "accounts",
         "variables": {
-          "representations": [
+          "__mesh_representations": [
             {
               "__typename": "User",
               "id": "1",

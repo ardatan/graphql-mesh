@@ -223,12 +223,34 @@ export interface MergedTypeResolverOptions<K = any, V = any> {
 
 export type OverrideHandler = (context: any, info: GraphQLResolveInfo) => boolean;
 
+/**
+ * Federation join v0.5 `@join__field(contextArguments:)` entry. The public
+ * API schema omits the argument; the subgraph still receives it, filled from
+ * the nearest `@context` ancestor at execute time.
+ */
+export interface MergedFieldContextArgument {
+  /** Subgraph argument name (e.g. `code`). */
+  name: string;
+  /** GraphQL input type string (e.g. `String`). */
+  type: string;
+  /** Context name as composed (`subgraph__localName`). */
+  context: string;
+  /** Context selection relative to the provider (e.g. ` { currency }`). */
+  selection: string;
+}
+
 export interface MergedFieldConfig {
   selectionSet?: string;
   computed?: boolean;
   canonical?: boolean;
   provides?: SelectionSetNode;
   override?: OverrideHandler;
+  /**
+   * Federation `@fromContext` args preserved from join `contextArguments`.
+   * When set, the stitch backbone plans a separate entity hop and injects
+   * values from the nearest matching `@context` ancestor.
+   */
+  contextArguments?: MergedFieldContextArgument[];
 }
 
 export type MergedTypeResolver<TContext = Record<string, any>> = (
@@ -260,6 +282,11 @@ export interface StitchingInfo<TContext = Record<string, any>> {
    * nodes for these.
    */
   localFields: Map<string, Set<string>>;
+  /**
+   * Federation `@context(name:)` providers on the supergraph: composed context
+   * name (`subgraph__localName`) → type names that set that context.
+   */
+  contextProviders?: Record<string, string[]>;
 }
 
 export interface ExternalObject<TContext = Record<string, any>> {

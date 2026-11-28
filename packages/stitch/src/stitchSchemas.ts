@@ -60,6 +60,9 @@ export function stitchSchemas<TContext extends Record<string, any> = Record<stri
     resolverValidationOptions = {},
     updateResolversInPlace = true,
     schemaExtensions,
+    contextProviders: contextProvidersOption,
+    overrideLabels: overrideLabelsOption,
+    handleProgressiveOverride: handleProgressiveOverrideOption,
     ...rest
   } = options;
   let {
@@ -156,10 +159,22 @@ export function stitchSchemas<TContext extends Record<string, any> = Record<stri
     applyExtensions(schema, mergedSchemaExtensions);
   }
 
-  // Backbone executor + root proxying resolvers on the stitched schema.
-  // Callers that mapSchema afterward (e.g. federation filter) must re-attach
-  // on the new instance.
-  return attachBackboneExecutor(schema);
+  if (contextProvidersOption && schema.extensions?.stitchingInfo) {
+    (
+      schema.extensions.stitchingInfo as { contextProviders?: Record<string, string[]> }
+    ).contextProviders = contextProvidersOption;
+  }
+
+  // Root proxies + per-schema WeakMap executor record (gateway direct execute).
+  // Progressive-override inputs are closed over here — not stored on shared
+  // stitchingInfo. Identity / filter mapSchema keeps root proxies; no re-attach
+  // is required for stock graphql-js execute.
+  return attachBackboneExecutor(schema, {
+    ...(overrideLabelsOption != null ? { overrideLabels: overrideLabelsOption } : {}),
+    ...(handleProgressiveOverrideOption != null
+      ? { handleProgressiveOverride: handleProgressiveOverrideOption }
+      : {}),
+  });
 }
 
 function stripCustomDirectiveUsages(types: GraphQLNamedType[]): void {

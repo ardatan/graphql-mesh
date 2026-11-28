@@ -12,6 +12,55 @@ import type { Subschema } from '@graphql-tools/delegate';
 export type PathSegment = string | number;
 
 /**
+ * One segment of a Federation context rewrite path after `Parent` depth is
+ * peeled off. Sibling type-conditioned fragments become `Alternatives` so
+ * evaluation picks the branch that matches the provider typename.
+ */
+export type StitchContextPathSegment =
+  | {
+      Key: string;
+      /**
+       * Concrete response key to read when a context bridge was injected under
+       * an alias (`__mesh_ctx_currency_2`). Omit to use `Key` / bare bridge
+       * fallback.
+       */
+      ResponseKey?: string;
+    }
+  | { TypenameEquals: string[] }
+  | { Alternatives: StitchContextPathSegment[][] };
+
+/**
+ * How to fill one `@fromContext` argument on an entity Fetch from an ancestor
+ * in the in-flight response (Federation join `contextArguments`).
+ */
+export interface StitchContextArgument {
+  /** Field that owns the `@fromContext` argument (e.g. `amount`). */
+  fieldName: string;
+  /** Subgraph argument name. */
+  argName: string;
+  /** Variable name in the subgraph operation (e.g. `__context_0`). */
+  variableName: string;
+  /** GraphQL input type string for the variable. */
+  type: string;
+  /** How many object parents to walk up from the entity (from a representative path). */
+  parentDepth: number;
+  /**
+   * Types that provide this context (`@context` providers). Execute walks
+   * ancestors per entity to the nearest provider so coalesced multi-path
+   * Fetches still resolve the correct depth.
+   */
+  providerTypeNames: string[];
+  /** Selection from that ancestor (`Key` / `TypenameEquals` / `Alternatives`). */
+  selectionPath: StitchContextPathSegment[];
+  /**
+   * Concrete / inline-fragment type this rewrite was collected under. Distinct
+   * typed branches under one covering Fetch (e.g. `... on Sale` vs `... on
+   * Refund`) keep separate bindings; aliases within one type still share.
+   */
+  typeCondition?: string;
+}
+
+/**
  * One variable predicate inside a `runIf` AND-group.
  */
 export interface StitchRunIfClause {
@@ -44,6 +93,8 @@ export interface StitchBatchAlias {
   representationsVariable?: string;
   /** Per-alias `@skip`/`@include` gate; off aliases send no representations. */
   runIf?: StitchRunIf;
+  /** Federation `@fromContext` args for this alias's entity selection. */
+  contextArguments?: StitchContextArgument[];
 }
 
 /**
@@ -86,6 +137,11 @@ export type StitchPlanNode =
        */
       document?: DocumentNode;
       /**
+       * Merge-arg variable name chosen by preparePlanDocuments (avoids client
+       * `$__mesh_nxt` collisions). Raw execute paths must use this name.
+       */
+      mergeVariableName?: string;
+      /**
        * When set, hop runs only if any DNF AND-group matches `variableValues`.
        * Used for root `@skip`/`@include` instead of Condition nodes.
        */
@@ -95,6 +151,11 @@ export type StitchPlanNode =
        * Execute may copy by representation hash and skip HTTP.
        */
       reuseFrom?: string[];
+      /**
+       * Federation `@fromContext` args for this entity hop. Execute groups
+       * entities by distinct context values and injects them as variables.
+       */
+      contextArguments?: StitchContextArgument[];
     }
   | {
       kind: 'BatchFetch';
@@ -113,6 +174,8 @@ export type StitchPlanNode =
       /** Hop-level gate (DNF); also checked before any alias work. */
       runIf?: StitchRunIf;
       reuseFrom?: string[];
+      /** Per-batch hop context args (applied when aliases share grouping). */
+      contextArguments?: StitchContextArgument[];
     }
   | {
       kind: 'Island';
@@ -174,31 +237,22 @@ export interface StitchPlan {
 }
 
 /**
- * Static options for `createBackboneExecutor` / plan-cache keying.
- * Per-request GraphQL context is NOT an option - it comes from
- * `ExecutionRequest.context` and is passed into `buildStitchPlan` per call.
+ * Per-call inputs for `buildStitchPlan`. Progressive-override fields are
+ * closed over by `createBackboneExecutor` and passed through here.
+ * Per-request GraphQL context comes from `ExecutionRequest.context`, never a
+ * constructor opt.
  */
-export interface BackboneExecutorOptions {
+export interface BuildStitchPlanOptions {
   /**
    * Progressive override label handler (gateway `progressiveOverride`).
    * Used for plan-cache keying when `overrideLabels` is also set.
-   * Persisted on `schema.extensions` so a post-`mapSchema` re-attach needs
-   * no options bag.
    */
   handleProgressiveOverride?: (label: string, context: any) => boolean | Promise<boolean>;
   /**
    * Known progressive-override labels from the supergraph. Combined with
    * `handleProgressiveOverride` + request context to cache plans per enabled set.
-   * Falls back to `schema.extensions.overrideLabels` when omitted.
    */
   overrideLabels?: Iterable<string>;
-}
-
-/** `schema.extensions` key for last-attached {@link BackboneExecutorOptions}. */
-export const BACKBONE_EXECUTOR_OPTIONS_EXTENSION = 'backboneExecutorOptions';
-
-/** Per-call inputs for `buildStitchPlan` (static opts + request context). */
-export interface BuildStitchPlanOptions extends BackboneExecutorOptions {
   /**
    * Request GraphQL context - progressive override / delegationPlanBuilder
    * during planning. From `ExecutionRequest.context`, never a constructor opt.

@@ -19,6 +19,7 @@ import {
   buildBatchedMergeDocument,
   getBatchedMergeEntry,
   inferMergeArgName,
+  mergeVariableName,
 } from './mergeEntry.js';
 import type { StitchBatchAlias, StitchPlanNode } from './types.js';
 
@@ -447,6 +448,14 @@ export function preparePlanDocuments(
       fieldNodesByField,
     );
     const entry = getBatchedMergeEntry(root.subschema, root.entityTypeName);
+    const reservedVariableNames = new Set(
+      (operation.variableDefinitions ?? []).map(d => d.variable.name.value),
+    );
+    const argName = entry != null ? inferMergeArgName(entry.argsFromKeys) : null;
+    const mergeVar =
+      entry != null && argName != null
+        ? mergeVariableName(argName, reservedVariableNames)
+        : undefined;
     const document =
       entry != null
         ? (buildBatchedMergeDocument(
@@ -459,11 +468,13 @@ export function preparePlanDocuments(
               },
             ],
             operation.name,
+            reservedVariableNames,
           ) ?? undefined)
         : undefined;
     return {
       ...root,
       document,
+      ...(mergeVar ? { mergeVariableName: mergeVar } : {}),
     };
   }
   if (root.kind === 'BatchFetch') {
@@ -493,9 +504,13 @@ export function preparePlanDocuments(
           e.fieldName === first.fieldName &&
           inferMergeArgName(e.argsFromKeys) === argName,
       );
+    const reservedVariableNames = new Set(
+      (operation.variableDefinitions ?? []).map(d => d.variable.name.value),
+    );
+    const mergeVar = canBatchDoc ? mergeVariableName(argName!, reservedVariableNames) : undefined;
     const aliases: StitchBatchAlias[] = filteredAliases.map(a => ({
       ...a,
-      representationsVariable: canBatchDoc ? argName! : undefined,
+      representationsVariable: mergeVar,
     }));
     const document = canBatchDoc
       ? (buildBatchedMergeDocument(
@@ -506,6 +521,7 @@ export function preparePlanDocuments(
             selectionSet: a.selectionSet,
           })),
           operation.name,
+          reservedVariableNames,
         ) ?? undefined)
       : undefined;
     return {

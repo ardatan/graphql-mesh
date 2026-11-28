@@ -21,6 +21,7 @@ import {
   type EnumValueDefinitionNode,
   type FieldDefinitionNode,
   type FieldNode,
+  type GraphQLFieldConfig,
   type GraphQLFieldResolver,
   type GraphQLInterfaceType,
   type GraphQLOutputType,
@@ -50,18 +51,17 @@ import {
   UNPATHED_ERRORS_SYMBOL,
   type BatchingOptions,
   type MergedFieldConfig,
+  type MergedFieldContextArgument,
   type MergedTypeConfig,
+  type StitchingInfo,
   type SubschemaConfig,
   type Transform,
 } from '@graphql-tools/delegate';
 import { CRITICAL_ERROR } from '@graphql-tools/executor';
 import { buildHTTPExecutor, type HTTPExecutorOptions } from '@graphql-tools/executor-http';
 import {
-  attachBackboneExecutor,
   calculateSelectionScore,
   getDefaultFieldConfigMerger,
-  markChangedRootResolvesAsLocal,
-  snapshotRootFieldResolves,
   stitchSchemas,
   ValidationLevel,
   type MergeFieldConfigCandidate,
@@ -75,7 +75,6 @@ import {
   parseSelectionSet,
   type ASTVisitorKeyMap,
   type Executor,
-  type SchemaExtensions,
 } from '@graphql-tools/utils';
 import { handleMaybePromise, isPromise } from '@whatwg-node/promise-helpers';
 import {
@@ -197,6 +196,13 @@ export function getStitchingOptionsFromSupergraphSdl(
   const subgraphTypesMap = new Map<string, TypeDefinitionNode[]>();
   const typeNameKeysBySubgraphMap = new Map<string, Map<string, Set<string>>>();
   const typeNameFieldsKeyBySubgraphMap = new Map<string, Map<string, Map<string, string>>>();
+  /** Subgraph → type → field → join `contextArguments` (@fromContext). */
+  const typeNameContextArgsBySubgraphMap = new Map<
+    string,
+    Map<string, Map<string, MergedFieldContextArgument[]>>
+  >();
+  /** Composed context name (`subgraph__local`) → provider type names. */
+  const contextProviders: Record<string, string[]> = Object.create(null);
   const typeNameCanonicalMap = new Map<string, string>();
   const subgraphTypeNameProvidedMap = new Map<string, Map<string, Set<string>>>();
   const subgraphTypeNameFieldProvidedSelectionMap = new Map<
@@ -294,6 +300,23 @@ export function getStitchingOptionsFromSupergraphSdl(
   });
   // END TODO
   function TypeWithFieldsVisitor(typeNode: ObjectTypeDefinitionNode | InterfaceTypeDefinitionNode) {
+    // Federation `@context(name:)` composes onto the supergraph (context spec).
+    // Record providers so the stitch backbone can resolve `@fromContext`.
+    for (const directiveNode of typeNode.directives ?? []) {
+      if (directiveNode.name.value !== 'context') {
+        continue;
+      }
+      const nameArg = directiveNode.arguments?.find(
+        argumentNode => argumentNode.name.value === 'name',
+      );
+      if (nameArg?.value?.kind === Kind.STRING && nameArg.value.value) {
+        const contextName = nameArg.value.value;
+        const providers = contextProviders[contextName] ?? (contextProviders[contextName] = []);
+        if (!providers.includes(typeNode.name.value)) {
+          providers.push(typeNode.name.value);
+        }
+      }
+    }
     // TODO: Temporary fix to add missing join__type directives to Query
     // Use a local directives list so we never mutate the caller's supergraph AST.
     let typeNodeDirectives = typeNode.directives;
@@ -391,13 +414,43 @@ export function getStitchingOptionsFromSupergraphSdl(
                   const typeArg = joinFieldDirectiveNode.arguments?.find(
                     argumentNode => argumentNode.name.value === 'type',
                   );
-                  const typeNode =
+                  const fieldTypeNode =
                     typeArg?.value.kind === Kind.STRING
                       ? parseType(typeArg.value.value)
                       : fieldNode.type;
+                  // Public API omits `@fromContext` args; re-add them on the
+                  // subgraph field so entity fetches can pass the values.
+                  const contextArguments = parseJoinContextArguments(joinFieldDirectiveNode);
+                  const subgraphArgs: InputValueDefinitionNode[] = [
+                    ...((fieldNode.arguments as InputValueDefinitionNode[] | undefined) ?? []),
+                  ];
+                  if (contextArguments?.length) {
+                    for (const ca of contextArguments) {
+                      if (subgraphArgs.some(a => a.name.value === ca.name)) {
+                        continue;
+                      }
+                      subgraphArgs.push({
+                        kind: Kind.INPUT_VALUE_DEFINITION,
+                        name: { kind: Kind.NAME, value: ca.name },
+                        type: parseType(ca.type),
+                      });
+                    }
+                    let typeContextMap = typeNameContextArgsBySubgraphMap.get(graphName);
+                    if (!typeContextMap) {
+                      typeContextMap = new Map();
+                      typeNameContextArgsBySubgraphMap.set(graphName, typeContextMap);
+                    }
+                    let fieldContextMap = typeContextMap.get(typeNode.name.value);
+                    if (!fieldContextMap) {
+                      fieldContextMap = new Map();
+                      typeContextMap.set(typeNode.name.value, fieldContextMap);
+                    }
+                    fieldContextMap.set(fieldNode.name.value, contextArguments);
+                  }
                   fieldDefinitionNodesOfSubgraph.push({
                     ...fieldNode,
-                    type: typeNode,
+                    type: fieldTypeNode,
+                    arguments: subgraphArgs,
                     directives: filterDirectivesByGraph(graphName, fieldNode.directives, [
                       'join__field',
                     ]),
@@ -789,6 +842,21 @@ export function getStitchingOptionsFromSupergraphSdl(
     },
     InterfaceTypeDefinition: TypeWithFieldsVisitor,
     UnionTypeDefinition(node) {
+      for (const directiveNode of node.directives ?? []) {
+        if (directiveNode.name.value !== 'context') {
+          continue;
+        }
+        const nameArg = directiveNode.arguments?.find(
+          argumentNode => argumentNode.name.value === 'name',
+        );
+        if (nameArg?.value?.kind === Kind.STRING && nameArg.value.value) {
+          const contextName = nameArg.value.value;
+          const providers = contextProviders[contextName] ?? (contextProviders[contextName] = []);
+          if (!providers.includes(node.name.value)) {
+            providers.push(node.name.value);
+          }
+        }
+      }
       let isOrphan = true;
       node.directives?.forEach(directiveNode => {
         if (directiveNode.name.value === 'join__type') {
@@ -1309,6 +1377,42 @@ export function getStitchingOptionsFromSupergraphSdl(
           fieldsConfig[fieldName] = {
             ...existing,
             provides: selectionSet,
+          };
+        }
+      }
+    }
+    const typeNameContextArgsMap = typeNameContextArgsBySubgraphMap.get(subgraphName);
+    if (typeNameContextArgsMap) {
+      for (const [typeName, fieldContextMap] of typeNameContextArgsMap) {
+        const mergedTypeConfig: MergedTypeConfig = (mergeConfig[typeName] ||= {});
+        const fieldsConfig: Record<string, MergedFieldConfig> = (mergedTypeConfig.fields ||= {});
+        for (const [fieldName, contextArguments] of fieldContextMap) {
+          // Prefer a conflict-group field config that already owns this field
+          // (requires-with-argument split); otherwise attach to the main config.
+          let attached = false;
+          for (const pending of pendingConflictSubschemaConfigs) {
+            const pendingFields = pending.mergeTypeConfig.fields;
+            if (pending.typeName !== typeName || !pendingFields?.[fieldName]) {
+              continue;
+            }
+            const existing = pendingFields[fieldName]!;
+            pendingFields[fieldName] = {
+              ...existing,
+              computed: existing.computed ?? true,
+              contextArguments,
+            };
+            attached = true;
+            break;
+          }
+          if (attached) {
+            continue;
+          }
+          const existing = fieldsConfig[fieldName] ?? {};
+          fieldsConfig[fieldName] = {
+            ...existing,
+            // Force a separate entity hop after the ancestor context is fetched.
+            computed: existing.computed ?? true,
+            contextArguments,
           };
         }
       }
@@ -1955,6 +2059,39 @@ export function getStitchingOptionsFromSupergraphSdl(
   }
 
   const defaultMerger = getDefaultFieldConfigMerger(true);
+  /** Public API must not expose `@fromContext` args (join keeps them on the subgraph field only). */
+  function stripContextualArgsFromFieldConfig(
+    typeName: string,
+    fieldName: string,
+    fieldConfig: GraphQLFieldConfig<any, any>,
+  ): GraphQLFieldConfig<any, any> {
+    if (!fieldConfig.args) {
+      return fieldConfig;
+    }
+    const contextualArgNames = new Set<string>();
+    for (const typeMap of typeNameContextArgsBySubgraphMap.values()) {
+      const fieldMap = typeMap.get(typeName);
+      const contextArguments = fieldMap?.get(fieldName);
+      if (!contextArguments?.length) {
+        continue;
+      }
+      for (const ca of contextArguments) {
+        contextualArgNames.add(ca.name);
+      }
+    }
+    if (!contextualArgNames.size) {
+      return fieldConfig;
+    }
+    let changed = false;
+    const nextArgs: typeof fieldConfig.args = { ...fieldConfig.args };
+    for (const name of contextualArgNames) {
+      if (Object.prototype.hasOwnProperty.call(nextArgs, name)) {
+        delete nextArgs[name];
+        changed = true;
+      }
+    }
+    return changed ? { ...fieldConfig, args: nextArgs } : fieldConfig;
+  }
   const fieldConfigMerger: TypeMergingOptions['fieldConfigMerger'] = function (
     candidates: MergeFieldConfigCandidate[],
   ) {
@@ -1963,7 +2100,11 @@ export function getStitchingOptionsFromSupergraphSdl(
       candidates.some(candidate => candidate.fieldName === '_entities')
     ) {
       if (candidates[0]) {
-        return candidates[0].fieldConfig;
+        return stripContextualArgsFromFieldConfig(
+          candidates[0].type.name,
+          candidates[0].fieldName,
+          candidates[0].fieldConfig,
+        );
       }
     }
     let operationType: OperationTypeNode | undefined;
@@ -2142,18 +2283,26 @@ export function getStitchingOptionsFromSupergraphSdl(
         return mergeResults(jobs, getFieldNames);
       };
       if (operationType === 'subscription') {
-        return {
-          ...defaultMergedField,
-          subscribe: mergedResolver,
-          resolve: function identityFn(payload) {
-            return payload;
+        return stripContextualArgsFromFieldConfig(
+          candidates[0]!.type.name,
+          candidates[0]!.fieldName,
+          {
+            ...defaultMergedField,
+            subscribe: mergedResolver,
+            resolve: function identityFn(payload) {
+              return payload;
+            },
           },
-        };
+        );
       }
-      return {
-        ...defaultMergedField,
-        resolve: mergedResolver,
-      };
+      return stripContextualArgsFromFieldConfig(
+        candidates[0]!.type.name,
+        candidates[0]!.fieldName,
+        {
+          ...defaultMergedField,
+          resolve: mergedResolver,
+        },
+      );
     }
     const filteredCandidates = candidates.filter(candidate => {
       const fieldASTMap = typeFieldASTMap.get(candidate.type.name);
@@ -2167,7 +2316,11 @@ export function getStitchingOptionsFromSupergraphSdl(
       }
       return false;
     });
-    return defaultMerger(filteredCandidates.length ? filteredCandidates : candidates);
+    const merged = defaultMerger(filteredCandidates.length ? filteredCandidates : candidates);
+    const sample = candidates[0];
+    return sample
+      ? stripContextualArgsFromFieldConfig(sample.type.name, sample.fieldName, merged)
+      : merged;
   };
 
   function doesFieldExistInSupergraph(typeName: string, fieldName: string) {
@@ -2242,15 +2395,7 @@ export function getStitchingOptionsFromSupergraphSdl(
       opts.onSubschemaConfig(subschema as FederationSubschemaConfig);
     }
   }
-  let schemaExtensions: SchemaExtensions | undefined;
-  if (overrideLabels.size) {
-    schemaExtensions = {
-      schemaExtensions: {
-        overrideLabels,
-      },
-      types: {},
-    };
-  }
+  const hasContextProviders = Object.keys(contextProviders).length > 0;
 
   return {
     subschemas,
@@ -2264,38 +2409,124 @@ export function getStitchingOptionsFromSupergraphSdl(
       },
       fieldConfigMerger,
     },
-    schemaExtensions,
+    ...(hasContextProviders ? { contextProviders } : {}),
+    ...(overrideLabels.size ? { overrideLabels } : {}),
+    ...(opts.handleProgressiveOverride
+      ? {
+          handleProgressiveOverride: (label: string, context: any) =>
+            opts.handleProgressiveOverride!(label, context, undefined as any),
+        }
+      : {}),
   };
 }
 
 export interface GetStitchedSchemaFromSupergraphSdlOpts extends GetStitchingOptionsFromSupergraphSdlOpts {
   supergraphSdl: string | DocumentNode;
   onStitchingOptions?(opts: ReturnType<typeof getStitchingOptionsFromSupergraphSdl>): void;
-  onStitchedSchema?(schema: GraphQLSchema): GraphQLSchema | void;
 }
 
 export function getStitchedSchemaFromSupergraphSdl(opts: GetStitchedSchemaFromSupergraphSdlOpts) {
   const stitchSchemasOpts = getStitchingOptionsFromSupergraphSdl(opts);
   opts.onStitchingOptions?.(stitchSchemasOpts);
   let supergraphSchema = stitchSchemas(stitchSchemasOpts);
-  // filterInternalFieldsAndTypes mapSchema -> new schema; re-bind backbone.
-  supergraphSchema = filterInternalFieldsAndTypes(supergraphSchema);
-  if (opts.onStitchedSchema) {
-    const rootResolvesBefore = snapshotRootFieldResolves(supergraphSchema);
-    supergraphSchema = opts.onStitchedSchema(supergraphSchema) || supergraphSchema;
-    // Late root resolver overrides (Query.me -> local) must plan as Islands.
-    markChangedRootResolvesAsLocal(supergraphSchema, rootResolvesBefore);
+  // Subgraph schemas keep `@fromContext` args for entity documents; strip them
+  // from the public gateway schema (join SDL never exposes them). Root proxies
+  // installed by stitchSchemas survive this mapSchema (same field configs).
+  // Filter / shared info.schema backbone wiring is #9896 (GM-81); no re-attach.
+  supergraphSchema = stripContextualArgsFromPublicSchema(supergraphSchema);
+  return filterInternalFieldsAndTypes(supergraphSchema);
+}
+
+/**
+ * Remove `@fromContext` args from the public gateway schema while leaving them
+ * on reconstructed subgraph schemas used for entity `_entities` documents.
+ */
+function stripContextualArgsFromPublicSchema(schema: GraphQLSchema): GraphQLSchema {
+  const stitchingInfo = schema.extensions?.stitchingInfo as StitchingInfo | undefined;
+  if (!stitchingInfo?.subschemaMap) {
+    return schema;
   }
-  // Persist progressive-override plan-cache opts on schema.extensions so a
-  // later mapSchema + bare re-attach (e.g. filterInternalFieldsAndTypes) needs
-  // no options bag.
-  return attachBackboneExecutor(supergraphSchema, {
-    // Plan-cache keying only needs label + context; federation's handler also
-    // accepts resolve info when used as a field override callback.
-    handleProgressiveOverride: opts.handleProgressiveOverride
-      ? (label, context) => opts.handleProgressiveOverride!(label, context, undefined as any)
-      : undefined,
+  const stripMap = new Map<string, Map<string, Set<string>>>();
+  for (const sub of stitchingInfo.subschemaMap.values()) {
+    if (!sub.merge) {
+      continue;
+    }
+    for (const typeName in sub.merge) {
+      const fields = sub.merge[typeName]?.fields;
+      if (!fields) {
+        continue;
+      }
+      for (const fieldName in fields) {
+        const contextArguments = fields[fieldName]?.contextArguments;
+        if (!contextArguments?.length) {
+          continue;
+        }
+        let fieldMap = stripMap.get(typeName);
+        if (!fieldMap) {
+          fieldMap = new Map();
+          stripMap.set(typeName, fieldMap);
+        }
+        let names = fieldMap.get(fieldName);
+        if (!names) {
+          names = new Set();
+          fieldMap.set(fieldName, names);
+        }
+        for (const ca of contextArguments) {
+          names.add(ca.name);
+        }
+      }
+    }
+  }
+  if (!stripMap.size) {
+    return schema;
+  }
+  return mapSchema(schema, {
+    [MapperKind.OBJECT_FIELD]: (fieldConfig, fieldName, typeName) => {
+      const names = stripMap.get(typeName)?.get(fieldName);
+      if (!names?.size || !fieldConfig.args) {
+        return fieldConfig;
+      }
+      const nextArgs: typeof fieldConfig.args = { ...fieldConfig.args };
+      let changed = false;
+      for (const name of names) {
+        if (Object.prototype.hasOwnProperty.call(nextArgs, name)) {
+          delete nextArgs[name];
+          changed = true;
+        }
+      }
+      return changed ? { ...fieldConfig, args: nextArgs } : fieldConfig;
+    },
   });
+}
+
+/** Parse join v0.5 `@join__field(contextArguments: [...])` into merge field metadata. */
+function parseJoinContextArguments(
+  joinFieldDirectiveNode: DirectiveNode,
+): MergedFieldContextArgument[] | undefined {
+  const arg = joinFieldDirectiveNode.arguments?.find(
+    argumentNode => argumentNode.name.value === 'contextArguments',
+  );
+  if (arg?.value?.kind !== Kind.LIST) {
+    return undefined;
+  }
+  const result: MergedFieldContextArgument[] = [];
+  for (const item of arg.value.values) {
+    if (item.kind !== Kind.OBJECT) {
+      continue;
+    }
+    const readString = (fieldName: string): string | undefined => {
+      const field = item.fields.find(f => f.name.value === fieldName);
+      return field?.value.kind === Kind.STRING ? field.value.value : undefined;
+    };
+    const name = readString('name');
+    const type = readString('type');
+    const context = readString('context');
+    const selection = readString('selection');
+    if (name && type && context && selection != null) {
+      result.push({ name, type, context, selection });
+    }
+  }
+  return result.length ? result : undefined;
 }
 
 const anyTypeDefinitionNode: ScalarTypeDefinitionNode = {
