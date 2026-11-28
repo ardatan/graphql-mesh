@@ -3143,8 +3143,7 @@ function planRootField(
                 nestedFrag.selectionSet.selections,
                 fragments,
               ).filter(
-                fn =>
-                  fn.name.value !== '__typename' && !isFieldCovered(fn.name.value, nestedCond),
+                fn => fn.name.value !== '__typename' && !isFieldCovered(fn.name.value, nestedCond),
               );
               if (!nested.length) {
                 if (nestedCond !== returnType.name) {
@@ -3432,14 +3431,18 @@ export function buildStitchPlan(
     activeLabels != null ? { [OVERRIDE_LABELS_CONTEXT_KEY]: activeLabels } : undefined;
   try {
     return buildCompletePlan(schema, stitchingInfo, operation, fragments, {}, incompleteReasons);
-  } catch {
+  } catch (err) {
+    const reason =
+      err instanceof Error
+        ? `Plan build failed: ${err.message}`
+        : `Plan build failed: ${String(err)}`;
     return {
       operation,
       fragments,
       root: { kind: 'Parallel', nodes: [] },
       variableDefaults: collectVariableDefaults(operation),
       incomplete: true,
-      incompleteReasons: incompleteReasons.length ? incompleteReasons : ['Plan build failed'],
+      incompleteReasons: incompleteReasons.length ? incompleteReasons : [reason],
     };
   } finally {
     planningContext = previousPlanningContext;
@@ -5424,10 +5427,13 @@ function buildCompletePlan(
   // Wave fold: same dependsOn wave + same subgraph → one BatchFetch
   // (or covering Fetch). Runs after reuse so reuse edges affect wave layers.
   const folded = isMutation ? withReuse : foldSameWaveSubgraphFetches(withReuse, stitchingInfo);
+  // Deep recursive entity graphs (many-plans) can leave mutual dependsOn after
+  // fold; drop back-edges so the schedule stays a DAG.
+  const acyclic = stripDependsOnCycles(folded);
   // Prebuild hop documents at plan time (queries + mutations). For root
   // @skip/@include Condition, both branches get documents; execute only picks
   // the taken branch and binds variables / applies transforms — no rebuild.
-  const withDocs = preparePlanDocuments(folded, {
+  const withDocs = preparePlanDocuments(acyclic, {
     operation,
     fragments,
     fieldNodesByField: stitchingInfo.fieldNodesByField,
@@ -6059,6 +6065,171 @@ function hopCompletesIdList(hop: FoldableEntityHop): string[] {
 }
 
 /**
+ * Remove dependsOn edges that make the hop graph cyclic.
+ * Among a cycle, drop edges where an earlier hop waits on a later hop
+ * (annotate order); keep later→earlier so providers still gate consumers.
+ */
+function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
+  const hops: Array<
+    | Extract<StitchPlanNode, { kind: 'Fetch' }>
+    | Extract<StitchPlanNode, { kind: 'BatchFetch' }>
+    | Extract<StitchPlanNode, { kind: 'Island' }>
+  > = [];
+  collectExecutableHops(root, hops, {});
+  if (hops.length < 2) {
+    return root;
+  }
+  const idOwner = new Map<string, number>();
+  for (let i = 0; i < hops.length; i++) {
+    for (const id of hopCompletesIdList(hops[i]! as FoldableEntityHop)) {
+      if (!idOwner.has(id)) {
+        idOwner.set(id, i);
+      }
+    }
+    const hid = hops[i]!.id;
+    if (hid && !idOwner.has(hid)) {
+      idOwner.set(hid, i);
+    }
+  }
+
+  // Mutable adjacency: i waits on j.
+  const preds: number[][] = hops.map(() => []);
+  for (let i = 0; i < hops.length; i++) {
+    const deps = hops[i]!.dependsOn ?? [];
+    const seen = new Set<number>();
+    for (const d of deps) {
+      const j = idOwner.get(d);
+      if (j == null || j === i || seen.has(j)) {
+        continue;
+      }
+      seen.add(j);
+      preds[i]!.push(j);
+    }
+  }
+
+  const dropForHop = new Map<number, Set<number>>();
+  const markDrop = (from: number, to: number) => {
+    let set = dropForHop.get(from);
+    if (!set) {
+      set = new Set();
+      dropForHop.set(from, set);
+    }
+    set.add(to);
+    preds[from] = preds[from]!.filter(j => j !== to);
+  };
+
+  const stuckOf = (): number[] => {
+    const n = hops.length;
+    const waits = preds.map(p => p.length);
+    const dependents: number[][] = Array.from({ length: n }, () => []);
+    for (let i = 0; i < n; i++) {
+      for (const j of preds[i]!) {
+        dependents[j]!.push(i);
+      }
+    }
+    const queue: number[] = [];
+    for (let i = 0; i < n; i++) {
+      if (waits[i] === 0) {
+        queue.push(i);
+      }
+    }
+    let seen = 0;
+    const remaining = waits.slice();
+    while (queue.length) {
+      const i = queue.pop()!;
+      seen++;
+      for (const d of dependents[i]!) {
+        remaining[d]!--;
+        if (remaining[d] === 0) {
+          queue.push(d);
+        }
+      }
+    }
+    if (seen === n) {
+      return [];
+    }
+    const stuck: number[] = [];
+    for (let i = 0; i < n; i++) {
+      if (remaining[i]! > 0) {
+        stuck.push(i);
+      }
+    }
+    return stuck;
+  };
+
+  // Iteratively break SCCs: among stuck hops, drop earlier→later edges first.
+  for (let guard = 0; guard < hops.length * hops.length; guard++) {
+    const stuck = stuckOf();
+    if (!stuck.length) {
+      break;
+    }
+    const stuckSet = new Set(stuck);
+    let removed = false;
+    // Prefer dropping earlier-waits-on-later (i < j).
+    for (const i of stuck) {
+      for (const j of preds[i]!) {
+        if (stuckSet.has(j) && i < j) {
+          markDrop(i, j);
+          removed = true;
+        }
+      }
+    }
+    if (!removed) {
+      // Fall back: drop any one edge inside the stuck set.
+      outer: for (const i of stuck) {
+        for (const j of preds[i]!) {
+          if (stuckSet.has(j)) {
+            markDrop(i, j);
+            removed = true;
+            break outer;
+          }
+        }
+      }
+    }
+    if (!removed) {
+      break;
+    }
+  }
+
+  if (!dropForHop.size) {
+    return root;
+  }
+
+  const rewrite = (node: StitchPlanNode): StitchPlanNode => {
+    if (node.kind === 'Fetch' || node.kind === 'BatchFetch' || node.kind === 'Island') {
+      const idx = hops.indexOf(node as (typeof hops)[number]);
+      const removePreds = idx >= 0 ? dropForHop.get(idx) : undefined;
+      let next: StitchPlanNode = node;
+      if (removePreds?.size && node.dependsOn?.length) {
+        const filtered = node.dependsOn.filter(d => {
+          const j = idOwner.get(d);
+          return j == null || !removePreds.has(j);
+        });
+        if (filtered.length !== node.dependsOn.length) {
+          next = { ...node, dependsOn: filtered };
+        }
+      }
+      if (next.kind === 'Island' && next.continue) {
+        return { ...next, continue: rewrite(next.continue) };
+      }
+      return next;
+    }
+    if (node.kind === 'Condition') {
+      return {
+        ...node,
+        ifClause: node.ifClause ? rewrite(node.ifClause) : undefined,
+        elseClause: node.elseClause ? rewrite(node.elseClause) : undefined,
+      };
+    }
+    if (node.kind === 'Sequence' || node.kind === 'Parallel') {
+      return { kind: node.kind, nodes: node.nodes.map(rewrite) };
+    }
+    return node;
+  };
+  return rewrite(root);
+}
+
+/**
  * Attach schedule metadata from a fold group onto the collapsed hop so
  * dependents still see every original completesId.
  */
@@ -6539,32 +6710,44 @@ function annotateEntityReuse(root: StitchPlanNode): StitchPlanNode {
       return [];
     }
     const needed = hop.selectionSet;
+    const selfIds = new Set(hop.completesIds?.length ? hop.completesIds : hop.id ? [hop.id] : []);
     const seen = new Set<string>();
     const out: string[] = [];
     const stack = [...(hop.dependsOn ?? [])];
     while (stack.length) {
       const id = stack.pop()!;
-      if (seen.has(id)) continue;
+      if (seen.has(id) || selfIds.has(id)) continue;
       seen.add(id);
       const src = byId.get(id);
-      if (!src) continue;
+      if (!src || src === hop) continue;
       for (const d of src.dependsOn ?? []) {
-        stack.push(d);
+        if (!selfIds.has(d)) {
+          stack.push(d);
+        }
       }
       if (src.kind === 'Fetch' && src.entityTypeName === hop.entityTypeName) {
         if (selectionCovers(src.selectionSet, needed)) {
-          out.push(src.id ?? id);
+          const srcId = src.id ?? id;
+          if (!selfIds.has(srcId)) {
+            out.push(srcId);
+          }
         }
       } else if (src.kind === 'Fetch' && src.rootField) {
         // Root may embed entity fields under flatten path - leaf cover only
         // when root selectionSet matches entity type fields directly.
         if (src.selectionSet && selectionCovers(src.selectionSet, needed)) {
-          out.push(src.id ?? id);
+          const srcId = src.id ?? id;
+          if (!selfIds.has(srcId)) {
+            out.push(srcId);
+          }
         }
       } else if (src.kind === 'BatchFetch') {
         for (const a of src.aliases) {
           if (a.entityTypeName === hop.entityTypeName && selectionCovers(a.selectionSet, needed)) {
-            out.push(src.id ?? id);
+            const srcId = src.id ?? id;
+            if (!selfIds.has(srcId)) {
+              out.push(srcId);
+            }
             break;
           }
         }
@@ -6579,14 +6762,19 @@ function annotateEntityReuse(root: StitchPlanNode): StitchPlanNode {
       if (!reuseFrom.length) {
         return node;
       }
+      const selfIds = new Set(
+        node.completesIds?.length ? node.completesIds : node.id ? [node.id] : [],
+      );
       const deps = new Set(node.dependsOn ?? []);
       for (const id of reuseFrom) {
-        deps.add(id);
+        if (!selfIds.has(id)) {
+          deps.add(id);
+        }
       }
       return {
         ...node,
-        reuseFrom,
-        dependsOn: [...deps],
+        reuseFrom: reuseFrom.filter(id => !selfIds.has(id)),
+        dependsOn: [...deps].filter(id => !selfIds.has(id)),
       };
     }
     if (node.kind === 'BatchFetch') {

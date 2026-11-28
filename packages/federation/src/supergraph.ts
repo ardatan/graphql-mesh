@@ -1645,6 +1645,8 @@ export function getStitchingOptionsFromSupergraphSdl(
     }
     let executor: Executor = buildHTTPExecutor({
       endpoint,
+      // Subgraph error extensions include request method/body (gateway backbone PR parity).
+      exposeHTTPDetailsInExtensions: true,
       ...httpExecutorOpts,
     });
     if (globalThis.process?.env?.DEBUG) {

@@ -37,14 +37,27 @@ function isPlainObject(value: object): boolean {
 
 /** Keep ExternalObject annotations across projection (aliases / entity hops). */
 function copyExternalObjectAnnotations(from: object, to: Record<string, any>): void {
+  const src = from as any;
   if (OBJECT_SUBSCHEMA_SYMBOL in from) {
-    to[OBJECT_SUBSCHEMA_SYMBOL] = (from as any)[OBJECT_SUBSCHEMA_SYMBOL];
+    Object.defineProperty(to, OBJECT_SUBSCHEMA_SYMBOL, {
+      value: src[OBJECT_SUBSCHEMA_SYMBOL],
+      writable: true,
+      configurable: true,
+    });
   }
   if (FIELD_SUBSCHEMA_MAP_SYMBOL in from) {
-    to[FIELD_SUBSCHEMA_MAP_SYMBOL] = (from as any)[FIELD_SUBSCHEMA_MAP_SYMBOL];
+    Object.defineProperty(to, FIELD_SUBSCHEMA_MAP_SYMBOL, {
+      value: src[FIELD_SUBSCHEMA_MAP_SYMBOL],
+      writable: true,
+      configurable: true,
+    });
   }
   if (UNPATHED_ERRORS_SYMBOL in from) {
-    to[UNPATHED_ERRORS_SYMBOL] = (from as any)[UNPATHED_ERRORS_SYMBOL];
+    Object.defineProperty(to, UNPATHED_ERRORS_SYMBOL, {
+      value: src[UNPATHED_ERRORS_SYMBOL],
+      writable: true,
+      configurable: true,
+    });
   }
 }
 

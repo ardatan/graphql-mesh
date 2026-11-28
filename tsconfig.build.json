@@ -13,6 +13,7 @@
     "**/scripts",
     "**/test/*.ts",
     "**/tests/*.ts",
+    "**/tests/**",
     "**/__tests__/**",
     "*.spec.ts",
     "*.test.ts",
