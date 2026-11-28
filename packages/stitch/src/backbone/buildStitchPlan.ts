@@ -3299,23 +3299,14 @@ export function buildStitchPlan(
   planningContext =
     activeLabels != null ? { [OVERRIDE_LABELS_CONTEXT_KEY]: activeLabels } : undefined;
   try {
-    return buildCompletePlan(
-      schema,
-      stitchingInfo,
-      operation,
-      fragments,
-      {},
-      incompleteReasons,
-    );
+    return buildCompletePlan(schema, stitchingInfo, operation, fragments, {}, incompleteReasons);
   } catch {
     return {
       operation,
       fragments,
       root: { kind: 'Parallel', nodes: [] },
       incomplete: true,
-      incompleteReasons: incompleteReasons.length
-        ? incompleteReasons
-        : ['Plan build failed'],
+      incompleteReasons: incompleteReasons.length ? incompleteReasons : ['Plan build failed'],
     };
   } finally {
     planningContext = previousPlanningContext;
