@@ -173,6 +173,8 @@ export function installRootProxyingResolvers(schema: GraphQLSchema, runBackbone:
             context,
             rootValue: root,
             operationName: info.operation.name?.value,
+            // Shared backboneExecutor plans against info.schema / stitchingInfo.
+            info,
           };
           // Sync backbone results stay sync (fakePromise) - no Promise.resolve
           // microtask. Share one MaybePromise across sibling root fields.

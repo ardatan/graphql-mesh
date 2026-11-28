@@ -35,6 +35,7 @@ import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { attachBackboneExecutor } from './backbone/attachBackboneExecutor.js';
 import { defaultMergedResolver as backboneDefaultMergedResolver } from './backbone/defaultMergedResolver.js';
 import { BACKBONE_EXECUTING } from './backbone/rootProxyingResolvers.js';
+import { filterInternalFieldsAndTypes } from './filterInternalFieldsAndTypes.js';
 import { resolveLocalFieldResult } from './resolveLocalFieldResult.js';
 import { addStitchingInfo, completeStitchingInfo, createStitchingInfo } from './stitchingInfo.js';
 import {
@@ -158,10 +159,12 @@ export function stitchSchemas<TContext extends Record<string, any> = Record<stri
     applyExtensions(schema, mergedSchemaExtensions);
   }
 
-  // Backbone executor + root proxying resolvers. Progressive-override inputs
-  // are closed over here — not stored on shared stitchingInfo. After filter
-  // mapSchema, call `retargetBackboneToSchema` (same runtime) instead of
-  // creating a new executor.
+  // Filter federation join internals before installing shared root proxies so
+  // the backbone binds once to the public schema (no retarget / re-attach).
+  schema = filterInternalFieldsAndTypes(schema);
+
+  // Shared backboneExecutor + root proxies. Progressive-override inputs live on
+  // schema.extensions; plan/locals are read from info.schema at execute time.
   return attachBackboneExecutor(schema, {
     ...(overrideLabelsOption != null ? { overrideLabels: overrideLabelsOption } : {}),
     ...(handleProgressiveOverrideOption != null

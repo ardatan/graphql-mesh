@@ -71,13 +71,13 @@ export interface IStitchSchemasOptions<TContext = Record<string, any>> extends O
   typeMergingOptions?: TypeMergingOptions<TContext>;
   subschemaConfigTransforms?: Array<SubschemaConfigTransform<TContext>>;
   /**
-   * Progressive-override labels closed over by `createBackboneExecutor`
-   * (not stored on shared `stitchingInfo`).
+   * Progressive-override labels stored on `schema.extensions` and read by the
+   * shared backbone executor from `info.schema` at plan time.
    */
   overrideLabels?: Iterable<string>;
   /**
-   * Progressive-override handler closed over by `createBackboneExecutor`
-   * for plan-cache keying.
+   * Progressive-override handler stored on `schema.extensions` and read by the
+   * shared backbone executor for plan-cache keying.
    */
   handleProgressiveOverride?: (label: string, context: any) => boolean | Promise<boolean>;
 }

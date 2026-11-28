@@ -4,19 +4,10 @@ import {
   type ConstDirectiveNode,
   type ConstObjectValueNode,
   type GraphQLResolveInfo,
-  type GraphQLSchema,
   type SelectionSetNode,
   type TypeNode,
 } from 'graphql';
-import {
-  getDirectiveExtensions,
-  MapperKind,
-  mapSchema,
-  memoize1,
-  mergeDeep,
-  parseSelectionSet,
-  type DirectableObject,
-} from '@graphql-tools/utils';
+import { memoize1, mergeDeep, parseSelectionSet } from '@graphql-tools/utils';
 
 export const getArgsFromKeysForFederation = memoize1(function getArgsFromKeysForFederation(
   representations: readonly any[],
@@ -167,91 +158,8 @@ export function getCacheKeyFnFromKey(key: string) {
   });
 }
 
-const INACCESSIBLE_SPEC_PREFIX = 'https://specs.apollo.dev/inaccessible';
-
-function resolveInaccessibleDirectiveName(schema: GraphQLSchema): string {
-  // getDirectiveExtensions already returns an array per directive name.
-  const schemaDirs = getDirectiveExtensions<{
-    link: { url?: string; import?: unknown };
-  }>(schema, schema);
-  const links = schemaDirs?.link;
-  if (Array.isArray(links)) {
-    for (const link of links) {
-      if (typeof link?.url === 'string' && link.url.startsWith(INACCESSIBLE_SPEC_PREFIX)) {
-        const imports = link.import;
-        if (Array.isArray(imports)) {
-          for (const item of imports) {
-            if (typeof item === 'string') {
-              const name = item.replace(/^@/, '');
-              if (name === 'inaccessible') {
-                return 'inaccessible';
-              }
-            } else if (item && typeof item === 'object') {
-              const name = String((item as any).name ?? '').replace(/^@/, '');
-              const as =
-                (item as any).as != null ? String((item as any).as).replace(/^@/, '') : name;
-              if (name === 'inaccessible') {
-                return as || 'inaccessible';
-              }
-            }
-          }
-        }
-        // Spec linked without an explicit import still uses @inaccessible.
-        return 'inaccessible';
-      }
-    }
-  }
-  return 'inaccessible';
-}
-
-function hasInaccessible(obj: DirectableObject, inaccessibleName: string) {
-  const dirs = getDirectiveExtensions(obj);
-  return dirs?.[inaccessibleName]?.length;
-}
-
-export function filterInternalFieldsAndTypes(finalSchema: GraphQLSchema) {
-  const inaccessibleName = resolveInaccessibleDirectiveName(finalSchema);
-  const internalTypeNameRegexp =
-    /^(?:_Entity|_Any|_FieldSet|_Service|link|inaccessible|(?:link__|join__|core__)[\w]*)$/;
-  return mapSchema(finalSchema, {
-    [MapperKind.DIRECTIVE]: directive => {
-      if (internalTypeNameRegexp.test(directive.name)) {
-        return null;
-      }
-      return directive;
-    },
-    [MapperKind.TYPE]: type => {
-      if (internalTypeNameRegexp.test(type.name) || hasInaccessible(type, inaccessibleName)) {
-        return null;
-      }
-      return type;
-    },
-    [MapperKind.FIELD]: fieldConfig => {
-      if (hasInaccessible(fieldConfig, inaccessibleName)) {
-        return null;
-      }
-      return fieldConfig;
-    },
-    [MapperKind.QUERY_ROOT_FIELD]: (fieldConfig, fieldName) => {
-      if (fieldName === '_entities' || hasInaccessible(fieldConfig, inaccessibleName)) {
-        return null;
-      }
-      return fieldConfig;
-    },
-    [MapperKind.ENUM_VALUE]: valueConfig => {
-      if (hasInaccessible(valueConfig, inaccessibleName)) {
-        return null;
-      }
-      return valueConfig;
-    },
-    [MapperKind.ARGUMENT]: argConfig => {
-      if (hasInaccessible(argConfig, inaccessibleName)) {
-        return null;
-      }
-      return argConfig;
-    },
-  });
-}
+/** @deprecated Import from `@graphql-tools/stitch` — filter runs inside `stitchSchemas`. */
+export { filterInternalFieldsAndTypes } from '@graphql-tools/stitch';
 
 export function getNamedTypeNode(typeNode: TypeNode) {
   if (typeNode.kind !== Kind.NAMED_TYPE) {

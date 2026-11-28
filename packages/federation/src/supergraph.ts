@@ -59,9 +59,6 @@ import { buildHTTPExecutor, type HTTPExecutorOptions } from '@graphql-tools/exec
 import {
   calculateSelectionScore,
   getDefaultFieldConfigMerger,
-  markChangedRootResolvesAsLocal,
-  retargetBackboneToSchema,
-  snapshotRootFieldResolves,
   stitchSchemas,
   ValidationLevel,
   type MergeFieldConfigCandidate,
@@ -82,7 +79,6 @@ import {
   createComplementaryPercentOverrideHandlers,
   extractPercentageFromLabel,
   filterDirectivesByGraph,
-  filterInternalFieldsAndTypes,
   getArgsFromKeysForFederation,
   getCacheKeyFnFromKey,
   getKeyFnForFederation,
@@ -2278,28 +2274,18 @@ export function getStitchingOptionsFromSupergraphSdl(
 export interface GetStitchedSchemaFromSupergraphSdlOpts extends GetStitchingOptionsFromSupergraphSdlOpts {
   supergraphSdl: string | DocumentNode;
   onStitchingOptions?(opts: ReturnType<typeof getStitchingOptionsFromSupergraphSdl>): void;
-  onStitchedSchema?(schema: GraphQLSchema): GraphQLSchema | void;
 }
 
+/**
+ * Build an executable stitched schema from Federation supergraph SDL.
+ * `stitchSchemas` filters join internals then installs shared backbone root
+ * proxies (plan/locals from `info.schema`). `onStitchedSchema` was removed —
+ * mutate via `onStitchingOptions` / resolvers before stitch completes.
+ */
 export function getStitchedSchemaFromSupergraphSdl(opts: GetStitchedSchemaFromSupergraphSdlOpts) {
   const stitchSchemasOpts = getStitchingOptionsFromSupergraphSdl(opts);
   opts.onStitchingOptions?.(stitchSchemasOpts);
-  let supergraphSchema = stitchSchemas(stitchSchemasOpts);
-  // filterInternalFieldsAndTypes mapSchema -> new schema. Retarget the same
-  // backbone executor (labels stay closed over) so getBackboneExecutor and
-  // Islands use this schema — no new executor / no stitchingInfo options bag.
-  supergraphSchema = filterInternalFieldsAndTypes(supergraphSchema);
-  supergraphSchema = retargetBackboneToSchema(supergraphSchema);
-  if (opts.onStitchedSchema) {
-    const rootResolvesBefore = snapshotRootFieldResolves(supergraphSchema);
-    supergraphSchema = opts.onStitchedSchema(supergraphSchema) || supergraphSchema;
-    // Late root resolver overrides (Query.me -> local) must plan as Islands.
-    markChangedRootResolvesAsLocal(supergraphSchema, rootResolvesBefore);
-    // Pick up overrides into the live runtime + reinstall proxies so Islands
-    // call getOriginalRootResolve (= override), not the pre-stitch resolver.
-    supergraphSchema = retargetBackboneToSchema(supergraphSchema);
-  }
-  return supergraphSchema;
+  return stitchSchemas(stitchSchemasOpts);
 }
 
 const anyTypeDefinitionNode: ScalarTypeDefinitionNode = {

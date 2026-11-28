@@ -1,13 +1,12 @@
 export {
   attachBackboneExecutor,
+  backboneExecutor,
+  createBackboneExecutor,
   getBackboneExecutor,
-  markChangedRootResolvesAsLocal,
-  retargetBackboneToSchema,
-  snapshotRootFieldResolves,
-} from './attachBackboneExecutor.js';
+  type BackboneAttachOptions,
+} from './createBackboneExecutor.js';
 export { defaultMergedResolver } from './defaultMergedResolver.js';
 export { buildStitchPlan } from './buildStitchPlan.js';
-export { createBackboneExecutor } from './createBackboneExecutor.js';
 export { executeStitchPlan } from './executeStitchPlan.js';
 export { isLocalField } from './localFields.js';
 export { projectDataToOperation } from './projectResult.js';

@@ -6,6 +6,7 @@ export {
 } from './createMergedTypeResolver.js';
 export { entryPointAppliesToParent } from './entryPointAppliesToParent.js';
 export { forwardArgsToSelectionSet } from './selectionSetArgs.js';
+export { filterInternalFieldsAndTypes } from './filterInternalFieldsAndTypes.js';
 
 export * from './subschemaConfigTransforms/index.js';
 export * from './types.js';
