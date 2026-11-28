@@ -17,12 +17,48 @@ import {
   isObjectType,
   Kind,
 } from 'graphql';
-import { getVariableValues } from '@graphql-tools/delegate';
-import { collectFields, getDefinedRootType, shouldIncludeNode } from '@graphql-tools/utils';
+import {
+  FIELD_SUBSCHEMA_MAP_SYMBOL,
+  getVariableValues,
+  OBJECT_SUBSCHEMA_SYMBOL,
+  UNPATHED_ERRORS_SYMBOL,
+} from '@graphql-tools/delegate';
+import {
+  collectFields,
+  getDefinedRootType,
+  isDangerousObjectKey,
+  shouldIncludeNode,
+} from '@graphql-tools/utils';
 
 function isPlainObject(value: object): boolean {
   const proto = Object.getPrototypeOf(value);
   return proto === Object.prototype || proto === null;
+}
+
+/** Keep ExternalObject annotations across projection (aliases / entity hops). */
+function copyExternalObjectAnnotations(from: object, to: Record<string, any>): void {
+  const src = from as any;
+  if (OBJECT_SUBSCHEMA_SYMBOL in from) {
+    Object.defineProperty(to, OBJECT_SUBSCHEMA_SYMBOL, {
+      value: src[OBJECT_SUBSCHEMA_SYMBOL],
+      writable: true,
+      configurable: true,
+    });
+  }
+  if (FIELD_SUBSCHEMA_MAP_SYMBOL in from) {
+    Object.defineProperty(to, FIELD_SUBSCHEMA_MAP_SYMBOL, {
+      value: src[FIELD_SUBSCHEMA_MAP_SYMBOL],
+      writable: true,
+      configurable: true,
+    });
+  }
+  if (UNPATHED_ERRORS_SYMBOL in from) {
+    Object.defineProperty(to, UNPATHED_ERRORS_SYMBOL, {
+      value: src[UNPATHED_ERRORS_SYMBOL],
+      writable: true,
+      configurable: true,
+    });
+  }
 }
 
 /**
@@ -50,6 +86,11 @@ export function projectDataToOperation(
   const projected: Record<string, any> = {};
   for (const [responseKey, fieldNodes] of fields) {
     if (!(responseKey in data)) {
+      continue;
+    }
+    // Drop prototype-polluting aliases (`constructor` / `__proto__` / …).
+    if (isDangerousObjectKey(responseKey)) {
+      projected[responseKey] = null;
       continue;
     }
     const fieldNode = fieldNodes[0]!;
@@ -138,7 +179,11 @@ function projectValue(
   if (!selectionSet.selections.length) {
     // Leaf field - return scalar/object as-is without __typename injection noise
     const { __typename: _t, ...rest } = value as Record<string, any>;
-    return Object.keys(rest).length ? rest : value;
+    if (Object.keys(rest).length) {
+      copyExternalObjectAnnotations(value, rest);
+      return rest;
+    }
+    return value;
   }
 
   // @interfaceObject responses may keep the interface name as __typename
@@ -156,6 +201,7 @@ function projectValue(
   }
   if (!objectType) {
     const { __typename: _t, ...rest } = value as Record<string, any>;
+    copyExternalObjectAnnotations(value, rest);
     return rest;
   }
 
@@ -168,6 +214,10 @@ function projectValue(
   );
   const projected: Record<string, any> = {};
   for (const [responseKey, nestedFieldNodes] of fields) {
+    if (isDangerousObjectKey(responseKey)) {
+      projected[responseKey] = null;
+      continue;
+    }
     const nestedFieldNode = nestedFieldNodes[0]!;
     if (nestedFieldNode.name.value === '__typename') {
       projected[responseKey] = value[responseKey] ?? value.__typename ?? objectType.name;
@@ -192,6 +242,23 @@ function projectValue(
       raw,
     );
   }
+  // Abstract parent fields need __typename for graphql-js resolveType even when
+  // the client selection only used inline fragments (no explicit __typename).
+  // Non-enumerable so JSON/direct-executor responses do not leak it when the
+  // client did not select `__typename`.
+  if (
+    isAbstractType(runtimeType) &&
+    typeof value.__typename === 'string' &&
+    !Object.prototype.hasOwnProperty.call(projected, '__typename')
+  ) {
+    Object.defineProperty(projected, '__typename', {
+      value: value.__typename,
+      enumerable: false,
+      configurable: true,
+      writable: true,
+    });
+  }
+  copyExternalObjectAnnotations(value, projected);
   return projected;
 }
 
@@ -216,6 +283,10 @@ function projectInterfaceObjectValue(
 
   const applyField = (fieldNode: FieldNode) => {
     const responseKey = fieldNode.alias?.value ?? fieldNode.name.value;
+    if (isDangerousObjectKey(responseKey)) {
+      projected[responseKey] = null;
+      return;
+    }
     if (fieldNode.name.value === '__typename') {
       projected[responseKey] = value.__typename ?? abstractType.name;
       return;
@@ -310,6 +381,7 @@ function projectInterfaceObjectValue(
       }
     }
   }
+  copyExternalObjectAnnotations(value, projected);
   return projected;
 }
 

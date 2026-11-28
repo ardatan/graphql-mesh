@@ -251,7 +251,8 @@ function finalizeGatewayDocument<TContext>(
                 return undefined;
               }
               const typeConfig = stitchingInfo?.mergedTypes?.[parentType.name];
-              const providedSelectionsByField = typeConfig?.providedSelectionsByField?.get(
+              const providedSelectionsByField = getProvidedSelectionsByField(
+                typeConfig,
                 delegationContext.subschema as Subschema,
               );
               const providedSelection = providedSelectionsByField?.[fieldNode.name.value];
@@ -641,6 +642,34 @@ function nextInlineFragmentPathSegment(
   return `inline:${typeName}:${idx}`;
 }
 
+/**
+ * Resolve `providedSelectionsByField` for a subschema. Prefer object identity;
+ * fall back to matching `subschema.name` so clone / transform wrappers still
+ * re-inject `@provides` fields (circular-reference-interface Book.price).
+ */
+function getProvidedSelectionsByField(
+  typeConfig: StitchingInfo['mergedTypes'][string] | undefined,
+  subschema: Subschema,
+): Record<string, SelectionSetNode> | undefined {
+  const map = typeConfig?.providedSelectionsByField;
+  if (!map) {
+    return undefined;
+  }
+  const direct = map.get(subschema);
+  if (direct) {
+    return direct;
+  }
+  if (!subschema.name) {
+    return undefined;
+  }
+  for (const [key, value] of map) {
+    if (key.name === subschema.name) {
+      return value;
+    }
+  }
+  return undefined;
+}
+
 function subschemaHasProvidedSelectionsImpl(
   stitchingInfo: StitchingInfo,
   subschema: Subschema,
@@ -650,7 +679,7 @@ function subschemaHasProvidedSelectionsImpl(
     return false;
   }
   for (const typeConfig of Object.values(mergedTypes)) {
-    if (typeConfig?.providedSelectionsByField?.has(subschema)) {
+    if (getProvidedSelectionsByField(typeConfig, subschema) != null) {
       return true;
     }
   }
@@ -662,21 +691,44 @@ function subschemaHasProvidedSelectionsImpl(
 // (schema, subschema) pair instead of per delegation.
 const subschemaHasProvidedSelections = memoize2(subschemaHasProvidedSelectionsImpl);
 
+/** Drop inline-fragment sibling indices so filtered docs still match originals. */
+function normalizeProvidesPath(path: string): string {
+  return path.replace(/inline:([^:>]+):\d+/g, 'inline:$1');
+}
+
 function lookupOriginalSelectionSet(
   pathStack: string[],
   fieldNode: { name: { value: string }; alias?: { value: string } | undefined },
   selectionSetsByPath: Map<string, SelectionSetNode>,
 ): SelectionSetNode | undefined {
-  const exact = selectionSetsByPath.get(pathStack.join('>'));
-  if (exact || !fieldNode.alias) {
+  const key = pathStack.join('>');
+  const exact = selectionSetsByPath.get(key);
+  if (exact) {
     return exact;
   }
   // Fallback: downstream transforms may rewrite the alias (for example to
   // `_nullable_<fieldName>` when reconciling overlapping nullable / non-null
   // selections). The collection step also indexes those selection sets under
   // the field's name so we can recover them here.
-  const fallback = [...pathStack.slice(0, -1), fieldNode.name.value].join('>');
-  return selectionSetsByPath.get(fallback);
+  if (fieldNode.alias) {
+    const fallback = [...pathStack.slice(0, -1), fieldNode.name.value].join('>');
+    const byName = selectionSetsByPath.get(fallback);
+    if (byName) {
+      return byName;
+    }
+  }
+  // Filtering may drop an earlier sibling inline fragment, shifting indices
+  // (`inline:Product:1` in the original map vs `inline:Product:0` on the
+  // rewritten document). Match on type name only so `@provides` still injects.
+  const normalized = normalizeProvidesPath(key);
+  if (normalized !== key) {
+    for (const [path, ss] of selectionSetsByPath) {
+      if (normalizeProvidesPath(path) === normalized) {
+        return ss;
+      }
+    }
+  }
+  return undefined;
 }
 
 /**
@@ -1654,7 +1706,8 @@ function collectDeferredDependencySelections(
       }
     }
     // Also honour @provides-style dependency maps when present.
-    const provided = typeConfig?.providedSelectionsByField?.get(
+    const provided = getProvidedSelectionsByField(
+      typeConfig,
       delegationContext.subschema as Subschema,
     )?.[fieldName];
     if (provided?.selections) {

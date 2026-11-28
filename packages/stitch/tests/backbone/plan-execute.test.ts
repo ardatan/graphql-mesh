@@ -5,13 +5,13 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import type { ExecutionResult } from '@graphql-tools/utils';
 import {
   buildStitchPlan,
-  createBackboneExecutor,
+  getBackboneExecutorBySchema,
   type StitchPlanNode,
 } from '../../src/backbone/index';
 import { stitchSchemas } from '../../src/stitchSchemas';
 
 async function exec(
-  executor: ReturnType<typeof createBackboneExecutor>,
+  executor: ReturnType<typeof getBackboneExecutorBySchema>,
   request: Parameters<typeof executor>[0],
 ): Promise<ExecutionResult> {
   return (await executor(request)) as ExecutionResult;
@@ -117,8 +117,7 @@ describe('stitching backbone', () => {
         }
       }
     `);
-    const operation = document.definitions[0] as any;
-    const plan = buildStitchPlan(schema, operation, {}, { id: '1' });
+    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, undefined);
     expect(plan.incompleteReasons).toEqual([]);
     // Final plans flatten Sequence barriers; schedule is cached when there is
     // no Condition.
@@ -129,7 +128,7 @@ describe('stitching backbone', () => {
 
   it('executes a merged query via the backbone executor', async () => {
     const schema = createStitched();
-    const executor = createBackboneExecutor(schema);
+    const executor = getBackboneExecutorBySchema(schema);
     const result = await exec(executor, {
       document: parse(/* GraphQL */ `
         query ($id: ID!) {
@@ -166,25 +165,8 @@ describe('stitching backbone', () => {
         }
       }
     `);
-    const operation = document.definitions[0] as any;
-    const planSkip = buildStitchPlan(
-      schema,
-      operation,
-      {},
-      {
-        id: '1',
-        skipEmail: true,
-      },
-    );
-    const planInclude = buildStitchPlan(
-      schema,
-      operation,
-      {},
-      {
-        id: '1',
-        skipEmail: false,
-      },
-    );
+    const planSkip = buildStitchPlan(schema, document.definitions[0] as any, {}, undefined);
+    const planInclude = buildStitchPlan(schema, document.definitions[0] as any, {}, undefined);
     expect(planSkip.incompleteReasons).toEqual([]);
     // runIf keeps the hop set fixed (no Condition) so schedule caches.
     expect(planSkip.root.kind).not.toBe('Condition');
@@ -201,7 +183,7 @@ describe('stitching backbone', () => {
     // Same structure regardless of variable map (one cached plan shape).
     expect(planInclude.root.kind).toBe(planSkip.root.kind);
 
-    const executor = createBackboneExecutor(schema);
+    const executor = getBackboneExecutorBySchema(schema);
     const skipped = await exec(executor, {
       document,
       variables: { id: '1', skipEmail: true },
@@ -254,7 +236,7 @@ describe('stitching backbone', () => {
     const stitchingInfo = schema.extensions?.['stitchingInfo'] as StitchingInfo;
     expect(stitchingInfo.localFields.get('Query')?.has('me')).toBe(true);
 
-    const executor = createBackboneExecutor(schema);
+    const executor = getBackboneExecutorBySchema(schema);
     const result = await exec(executor, {
       document: parse(/* GraphQL */ `
         {
@@ -279,12 +261,12 @@ describe('stitching backbone', () => {
         __typename
       }
     `);
-    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, {});
+    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, undefined);
     expect(plan.incompleteReasons).toEqual([]);
     expect(plan.root.kind).toBe('Island');
     expect((plan.root as any).fieldNode.name.value).toBe('__typename');
 
-    const executor = createBackboneExecutor(schema);
+    const executor = getBackboneExecutorBySchema(schema);
     const result = await exec(executor, { document, context: {} });
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({ __typename: 'Query' });
@@ -330,7 +312,7 @@ describe('stitching backbone', () => {
         }
       }
     `);
-    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, {});
+    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, undefined);
     expect(plan.incompleteReasons).toEqual([]);
     expect(plan.root.kind).toBe('Island');
     expect((plan.root as any).fieldNode.name.value).toBe('Group');
@@ -338,7 +320,7 @@ describe('stitching backbone', () => {
     expect((plan.root as any).continue.kind).toBe('Island');
     expect((plan.root as any).continue.fieldNode.name.value).toBe('echo');
 
-    const executor = createBackboneExecutor(schema);
+    const executor = getBackboneExecutorBySchema(schema);
     const result = await exec(executor, { document, context: {} });
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
@@ -403,7 +385,7 @@ describe('stitching backbone', () => {
         }
       }
     `);
-    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, {});
+    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, undefined);
     expect(plan.incompleteReasons).toEqual([]);
     const hasLabelIsland = (n: any): boolean => {
       if (!n) return false;
@@ -414,7 +396,7 @@ describe('stitching backbone', () => {
     };
     expect(hasLabelIsland(plan.root)).toBe(true);
 
-    const executor = createBackboneExecutor(schema);
+    const executor = getBackboneExecutorBySchema(schema);
     const result = await exec(executor, { document, context: {} });
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
@@ -516,7 +498,7 @@ describe('stitching backbone', () => {
         }
       }
     `);
-    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, {});
+    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, undefined);
     expect(plan.incompleteReasons).toEqual([]);
 
     const hasNestedAuthorIsland = (n: any): boolean => {
@@ -538,7 +520,7 @@ describe('stitching backbone', () => {
     };
     expect(hasNestedAuthorIsland(plan.root)).toBe(true);
 
-    const executor = createBackboneExecutor(schema);
+    const executor = getBackboneExecutorBySchema(schema);
     const result = await exec(executor, { document, context: {} });
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
@@ -647,7 +629,7 @@ describe('backbone performance smoke', () => {
   }
 
   it('planned execute returns the expected entity graph on this microbench', async () => {
-    const planned = createBackboneExecutor(schema);
+    const planned = getBackboneExecutorBySchema(schema);
     const request = {
       document,
       variables: { id: '1' },
@@ -805,7 +787,7 @@ describe('backbone plan quality', () => {
         }
       }
     `);
-    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, { id: '1' });
+    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, undefined);
     expect(plan.incomplete).toBe(false);
     const counts = countFetches(plan.root);
     // Shared root `userById`: either Parallel roots (chirps + authors) with no
@@ -833,7 +815,7 @@ describe('backbone plan quality', () => {
         }
       }
     `);
-    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, {});
+    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, undefined);
     expect(plan.incomplete).toBe(false);
     const counts = countFetches(plan.root);
     expect(counts.root).toBeGreaterThanOrEqual(2);

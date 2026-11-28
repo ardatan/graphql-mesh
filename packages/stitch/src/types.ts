@@ -70,6 +70,12 @@ export interface IStitchSchemasOptions<TContext = Record<string, any>> extends O
   mergeTypes?: boolean | Array<string> | MergeTypeFilter<TContext>;
   typeMergingOptions?: TypeMergingOptions<TContext>;
   subschemaConfigTransforms?: Array<SubschemaConfigTransform<TContext>>;
+  /**
+   * Transform the stitched schema immediately before backbone root proxies are
+   * installed. Federation uses this to filter join internals and run its user
+   * `onStitchedSchema` hook before the single attach.
+   */
+  onStitchedSchema?(schema: GraphQLSchema): GraphQLSchema | void;
 }
 
 export type SubschemaConfigTransform<TContext = Record<string, any>> = (

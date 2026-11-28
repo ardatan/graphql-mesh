@@ -2,9 +2,12 @@ import {
   defaultFieldResolver,
   isObjectType,
   Kind,
+  type DocumentNode,
+  type FragmentDefinitionNode,
   type GraphQLError,
   type GraphQLFieldResolver,
   type GraphQLSchema,
+  type OperationDefinitionNode,
   type SelectionNode,
 } from 'graphql';
 import {
@@ -13,15 +16,61 @@ import {
   UNPATHED_ERRORS_SYMBOL,
 } from '@graphql-tools/delegate';
 import { CRITICAL_ERROR } from '@graphql-tools/executor';
-import type { ExecutionRequest, Executor } from '@graphql-tools/utils';
+import { memoize2, type ExecutionRequest } from '@graphql-tools/utils';
 import { handleMaybePromise, type MaybePromise } from '@whatwg-node/promise-helpers';
-
-const PROXYING_INSTALLED = Symbol.for('graphql-tools.stitch.backboneRootProxying');
+import { executor } from './executor.js';
 
 /** Set on context while backbone execute runs so root Islands skip proxying. */
 export const BACKBONE_EXECUTING = Symbol.for('graphql-tools.stitch.backboneExecuting');
 
-const ORIGINAL_RESOLVE = Symbol.for('graphql-tools.stitch.backboneOriginalResolve');
+/** Schemas that already have root proxying installed (no schema mutation). */
+const schemasWithRootProxying = new WeakSet<GraphQLSchema>();
+/** Resolve fns installed by {@link installRootProxyingResolvers} (no fn mutation). */
+const backboneRootProxies = new WeakSet<object>();
+/** Pre-proxy root resolve for Islands — keyed by field object, no field mutation. */
+const originalResolveByField = new WeakMap<object, GraphQLFieldResolver<any, any>>();
+
+/** Per-request plan result/promise — keyed by context, no context mutation. */
+const planResultByContext = new WeakMap<object, any>();
+const planPromiseByContext = new WeakMap<object, MaybePromise<any>>();
+
+/**
+ * WeakMap key for sibling root fields in one execute.
+ * Prefer `context` (yoga / callers always pass an object). When callers omit
+ * `contextValue`, graphql-js still shares one `info.variableValues` object
+ * across sibling resolvers — use that so we do not crash WeakMap and still
+ * share one plan (duplicate hops otherwise).
+ */
+function planCacheKey(context: unknown, info: { variableValues?: unknown }): object | undefined {
+  if (context != null && (typeof context === 'object' || typeof context === 'function')) {
+    return context as object;
+  }
+  const variableValues = info.variableValues;
+  if (
+    variableValues != null &&
+    (typeof variableValues === 'object' || typeof variableValues === 'function')
+  ) {
+    return variableValues as object;
+  }
+  return undefined;
+}
+
+/** Stable empty fragments map for memoize2 when `info.fragments` is absent. */
+const EMPTY_FRAGMENTS: Record<string, FragmentDefinitionNode> = Object.freeze({});
+
+/**
+ * Stable document per (operation, fragments) so plan cache can key by
+ * `request.document` (root proxies used to rebuild a fresh Document every call).
+ */
+const memoizedRootProxyDocument = memoize2(function memoizedRootProxyDocument(
+  operation: OperationDefinitionNode,
+  fragments: Record<string, FragmentDefinitionNode>,
+): DocumentNode {
+  return {
+    kind: Kind.DOCUMENT,
+    definitions: [operation, ...Object.values(fragments)],
+  };
+});
 
 function selectionHasDeferOrStream(selections: readonly SelectionNode[]): boolean {
   const stack = [...selections];
@@ -84,18 +133,19 @@ function applyBackboneResult(
 
 /**
  * Install root Query/Mutation proxying resolvers so stock graphql-js `execute`
- * proxies once into the backbone plan, then returns cached root values -
- * same idea as wrapSchema's proxying resolvers, but the target is the
- * backbone executor rather than a single subgraph.
+ * proxies once into the shared {@link executor}, then returns cached
+ * root values — same idea as wrapSchema's proxying resolvers, but the target
+ * is the backbone rather than a single subgraph.
  * Subscription roots are left alone (schema subscribe / backbone schema path).
+ * Does not store a per-schema Executor.
  */
-export function installRootProxyingResolvers(schema: GraphQLSchema, runBackbone: Executor): void {
-  // Idempotent re-attach: after mapSchema / option changes, rebind proxying
-  // to the new executor without nesting (always wrap the pre-proxy resolve).
-  (schema as any)[PROXYING_INSTALLED] = true;
-
-  const CONTEXT_PLAN_RESULT = Symbol('backboneRootProxyResult');
-  const CONTEXT_PLAN_PROMISE = Symbol('backboneRootProxyPromise');
+export function installRootProxyingResolvers(schema: GraphQLSchema): GraphQLSchema {
+  // Attach-once after filter / onStitchedSchema. External post-stitch mapSchema
+  // is unsupported — original resolve lives in a WeakMap for Islands.
+  if (schemasWithRootProxying.has(schema)) {
+    return schema;
+  }
+  schemasWithRootProxying.add(schema);
 
   for (const op of ['query', 'mutation'] as const) {
     const rootType = op === 'query' ? schema.getQueryType() : schema.getMutationType();
@@ -105,10 +155,19 @@ export function installRootProxyingResolvers(schema: GraphQLSchema, runBackbone:
     const fields = rootType.getFields();
     for (const fieldName of Object.keys(fields)) {
       const field = fields[fieldName]!;
-      const previousResolve: GraphQLFieldResolver<any, any> =
-        (field as any)[ORIGINAL_RESOLVE] ?? field.resolve ?? defaultFieldResolver;
-      (field as any)[ORIGINAL_RESOLVE] = previousResolve;
-      field.resolve = function backboneRootProxyingResolver(root, args, context, info) {
+      const resolveFn = field.resolve ?? defaultFieldResolver;
+      // Already proxied — do not nest (would recurse when Islands call original).
+      if (typeof resolveFn === 'function' && backboneRootProxies.has(resolveFn)) {
+        continue;
+      }
+      const previousResolve: GraphQLFieldResolver<any, any> = resolveFn;
+      originalResolveByField.set(field, previousResolve);
+      const proxy: GraphQLFieldResolver<any, any> = function backboneRootProxyingResolver(
+        root,
+        args,
+        context,
+        info,
+      ) {
         // @defer/@stream: classic incremental execute. The backbone executor
         // falls back to schemaExecutor for these, which would re-enter this
         // proxy and recurse forever if we ran the plan here.
@@ -121,58 +180,64 @@ export function installRootProxyingResolvers(schema: GraphQLSchema, runBackbone:
         ) {
           return previousResolve(root, args, context, info);
         }
-        if (context == null || typeof context !== 'object') {
-          return previousResolve(root, args, context, info);
-        }
         const responseKey = info.path.key;
+        const cacheKey = planCacheKey(context, info);
 
         // Share one plan across sibling roots. Never fall through to classic
         // proxying while a plan is in flight - that re-delegates e.g.
         // topProducts and schedules a duplicate inventory mergeFields hop.
         // Root Islands call getOriginalRootResolve() so they do not hit this.
-        const cached = (context as any)[CONTEXT_PLAN_RESULT];
-        if (cached != null) {
-          return applyBackboneResult(cached, responseKey);
+        if (cacheKey) {
+          const cached = planResultByContext.get(cacheKey);
+          if (cached != null) {
+            return applyBackboneResult(cached, responseKey);
+          }
         }
 
-        let pending = (context as any)[CONTEXT_PLAN_PROMISE] as MaybePromise<any> | undefined;
+        let pending = cacheKey ? planPromiseByContext.get(cacheKey) : undefined;
         if (!pending) {
           // GraphQL 17: info.variableValues is `{ coerced, sources }` — unwrap
           // so File/upload scalars and other runtime values reach subgraphs
           // (same as classic delegate/createRequest).
           const request: ExecutionRequest = {
-            document: {
-              kind: Kind.DOCUMENT,
-              definitions: [info.operation, ...Object.values(info.fragments ?? {})],
-            },
+            document: memoizedRootProxyDocument(info.operation, info.fragments ?? EMPTY_FRAGMENTS),
             variables: getCoercedVariableValues(info.variableValues) ?? {},
             context,
             rootValue: root,
             operationName: info.operation.name?.value,
+            // Shared executor: omit schema → request.info.schema.
+            info,
           };
           // Sync backbone results stay sync (fakePromise) - no Promise.resolve
           // microtask. Share one MaybePromise across sibling root fields.
           pending = handleMaybePromise(
-            () => runBackbone(request),
+            () => executor(request),
             result => {
-              (context as any)[CONTEXT_PLAN_RESULT] = result;
+              if (cacheKey) {
+                planResultByContext.set(cacheKey, result);
+              }
               return result;
             },
           );
-          (context as any)[CONTEXT_PLAN_PROMISE] = pending;
+          if (cacheKey) {
+            planPromiseByContext.set(cacheKey, pending);
+          }
         }
         return handleMaybePromise(
           () => pending,
           result => applyBackboneResult(result, responseKey),
         );
       };
+      backboneRootProxies.add(proxy);
+      field.resolve = proxy;
     }
   }
+  return schema;
 }
 
-/** Original root resolver before backbone proxying (for tests / debugging). */
+/** Original root resolver before backbone proxying (Island local). */
 export function getOriginalRootResolve(field: {
   resolve?: GraphQLFieldResolver<any, any>;
 }): GraphQLFieldResolver<any, any> | undefined {
-  return (field as any)[ORIGINAL_RESOLVE];
+  return originalResolveByField.get(field);
 }

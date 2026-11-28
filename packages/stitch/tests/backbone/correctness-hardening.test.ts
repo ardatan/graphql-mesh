@@ -2,11 +2,11 @@ import { parse } from 'graphql';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import type { ExecutionResult, Executor } from '@graphql-tools/utils';
-import { BACKBONE_EXECUTING, createBackboneExecutor } from '../../src/backbone/index';
+import { BACKBONE_EXECUTING, getBackboneExecutorBySchema } from '../../src/backbone/index';
 import { stitchSchemas } from '../../src/stitchSchemas';
 
 async function exec(
-  executor: ReturnType<typeof createBackboneExecutor>,
+  executor: ReturnType<typeof getBackboneExecutorBySchema>,
   request: Parameters<typeof executor>[0],
 ): Promise<ExecutionResult> {
   return (await executor(request)) as ExecutionResult;
@@ -76,7 +76,7 @@ describe('backbone correctness: valuesFromResults', () => {
       ],
     });
 
-    const backbone = createBackboneExecutor(schema);
+    const backbone = getBackboneExecutorBySchema(schema);
     const result = await exec(backbone, {
       document: parse(/* GraphQL */ `
         {
@@ -101,8 +101,8 @@ describe('backbone correctness: valuesFromResults', () => {
   });
 });
 
-describe('backbone correctness: percentage progressive-override cache', () => {
-  it('re-evaluates percent overrides without unbounded plan-cache growth', async () => {
+describe('backbone correctness: progressive-override per request', () => {
+  it('re-evaluates field override handlers on every request', async () => {
     const remoteA = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
         type Query {
@@ -125,7 +125,8 @@ describe('backbone correctness: percentage progressive-override cache', () => {
     });
 
     // Competing progressive-override routes (destination vs source). Controlled
-    // decisions so each request's selected route is predictable.
+    // decisions so each request's selected route is predictable. Active labels
+    // are gateway-owned on context — stitch does not special-case percent/RNG.
     let useDestination = true;
     let destinationCalls = 0;
     let sourceCalls = 0;
@@ -166,70 +167,58 @@ describe('backbone correctness: percentage progressive-override cache', () => {
       ],
     });
 
-    // Count plan-cache writes by StitchPlan value shape, not key spelling.
-    // Production no longer emits `::pct:` keys; a constant-key regression would
-    // still write one plan entry and pass a `::pct:`-only assertion.
-    let planCacheWrites = 0;
-    const OriginalMap = Map;
-    let active = false;
-    (globalThis as any).Map = class extends OriginalMap<any, any> {
-      set(key: any, value: any) {
-        if (
-          active &&
-          value != null &&
-          typeof value === 'object' &&
-          'root' in value &&
-          'operation' in value &&
-          'fragments' in value
-        ) {
-          planCacheWrites += 1;
-        }
-        return super.set(key, value);
-      }
-    };
+    const backbone = getBackboneExecutorBySchema(schema);
+    const document = parse(`{ hello }`);
 
-    try {
-      const backbone = createBackboneExecutor(schema, {
-        // percent(...) bypasses plan cache so override handlers re-run every request.
-        overrideLabels: ['percent(50)'],
+    const routes: string[] = [];
+    for (let i = 0; i < 10; i++) {
+      useDestination = i % 2 === 0;
+      const beforeDest = destinationCalls;
+      const beforeSrc = sourceCalls;
+      // Unique sorted-label key each request → plan Map miss and rebuild.
+      const result = await exec(backbone, {
+        document,
+        context: {
+          [Symbol.for('hive.gateway.overrideLabels')]: new Set([`label-${i}`]),
+        },
       });
-      const document = parse(`{ hello }`);
-      active = true;
-
-      const routes: string[] = [];
-      for (let i = 0; i < 10; i++) {
-        useDestination = i % 2 === 0;
-        const beforeDest = destinationCalls;
-        const beforeSrc = sourceCalls;
-        const result = await exec(backbone, { document, context: {} });
-        expect(result.errors).toBeUndefined();
-        const hello = String((result.data as any)?.hello);
-        routes.push(hello);
-        expect(hello).toBe(useDestination ? 'from-a' : 'from-b');
-        // Each request re-plans: both override handlers run again.
-        expect(destinationCalls).toBeGreaterThan(beforeDest);
-        expect(sourceCalls).toBeGreaterThan(beforeSrc);
-      }
-      active = false;
-
-      expect(planCacheWrites).toBe(0);
-      expect(destinationCalls).toBeGreaterThanOrEqual(10);
-      expect(sourceCalls).toBeGreaterThanOrEqual(10);
-      expect(routes).toEqual([
-        'from-a',
-        'from-b',
-        'from-a',
-        'from-b',
-        'from-a',
-        'from-b',
-        'from-a',
-        'from-b',
-        'from-a',
-        'from-b',
-      ]);
-    } finally {
-      (globalThis as any).Map = OriginalMap;
+      expect(result.errors).toBeUndefined();
+      const hello = String((result.data as any)?.hello);
+      routes.push(hello);
+      expect(hello).toBe(useDestination ? 'from-a' : 'from-b');
+      expect(destinationCalls).toBeGreaterThan(beforeDest);
+      expect(sourceCalls).toBeGreaterThan(beforeSrc);
     }
+
+    expect(destinationCalls).toBeGreaterThanOrEqual(10);
+    expect(sourceCalls).toBeGreaterThanOrEqual(10);
+    expect(routes).toEqual([
+      'from-a',
+      'from-b',
+      'from-a',
+      'from-b',
+      'from-a',
+      'from-b',
+      'from-a',
+      'from-b',
+      'from-a',
+      'from-b',
+    ]);
+
+    // Same label key hits the plan Map — override handlers do not re-run.
+    const cachedBeforeDest = destinationCalls;
+    const cachedBeforeSrc = sourceCalls;
+    useDestination = false;
+    const cached = await exec(backbone, {
+      document,
+      context: {
+        [Symbol.for('hive.gateway.overrideLabels')]: new Set(['label-0']),
+      },
+    });
+    expect(cached.errors).toBeUndefined();
+    expect(cached.data).toEqual({ hello: 'from-a' });
+    expect(destinationCalls).toBe(cachedBeforeDest);
+    expect(sourceCalls).toBe(cachedBeforeSrc);
   });
 });
 
@@ -246,7 +235,7 @@ describe('backbone correctness: BACKBONE_EXECUTING lifecycle', () => {
     const schema = stitchSchemas({
       subschemas: [{ schema: remote, executor: createDefaultExecutor(remote) }],
     });
-    const backbone = createBackboneExecutor(schema);
+    const backbone = getBackboneExecutorBySchema(schema);
     const context: Record<symbol, unknown> = {};
     await exec(backbone, {
       document: parse(`{ hello }`),
@@ -286,7 +275,7 @@ describe('backbone correctness: mutation serial semantics', () => {
     const schema = stitchSchemas({
       subschemas: [{ schema: remote, executor: createDefaultExecutor(remote) }],
     });
-    const backbone = createBackboneExecutor(schema);
+    const backbone = getBackboneExecutorBySchema(schema);
     const result = await exec(backbone, {
       document: parse(/* GraphQL */ `
         mutation {
@@ -347,7 +336,7 @@ describe('backbone correctness: mutation serial semantics', () => {
         },
       ],
     });
-    const backbone = createBackboneExecutor(schema);
+    const backbone = getBackboneExecutorBySchema(schema);
     const result = await exec(backbone, {
       document: parse(/* GraphQL */ `
         mutation {
@@ -396,7 +385,7 @@ describe('backbone correctness: mutation serial semantics', () => {
     const schema = stitchSchemas({
       subschemas: [{ schema: remote, executor: createDefaultExecutor(remote) }],
     });
-    const backbone = createBackboneExecutor(schema);
+    const backbone = getBackboneExecutorBySchema(schema);
     const result = await exec(backbone, {
       document: parse(/* GraphQL */ `
         mutation {
@@ -463,7 +452,7 @@ describe('backbone correctness: mutation serial semantics', () => {
     expect(stitchingInfo.localFields?.get('Mutation')?.has('first')).toBe(true);
     expect(stitchingInfo.localFields?.get('Mutation')?.has('second')).toBe(true);
 
-    const backbone = createBackboneExecutor(schema);
+    const backbone = getBackboneExecutorBySchema(schema);
     const result = await exec(backbone, {
       document: parse(/* GraphQL */ `
         mutation {
@@ -509,7 +498,7 @@ describe('backbone correctness: mutation serial semantics', () => {
     const schema = stitchSchemas({
       subschemas: [{ schema: remote, executor: throwingExecutor }],
     });
-    const backbone = createBackboneExecutor(schema);
+    const backbone = getBackboneExecutorBySchema(schema);
     const result = await exec(backbone, {
       document: parse(/* GraphQL */ `
         mutation {
@@ -546,7 +535,7 @@ describe('backbone correctness: mutation serial semantics', () => {
     const schema = stitchSchemas({
       subschemas: [{ schema: remote, executor: createDefaultExecutor(remote) }],
     });
-    const backbone = createBackboneExecutor(schema);
+    const backbone = getBackboneExecutorBySchema(schema);
     // Same response key via alias — GraphQL collectFields dedupes; one call.
     const result = await exec(backbone, {
       document: parse(/* GraphQL */ `
@@ -620,7 +609,7 @@ describe('backbone correctness: nullable entity hop survival', () => {
         { schema: posts, executor: createDefaultExecutor(posts) },
       ],
     });
-    const backbone = createBackboneExecutor(schema);
+    const backbone = getBackboneExecutorBySchema(schema);
     const result = await exec(backbone, {
       document: parse(/* GraphQL */ `
         {
@@ -662,7 +651,7 @@ describe('backbone correctness: subgraph error path remapping', () => {
     const schema = stitchSchemas({
       subschemas: [{ schema: remote, executor: createDefaultExecutor(remote) }],
     });
-    const backbone = createBackboneExecutor(schema);
+    const backbone = getBackboneExecutorBySchema(schema);
     const result = await exec(backbone, {
       document: parse(/* GraphQL */ `
         {
@@ -736,7 +725,7 @@ describe('backbone correctness: subschema rootValue on raw fetches', () => {
         { schema: posts, executor: createDefaultExecutor(posts) },
       ],
     });
-    const backbone = createBackboneExecutor(schema);
+    const backbone = getBackboneExecutorBySchema(schema);
     const result = await exec(backbone, {
       document: parse(/* GraphQL */ `
         {

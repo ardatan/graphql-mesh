@@ -17,7 +17,7 @@ import {
 import { createDefaultExecutor, type SubschemaConfig } from '@graphql-tools/delegate';
 import { getStitchedSchemaFromSupergraphSdl } from '@graphql-tools/federation';
 import { mergeTypeDefs } from '@graphql-tools/merge';
-import { getBackboneExecutor } from '@graphql-tools/stitch';
+import { getBackboneExecutorBySchema } from '@graphql-tools/stitch';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import {
   asArray,
@@ -267,9 +267,7 @@ export const handleFederationSupergraph = function ({
         additionalTypeDefs,
         additionalResolvers,
       );
-      // @ts-expect-error - Typings are wrong
       opts.resolvers = additionalResolvers;
-      // @ts-expect-error - Typings are wrong
       opts.inheritResolversFromInterfaces = true;
     },
     onSubgraphAST(_name, subgraphAST) {
@@ -328,7 +326,8 @@ export const handleFederationSupergraph = function ({
   // @pubsubPublish is Mesh/fusion concern: wrap the backbone executor (do not
   // mapSchema Mutation fields - that replaces the schema and drops attach).
   const backboneOrSchema =
-    getBackboneExecutor(executableUnifiedGraph) ?? createDefaultExecutor(executableUnifiedGraph);
+    getBackboneExecutorBySchema(executableUnifiedGraph) ??
+    createDefaultExecutor(executableUnifiedGraph);
   const executor = wrapExecutorWithPubsubPublish(executableUnifiedGraph, backboneOrSchema);
 
   return {

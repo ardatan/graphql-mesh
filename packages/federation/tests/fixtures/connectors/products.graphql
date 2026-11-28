@@ -1,0 +1,94 @@
+# This schema uses Apollo Connectors, a declarative programming model for
+# GraphQL that allows you to plug in your existing REST services directly into
+# a graph. To learn more, visit Apollo's documentation: 🔗https://www.apollographql.com/docs/graphos/schema-design/connectors
+
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.11", import: ["@key"]) # Enable this schema to use Apollo Federation features
+  @link( # Enable this schema to use Apollo Connectors
+    url: "https://specs.apollo.dev/connect/v0.2"
+    import: ["@connect", "@source"]
+  )
+  # A @source directive defines a shared data source for multiple Connectors.
+  # ✏️ Replace the `name` and `baseURL` of this @source with your own REST API.
+  @source(
+    name: "ecomm"
+    # A @source directive defines a shared data source for multiple Connectors.
+    http: {
+      baseURL: "https://ecommerce.demo-api.apollo.dev/"
+      # If your API requires headers, add them here and in your router.yaml file.
+      # Example:
+      # { name: "name", value: "{$config.apiKey}" }
+      headers: []
+    }
+  )
+
+# ✏️ Replace this example type with your own object type.
+type Product
+  @connect(
+    source: "ecomm"
+    http: { GET: "/products/{$this.id}" }
+    selection: """
+    id
+    name
+    description
+    variants {
+      id: variantID
+      name
+    }
+    price {
+        id: default_price
+    }
+    """
+  ) {
+  id: ID!
+  name: String
+  description: String
+  price: Price
+  variants: [Variant]
+}
+
+type Price
+  @key(fields: "id")
+  @connect(
+    source: "ecomm"
+    http: { GET: "/products/{$this.id}/price" }
+    selection: """
+    id
+    active
+    currency
+    unitAmount
+    """
+  ) {
+  id: ID!
+  active: Boolean
+  currency: String
+  unitAmount: Float
+}
+
+# ✏️ Set up your Query field with the endpoint that returns the data you want.
+
+type Query {
+  # The Query.products field uses @connect to connect to the /products endpoint in the "ecomm" source.
+  # To check out the JSON response for this endpoint, go to 🔗 https://ecommerce.demo-api.apollo.dev/products.
+  products: [Product]
+    # A @connect directive defines the API data source of a GraphQL schema field.
+    @connect(
+      source: "ecomm"
+      http: { GET: "/products" } # GET, POST, PUT, PATCH, DELETE.
+      # Use @connect for any field that should be resolved by your REST API endpoints.
+      # Use the selection argument to map fields from the JSON response to the type.
+      # You can do more with this selection mapping. Learn more at 🔗 https://www.apollographql.com/docs/graphos/schema-design/connectors/responses
+      selection: """
+      $.products {
+        id
+        name
+        description
+      }
+      """
+    )
+}
+
+type Variant {
+  id: ID!
+  name: String
+}

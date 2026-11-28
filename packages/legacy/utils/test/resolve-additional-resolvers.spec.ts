@@ -9,7 +9,7 @@ import { execute, subscribe } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import {
   buildStitchPlan,
-  createBackboneExecutor,
+  getBackboneExecutorBySchema,
   stitchSchemas,
   ValidationLevel,
 } from '@graphql-tools/stitch';
@@ -924,7 +924,7 @@ describe('@resolveTo result path when the source field is missing from the gatew
         }
       }
     `);
-    const plan = buildStitchPlan(stitched, document.definitions[0] as any, {}, {});
+    const plan = buildStitchPlan(stitched, document.definitions[0] as any, {}, undefined);
     expect(plan.incompleteReasons).toEqual([]);
     const hasComplexIsland = (n: any): boolean => {
       if (!n) return false;
@@ -935,7 +935,7 @@ describe('@resolveTo result path when the source field is missing from the gatew
     };
     expect(hasComplexIsland(plan.root)).toBe(true);
 
-    const executor = createBackboneExecutor(stitched);
+    const executor = getBackboneExecutorBySchema(stitched);
     const result = (await executor({
       document,
       context: { ...inContextSDK },
@@ -1101,7 +1101,7 @@ describe('@resolveTo result path when the source field is missing from the gatew
         }
       }
     `);
-    const plan = buildStitchPlan(stitched, document.definitions[0] as any, {}, {});
+    const plan = buildStitchPlan(stitched, document.definitions[0] as any, {}, undefined);
     expect(plan.incompleteReasons).toEqual([]);
     const hasComplexIsland = (n: any): boolean => {
       if (!n) return false;
@@ -1112,7 +1112,7 @@ describe('@resolveTo result path when the source field is missing from the gatew
     };
     expect(hasComplexIsland(plan.root)).toBe(true);
 
-    const executor = createBackboneExecutor(stitched);
+    const executor = getBackboneExecutorBySchema(stitched);
     const result = (await executor({
       document,
       context: { ...inContextSDK },

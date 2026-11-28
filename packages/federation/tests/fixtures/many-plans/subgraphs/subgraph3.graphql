@@ -1,0 +1,16 @@
+type Query {
+  node: Node
+}
+type Node @key(fields: "id0") {
+  id0: ID!
+  n0: Node
+  f0: String
+  n1: Node
+  f1: String
+  n3: Node
+  f3: String
+  n4: Node
+  f4: String
+  n6: Node
+  f6: String
+}

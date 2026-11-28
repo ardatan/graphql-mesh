@@ -86,8 +86,13 @@ export type StitchPlanNode =
        */
       document?: DocumentNode;
       /**
+       * Variable names used by {@link document} (plan-time). Execute binds
+       * values by lookup — does not re-walk the document AST.
+       */
+      variableNames?: readonly string[];
+      /**
        * When set, hop runs only if any DNF AND-group matches `variableValues`.
-       * Used for root `@skip`/`@include` instead of Condition nodes.
+       * Root `@skip`/`@include` stamp runIf so the hop set stays cacheable.
        */
       runIf?: StitchRunIf;
       /**
@@ -110,6 +115,11 @@ export type StitchPlanNode =
       aliases: StitchBatchAlias[];
       /** Prebuilt single merge-field document for one HTTP round-trip. */
       document?: DocumentNode;
+      /**
+       * Client variable names used by {@link document} (not the merge arg).
+       * Execute binds these from `variableValues` with `argsFromKeys`.
+       */
+      variableNames?: readonly string[];
       /** Hop-level gate (DNF); also checked before any alias work. */
       runIf?: StitchRunIf;
       reuseFrom?: string[];
@@ -135,9 +145,8 @@ export type StitchPlanNode =
   | {
       /**
        * Runtime `@skip`/`@include` branch. `condition` is the variable name;
-       * true -> ifClause, otherwise elseClause.
-       * Prefer `runIf` on hops (flattened at plan time); Condition remains for
-       * legacy / un-flattenable trees.
+       * true -> ifClause, otherwise elseClause. Evaluated at execute so the
+       * plan shape stays variable-independent.
        */
       kind: 'Condition';
       condition: string;
@@ -167,43 +176,15 @@ export interface StitchPlan {
    * the hop set is fixed and schedule is always present.
    */
   schedule?: StitchPlanSchedule;
+  /**
+   * Operation variable defaults from the document AST. Execute fills a missing
+   * variable into `variableValues` on first read (Condition / runIf / hop args).
+   */
+  variableDefaults?: Record<string, any>;
   /** When true, executor must fall back to schema execute. */
   incomplete: boolean;
   /** Reasons the plan is incomplete (hooks, unsupported nodes, etc.). */
   incompleteReasons: string[];
-}
-
-/**
- * Static options for `createBackboneExecutor` / plan-cache keying.
- * Per-request GraphQL context is NOT an option - it comes from
- * `ExecutionRequest.context` and is passed into `buildStitchPlan` per call.
- */
-export interface BackboneExecutorOptions {
-  /**
-   * Progressive override label handler (gateway `progressiveOverride`).
-   * Used for plan-cache keying when `overrideLabels` is also set.
-   * Persisted on `schema.extensions` so a post-`mapSchema` re-attach needs
-   * no options bag.
-   */
-  handleProgressiveOverride?: (label: string, context: any) => boolean | Promise<boolean>;
-  /**
-   * Known progressive-override labels from the supergraph. Combined with
-   * `handleProgressiveOverride` + request context to cache plans per enabled set.
-   * Falls back to `schema.extensions.overrideLabels` when omitted.
-   */
-  overrideLabels?: Iterable<string>;
-}
-
-/** `schema.extensions` key for last-attached {@link BackboneExecutorOptions}. */
-export const BACKBONE_EXECUTOR_OPTIONS_EXTENSION = 'backboneExecutorOptions';
-
-/** Per-call inputs for `buildStitchPlan` (static opts + request context). */
-export interface BuildStitchPlanOptions extends BackboneExecutorOptions {
-  /**
-   * Request GraphQL context - progressive override / delegationPlanBuilder
-   * during planning. From `ExecutionRequest.context`, never a constructor opt.
-   */
-  context?: any;
 }
 
 export interface BackboneExecutionContext {
@@ -212,6 +193,8 @@ export interface BackboneExecutionContext {
   operation: OperationDefinitionNode;
   fragments: Record<string, FragmentDefinitionNode>;
   variableValues: Record<string, any>;
+  /** From {@link StitchPlan.variableDefaults}; used by on-demand fill. */
+  variableDefaults?: Record<string, any>;
   contextValue: any;
   rootValue: any;
   signal?: AbortSignal;

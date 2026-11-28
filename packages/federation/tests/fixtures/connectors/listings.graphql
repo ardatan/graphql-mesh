@@ -1,0 +1,36 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.11", import: ["@key"])
+
+type Query {
+  "A curated array of listings to feature on the homepage"
+  featuredListings: [Listing!]!
+
+  # # EXERCISE: LISTING DETAILS
+  # "A specific listing"
+  # listing(id: ID!): Listing
+}
+
+"A particular intergalactic location available for booking"
+type Listing {
+  id: ID!
+  "The listing's title"
+  title: String!
+  "The number of beds available"
+  numOfBeds: Int
+  "The cost per night"
+  costPerNight: Float
+  "Indicates whether listing is closed for bookings (on hiatus)"
+  closed: Boolean
+  # # EXERCISE: LISTING ACTIVITIES
+  # "The activities available for this listing"
+  # activities: [Activity!]!
+}
+
+# # EXERCISE: LISTING ACTIVITIES
+# type Activity {
+#   id: ID!
+#   name: String!
+#   description: String
+#   terrain: String
+#   groupSize: Int
+# }

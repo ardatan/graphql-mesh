@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Progressive Override simple-progressive-overrides progressive_override_label_test 1`] = `"[{"subgraph":"B","query":"{\\n  feed {\\n    id\\n  }\\n}"}]"`;
+
+exports[`Progressive Override simple-progressive-overrides progressive_override_label_test 2`] = `"[{"subgraph":"A","query":"{\\n  feed {\\n    id\\n  }\\n}"}]"`;
+
+exports[`Progressive Override simple-progressive-overrides progressive_override_percentage_test 1`] = `"[{"subgraph":"A","query":"{\\n  aFeed {\\n    __typename\\n    id\\n  }\\n}"},{"subgraph":"B","query":"{\\n  bFeed {\\n    createdAt\\n  }\\n}"},{"subgraph":"B","query":"query ($representations: [_Any!]!) {\\n  _entities(representations: $representations) {\\n    __typename\\n    ... on Post {\\n      createdAt\\n    }\\n  }\\n}"}]"`;
+
+exports[`Progressive Override simple-progressive-overrides progressive_override_percentage_test 2`] = `"[{"subgraph":"A","query":"{\\n  aFeed {\\n    createdAt\\n  }\\n}"},{"subgraph":"B","query":"{\\n  bFeed {\\n    __typename\\n    id\\n  }\\n}"},{"subgraph":"A","query":"query ($representations: [_Any!]!) {\\n  _entities(representations: $representations) {\\n    __typename\\n    ... on Post {\\n      createdAt\\n    }\\n  }\\n}"}]"`;

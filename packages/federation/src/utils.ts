@@ -209,7 +209,11 @@ function hasInaccessible(obj: DirectableObject, inaccessibleName: string) {
   return dirs?.[inaccessibleName]?.length;
 }
 
-export function filterInternalFieldsAndTypes(finalSchema: GraphQLSchema) {
+/**
+ * Strip federation join/link internals and `@inaccessible` from a stitched
+ * schema. Called from federation `onStitchedSchema` before backbone attach.
+ */
+export function filterInternalFieldsAndTypes(finalSchema: GraphQLSchema): GraphQLSchema {
   const inaccessibleName = resolveInaccessibleDirectiveName(finalSchema);
   const internalTypeNameRegexp =
     /^(?:_Entity|_Any|_FieldSet|_Service|link|inaccessible|(?:link__|join__|core__)[\w]*)$/;

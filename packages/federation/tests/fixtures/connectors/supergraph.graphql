@@ -1,0 +1,186 @@
+schema
+  @link(url: "https://specs.apollo.dev/link/v1.0")
+  @link(url: "https://specs.apollo.dev/join/v0.5", for: EXECUTION)
+  @link(url: "https://specs.apollo.dev/connect/v0.2", for: EXECUTION)
+  @join__directive(
+    graphs: [PRODUCTS]
+    name: "link"
+    args: {
+      url: "https://specs.apollo.dev/connect/v0.2"
+      import: ["@connect", "@source"]
+    }
+  )
+  @join__directive(
+    graphs: [PRODUCTS]
+    name: "source"
+    args: {
+      name: "ecomm"
+      http: { baseURL: "https://ecommerce.demo-api.apollo.dev/", headers: [] }
+    }
+  ) {
+  query: Query
+}
+
+directive @join__directive(
+  graphs: [join__Graph!]
+  name: String!
+  args: join__DirectiveArguments
+) repeatable on SCHEMA | OBJECT | INTERFACE | FIELD_DEFINITION
+
+directive @join__enumValue(graph: join__Graph!) repeatable on ENUM_VALUE
+
+directive @join__field(
+  graph: join__Graph
+  requires: join__FieldSet
+  provides: join__FieldSet
+  type: String
+  external: Boolean
+  override: String
+  usedOverridden: Boolean
+  overrideLabel: String
+  contextArguments: [join__ContextArgument!]
+) repeatable on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__implements(
+  graph: join__Graph!
+  interface: String!
+) repeatable on OBJECT | INTERFACE
+
+directive @join__type(
+  graph: join__Graph!
+  key: join__FieldSet
+  extension: Boolean! = false
+  resolvable: Boolean! = true
+  isInterfaceObject: Boolean! = false
+) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
+
+directive @join__unionMember(
+  graph: join__Graph!
+  member: String!
+) repeatable on UNION
+
+directive @link(
+  url: String
+  as: String
+  for: link__Purpose
+  import: [link__Import]
+) repeatable on SCHEMA
+
+input join__ContextArgument {
+  name: String!
+  type: String!
+  context: String!
+  selection: join__FieldValue!
+}
+
+scalar join__DirectiveArguments
+
+scalar join__FieldSet
+
+scalar join__FieldValue
+
+enum join__Graph {
+  LISTINGS @join__graph(name: "listings", url: "http://ignore")
+  PRODUCTS @join__graph(name: "products", url: "http://ignore")
+}
+
+scalar link__Import
+
+enum link__Purpose {
+  """
+  `SECURITY` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+
+  """
+  `EXECUTION` features provide metadata necessary for operation execution.
+  """
+  EXECUTION
+}
+
+"""
+A particular intergalactic location available for booking
+"""
+type Listing @join__type(graph: LISTINGS) {
+  id: ID!
+
+  """
+  The listing's title
+  """
+  title: String!
+
+  """
+  The number of beds available
+  """
+  numOfBeds: Int
+
+  """
+  The cost per night
+  """
+  costPerNight: Float
+
+  """
+  Indicates whether listing is closed for bookings (on hiatus)
+  """
+  closed: Boolean
+}
+
+type Price
+  @join__type(graph: PRODUCTS, key: "id")
+  @join__directive(
+    graphs: [PRODUCTS]
+    name: "connect"
+    args: {
+      source: "ecomm"
+      http: { GET: "/products/{$this.id}/price" }
+      selection: "id\nactive\ncurrency\nunitAmount"
+    }
+  ) {
+  id: ID!
+  active: Boolean
+  currency: String
+  unitAmount: Float
+}
+
+type Product
+  @join__type(graph: PRODUCTS)
+  @join__directive(
+    graphs: [PRODUCTS]
+    name: "connect"
+    args: {
+      source: "ecomm"
+      http: { GET: "/products/{$this.id}" }
+      selection: "id\nname\ndescription\nvariants {\n  id: variantID\n  name\n}\nprice {\n    id: default_price\n}"
+    }
+  ) {
+  id: ID!
+  name: String
+  description: String
+  price: Price
+  variants: [Variant]
+}
+
+type Query @join__type(graph: LISTINGS) @join__type(graph: PRODUCTS) {
+  """
+  A curated array of listings to feature on the homepage
+  """
+  featuredListings: [Listing!]! @join__field(graph: LISTINGS)
+  products: [Product]
+    @join__field(graph: PRODUCTS)
+    @join__directive(
+      graphs: [PRODUCTS]
+      name: "connect"
+      args: {
+        source: "ecomm"
+        http: { GET: "/products" }
+        selection: "$.products {\n  id\n  name\n  description\n}"
+      }
+    )
+}
+
+type Variant @join__type(graph: PRODUCTS) {
+  id: ID!
+  name: String
+}

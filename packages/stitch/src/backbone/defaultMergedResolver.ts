@@ -14,6 +14,10 @@ import {
 } from '@graphql-tools/delegate';
 import { resolveLocalFieldResult } from '../resolveLocalFieldResult.js';
 
+/** Same symbols as rootProxyingResolvers / stitchSchemas hydration wrap. */
+const BACKBONE_EXECUTING = Symbol.for('graphql-tools.stitch.backboneExecuting');
+const BACKBONE_HYDRATED = Symbol.for('graphql-tools.stitch.backboneHydrated');
+
 /**
  * Gateway default field resolver for stitched schemas (backbone era).
  *
@@ -82,6 +86,15 @@ function readParentField(
 }
 
 function hydrateIfMerged(value: any, context: Record<string, any>, info: GraphQLResolveInfo): any {
+  // Backbone plan already hydrated the tree — do not re-enter classic
+  // resolveLocalFieldResult / mergeFields (would drop alias keys / re-fetch).
+  if (
+    context != null &&
+    typeof context === 'object' &&
+    ((context as any)[BACKBONE_HYDRATED] || (context as any)[BACKBONE_EXECUTING])
+  ) {
+    return value;
+  }
   const stitchingInfo = info.schema.extensions?.stitchingInfo as StitchingInfo | undefined;
   if (stitchingInfo == null || value == null) {
     return value;

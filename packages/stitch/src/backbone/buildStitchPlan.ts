@@ -25,33 +25,14 @@ import { getBatchedMergeEntry, inferMergeArgName } from './mergeEntry.js';
 import { buildPlanSchedule, collectExecutableHops, planHasCondition } from './planSchedule.js';
 import { flattenPlanControlFlow } from './planShape.js';
 import { preparePlanDocuments } from './preparePlanDocuments.js';
-import { flattenConditionsToRunIf, orRunIf, runIfKey, stampRunIf } from './runIf.js';
-import type {
-  BuildStitchPlanOptions,
-  PathSegment,
-  StitchPlan,
-  StitchPlanNode,
-  StitchRunIfClause,
-} from './types.js';
-
-/**
- * Aggressive (earliest-wave) fold only kicks in when the plan still has many
- * foldable entity hops after the safe exact-dependsOn pass. Federation-example
- * TestQuery stays under this threshold so continuous dispatch is preserved;
- * planning-large (100+ hops) gets earliest-wave coalesce.
- */
-const AGGRESSIVE_WAVE_FOLD_MIN_ENTITY_HOPS = 16;
-
-function selectionSetOf(selections: readonly SelectionNode[]): SelectionSetNode {
-  return { kind: Kind.SELECTION_SET, selections: [...selections] };
-}
-
-/**
- * Request context for the in-flight `buildStitchPlan` call. Used so
- * `delegationPlanBuilder` can evaluate progressive-override handlers without
- * threading context through every recursive plan helper.
- */
-let planningContext: any;
+import {
+  collectVariableDefaults,
+  flattenConditionsToRunIf,
+  orRunIf,
+  runIfKey,
+  stampRunIf,
+} from './runIf.js';
+import type { PathSegment, StitchPlan, StitchPlanNode, StitchRunIfClause } from './types.js';
 
 /**
  * Fill omitted operation variables from their GraphQL default values so
@@ -76,6 +57,27 @@ export function coerceOperationVariables(
   }
   return out;
 }
+
+/**
+ * Aggressive (earliest-wave) fold only kicks in when the plan still has many
+ * foldable entity hops after the safe exact-dependsOn pass. Federation-example
+ * TestQuery stays under this threshold so continuous dispatch is preserved;
+ * planning-large (100+ hops) gets earliest-wave coalesce.
+ */
+const AGGRESSIVE_WAVE_FOLD_MIN_ENTITY_HOPS = 16;
+
+function selectionSetOf(selections: readonly SelectionNode[]): SelectionSetNode {
+  return { kind: Kind.SELECTION_SET, selections: [...selections] };
+}
+
+/** Same key fusion sets on request context with per-request active labels. */
+const OVERRIDE_LABELS_CONTEXT_KEY = Symbol.for('hive.gateway.overrideLabels');
+
+/**
+ * Labels-only bag for the in-flight `buildStitchPlan` call. Progressive-override
+ * / delegationPlanBuilder handlers see this instead of full request context.
+ */
+let planningContext: any;
 
 function ensureTypename(selectionSet: SelectionSetNode): SelectionSetNode {
   const hasTypename = selectionSet.selections.some(
@@ -689,27 +691,29 @@ function fieldFetchableOnSubschema(
   return true;
 }
 
+/** Origin of @provides on a parent field - used to expand type-conditioned provides. */
+type ProvidesOrigin = {
+  parentTypeName: string;
+  parentFieldName: string;
+  /**
+   * Current `@provides` selection set at this nesting level. Root origins look
+   * this up from stitchingInfo; nested origins carry the subtree under the
+   * parent provided field so deeper externals stay covered.
+   */
+  providedSelectionSet?: SelectionSetNode;
+};
+
 /**
- * Field names covered by `@provides` on a parent field for a given subschema.
+ * Field names covered by a `@provides` selection set.
  *
  * - `forTypeName` omitted: only unconditional fields (e.g. `categories { id }`).
  * - `forTypeName` set: also fields under `... on forTypeName` (e.g. media
  *   provides `... on Book { title }` -> title when partitioning Book).
  */
-function getProvidedFieldNames(
-  stitchingInfo: StitchingInfo,
-  parentTypeName: string,
-  parentFieldName: string,
-  subschema: Subschema,
+function fieldNamesFromProvidesSelectionSet(
+  provided: SelectionSetNode,
   forTypeName?: string,
 ): Set<string> {
-  const provided =
-    stitchingInfo.mergedTypes[parentTypeName]?.providedSelectionsByField?.get(subschema)?.[
-      parentFieldName
-    ];
-  if (!provided) {
-    return new Set();
-  }
   const names = new Set<string>();
   const visit = (selections: readonly SelectionNode[], activeType: string | null) => {
     for (const sel of selections) {
@@ -731,15 +735,61 @@ function getProvidedFieldNames(
 }
 
 /**
+ * Field names covered by `@provides` on a parent field for a given subschema.
+ */
+function getProvidedFieldNames(
+  stitchingInfo: StitchingInfo,
+  parentTypeName: string,
+  parentFieldName: string,
+  subschema: Subschema,
+  forTypeName?: string,
+): Set<string> {
+  const provided =
+    stitchingInfo.mergedTypes[parentTypeName]?.providedSelectionsByField?.get(subschema)?.[
+      parentFieldName
+    ];
+  if (!provided) {
+    return new Set();
+  }
+  return fieldNamesFromProvidesSelectionSet(provided, forTypeName);
+}
+
+/**
+ * Nested `@provides` coverage under `fieldName` in an origin's selection set
+ * (e.g. Query.products provides `categories { id name subCategories { … } }`
+ * → under `categories` the provided names are id/name/subCategories).
+ */
+function getNestedProvidesSelectionSet(
+  origin: ProvidesOrigin | undefined,
+  fieldName: string,
+): SelectionSetNode | undefined {
+  const provided = origin?.providedSelectionSet;
+  if (!provided) {
+    return undefined;
+  }
+  let found: SelectionSetNode | undefined;
+  const visit = (selections: readonly SelectionNode[]) => {
+    for (const sel of selections) {
+      if (sel.kind === Kind.FIELD && sel.name.value === fieldName && sel.selectionSet) {
+        found = sel.selectionSet;
+        return;
+      }
+      if (sel.kind === Kind.INLINE_FRAGMENT && sel.selectionSet) {
+        visit(sel.selectionSet.selections);
+        if (found) {
+          return;
+        }
+      }
+    }
+  };
+  visit(provided.selections);
+  return found;
+}
+
+/**
  * Split a selection set into fields available on `subschema` vs the rest.
  * Used when building a root/entity Fetch for one subgraph.
  */
-/** Origin of @provides on a parent field - used to expand type-conditioned provides. */
-type ProvidesOrigin = {
-  parentTypeName: string;
-  parentFieldName: string;
-};
-
 function partitionSelectionsForSubschema(
   subschema: Subschema,
   typeName: string,
@@ -753,16 +803,18 @@ function partitionSelectionsForSubschema(
 ): { available: SelectionNode[]; unavailable: SelectionNode[] } {
   const available: SelectionNode[] = [];
   const unavailable: SelectionNode[] = [];
+  // Resolve the provides selection set for this origin (root lookup or nested subtree).
+  const originSelectionSet =
+    providesOrigin?.providedSelectionSet ??
+    (stitchingInfo && providesOrigin
+      ? stitchingInfo.mergedTypes[providesOrigin.parentTypeName]?.providedSelectionsByField?.get(
+          subschema,
+        )?.[providesOrigin.parentFieldName]
+      : undefined);
   // Merge type-conditioned provides (e.g. `... on Book { title }`) for this typeName.
   let effectiveProvided = providedFieldNames;
-  if (stitchingInfo && providesOrigin) {
-    const typed = getProvidedFieldNames(
-      stitchingInfo,
-      providesOrigin.parentTypeName,
-      providesOrigin.parentFieldName,
-      subschema,
-      typeName,
-    );
+  if (originSelectionSet) {
+    const typed = fieldNamesFromProvidesSelectionSet(originSelectionSet, typeName);
     if (typed.size) {
       effectiveProvided = new Set([...(providedFieldNames ?? []), ...typed]);
     }
@@ -903,24 +955,49 @@ function partitionSelectionsForSubschema(
             ? getNamedType(gatewayField.type)
             : undefined;
         const nestedTypeName = nestedReturn?.name ?? typeName;
-        // @provides on this field (e.g. products.categories -> name) apply to
-        // the nested type's partition, not the parent type's.
-        const nestedOrigin: ProvidesOrigin | undefined = stitchingInfo
+        // Nested @provides coverage: prefer a provides entry registered on this
+        // field, else walk into the parent origin's selection under this field
+        // (Query.products provides `categories { subCategories {…} }` → Category
+        // sees subCategories as provided without an owner hop).
+        const directNestedProvided =
+          stitchingInfo != null
+            ? getProvidedFieldNames(stitchingInfo, typeName, selection.name.value, subschema)
+            : undefined;
+        const nestedProvidesSs = getNestedProvidesSelectionSet(
+          originSelectionSet
+            ? {
+                parentTypeName: providesOrigin?.parentTypeName ?? typeName,
+                parentFieldName: providesOrigin?.parentFieldName ?? selection.name.value,
+                providedSelectionSet: originSelectionSet,
+              }
+            : providesOrigin,
+          selection.name.value,
+        );
+        const fromNestedOrigin = nestedProvidesSs
+          ? fieldNamesFromProvidesSelectionSet(nestedProvidesSs)
+          : undefined;
+        const nestedProvided = new Set<string>([
+          ...(directNestedProvided ?? []),
+          ...(fromNestedOrigin ?? []),
+        ]);
+        const nestedOrigin: ProvidesOrigin | undefined = nestedProvidesSs
           ? {
               parentTypeName: typeName,
               parentFieldName: selection.name.value,
+              providedSelectionSet: nestedProvidesSs,
             }
-          : undefined;
-        const nestedProvided =
-          stitchingInfo != null
-            ? getProvidedFieldNames(stitchingInfo, typeName, selection.name.value, subschema)
+          : stitchingInfo
+            ? {
+                parentTypeName: typeName,
+                parentFieldName: selection.name.value,
+              }
             : undefined;
         const nested = partitionSelectionsForSubschema(
           subschema,
           nestedTypeName,
           selection.selectionSet,
           fragments,
-          nestedProvided?.size ? nestedProvided : undefined,
+          nestedProvided.size ? nestedProvided : undefined,
           stitchingInfo,
           gatewaySchema,
           nestedOrigin,
@@ -1770,7 +1847,6 @@ function planMergedTypeFollowUps(
     planningContext,
     overrideInfo,
   );
-
   const stages: StitchPlanNode[] = [];
   for (const delegationMap of delegationMaps) {
     const parallel: StitchPlanNode[] = [];
@@ -2642,7 +2718,84 @@ function planRootField(
         // must not spawn a punished C hop from A's unavailable Book.title).
         if (sel.kind === Kind.INLINE_FRAGMENT && sel.typeCondition) {
           const concreteName = sel.typeCondition.name.value;
-          if (!stitchingInfo.mergedTypes[concreteName]) {
+          const concreteMerged = stitchingInfo.mergedTypes[concreteName];
+          // Shareable union members may appear in mergedTypes without entity
+          // merge targets (GetUsersSuccess). Only real entity types take the
+          // remnant-fields path; others still need nested User.posts hops.
+          const isEntityMerged =
+            concreteMerged?.targetSubschemas != null && concreteMerged.targetSubschemas.size > 0;
+          if (!isEntityMerged) {
+            // Non-entity union/interface member (e.g. GetUsersSuccess): still
+            // plan nested merged-type follow-ups (User.posts @requires under
+            // users). Skipping here dropped stub/requires leftovers entirely.
+            const memberType = schema.getType(concreteName);
+            if (isObjectType(memberType) || isInterfaceType(memberType)) {
+              const rootKey = fieldNode.alias?.value ?? fieldNode.name.value;
+              for (const nestedSel of flattenToFieldNodes(sel.selectionSet.selections, fragments)) {
+                if (!nestedSel.selectionSet || nestedSel.name.value === '__typename') {
+                  continue;
+                }
+                const nestedFieldDef = memberType.getFields()[nestedSel.name.value];
+                if (!nestedFieldDef) {
+                  continue;
+                }
+                const nestedNamed = getNamedType(nestedFieldDef.type);
+                if (!isObjectType(nestedNamed) && !isAbstractType(nestedNamed)) {
+                  continue;
+                }
+                const nestedResponseKey = nestedSel.alias?.value ?? nestedSel.name.value;
+                if (isObjectType(nestedNamed) && stitchingInfo.mergedTypes[nestedNamed.name]) {
+                  const nestedFields = flattenToFieldNodes(
+                    nestedSel.selectionSet.selections,
+                    fragments,
+                  );
+                  const child = planMergedTypeFollowUps(
+                    schema,
+                    stitchingInfo,
+                    nestedNamed.name,
+                    p.owner,
+                    nestedFields,
+                    fragments,
+                    variableValues,
+                    [rootKey, nestedResponseKey],
+                    incompleteReasons,
+                  );
+                  if (child) {
+                    partialUnavailableFollowUps.push(child);
+                  }
+                } else if (isAbstractType(nestedNamed)) {
+                  for (const concrete of schema.getPossibleTypes(nestedNamed)) {
+                    if (!stitchingInfo.mergedTypes[concrete.name]) {
+                      continue;
+                    }
+                    const forConcrete = collectFieldsForConcreteType(
+                      nestedNamed,
+                      concrete,
+                      nestedSel.selectionSet,
+                      fragments,
+                      schema,
+                    );
+                    if (!forConcrete.length) {
+                      continue;
+                    }
+                    const child = planMergedTypeFollowUps(
+                      schema,
+                      stitchingInfo,
+                      concrete.name,
+                      p.owner,
+                      forConcrete,
+                      fragments,
+                      variableValues,
+                      [rootKey, nestedResponseKey],
+                      incompleteReasons,
+                    );
+                    if (child) {
+                      partialUnavailableFollowUps.push(child);
+                    }
+                  }
+                }
+              }
+            }
             continue;
           }
           const remnantFields: FieldNode[] = [];
@@ -2918,6 +3071,112 @@ function planRootField(
           }
         }
       }
+
+      // @provides leaves kept in `available` but absent from the subgraph SDL
+      // (Book.price under samePriceProduct @provides): still plan the unique
+      // owner hop so execute can fill if provides re-injection is skipped.
+      const rootKey = fieldNode.alias?.value ?? fieldNode.name.value;
+      const providesFollowUpFields = (sels: readonly SelectionNode[]): FieldNode[] => {
+        const out: FieldNode[] = [];
+        for (const s of sels) {
+          if (s.kind !== Kind.FIELD || s.name.value === '__typename' || !s.selectionSet) {
+            continue;
+          }
+          out.push(s);
+        }
+        return out;
+      };
+      for (const sel of p.available) {
+        const parentFields: FieldNode[] = [];
+        let typeCond: string | null = null;
+        if (sel.kind === Kind.FIELD && sel.selectionSet) {
+          parentFields.push(sel);
+        } else if (sel.kind === Kind.INLINE_FRAGMENT && sel.selectionSet) {
+          typeCond = sel.typeCondition?.name.value ?? null;
+          parentFields.push(...providesFollowUpFields(sel.selectionSet.selections));
+        }
+        for (const fieldSel of parentFields) {
+          const enclosingTypeName = typeCond ?? returnTypeName;
+          if (!enclosingTypeName) {
+            continue;
+          }
+          const enclosingType = schema.getType(enclosingTypeName);
+          if (!isObjectType(enclosingType) && !isInterfaceType(enclosingType)) {
+            continue;
+          }
+          const fieldDef = enclosingType.getFields()[fieldSel.name.value];
+          if (!fieldDef?.type || !fieldSel.selectionSet) {
+            continue;
+          }
+          const namedReturn = getNamedType(fieldDef.type);
+          if (!isObjectType(namedReturn) && !isAbstractType(namedReturn)) {
+            continue;
+          }
+          const nestedResponseKey = fieldSel.alias?.value ?? fieldSel.name.value;
+          const childPath = [rootKey, nestedResponseKey];
+          if (isObjectType(namedReturn) && stitchingInfo.mergedTypes[namedReturn.name]) {
+            const externalLeaves = flattenToFieldNodes(
+              fieldSel.selectionSet.selections,
+              fragments,
+            ).filter(
+              fn =>
+                fn.name.value !== '__typename' &&
+                !fieldAvailableOnSubschema(p.owner, namedReturn.name, fn.name.value),
+            );
+            if (!externalLeaves.length) {
+              continue;
+            }
+            const child = planMergedTypeFollowUps(
+              schema,
+              stitchingInfo,
+              namedReturn.name,
+              p.owner,
+              externalLeaves,
+              fragments,
+              variableValues,
+              childPath,
+              incompleteReasons,
+            );
+            if (child) {
+              partialUnavailableFollowUps.push(child);
+            }
+          } else if (isAbstractType(namedReturn)) {
+            for (const concrete of schema.getPossibleTypes(namedReturn)) {
+              if (!stitchingInfo.mergedTypes[concrete.name]) {
+                continue;
+              }
+              const forConcrete = collectFieldsForConcreteType(
+                namedReturn,
+                concrete,
+                fieldSel.selectionSet,
+                fragments,
+                schema,
+              ).filter(
+                fn =>
+                  fn.name.value !== '__typename' &&
+                  !fieldAvailableOnSubschema(p.owner, concrete.name, fn.name.value),
+              );
+              if (!forConcrete.length) {
+                continue;
+              }
+              const child = planMergedTypeFollowUps(
+                schema,
+                stitchingInfo,
+                concrete.name,
+                p.owner,
+                forConcrete,
+                fragments,
+                variableValues,
+                childPath,
+                incompleteReasons,
+              );
+              if (child) {
+                partialUnavailableFollowUps.push(child);
+              }
+            }
+          }
+        }
+      }
     }
   }
 
@@ -3016,12 +3275,10 @@ function planRootField(
           const cond = fragment.typeCondition.name.value;
           if (cond !== returnType.name) {
             clientHasConcreteFragments = true;
-          }
-          const nested = flattenToFieldNodes(fragment.selectionSet.selections, fragments).filter(
-            fn => fn.name.value !== '__typename' && !isFieldCovered(fn.name.value, cond),
-          );
-          if (!nested.length) {
-            if (cond !== returnType.name) {
+            const nested = flattenToFieldNodes(fragment.selectionSet.selections, fragments).filter(
+              fn => fn.name.value !== '__typename' && !isFieldCovered(fn.name.value, cond),
+            );
+            if (!nested.length) {
               concreteFragments.push({
                 kind: Kind.INLINE_FRAGMENT,
                 typeCondition: fragment.typeCondition,
@@ -3032,21 +3289,104 @@ function planRootField(
                   },
                 ]),
               });
+              continue;
             }
-            continue;
-          }
-          if (cond === returnType.name) {
-            interfaceFields.push(...nested);
-          } else {
             concreteFragments.push({
               kind: Kind.INLINE_FRAGMENT,
               typeCondition: fragment.typeCondition,
               selectionSet: selectionSetOf(nested),
             });
+            continue;
+          }
+          // Fragment on the interface itself (e.g. `fragment NodeFields on Node {
+          //   ... on Leaf { extra } }`): re-classify selections so nested
+          // concrete inline fragments keep their type conditions instead of
+          // being flattened onto the interface.
+          for (const inner of fragment.selectionSet.selections) {
+            if (inner.kind === Kind.FIELD) {
+              if (
+                inner.name.value !== '__typename' &&
+                !isFieldCovered(inner.name.value, returnType.name)
+              ) {
+                interfaceFields.push(inner);
+              }
+            } else if (inner.kind === Kind.INLINE_FRAGMENT) {
+              const innerCond = inner.typeCondition?.name.value;
+              if (!innerCond) {
+                continue;
+              }
+              if (innerCond !== returnType.name) {
+                clientHasConcreteFragments = true;
+              }
+              const nested = flattenToFieldNodes(inner.selectionSet.selections, fragments).filter(
+                fn => fn.name.value !== '__typename' && !isFieldCovered(fn.name.value, innerCond),
+              );
+              if (!nested.length) {
+                if (innerCond !== returnType.name) {
+                  concreteFragments.push({
+                    ...inner,
+                    selectionSet: selectionSetOf([
+                      {
+                        kind: Kind.FIELD,
+                        name: { kind: Kind.NAME, value: '__typename' },
+                      },
+                    ]),
+                  });
+                }
+                continue;
+              }
+              if (innerCond === returnType.name) {
+                interfaceFields.push(...nested);
+              } else {
+                concreteFragments.push({
+                  ...inner,
+                  selectionSet: selectionSetOf(nested),
+                });
+              }
+            } else if (inner.kind === Kind.FRAGMENT_SPREAD) {
+              // Nested spreads (NodeFields -> LeafFields on Leaf): one level deep.
+              const nestedFrag = fragments[inner.name.value];
+              if (!nestedFrag) {
+                continue;
+              }
+              const nestedCond = nestedFrag.typeCondition.name.value;
+              if (nestedCond !== returnType.name) {
+                clientHasConcreteFragments = true;
+              }
+              const nested = flattenToFieldNodes(
+                nestedFrag.selectionSet.selections,
+                fragments,
+              ).filter(
+                fn => fn.name.value !== '__typename' && !isFieldCovered(fn.name.value, nestedCond),
+              );
+              if (!nested.length) {
+                if (nestedCond !== returnType.name) {
+                  concreteFragments.push({
+                    kind: Kind.INLINE_FRAGMENT,
+                    typeCondition: nestedFrag.typeCondition,
+                    selectionSet: selectionSetOf([
+                      {
+                        kind: Kind.FIELD,
+                        name: { kind: Kind.NAME, value: '__typename' },
+                      },
+                    ]),
+                  });
+                }
+                continue;
+              }
+              if (nestedCond === returnType.name) {
+                interfaceFields.push(...nested);
+              } else {
+                concreteFragments.push({
+                  kind: Kind.INLINE_FRAGMENT,
+                  typeCondition: nestedFrag.typeCondition,
+                  selectionSet: selectionSetOf(nested),
+                });
+              }
+            }
           }
         }
       }
-
       // Expand requires bridges for interface fields onto the root Fetch.
       const bridgeFragments: SelectionNode[] = [];
       if (interfaceFields.length) {
@@ -3267,12 +3607,17 @@ function planRootField(
   return sequenceRootFollowUps(rootNode, null);
 }
 
+/**
+ * Build a stitch plan for one operation. Caller extracts `operation` /
+ * `fragments` from the document. Variable-independent: root `@skip`/`@include`
+ * become hop `runIf` gates (with plan-time vars forced so every selection stays
+ * present). Progressive override uses `activeLabels` only.
+ */
 export function buildStitchPlan(
   schema: GraphQLSchema,
   operation: OperationDefinitionNode,
   fragments: Record<string, FragmentDefinitionNode>,
-  variableValues: Record<string, any>,
-  options: BuildStitchPlanOptions = {},
+  activeLabels?: Iterable<string> | null,
 ): StitchPlan {
   const incompleteReasons: string[] = [];
   const stitchingInfo = schema.extensions?.stitchingInfo as StitchingInfo | undefined;
@@ -3282,56 +3627,38 @@ export function buildStitchPlan(
       operation,
       fragments,
       root: { kind: 'Parallel', nodes: [] },
+      variableDefaults: collectVariableDefaults(operation),
       incomplete: true,
       incompleteReasons: ['Schema is not a stitched schema'],
     };
   }
 
-  // Subscriptions are routed to schema execute in createBackboneExecutor
+  // Subscriptions are routed to schema execute in executor
   // (classic subscribe + type merging). Planning them here is unused.
 
   // Abstract / interface / union selections are planned (inline fragments on
   // root + entity hops on concrete members). Do not mark incomplete solely for
   // abstracts - Cast/Flatten gaps must fail at execute so we fix plan quality.
 
-  // Apply variable defaults so @skip/@include evaluate safely.
-  const coercedVariables = coerceOperationVariables(operation, variableValues);
-
   const previousPlanningContext = planningContext;
-  planningContext = options.context;
+  // Labels-only bag (not full request context) for override handlers.
+  planningContext =
+    activeLabels != null ? { [OVERRIDE_LABELS_CONTEXT_KEY]: activeLabels } : undefined;
   try {
-    if (incompleteReasons.length > 0) {
-      // Still attempt a best-effort plan for warming, but never throw out of here.
-      try {
-        return buildCompletePlan(
-          schema,
-          stitchingInfo,
-          operation,
-          fragments,
-          coercedVariables,
-          incompleteReasons,
-          options,
-        );
-      } catch {
-        return {
-          operation,
-          fragments,
-          root: { kind: 'Parallel', nodes: [] },
-          incomplete: true,
-          incompleteReasons,
-        };
-      }
-    }
-
-    return buildCompletePlan(
-      schema,
-      stitchingInfo,
+    return buildCompletePlan(schema, stitchingInfo, operation, fragments, {}, incompleteReasons);
+  } catch (err) {
+    const reason =
+      err instanceof Error
+        ? `Plan build failed: ${err.message}`
+        : `Plan build failed: ${String(err)}`;
+    return {
       operation,
       fragments,
-      coercedVariables,
-      incompleteReasons,
-      options,
-    );
+      root: { kind: 'Parallel', nodes: [] },
+      variableDefaults: collectVariableDefaults(operation),
+      incomplete: true,
+      incompleteReasons: incompleteReasons.length ? incompleteReasons : [reason],
+    };
   } finally {
     planningContext = previousPlanningContext;
   }
@@ -3457,6 +3784,72 @@ function requiresDepsForField(
     return [];
   }
   return stitchingInfo.fieldNodesByField?.[typeName]?.[fieldName] ?? [];
+}
+
+/**
+ * True when a @requires dep tree selects nested fields this subschema cannot
+ * resolve (e.g. `comments { authorId }` on D where authorId is external).
+ * Those need a follow-up entity hop before the requiring field can run.
+ */
+function requiresTreeNeedsExternalFollowUp(
+  subschema: Subschema,
+  parentTypeName: string,
+  dep: FieldNode,
+): boolean {
+  if (!dep.selectionSet) {
+    return false;
+  }
+  const parentType =
+    subschema.transformedSchema.getType(parentTypeName) ??
+    subschema.schema.getType(parentTypeName);
+  if (!parentType || !('getFields' in parentType)) {
+    return false;
+  }
+  const field = (parentType as GraphQLObjectType).getFields()[dep.name.value];
+  if (!field) {
+    // Dep field itself missing here - treat as needing follow-up.
+    return true;
+  }
+  const namedReturn = getNamedType(field.type);
+  const walk = (typeName: string, ss: SelectionSetNode): boolean => {
+    for (const sel of ss.selections) {
+      if (sel.kind === Kind.FIELD) {
+        if (sel.name.value === '__typename') {
+          continue;
+        }
+        if (!fieldAvailableOnSubschema(subschema, typeName, sel.name.value)) {
+          return true;
+        }
+        if (sel.selectionSet) {
+          const t =
+            subschema.transformedSchema.getType(typeName) ?? subschema.schema.getType(typeName);
+          if (t && 'getFields' in t) {
+            const childField = (t as GraphQLObjectType).getFields()[sel.name.value];
+            if (childField) {
+              const childNamed = getNamedType(childField.type);
+              if (
+                (isObjectType(childNamed) || isInterfaceType(childNamed)) &&
+                walk(childNamed.name, sel.selectionSet)
+              ) {
+                return true;
+              }
+            }
+          }
+        }
+      } else if (sel.kind === Kind.INLINE_FRAGMENT && sel.selectionSet) {
+        const on = sel.typeCondition?.name.value ?? typeName;
+        if (walk(on, sel.selectionSet)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+  const startType =
+    isObjectType(namedReturn) || isInterfaceType(namedReturn) || isUnionType(namedReturn)
+      ? namedReturn.name
+      : parentTypeName;
+  return walk(startType, dep.selectionSet);
 }
 
 /**
@@ -3667,6 +4060,15 @@ function tryUnionEntityFetches(
       if (depMerge?.selectionSet || depMerge?.computed) {
         return null;
       }
+      // requires-with-argument: author @requires comments { authorId } where
+      // authorId is external on D. Uniting the comments bridge with author
+      // would fetch author before Comment.authorId is resolved on C.
+      if (
+        dep.selectionSet &&
+        requiresTreeNeedsExternalFollowUp(template.subschema, template.entityTypeName!, dep)
+      ) {
+        return null;
+      }
     }
   }
   const subschema = resolveSubschemaForUnion(stitchingInfo, template, selected);
@@ -3728,20 +4130,31 @@ function resolveSubschemaForUnion(
 function selectionProducesPathSuffix(
   selectionSet: SelectionSetNode,
   suffix: PathSegment[],
+  fragments?: Record<string, FragmentDefinitionNode>,
 ): boolean {
   if (!suffix.length) {
     return true;
   }
   const head = suffix[0];
   if (typeof head !== 'string') {
-    return selectionProducesPathSuffix(selectionSet, suffix.slice(1));
+    return selectionProducesPathSuffix(selectionSet, suffix.slice(1), fragments);
   }
   for (const sel of selectionSet.selections) {
     if (sel.kind === Kind.INLINE_FRAGMENT) {
       // Abstract parent selections nest entity paths under inline fragments
       // (`blocks { ... on BrandSpotlight { brand { … } } }`). Skipping them
       // left nested entity hops with empty dependsOn (wave-0 races).
-      if (selectionProducesPathSuffix(sel.selectionSet, suffix)) {
+      if (selectionProducesPathSuffix(sel.selectionSet, suffix, fragments)) {
+        return true;
+      }
+      continue;
+    }
+    if (sel.kind === Kind.FRAGMENT_SPREAD) {
+      // Stub/requires paths often live under client fragments
+      // (`posts { ...PostPageFragment }` → rating). Without expanding spreads,
+      // deeper entity hops (Rating/Comment) get empty dependsOn and race.
+      const frag = fragments?.[sel.name.value];
+      if (frag && selectionProducesPathSuffix(frag.selectionSet, suffix, fragments)) {
         return true;
       }
       continue;
@@ -3757,7 +4170,7 @@ function selectionProducesPathSuffix(
       return true;
     }
     if (sel.selectionSet) {
-      return selectionProducesPathSuffix(sel.selectionSet, suffix.slice(1));
+      return selectionProducesPathSuffix(sel.selectionSet, suffix.slice(1), fragments);
     }
   }
   return false;
@@ -3793,6 +4206,7 @@ function fetchDependsOn(
   stitchingInfo: StitchingInfo,
   later: Extract<StitchPlanNode, { kind: 'Fetch' }>,
   earlier: Extract<StitchPlanNode, { kind: 'Fetch' }>,
+  fragments?: Record<string, FragmentDefinitionNode>,
 ): boolean {
   const laterPaths = fetchFlattenPaths(later);
   const earlierPaths = fetchFlattenPaths(earlier);
@@ -3806,7 +4220,7 @@ function fetchDependsOn(
       if (lp.length === 1) {
         return true;
       }
-      if (selectionProducesPathSuffix(earlier.selectionSet, lp.slice(1))) {
+      if (selectionProducesPathSuffix(earlier.selectionSet, lp.slice(1), fragments)) {
         return true;
       }
     }
@@ -3817,8 +4231,15 @@ function fetchDependsOn(
       if (!pathIsPrefix(ep, lp)) {
         continue;
       }
+      // Multi-path peers: if `earlier` also fetches at `lp`, it is not a
+      // parent producer of that path (both own it). Counting it created
+      // A↔B cycles (many-plans f12↔f104) that strip then severed, nulling
+      // nested leaves like n0.n4.n3.n2.f4.
+      if (earlierPaths.some(p => pathsEqual(p, lp))) {
+        continue;
+      }
       const suffix = lp.slice(ep.length);
-      if (selectionProducesPathSuffix(earlier.selectionSet, suffix)) {
+      if (selectionProducesPathSuffix(earlier.selectionSet, suffix, fragments)) {
         return true;
       }
     }
@@ -4068,6 +4489,9 @@ function tryAbsorbFetches(
   // Identical selections on (possibly different) paths -> one multi-path Fetch
   // (topProducts inventory ∥ reviews->product inventory). Avoids duplicate
   // upstream `_entities` calls that inflate OTEL subgraph.execute counts.
+  // Refuse when paths nest: the same AST under a deeper flatten path resolves
+  // the wrong relative fields (many-plans: Node@n0 selection `n2 { n0 { n3 {
+  // f4 } } }` applied at n0.n4.n3 misses leaf n2.f4).
   if (selectionSetKey(earlier.selectionSet) === selectionSetKey(later.selectionSet)) {
     const pathKeys = new Set(aPaths.map(p => p.join('\0')));
     const mergedPaths = [...aPaths];
@@ -4076,6 +4500,21 @@ function tryAbsorbFetches(
       if (!pathKeys.has(key)) {
         pathKeys.add(key);
         mergedPaths.push(p);
+      }
+    }
+    // Nested flatten paths are safe when the shared selection is leaf-only
+    // (inStock∥shippingEstimate across depths). Nested object selections are
+    // path-relative — applying a shallow deep-tree at a deeper flatten path
+    // misses leaf fields (many-plans n2.f4 under n0.n4.n3). Same for unequal
+    // path depths: a hop at depth 3 vs depth 4 needs different relative ASTs
+    // (f114 mixing n0.n4.n4 with n0.n2.n1.n0 stranded leaf f4).
+    if (!selectionIsLeafOnly(earlier.selectionSet)) {
+      if (pathsHaveNesting(mergedPaths)) {
+        return null;
+      }
+      const depths = new Set(mergedPaths.map(p => p.length));
+      if (depths.size > 1) {
+        return null;
       }
     }
     const united: Extract<StitchPlanNode, { kind: 'Fetch' }> = {
@@ -5147,7 +5586,7 @@ function tryBatchWithinSequence(
 }
 
 /**
- * Expand root selections without evaluating `@skip`/`@include` (Condition path).
+ * Expand root selections without evaluating `@skip`/`@include` (runIf path).
  * Fragment spreads / inline fragments are flattened to field nodes.
  */
 function collectRootFieldNodesPreservingSkipInclude(
@@ -5239,7 +5678,7 @@ function wrapRootFieldWithRunIf(field: FieldNode, plan: StitchPlanNode): StitchP
 /**
  * Plan-time vars that keep every `@skip`/`@include` selection present so one
  * document plan covers all runtime maps. Nested directives stay on the AST and
- * are evaluated by the subgraph (or by Condition at roots).
+ * are evaluated by the subgraph (or by runIf at roots).
  */
 function variablesForcingSkipIncludePresent(
   operation: OperationDefinitionNode,
@@ -5284,7 +5723,6 @@ function buildCompletePlan(
   fragments: Record<string, FragmentDefinitionNode>,
   variableValues: Record<string, any>,
   incompleteReasons: string[],
-  options: BuildStitchPlanOptions = {},
 ): StitchPlan {
   const rootNodes: StitchPlanNode[] = [];
 
@@ -5335,6 +5773,7 @@ function buildCompletePlan(
   // coalesce / BatchFetch with per-hop runIf (schedule stays cacheable).
   const withoutConditions = flattenConditionsToRunIf(rootRaw);
   const optimized = optimizeStitchPlanNode(withoutConditions, stitchingInfo);
+
   const coalesced = coalesceSamePathEntityFields(optimized, stitchingInfo);
   const packed = packIndependentWaves(
     optimizeStitchPlanNode(coalesced, stitchingInfo),
@@ -5354,20 +5793,26 @@ function buildCompletePlan(
           stitchingInfo,
         ),
     stitchingInfo,
-    { serializeSequences: isMutation },
+    { serializeSequences: isMutation, fragments },
   );
+
   // Entity reuse is always planned for queries; mutations skip at execute.
   const withReuse = isMutation ? annotated : annotateEntityReuse(annotated);
   // Wave fold: same dependsOn wave + same subgraph → one BatchFetch
   // (or covering Fetch). Runs after reuse so reuse edges affect wave layers.
   const folded = isMutation ? withReuse : foldSameWaveSubgraphFetches(withReuse, stitchingInfo);
-  const withDocs = isMutation
-    ? folded
-    : preparePlanDocuments(folded, {
-        operation,
-        fragments,
-        fieldNodesByField: stitchingInfo.fieldNodesByField,
-      });
+
+  // Deep recursive entity graphs (many-plans) can leave mutual dependsOn after
+  // fold; drop back-edges so the schedule stays a DAG.
+  const acyclic = stripDependsOnCycles(folded);
+
+  // Prebuild hop documents at plan time (queries + mutations). Root
+  // @skip/@include use runIf; nested directives stay on the AST for subgraphs.
+  const withDocs = preparePlanDocuments(acyclic, {
+    operation,
+    fragments,
+    fieldNodesByField: stitchingInfo.fieldNodesByField,
+  });
   // Final plan: no Sequence barriers — flat bag + dependsOn schedule.
   const root = flattenPlanControlFlow(withDocs);
   let schedule: StitchPlan['schedule'];
@@ -5383,6 +5828,7 @@ function buildCompletePlan(
     fragments,
     root,
     schedule,
+    variableDefaults: collectVariableDefaults(operation),
     incomplete: incompleteReasons.length > 0,
     incompleteReasons,
   };
@@ -5774,12 +6220,20 @@ function possibleEntityTypeNames(stitchingInfo: StitchingInfo, typeName: string)
  * When entity types nest (Book possibles ⊆ Product possibles) under the same
  * flatten paths, merge into one Fetch on the covering type with inline
  * fragments for more-specific selections (Product||Book → one hop).
+ *
+ * Same concrete type twice (Post comments-bridge ‖ Post.author @requires) must
+ * stay split — covering coalescence would wrap author in `... on Post` and
+ * schedule it before nested requires providers.
  */
 function tryCoalesceOverlappingEntityFetches(
   stitchingInfo: StitchingInfo,
   fetches: Array<Extract<StitchPlanNode, { kind: 'Fetch' }>>,
 ): Extract<StitchPlanNode, { kind: 'Fetch' }> | null {
   if (fetches.length < 2) {
+    return null;
+  }
+  const distinctTypes = new Set(fetches.map(f => f.entityTypeName));
+  if (distinctTypes.size < 2) {
     return null;
   }
   const annotated = fetches.map(f => ({
@@ -5790,6 +6244,7 @@ function tryCoalesceOverlappingEntityFetches(
     return null;
   }
   // Covering type: possibles ⊇ every other type's possibles (widest abstract).
+  // Require a strict superset vs at least one peer so Post||Post never merges.
   let cover: (typeof annotated)[number] | null = null;
   for (const cand of annotated) {
     const coversAll = annotated.every(o => {
@@ -5801,6 +6256,12 @@ function tryCoalesceOverlappingEntityFetches(
       return true;
     });
     if (!coversAll) {
+      continue;
+    }
+    const strictlyWider = annotated.some(
+      o => o !== cand && [...o.set].every(n => cand.set.has(n)) && cand.set.size > o.set.size,
+    );
+    if (!strictlyWider) {
       continue;
     }
     if (!cover || cand.set.size > cover.set.size) {
@@ -5882,18 +6343,21 @@ function isFoldableEntityHop(n: StitchPlanNode): n is FoldableEntityHop {
   return isEntityFetchHop(n) || n.kind === 'BatchFetch';
 }
 
-/** Subschema identity for BatchFetch grouping (name, else object identity). */
+/**
+ * Subschema identity for BatchFetch grouping. Always object identity — not
+ * `name` alone. Federation computed-isolation clones share a graph name
+ * (`A`) but only expose their own @requires fields (shippingEstimate vs
+ * shippingEstimateEUR); name-keyed BatchFetch filtered the second alias
+ * against the first clone and stripped it to bare `upc`.
+ */
 function makeSubschemaKeyFn(): (s: Subschema) => string {
-  const anonIds = new WeakMap<object, string>();
-  let anonSeq = 0;
+  const ids = new WeakMap<object, string>();
+  let seq = 0;
   return (s: Subschema): string => {
-    if (s.name) {
-      return `n:${s.name}`;
-    }
-    let id = anonIds.get(s);
+    let id = ids.get(s);
     if (!id) {
-      id = `a:${anonSeq++}`;
-      anonIds.set(s, id);
+      id = `${s.name ?? 'anon'}:${seq++}`;
+      ids.set(s, id);
     }
     return id;
   };
@@ -5993,6 +6457,477 @@ function hopCompletesIdList(hop: FoldableEntityHop): string[] {
   return hop.id ? [hop.id] : [];
 }
 
+type ExecutableHop =
+  | Extract<StitchPlanNode, { kind: 'Fetch' }>
+  | Extract<StitchPlanNode, { kind: 'BatchFetch' }>
+  | Extract<StitchPlanNode, { kind: 'Island' }>;
+
+/** Flatten paths this hop writes into (Fetch / Island / BatchFetch aliases). */
+function hopFlattenPaths(hop: ExecutableHop): PathSegment[][] {
+  if (hop.kind === 'Fetch') {
+    return fetchFlattenPaths(hop);
+  }
+  if (hop.kind === 'Island') {
+    return islandFlattenPaths(hop);
+  }
+  return hop.aliases.flatMap(a => (a.flattenPaths?.length ? a.flattenPaths.map(p => [...p]) : []));
+}
+
+/**
+ * Remove dependsOn edges that make the hop graph cyclic.
+ * Among a cycle, drop edges where an earlier hop waits on a later hop
+ * (annotate order); keep later→earlier so providers still gate consumers.
+ * Prefer keeping key path-parent waits (exact parent flatten path, not also
+ * at the consumer path) so strip does not strand nested leaves (many-plans f4).
+ */
+function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
+  const hops: ExecutableHop[] = [];
+  collectExecutableHops(root, hops, {});
+  if (hops.length < 2) {
+    return root;
+  }
+  const idOwner = new Map<string, number>();
+  for (let i = 0; i < hops.length; i++) {
+    for (const id of hopCompletesIdList(hops[i]! as FoldableEntityHop)) {
+      if (!idOwner.has(id)) {
+        idOwner.set(id, i);
+      }
+    }
+    const hid = hops[i]!.id;
+    if (hid && !idOwner.has(hid)) {
+      idOwner.set(hid, i);
+    }
+  }
+
+  // Mutable adjacency: i waits on j.
+  const preds: number[][] = hops.map(() => []);
+  for (let i = 0; i < hops.length; i++) {
+    const deps = hops[i]!.dependsOn ?? [];
+    const seen = new Set<number>();
+    for (const d of deps) {
+      const j = idOwner.get(d);
+      if (j == null || j === i || seen.has(j)) {
+        continue;
+      }
+      seen.add(j);
+      preds[i]!.push(j);
+    }
+  }
+
+  const dropForHop = new Map<number, Set<number>>();
+  const markDrop = (from: number, to: number) => {
+    let set = dropForHop.get(from);
+    if (!set) {
+      set = new Set();
+      dropForHop.set(from, set);
+    }
+    set.add(to);
+    preds[from] = preds[from]!.filter(j => j !== to);
+  };
+
+  const bestPrefixLen = (paths: PathSegment[][], cp: PathSegment[]): number => {
+    let best = 0;
+    for (const pp of paths) {
+      if (pathIsPrefix(pp, cp) && pp.length > best) {
+        best = pp.length;
+      }
+    }
+    return best;
+  };
+
+  const maxPathLen = (idx: number): number => {
+    let m = 0;
+    for (const path of hopFlattenPaths(hops[idx]!)) {
+      if (path.length > m) {
+        m = path.length;
+      }
+    }
+    return m;
+  };
+
+  /**
+   * Pred owns the exact immediate parent flatten path of some consumer path
+   * and does not also fetch at that consumer path. Multi-path hops include
+   * shallow ancestors that must not count as key producers for peers —
+   * otherwise A↔B both look like immediate parents.
+   */
+  const isKeyParentEdge = (i: number, j: number): boolean => {
+    const consumerPaths = hopFlattenPaths(hops[i]!);
+    const predPaths = hopFlattenPaths(hops[j]!);
+    if (!consumerPaths.length || !predPaths.length) {
+      return false;
+    }
+    for (const cp of consumerPaths) {
+      if (cp.length < 1) {
+        continue;
+      }
+      const parent = cp.slice(0, -1);
+      if (
+        predPaths.some(pp => pathsEqual(pp, parent)) &&
+        !predPaths.some(pp => pathsEqual(pp, cp))
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  /**
+   * Keep this wait if `pred` uniquely supplies the deepest remaining path
+   * prefix for any consumer flatten path. Shallower ancestors must not count
+   * as substitutes — they do not create the child entity key.
+   */
+  const isLastPathParentEdge = (i: number, j: number): boolean => {
+    if (isKeyParentEdge(i, j)) {
+      // Peer key parents at the same depth are all needed until only one
+      // remains; treat every remaining key parent as protected so step 4
+      // cannot strand the sole producer of a nested leaf (many-plans f4).
+      return true;
+    }
+    const consumerPaths = hopFlattenPaths(hops[i]!);
+    const predPaths = hopFlattenPaths(hops[j]!);
+    if (!consumerPaths.length || !predPaths.length) {
+      return false;
+    }
+    for (const cp of consumerPaths) {
+      const predBest = bestPrefixLen(predPaths, cp);
+      if (predBest === 0) {
+        continue;
+      }
+      let other = false;
+      for (const k of preds[i]!) {
+        if (k === j) {
+          continue;
+        }
+        if (bestPrefixLen(hopFlattenPaths(hops[k]!), cp) >= predBest) {
+          other = true;
+          break;
+        }
+      }
+      if (!other) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const stuckOf = (): number[] => {
+    const n = hops.length;
+    const waits = preds.map(p => p.length);
+    const dependents: number[][] = Array.from({ length: n }, () => []);
+    for (let i = 0; i < n; i++) {
+      for (const j of preds[i]!) {
+        dependents[j]!.push(i);
+      }
+    }
+    const queue: number[] = [];
+    for (let i = 0; i < n; i++) {
+      if (waits[i] === 0) {
+        queue.push(i);
+      }
+    }
+    let seen = 0;
+    const remaining = waits.slice();
+    while (queue.length) {
+      const i = queue.pop()!;
+      seen++;
+      for (const d of dependents[i]!) {
+        remaining[d]!--;
+        if (remaining[d] === 0) {
+          queue.push(d);
+        }
+      }
+    }
+    if (seen === n) {
+      return [];
+    }
+    const stuck: number[] = [];
+    for (let i = 0; i < n; i++) {
+      if (remaining[i]! > 0) {
+        stuck.push(i);
+      }
+    }
+    return stuck;
+  };
+
+  // Break mutual waits toward deeper consumers / non-key-parent directions
+  // before the iterative SCC strip so peer key parents stay intact.
+  for (let i = 0; i < hops.length; i++) {
+    for (const j of [...preds[i]!]) {
+      if (j <= i || !preds[j]!.includes(i)) {
+        continue;
+      }
+      const iNeedsJ = isKeyParentEdge(i, j);
+      const jNeedsI = isKeyParentEdge(j, i);
+      if (iNeedsJ && !jNeedsI) {
+        markDrop(j, i);
+      } else if (jNeedsI && !iNeedsJ) {
+        markDrop(i, j);
+      } else if (iNeedsJ && jNeedsI) {
+        if (maxPathLen(i) >= maxPathLen(j)) {
+          markDrop(j, i);
+        } else {
+          markDrop(i, j);
+        }
+      } else {
+        // Neither is a key parent: drop the shallower→deeper wait.
+        if (maxPathLen(i) >= maxPathLen(j)) {
+          markDrop(j, i);
+        } else {
+          markDrop(i, j);
+        }
+      }
+    }
+  }
+
+  // Iteratively break SCCs. Prefer dropping reuseFrom waits, then one
+  // earlier→later edge at a time (never a key / last path-parent),
+  // then any non-protected edge, then reverse parent→child, and only then
+  // a protected path-parent.
+  for (let guard = 0; guard < hops.length * hops.length; guard++) {
+    const stuck = stuckOf();
+    if (!stuck.length) {
+      break;
+    }
+    const stuckSet = new Set(stuck);
+    let removed = false;
+    // 1) Drop one reuseFrom edge inside the stuck set (annotation-added waits),
+    //    unless it is a protected path-parent for a consumer path.
+    reuseOuter: for (const i of stuck) {
+      const hop = hops[i]!;
+      const reuse =
+        hop.kind === 'Fetch' || hop.kind === 'BatchFetch'
+          ? new Set(('reuseFrom' in hop && hop.reuseFrom) || [])
+          : new Set<string>();
+      if (!reuse.size) {
+        continue;
+      }
+      for (const j of preds[i]!) {
+        if (!stuckSet.has(j) || isLastPathParentEdge(i, j)) {
+          continue;
+        }
+        const pred = hops[j]!;
+        const predIds = hopCompletesIdList(pred as FoldableEntityHop);
+        const predId = pred.id;
+        const isReuse = (predId != null && reuse.has(predId)) || predIds.some(id => reuse.has(id));
+        if (isReuse) {
+          markDrop(i, j);
+          removed = true;
+          break reuseOuter;
+        }
+      }
+    }
+    if (!removed) {
+      // 2) Drop one earlier-waits-on-later edge (i < j), skipping protected parents.
+      outer2: for (const i of stuck) {
+        for (const j of preds[i]!) {
+          if (stuckSet.has(j) && i < j && !isLastPathParentEdge(i, j)) {
+            markDrop(i, j);
+            removed = true;
+            break outer2;
+          }
+        }
+      }
+    }
+    if (!removed) {
+      // 3) Drop any one non-protected edge inside the stuck set.
+      outer3: for (const i of stuck) {
+        for (const j of preds[i]!) {
+          if (stuckSet.has(j) && !isLastPathParentEdge(i, j)) {
+            markDrop(i, j);
+            removed = true;
+            break outer3;
+          }
+        }
+      }
+    }
+    if (!removed) {
+      // 4) Prefer dropping reverse edges where the waiter is a key parent of the
+      //    dep (parent waits on child) — breaks cycles without stranding leaves.
+      outer4: for (const i of stuck) {
+        for (const j of preds[i]!) {
+          if (stuckSet.has(j) && isKeyParentEdge(j, i)) {
+            markDrop(i, j);
+            removed = true;
+            break outer4;
+          }
+        }
+      }
+    }
+    if (!removed) {
+      // 5) Last resort: never drop a sole/key-parent edge for a consumer path
+      // (many-plans f12→f15/f46/f105 at n0.n4). Prefer non-key-parent, then
+      // key-parents with an alternate still present. Do NOT absolute-drop a
+      // remaining key-parent — that strands nested leaves (f4).
+      const keyParentCount = (i: number, path: PathSegment[]): number => {
+        let n = 0;
+        for (const j of preds[i]!) {
+          const predPaths = hopFlattenPaths(hops[j]!);
+          const parent = path.slice(0, -1);
+          if (
+            predPaths.some(pp => pathsEqual(pp, parent)) &&
+            !predPaths.some(pp => pathsEqual(pp, path))
+          ) {
+            n++;
+          }
+        }
+        return n;
+      };
+      outer5a: for (const i of stuck) {
+        for (const j of preds[i]!) {
+          if (stuckSet.has(j) && !isKeyParentEdge(i, j)) {
+            markDrop(i, j);
+            removed = true;
+            break outer5a;
+          }
+        }
+      }
+      /**
+       * True when another stuck hop has exactly one flatten path that this hop
+       * also fetches. Dropping key-parents from the multi-path peer lets it
+       * race and clobber the single-path leaf (f112 vs f79 at n0.n4.n3 → f4).
+       */
+      const sharesPathWithSinglePathHop = (i: number): boolean => {
+        const paths = hopFlattenPaths(hops[i]!);
+        if (paths.length < 2) {
+          return false;
+        }
+        for (const s of stuck) {
+          if (s === i) {
+            continue;
+          }
+          const sp = hopFlattenPaths(hops[s]!);
+          if (sp.length !== 1) {
+            continue;
+          }
+          const only = sp[0]!;
+          if (paths.some(p => pathsEqual(p, only))) {
+            return true;
+          }
+        }
+        return false;
+      };
+      // Never drop a key-parent wait onto a single-path pred (f79 at
+      // n0.n4.n3). Child multi-path hops (f114 at n0.n4.n3.n2) must keep that
+      // gate or they race and strand nested leaves (f4).
+      const predIsSinglePath = (j: number): boolean => hopFlattenPaths(hops[j]!).length === 1;
+      if (!removed) {
+        outer5b: for (const i of stuck) {
+          if (hopFlattenPaths(hops[i]!).length < 2 || sharesPathWithSinglePathHop(i)) {
+            continue;
+          }
+          for (const j of preds[i]!) {
+            if (!stuckSet.has(j) || !isKeyParentEdge(i, j) || predIsSinglePath(j)) {
+              continue;
+            }
+            let hasAlt = false;
+            for (const cp of hopFlattenPaths(hops[i]!)) {
+              if (cp.length < 1) continue;
+              const parent = cp.slice(0, -1);
+              const predPaths = hopFlattenPaths(hops[j]!);
+              if (
+                predPaths.some(pp => pathsEqual(pp, parent)) &&
+                !predPaths.some(pp => pathsEqual(pp, cp)) &&
+                keyParentCount(i, cp) > 1
+              ) {
+                hasAlt = true;
+                break;
+              }
+            }
+            if (hasAlt) {
+              markDrop(i, j);
+              removed = true;
+              break outer5b;
+            }
+          }
+        }
+      }
+      // 5c) Cycle of key-parents only. Prefer multi-path consumers that do NOT
+      // share a flatten path with a single-path leaf gate, and never drop a
+      // wait onto a single-path pred (f114→f79).
+      if (!removed) {
+        const consider = (requireNoSinglePathShare: boolean): boolean => {
+          let bestI = -1;
+          let bestJ = -1;
+          let bestPaths = -1;
+          let bestDepth = Infinity;
+          for (const i of stuck) {
+            const pathCount = hopFlattenPaths(hops[i]!).length;
+            if (pathCount < 2) {
+              continue;
+            }
+            if (requireNoSinglePathShare && sharesPathWithSinglePathHop(i)) {
+              continue;
+            }
+            for (const j of preds[i]!) {
+              if (!stuckSet.has(j) || !isKeyParentEdge(i, j) || predIsSinglePath(j)) {
+                continue;
+              }
+              const depth = maxPathLen(i);
+              const better =
+                pathCount > bestPaths ||
+                (pathCount === bestPaths &&
+                  (depth < bestDepth || (depth === bestDepth && i > bestI)));
+              if (better) {
+                bestPaths = pathCount;
+                bestDepth = depth;
+                bestI = i;
+                bestJ = j;
+              }
+            }
+          }
+          if (bestI >= 0) {
+            markDrop(bestI, bestJ);
+            return true;
+          }
+          return false;
+        };
+        removed = consider(true) || consider(false);
+      }
+    }
+    if (!removed) {
+      break;
+    }
+  }
+
+  if (!dropForHop.size) {
+    return root;
+  }
+
+  const rewrite = (node: StitchPlanNode): StitchPlanNode => {
+    if (node.kind === 'Fetch' || node.kind === 'BatchFetch' || node.kind === 'Island') {
+      const idx = hops.indexOf(node as (typeof hops)[number]);
+      const removePreds = idx >= 0 ? dropForHop.get(idx) : undefined;
+      let next: StitchPlanNode = node;
+      if (removePreds?.size && node.dependsOn?.length) {
+        const filtered = node.dependsOn.filter(d => {
+          const j = idOwner.get(d);
+          return j == null || !removePreds.has(j);
+        });
+        if (filtered.length !== node.dependsOn.length) {
+          next = { ...node, dependsOn: filtered };
+        }
+      }
+      if (next.kind === 'Island' && next.continue) {
+        return { ...next, continue: rewrite(next.continue) };
+      }
+      return next;
+    }
+    if (node.kind === 'Condition') {
+      return {
+        ...node,
+        ifClause: node.ifClause ? rewrite(node.ifClause) : undefined,
+        elseClause: node.elseClause ? rewrite(node.elseClause) : undefined,
+      };
+    }
+    if (node.kind === 'Sequence' || node.kind === 'Parallel') {
+      return { kind: node.kind, nodes: node.nodes.map(rewrite) };
+    }
+    return node;
+  };
+  return rewrite(root);
+}
+
 /**
  * Attach schedule metadata from a fold group onto the collapsed hop so
  * dependents still see every original completesId.
@@ -6061,8 +6996,9 @@ function groupParallelBatchFetches(
   }
   if (node.kind === 'Sequence') {
     const mapped = node.nodes.map(c => groupParallelBatchFetches(c, stitchingInfo));
-    // Consecutive entity Fetches in a Sequence are parallel-ready after the
-    // shared prefix - BatchFetch them like a Parallel group.
+    // Consecutive independent entity Fetches can BatchFetch. Stop the run when
+    // a hop depends on an earlier hop in the run (requires-with-argument:
+    // D.comments → C.authorId → D.author must stay sequenced).
     const out: StitchPlanNode[] = [];
     let i = 0;
     while (i < mapped.length) {
@@ -6075,6 +7011,14 @@ function groupParallelBatchFetches(
       while (i < mapped.length) {
         const hop = mapped[i]!;
         if (!isEntityFetchHop(hop)) {
+          break;
+        }
+        const blocked = run.some(
+          earlier =>
+            fetchDependsOn(stitchingInfo, hop, earlier) ||
+            fetchDependsOn(stitchingInfo, earlier, hop),
+        );
+        if (blocked) {
           break;
         }
         run.push(hop);
@@ -6170,7 +7114,10 @@ function earliestHopWave(hop: { dependsOn?: string[] }, waveById: Map<string, nu
   return w;
 }
 
-function buildCompletesWaveMap(root: StitchPlanNode): Map<string, number> {
+function buildCompletesWaveMap(root: StitchPlanNode): {
+  waves: Map<string, number>;
+  cyclic: boolean;
+} {
   const hops: Array<
     | Extract<StitchPlanNode, { kind: 'Fetch' }>
     | Extract<StitchPlanNode, { kind: 'BatchFetch' }>
@@ -6185,11 +7132,13 @@ function buildCompletesWaveMap(root: StitchPlanNode): Map<string, number> {
   }
   const memo = new Map<string, number>();
   const visiting = new Set<string>();
+  let cyclic = false;
   const waveOf = (id: string): number => {
     if (memo.has(id)) {
       return memo.get(id)!;
     }
     if (visiting.has(id)) {
+      cyclic = true;
       return 0;
     }
     visiting.add(id);
@@ -6207,7 +7156,7 @@ function buildCompletesWaveMap(root: StitchPlanNode): Map<string, number> {
   for (const id of byId.keys()) {
     waveOf(id);
   }
-  return memo;
+  return { waves: memo, cyclic };
 }
 
 function countFoldableEntityHops(root: StitchPlanNode): number {
@@ -6354,11 +7303,17 @@ function foldSameWaveSubgraphFetches(
     hop => `${depsKey(hop)}::${subKey(hop.subschema)}`,
   );
 
-  // Pass 2: aggressive wave fold only on large plans.
+  // Pass 2: aggressive wave fold on large plans. Skip when dependsOn is already
+  // cyclic — waveOf parks cycle members at 0 and BatchFetch densifies SCCs;
+  // stripDependsOnCycles then cuts path edges (many-plans nulls). planning-large
+  // stays non-cyclic so it still gets earliest-wave coalesce.
   if (countFoldableEntityHops(next) < AGGRESSIVE_WAVE_FOLD_MIN_ENTITY_HOPS) {
     return next;
   }
-  const waveById = buildCompletesWaveMap(next);
+  const { waves: waveById, cyclic } = buildCompletesWaveMap(next);
+  if (cyclic) {
+    return next;
+  }
   return foldEntityHopsByKey(
     next,
     stitchingInfo,
@@ -6474,32 +7429,44 @@ function annotateEntityReuse(root: StitchPlanNode): StitchPlanNode {
       return [];
     }
     const needed = hop.selectionSet;
+    const selfIds = new Set(hop.completesIds?.length ? hop.completesIds : hop.id ? [hop.id] : []);
     const seen = new Set<string>();
     const out: string[] = [];
     const stack = [...(hop.dependsOn ?? [])];
     while (stack.length) {
       const id = stack.pop()!;
-      if (seen.has(id)) continue;
+      if (seen.has(id) || selfIds.has(id)) continue;
       seen.add(id);
       const src = byId.get(id);
-      if (!src) continue;
+      if (!src || src === hop) continue;
       for (const d of src.dependsOn ?? []) {
-        stack.push(d);
+        if (!selfIds.has(d)) {
+          stack.push(d);
+        }
       }
       if (src.kind === 'Fetch' && src.entityTypeName === hop.entityTypeName) {
         if (selectionCovers(src.selectionSet, needed)) {
-          out.push(src.id ?? id);
+          const srcId = src.id ?? id;
+          if (!selfIds.has(srcId)) {
+            out.push(srcId);
+          }
         }
       } else if (src.kind === 'Fetch' && src.rootField) {
         // Root may embed entity fields under flatten path - leaf cover only
         // when root selectionSet matches entity type fields directly.
         if (src.selectionSet && selectionCovers(src.selectionSet, needed)) {
-          out.push(src.id ?? id);
+          const srcId = src.id ?? id;
+          if (!selfIds.has(srcId)) {
+            out.push(srcId);
+          }
         }
       } else if (src.kind === 'BatchFetch') {
         for (const a of src.aliases) {
           if (a.entityTypeName === hop.entityTypeName && selectionCovers(a.selectionSet, needed)) {
-            out.push(src.id ?? id);
+            const srcId = src.id ?? id;
+            if (!selfIds.has(srcId)) {
+              out.push(srcId);
+            }
             break;
           }
         }
@@ -6514,14 +7481,19 @@ function annotateEntityReuse(root: StitchPlanNode): StitchPlanNode {
       if (!reuseFrom.length) {
         return node;
       }
+      const selfIds = new Set(
+        node.completesIds?.length ? node.completesIds : node.id ? [node.id] : [],
+      );
       const deps = new Set(node.dependsOn ?? []);
       for (const id of reuseFrom) {
-        deps.add(id);
+        if (!selfIds.has(id)) {
+          deps.add(id);
+        }
       }
       return {
         ...node,
-        reuseFrom,
-        dependsOn: [...deps],
+        reuseFrom: reuseFrom.filter(id => !selfIds.has(id)),
+        dependsOn: [...deps].filter(id => !selfIds.has(id)),
       };
     }
     if (node.kind === 'BatchFetch') {
@@ -6559,7 +7531,10 @@ function annotateEntityReuse(root: StitchPlanNode): StitchPlanNode {
 function annotateFetchDeps(
   root: StitchPlanNode,
   stitchingInfo: StitchingInfo,
-  opts: { serializeSequences?: boolean } = {},
+  opts: {
+    serializeSequences?: boolean;
+    fragments?: Record<string, FragmentDefinitionNode>;
+  } = {},
 ): StitchPlanNode {
   const fetches: Array<Extract<StitchPlanNode, { kind: 'Fetch' }>> = [];
   collectExecutableFetches(root, fetches);
@@ -6576,7 +7551,7 @@ function annotateFetchDeps(
       if (i === j) {
         continue;
       }
-      if (fetchDependsOn(stitchingInfo, fetches[i]!, fetches[j]!)) {
+      if (fetchDependsOn(stitchingInfo, fetches[i]!, fetches[j]!, opts.fragments)) {
         depIds[i]!.push(ids[j]!);
       }
     }

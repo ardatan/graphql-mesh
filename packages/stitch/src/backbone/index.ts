@@ -1,26 +1,15 @@
-export {
-  attachBackboneExecutor,
-  BACKBONE_EXECUTOR_EXTENSION,
-  getBackboneExecutor,
-  markChangedRootResolvesAsLocal,
-  resolveBackboneExecutorOptions,
-  snapshotRootFieldResolves,
-} from './attachBackboneExecutor.js';
+export { executor, getBackboneExecutorBySchema } from './executor.js';
 export { defaultMergedResolver } from './defaultMergedResolver.js';
-export { buildStitchPlan } from './buildStitchPlan.js';
-export { createBackboneExecutor } from './createBackboneExecutor.js';
+export { buildStitchPlan, coerceOperationVariables } from './buildStitchPlan.js';
 export { executeStitchPlan } from './executeStitchPlan.js';
 export { isLocalField } from './localFields.js';
 export { projectDataToOperation } from './projectResult.js';
 export {
+  installRootProxyingResolvers,
   BACKBONE_EXECUTING,
   getOriginalRootResolve,
-  installRootProxyingResolvers,
 } from './rootProxyingResolvers.js';
 export {
-  BACKBONE_EXECUTOR_OPTIONS_EXTENSION,
-  type BackboneExecutorOptions,
-  type BuildStitchPlanOptions,
   type StitchPlan,
   type StitchPlanNode,
   type StitchPlanSchedule,

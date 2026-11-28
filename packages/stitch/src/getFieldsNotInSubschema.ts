@@ -104,17 +104,19 @@ export function getFieldsNotInSubschema(
   const providedPaths = providedSelectionNode
     ? collectProvidedSelectionPaths(providedSelectionNode, gatewayType as GraphQLObjectType, schema)
     : null;
-
   for (const [, subFieldNodes] of subFieldNodesByResponseKey) {
     // Evaluate each node against its own field definition / concrete type.
     // Do not let the first node's definition decide availability for the key.
     for (const subFieldNode of subFieldNodes) {
       const fieldName = subFieldNode.name.value;
       let fieldNotInSchema = false;
+      // Availability must use the *subschema* type map only (Hive parity). Looking
+      // up possible types on the gateway schema incorrectly treats @interfaceObject
+      // fields (Location.plain) as present on every owner that defines Location.
       let field =
         fieldName === '__typename'
           ? TypeNameMetaFieldDef
-          : resolveFieldDefForNode(subFieldNode, fields, gatewayType, subschemaType, schema);
+          : resolveFieldDefForNode(subFieldNode, fields, gatewayType, subschemaType, sourceSchema);
       if (context != null && info != null) {
         const overrideHandler = subschema?.merge?.[gatewayType.name]?.fields?.[fieldName]?.override;
         if (overrideHandler != null) {
@@ -269,16 +271,17 @@ function addMissingRequiredFields({
 }
 
 /**
- * Resolve the field definition for one collected field node. When the parent
- * is abstract, prefer a concrete type that actually defines the field rather
- * than assuming the first sibling node's definition applies to every node.
+ * Resolve the field definition for one collected field node on the *subschema*.
+ * When the parent is abstract, only consult that subschema's concrete types —
+ * never the gateway schema (gateway interfaces absorb @interfaceObject fields
+ * that are not actually fetchable here).
  */
 function resolveFieldDefForNode(
   fieldNode: FieldNode,
   fields: Record<string, GraphQLField<any, any>>,
-  gatewayType: GraphQLCompositeType,
+  _gatewayType: GraphQLCompositeType,
   subschemaType: GraphQLCompositeType,
-  schema: GraphQLSchema,
+  subschemaSchema: GraphQLSchema,
 ): GraphQLField<any, any> | undefined {
   const fieldName = fieldNode.name.value;
   if (fieldName === '__typename') {
@@ -289,15 +292,15 @@ function resolveFieldDefForNode(
     return direct;
   }
   if (isAbstractType(subschemaType)) {
-    for (const possible of schema.getPossibleTypes(subschemaType)) {
-      const field = possible.getFields()[fieldName];
-      if (field) {
-        return field;
-      }
-    }
-  }
-  if (isAbstractType(gatewayType) && gatewayType !== subschemaType) {
-    for (const possible of schema.getPossibleTypes(gatewayType)) {
+    // Prefer possibles from the same schema that owns subschemaType.
+    const possibles =
+      subschemaSchema.getType(subschemaType.name) != null &&
+      isAbstractType(subschemaSchema.getType(subschemaType.name)!)
+        ? subschemaSchema.getPossibleTypes(
+            subschemaSchema.getType(subschemaType.name) as typeof subschemaType,
+          )
+        : [];
+    for (const possible of possibles) {
       const field = possible.getFields()[fieldName];
       if (field) {
         return field;

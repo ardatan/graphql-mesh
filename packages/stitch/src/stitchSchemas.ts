@@ -15,6 +15,7 @@ import {
   type GraphQLObjectType,
 } from 'graphql';
 import {
+  defaultMergedResolver as classicDefaultMergedResolver,
   getSubschema,
   getUnpathedErrors,
   isExternalObject,
@@ -32,9 +33,11 @@ import {
 } from '@graphql-tools/schema';
 import { inspect, type IResolvers } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
-import { attachBackboneExecutor } from './backbone/attachBackboneExecutor.js';
 import { defaultMergedResolver as backboneDefaultMergedResolver } from './backbone/defaultMergedResolver.js';
-import { BACKBONE_EXECUTING } from './backbone/rootProxyingResolvers.js';
+import {
+  BACKBONE_EXECUTING,
+  installRootProxyingResolvers,
+} from './backbone/rootProxyingResolvers.js';
 import { resolveLocalFieldResult } from './resolveLocalFieldResult.js';
 import { addStitchingInfo, completeStitchingInfo, createStitchingInfo } from './stitchingInfo.js';
 import {
@@ -48,9 +51,6 @@ import {
   type SubschemaConfigTransform,
 } from './types.js';
 
-const BACKBONE_HYDRATED = Symbol.for('graphql-tools.stitch.backboneHydrated');
-const BACKBONE_EXECUTING_SYM = Symbol.for('graphql-tools.stitch.backboneExecuting');
-
 export function stitchSchemas<TContext extends Record<string, any> = Record<string, any>>(
   options: IStitchSchemasOptions<TContext>,
 ): GraphQLSchema {
@@ -60,6 +60,7 @@ export function stitchSchemas<TContext extends Record<string, any> = Record<stri
     resolverValidationOptions = {},
     updateResolversInPlace = true,
     schemaExtensions,
+    onStitchedSchema,
     ...rest
   } = options;
   let {
@@ -156,10 +157,14 @@ export function stitchSchemas<TContext extends Record<string, any> = Record<stri
     applyExtensions(schema, mergedSchemaExtensions);
   }
 
-  // Backbone executor + root proxying resolvers on the stitched schema.
-  // Callers that mapSchema afterward (e.g. federation filter) must re-attach
-  // on the new instance.
-  return attachBackboneExecutor(schema);
+  // Optional pre-attach transform. Stitch stays generic — federation owns
+  // filterInternalFieldsAndTypes and wires it via this hook.
+  if (onStitchedSchema) {
+    schema = onStitchedSchema(schema) || schema;
+  }
+
+  // Shared executor + root proxies (plan/locals from info.schema).
+  return installRootProxyingResolvers(schema);
 }
 
 function stripCustomDirectiveUsages(types: GraphQLNamedType[]): void {
@@ -248,10 +253,40 @@ function cloneResolverMap(resolverMap: IResolvers, schema: GraphQLSchema): IReso
  * key fields of a merged type; those get delegated to the owning subschema so
  * the rest of the fields resolve through regular type merging.
  */
+/** True when this resolve runs under classic execute (no stitch plan hydration). */
+function needsClassicTypeMerging(info: {
+  operation?: { operation?: string; selectionSet?: { selections: readonly any[] } };
+  fragments?: Record<string, { selectionSet?: { selections: readonly any[] } }>;
+}): boolean {
+  if (info?.operation?.operation === 'subscription') {
+    return true;
+  }
+  const stack = [...(info?.operation?.selectionSet?.selections ?? [])];
+  for (const frag of Object.values(info?.fragments ?? {})) {
+    if (frag?.selectionSet?.selections) {
+      stack.push(...frag.selectionSet.selections);
+    }
+  }
+  while (stack.length) {
+    const sel = stack.pop()!;
+    if (
+      sel?.directives?.some(
+        (d: { name: { value: string } }) => d.name.value === 'defer' || d.name.value === 'stream',
+      )
+    ) {
+      return true;
+    }
+    if (sel?.selectionSet?.selections) {
+      stack.push(...sel.selectionSet.selections);
+    }
+  }
+  return false;
+}
+
 /**
- * Wrap merged-entity field resolvers: when the backbone plan has hydrated the
- * tree (`BACKBONE_HYDRATED`), skip mergeFields on already-present
- * fields. Otherwise call the previous resolver unchanged.
+ * Wrap merged-entity field resolvers: ExternalObject parents resolve from
+ * response keys (and rethrow matching unpathed errors); otherwise call the
+ * previous resolver (backbone DMR preferred over classic).
  */
 function wrapMergedTypeResolversForBackboneHydration<TContext extends Record<string, any>>(
   schema: GraphQLSchema,
@@ -271,18 +306,29 @@ function wrapMergedTypeResolversForBackboneHydration<TContext extends Record<str
       if (previous == null) {
         continue;
       }
+      // Prefer backbone DMR over classic `@graphql-tools/delegate` DMR (same
+      // function name). Classic ignores aliases on non-ExternalObject parents;
+      // `projectDataToOperation` also drops ExternalObject stamps, so alias
+      // keys must still resolve after projection.
+      const resolvePrevious =
+        previous === backboneDefaultMergedResolver || previous.name !== 'defaultMergedResolver'
+          ? previous
+          : backboneDefaultMergedResolver;
       field.resolve = function defaultMergedResolver(
         parent: any,
         args: any,
         context: any,
         info: any,
       ) {
-        const backboneActive =
-          context != null &&
-          typeof context === 'object' &&
-          ((context as any)[BACKBONE_HYDRATED] || (context as any)[BACKBONE_EXECUTING_SYM]);
-        if (backboneActive && parent != null && isExternalObject(parent)) {
+        // ExternalObject parents are backbone/stitch payloads. Handle them even
+        // when callers omit contextValue (HYDRATED lives on a private bag then).
+        // Backbone-planned queries/mutations: skip type merging (already hydrated).
+        // Classic execute paths (subscription, @defer/@stream) still need
+        // mergeFields for nested entity stubs (Comment.post → Post.title,
+        // deferred author.name, etc.).
+        if (parent != null && isExternalObject(parent)) {
           const responseKey = info.fieldNodes[0]?.alias?.value ?? info.fieldName;
+          const skipTypeMerging = !needsClassicTypeMerging(info);
           if (Object.prototype.hasOwnProperty.call(parent, responseKey)) {
             return resolveExternalValue(
               parent[responseKey],
@@ -291,17 +337,49 @@ function wrapMergedTypeResolversForBackboneHydration<TContext extends Record<str
               context,
               info,
               undefined,
-              true,
+              skipTypeMerging,
             );
           }
-          // Plan still running / already hydrated - do not schedule classic
-          // mergeFields DataLoader batches for missing entity fields.
           if (Object.prototype.hasOwnProperty.call(parent, info.fieldName)) {
-            return parent[info.fieldName];
+            return resolveExternalValue(
+              parent[info.fieldName],
+              getUnpathedErrors(parent),
+              getSubschema(parent, info.fieldName),
+              context,
+              info,
+              undefined,
+              skipTypeMerging,
+            );
           }
-          return undefined;
+          // Classic @defer/@stream: gateway-owned deferred selections are
+          // omitted from the initial subgraph response, so the key is missing.
+          // Classic DMR runs mergeFields / resolveMissingFieldFromSourceSubschema.
+          // Subscription must NOT take this path — missing keys fall through
+          // to local / previous resolvers (Comment.post → Post.title merge
+          // still runs above when the key is present).
+          if (
+            !skipTypeMerging &&
+            info?.operation?.operation !== 'subscription'
+          ) {
+            return classicDefaultMergedResolver(parent, args, context, info);
+          }
+          // Missing key: rethrow unpathed subgraph errors (shared-root non-null).
+          // Otherwise fall through so subscription / local resolvers still run.
+          const unpathed = getUnpathedErrors(parent);
+          const match = unpathed.find(error => {
+            const path = error.path;
+            if (!path?.length) {
+              return true;
+            }
+            return (
+              path[path.length - 1] === responseKey || path[path.length - 1] === info.fieldName
+            );
+          });
+          if (match) {
+            throw match;
+          }
         }
-        return previous(parent, args, context, info);
+        return resolvePrevious(parent, args, context, info);
       };
     }
   }

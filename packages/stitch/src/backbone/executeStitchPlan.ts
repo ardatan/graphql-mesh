@@ -15,7 +15,6 @@ import {
   type GraphQLSchema,
   type SelectionNode,
   type SelectionSetNode,
-  type VariableDefinitionNode,
 } from 'graphql';
 import {
   createDefaultExecutor,
@@ -48,7 +47,7 @@ import {
   type ScheduledHop,
 } from './planSchedule.js';
 import { BACKBONE_EXECUTING, getOriginalRootResolve } from './rootProxyingResolvers.js';
-import { evaluateRunIf } from './runIf.js';
+import { ensureVariableValue, evaluateRunIf } from './runIf.js';
 import type {
   BackboneExecutionContext,
   PathSegment,
@@ -118,6 +117,7 @@ function leafKeysSatisfied(value: Record<string, any>, keys: readonly string[]):
 function selectionSatisfiedByDeep(
   value: Record<string, any>,
   selectionSet: SelectionSetNode,
+  schema?: GraphQLSchema,
 ): boolean {
   for (const sel of selectionSet.selections) {
     if (sel.kind === Kind.FIELD) {
@@ -140,13 +140,13 @@ function selectionSatisfiedByDeep(
           if (
             item != null &&
             typeof item === 'object' &&
-            !selectionSatisfiedBy(item, sel.selectionSet)
+            !selectionSatisfiedBy(item, sel.selectionSet, schema)
           ) {
             return false;
           }
         }
       } else if (typeof child === 'object') {
-        if (!selectionSatisfiedBy(child, sel.selectionSet)) {
+        if (!selectionSatisfiedBy(child, sel.selectionSet, schema)) {
           return false;
         }
       } else {
@@ -156,10 +156,17 @@ function selectionSatisfiedByDeep(
       if (sel.typeCondition) {
         const tn = value.__typename;
         if (tn != null && tn !== sel.typeCondition.name.value) {
+          // @interfaceObject parents still carry the interface __typename until
+          // a concrete hop runs. Only skip when a *different concrete* object
+          // type was already resolved (Admin vs Regular).
+          const runtime = schema?.getType(tn);
+          if (runtime != null && (isInterfaceType(runtime) || !isObjectType(runtime))) {
+            return false;
+          }
           continue;
         }
       }
-      if (!selectionSatisfiedBy(value, sel.selectionSet)) {
+      if (!selectionSatisfiedBy(value, sel.selectionSet, schema)) {
         return false;
       }
     } else {
@@ -177,6 +184,7 @@ function selectionSatisfiedByDeep(
 function selectionSatisfiedBy(
   value: Record<string, any> | null | undefined,
   selectionSet: SelectionSetNode,
+  schema?: GraphQLSchema,
 ): boolean {
   if (value == null || typeof value !== 'object' || Array.isArray(value)) {
     return false;
@@ -189,7 +197,7 @@ function selectionSatisfiedBy(
   if (info.topKeys.length && !leafKeysSatisfied(value, info.topKeys)) {
     return false;
   }
-  return selectionSatisfiedByDeep(value, selectionSet);
+  return selectionSatisfiedByDeep(value, selectionSet, schema);
 }
 
 /** Copy missing selection fields (incl. nested) from cached entity onto parent. */
@@ -356,9 +364,9 @@ function tryReuseEntityIntoParent(
 ): boolean {
   if (!entityReuseAllowed(ctx) || !ctx.entityByRepHash?.size) {
     // Fall back: parent already has the needed selection from an earlier merge.
-    return selectionSatisfiedBy(parent, selectionSet);
+    return selectionSatisfiedBy(parent, selectionSet, ctx.schema);
   }
-  if (selectionSatisfiedBy(parent, selectionSet)) {
+  if (selectionSatisfiedBy(parent, selectionSet, ctx.schema)) {
     return true;
   }
   const hash = representationHash(parent, hopSubschema, entityTypeName);
@@ -366,7 +374,7 @@ function tryReuseEntityIntoParent(
     return false;
   }
   const cached = ctx.entityByRepHash.get(hash);
-  if (!cached || !selectionSatisfiedBy(cached, selectionSet)) {
+  if (!cached || !selectionSatisfiedBy(cached, selectionSet, ctx.schema)) {
     return false;
   }
   // Cached already satisfied the selection — copy is sufficient (no re-walk).
@@ -789,12 +797,25 @@ function mergeRootValues(existing: any, incoming: any): any {
     !Array.isArray(existing) &&
     !Array.isArray(incoming)
   ) {
-    // mergeDeep copies enumerable props; re-apply annotation symbols from either side.
-    const merged = mergeDeep([existing, incoming], undefined, true, true);
-    const sourceSub =
-      (existing as any)[OBJECT_SUBSCHEMA_SYMBOL] ?? (incoming as any)[OBJECT_SUBSCHEMA_SYMBOL];
-    if (sourceSub && merged && typeof merged === 'object') {
-      stampSubschema(merged, sourceSub);
+    // mergeDeep drops non-enumerable symbols unless asked; shared-root Parallel
+    // must keep ExternalObject annotations so alias-aware gateway resolvers run.
+    // Do not merge symbols via mergeDeep — Subschema graphs are cyclic.
+    const merged = mergeDeep([existing, incoming], false, true, true);
+    if (merged && typeof merged === 'object') {
+      const sourceSub =
+        (existing as any)[OBJECT_SUBSCHEMA_SYMBOL] ?? (incoming as any)[OBJECT_SUBSCHEMA_SYMBOL];
+      if (sourceSub) {
+        const leftErrors = (existing as any)[UNPATHED_ERRORS_SYMBOL] as any[] | undefined;
+        const rightErrors = (incoming as any)[UNPATHED_ERRORS_SYMBOL] as any[] | undefined;
+        const errors =
+          leftErrors?.length || rightErrors?.length
+            ? [...(leftErrors ?? []), ...(rightErrors ?? [])]
+            : [];
+        stampSubschema(merged, sourceSub, errors);
+      } else if ((merged as any)[UNPATHED_ERRORS_SYMBOL] == null) {
+        // Still mark as external so defaultMergedResolver reads alias keys.
+        (merged as any)[UNPATHED_ERRORS_SYMBOL] = [];
+      }
       const leftMap = (existing as any)[FIELD_SUBSCHEMA_MAP_SYMBOL];
       const rightMap = (incoming as any)[FIELD_SUBSCHEMA_MAP_SYMBOL];
       if (leftMap || rightMap) {
@@ -819,93 +840,6 @@ function collectUsedVariableNames(node: SelectionNode): Set<string> {
     },
   });
   return used;
-}
-
-function filterVariableDefinitions(
-  defs: readonly VariableDefinitionNode[] | undefined,
-  used: Set<string>,
-): VariableDefinitionNode[] | undefined {
-  if (!defs?.length) {
-    return undefined;
-  }
-  const filtered = defs.filter(d => used.has(d.variable.name.value));
-  return filtered.length ? filtered : undefined;
-}
-
-/**
- * When sibling inline fragments select the same field with conflicting
- * nullability (User.id: ID! vs Admin.id: ID), rewrite with `_nullable_` /
- * `_nonNullable_` aliases - same as finalizeGatewayRequest.
- */
-function rewriteNullabilityConflicts(
-  selectionSet: SelectionSetNode,
-  schema: GraphQLSchema,
-): SelectionSetNode {
-  const seenNonNullable = new Set<string>();
-  const seenNullable = new Set<string>();
-  const selections = selectionSet.selections.map(sel => {
-    if (sel.kind !== Kind.INLINE_FRAGMENT || !sel.typeCondition) {
-      if (sel.kind === Kind.FIELD && sel.selectionSet) {
-        return {
-          ...sel,
-          selectionSet: rewriteNullabilityConflicts(sel.selectionSet, schema),
-        };
-      }
-      return sel;
-    }
-    const type = schema.getType(sel.typeCondition.name.value);
-    if (!type || !('getFields' in type) || !sel.selectionSet) {
-      return sel;
-    }
-    const fields = (type as GraphQLObjectType).getFields();
-    const nextSels = sel.selectionSet.selections.map(sub => {
-      if (sub.kind !== Kind.FIELD || sub.alias) {
-        if (sub.kind === Kind.FIELD && sub.selectionSet) {
-          return {
-            ...sub,
-            selectionSet: rewriteNullabilityConflicts(sub.selectionSet, schema),
-          };
-        }
-        return sub;
-      }
-      const field = fields[sub.name.value];
-      if (!field) {
-        return sub;
-      }
-      const nullable = isNullableType(field.type);
-      if (nullable) {
-        seenNullable.add(sub.name.value);
-      } else {
-        seenNonNullable.add(sub.name.value);
-      }
-      if (seenNullable.has(sub.name.value) && seenNonNullable.has(sub.name.value)) {
-        return {
-          ...sub,
-          alias: {
-            kind: Kind.NAME,
-            value: nullable ? `_nullable_${sub.name.value}` : `_nonNullable_${sub.name.value}`,
-          },
-          selectionSet: sub.selectionSet
-            ? rewriteNullabilityConflicts(sub.selectionSet, schema)
-            : undefined,
-        };
-      }
-      return sub.selectionSet
-        ? {
-            ...sub,
-            selectionSet: rewriteNullabilityConflicts(sub.selectionSet, schema),
-          }
-        : sub;
-    });
-    return {
-      ...sel,
-      selectionSet: {
-        ...sel.selectionSet,
-        selections: nextSels as readonly SelectionNode[],
-      },
-    };
-  });
-  return { ...selectionSet, selections: selections as readonly SelectionNode[] };
 }
 
 function isPlainObject(value: object): boolean {
@@ -937,50 +871,14 @@ function unwrapNullabilityAliases(value: any): any {
   return out;
 }
 
-function buildRootDocument(
-  operationName: string | undefined,
-  operationType: OperationTypeNode,
-  fieldNode: FieldNode,
-  variableDefinitions: StitchPlan['operation']['variableDefinitions'],
+function ensureUsedVariableValues(
+  names: Iterable<string>,
   variableValues: Record<string, any>,
-  targetSchema?: GraphQLSchema,
-) {
-  // Keep nested @skip/@include - subgraph evaluates them (Condition / peel
-  // already decided which root fields run).
-  let cleaned = fieldNode;
-  if (targetSchema && cleaned.selectionSet) {
-    cleaned = {
-      ...cleaned,
-      selectionSet: rewriteNullabilityConflicts(cleaned.selectionSet, targetSchema),
-    };
+  variableDefaults?: Record<string, any>,
+): void {
+  for (const name of names) {
+    ensureVariableValue(variableValues, name, variableDefaults);
   }
-  const usedVars = collectUsedVariableNames(cleaned);
-  const filteredDefs = filterVariableDefinitions(variableDefinitions, usedVars);
-  const filteredVars: Record<string, any> = {};
-  for (const name of usedVars) {
-    if (name in variableValues) {
-      filteredVars[name] = variableValues[name];
-    }
-  }
-  const document: DocumentNode = {
-    kind: Kind.DOCUMENT,
-    definitions: [
-      {
-        kind: Kind.OPERATION_DEFINITION,
-        operation: operationType,
-        name: operationName ? { kind: Kind.NAME, value: operationName } : undefined,
-        variableDefinitions: filteredDefs,
-        selectionSet: {
-          kind: Kind.SELECTION_SET,
-          selections: [cleaned],
-        },
-      },
-    ],
-  };
-  return {
-    document,
-    variables: filteredVars,
-  };
 }
 
 function collectEntitiesAtPath(data: any, path: PathSegment[]): Array<Record<string, any>> {
@@ -1068,8 +966,9 @@ function executeFetchNode(
       maybeAbortMutationAfterNullifiedRoot(ctx, responseKey, rootFieldNode.name.value);
     };
 
-    // Rename / encapsulate / defer transforms need Transformer - prebuilt
-    // documents use gateway field names and would miss subgraph renames.
+    // Rename / encapsulate / defer transforms need delegateToSchema —
+    // prebuilt documents use gateway field names and would miss subgraph renames.
+    // Match Hive #2734: fieldName = schema field name, write returned value.
     if (node.subschema.transforms?.length) {
       const hopSubschema = node.subschema;
       const rootType = getDefinedRootType(ctx.schema, ctx.operation.operation);
@@ -1111,41 +1010,40 @@ function executeFetchNode(
       );
     }
 
-    let document = node.document;
-    let variables: Record<string, any>;
-    if (document) {
+    // Plan prebuilds documents (both @skip/@include Condition branches).
+    // Execute only selects the hop and binds variables — never rebuilds docs.
+    const document = node.document;
+    if (!document) {
+      return writeRootThrowFailure(
+        new GraphQLError(`Missing prebuilt document for root field ${rootFieldNode.name.value}`, {
+          extensions: { code: 'MISSING_STITCH_PLAN_DOCUMENT' },
+        }),
+      );
+    }
+    let variables: Record<string, any> | undefined;
+    if (node.variableNames?.length) {
       variables = {};
-      const op = document.definitions.find(d => d.kind === Kind.OPERATION_DEFINITION);
-      for (const def of op?.variableDefinitions ?? []) {
-        const name = def.variable.name.value;
+      for (const name of node.variableNames) {
+        ensureVariableValue(ctx.variableValues, name, ctx.variableDefaults);
         if (name in ctx.variableValues) {
           variables[name] = ctx.variableValues[name];
         }
       }
-    } else {
-      const built = buildRootDocument(
-        ctx.operation.name?.value,
-        ctx.operation.operation,
-        node.rootField,
-        ctx.operation.variableDefinitions,
-        ctx.variableValues,
-        node.subschema.schema,
-      );
-      document = built.document;
-      variables = built.variables;
     }
+
+    const request: ExecutionRequest = {
+      document,
+      variables,
+      context: ctx.contextValue,
+      rootValue: node.subschema.rootValue ?? ctx.rootValue,
+      operationType: ctx.operation.operation,
+      operationName: ctx.operation.name?.value,
+      signal: ctx.signal,
+      subgraphName: node.subschema.name,
+    };
+
     return handleMaybePromise(
-      () =>
-        executor({
-          document,
-          variables,
-          context: ctx.contextValue,
-          rootValue: node.subschema.rootValue ?? ctx.rootValue,
-          operationType: ctx.operation.operation,
-          operationName: ctx.operation.name?.value,
-          signal: ctx.signal,
-          subgraphName: node.subschema.name,
-        } satisfies ExecutionRequest) as MaybePromise<ExecutionResult>,
+      () => executor(request) as MaybePromise<ExecutionResult>,
       (result: ExecutionResult) => {
         const located = result.errors?.length ? (result.errors as GraphQLError[]) : [];
         if (result.data && responseKey in result.data) {
@@ -1202,6 +1100,7 @@ function executeFetchNode(
 
   // Always-on entity reuse (queries): copy by rep-hash / parent leaves, skip HTTP.
   if (entityReuseAllowed(ctx)) {
+    const before = parents.length;
     parents = parents.filter(
       p =>
         !tryReuseEntityIntoParent(ctx, node.subschema, node.entityTypeName!, p, node.selectionSet),
@@ -1430,13 +1329,17 @@ function tryExecuteEntitiesBatch(
   };
 
   // Prebuilt document skips Transformer - only safe for leaf-only selections
-  // (inventory/username style). Nested selections (field args, deep merges)
-  // fall through to per-parent merge resolvers so batchDelegate DataLoader
-  // keys include field arguments (sharedRootValue / sortBy memoization).
+  // (inventory/username style, including @include/@skip). Nested selections
+  // (field args, deep merges) fall through to per-parent merge resolvers so
+  // batchDelegate DataLoader keys include field arguments.
   if (!(node.document && isLeafOnlySelection(node.selectionSet))) {
     return undefined;
   }
-  const args = entry.argsFromKeys(keys) as Record<string, any>;
+  const args = bindMergeHopVariables(
+    entry.argsFromKeys(keys) as Record<string, any>,
+    node.variableNames,
+    ctx,
+  );
   const executor = getSubschemaExecutor(hopSubschema);
   return handleMaybePromise(
     () =>
@@ -1490,6 +1393,11 @@ function executeIslandNode(
   const rootType = getDefinedRootType(ctx.schema, ctx.operation.operation);
   const isRootIsland = parentType === rootType;
   const resolve = (isRootIsland ? getOriginalRootResolve(field) : undefined) ?? field.resolve;
+  ensureUsedVariableValues(
+    collectUsedVariableNames(node.fieldNode),
+    ctx.variableValues,
+    ctx.variableDefaults,
+  );
   const args = getArgumentValues(
     field,
     node.fieldNode,
@@ -1606,7 +1514,7 @@ function selectedEntityFields(hop: Extract<StitchPlanNode, { kind: 'Fetch' }>): 
 }
 
 function runOneHop(hop: ExecutableHop, ctx: BackboneExecutionContext): MaybePromise<void> {
-  if (!evaluateRunIf(hop.runIf, ctx.variableValues)) {
+  if (!evaluateRunIf(hop.runIf, ctx.variableValues, ctx.variableDefaults)) {
     return;
   }
   if (hop.kind === 'BatchFetch') {
@@ -1669,7 +1577,9 @@ function runSameKeyRootFetches(
   ctx: BackboneExecutionContext,
 ): MaybePromise<void> {
   // Grouped shared-root path bypasses executeHop's runIf check; filter here.
-  const runnable = fetches.filter(child => evaluateRunIf(child.runIf, ctx.variableValues));
+  const runnable = fetches.filter(child =>
+    evaluateRunIf(child.runIf, ctx.variableValues, ctx.variableDefaults),
+  );
   if (!runnable.length) {
     return;
   }
@@ -1707,6 +1617,14 @@ function runSameKeyRootFetches(
         }
         if (merged === undefined || failedFetchExplainsHole(runnable[i]!, merged)) {
           ctx.errors.push(...part.errors);
+          // Stamp onto the merged ExternalObject so nested field resolves can
+          // rethrow the original subgraph error (not a nullability bubble).
+          if (merged != null && typeof merged === 'object') {
+            const existing = (merged as any)[UNPATHED_ERRORS_SYMBOL] as any[] | undefined;
+            (merged as any)[UNPATHED_ERRORS_SYMBOL] = existing?.length
+              ? [...existing, ...part.errors]
+              : [...part.errors];
+          }
         }
       }
       if (merged !== undefined) {
@@ -1734,7 +1652,7 @@ export function executeDataflowPlan(
   cachedSchedule?: StitchPlanSchedule,
 ): MaybePromise<void> {
   const hops: ExecutableHop[] = [];
-  collectExecutableHops(root, hops, ctx.variableValues ?? {});
+  collectExecutableHops(root, hops, ctx.variableValues ?? {}, ctx.variableDefaults);
   if (!hops.length) {
     return;
   }
@@ -2076,23 +1994,49 @@ type BatchAliasPrep = {
 };
 
 /**
- * True when selection is only scalar/enum fields (+ __typename) - no nests,
- * fragments, args, or directives. Directives (`@include`/`@skip`) need
- * variable defs that Transformer/finalizeGatewayRequest would attach.
+ * True when selection is only scalar/enum fields (+ __typename) - no nests or
+ * field args. Inline fragments and `@include`/`@skip` are allowed: prebuilt
+ * merge docs declare client variable defs (see buildBatchedMergeDocument).
+ * Nested selections / field args still need Transformer / merge resolvers.
  */
 function isLeafOnlySelection(selectionSet: SelectionSetNode): boolean {
   for (const sel of selectionSet.selections) {
+    if (sel.kind === Kind.INLINE_FRAGMENT) {
+      if (!sel.selectionSet || !isLeafOnlySelection(sel.selectionSet)) {
+        return false;
+      }
+      continue;
+    }
     if (sel.kind !== Kind.FIELD) {
       return false;
     }
     if (sel.name.value === '__typename') {
       continue;
     }
-    if (sel.selectionSet || sel.arguments?.length || sel.directives?.length) {
+    if (sel.selectionSet || sel.arguments?.length) {
       return false;
     }
   }
   return true;
+}
+
+/** Bind client vars from ctx onto merge-arg variables from argsFromKeys. */
+function bindMergeHopVariables(
+  mergeArgs: Record<string, any>,
+  clientVariableNames: readonly string[] | undefined,
+  ctx: BackboneExecutionContext,
+): Record<string, any> {
+  if (!clientVariableNames?.length) {
+    return mergeArgs;
+  }
+  const variables = { ...mergeArgs };
+  for (const name of clientVariableNames) {
+    ensureVariableValue(ctx.variableValues, name, ctx.variableDefaults);
+    if (name in ctx.variableValues) {
+      variables[name] = ctx.variableValues[name];
+    }
+  }
+  return variables;
 }
 
 /**
@@ -2109,16 +2053,26 @@ function executeBatchFetchNode(
     return;
   }
   const activeAliases = node.aliases.filter(a =>
-    evaluateRunIf(a.runIf ?? node.runIf, ctx.variableValues),
+    evaluateRunIf(a.runIf ?? node.runIf, ctx.variableValues, ctx.variableDefaults),
   );
   if (!activeAliases.length) {
     return;
   }
 
-  // Prefer one concatenated merge-field HTTP whenever the plan attached a
-  // document. Alias selectionSets stay unfiltered for the parallel-Fetch
-  // fallback; the document itself carries subgraph-filtered selections.
-  if (node.document) {
+  // Prefer one concatenated merge-field HTTP when the plan attached a document
+  // and the raw path is safe:
+  // - leaf-only aliases (scalars / @include/@skip), or
+  // - mixed entity types (optimizations: User.reviews + Product.reviews → one
+  //   hop; each `_entities` result matches one type inline fragment).
+  // Same-type nested multi-alias BatchFetch stays on parallel Fetch: the
+  // prebuilt doc unions same-type inline fragments for every key, which
+  // mis-merges deep many-plans trees (n1.n0.n4.n5.f6). Gateway `batch`
+  // still collapses same-tick Fetches.
+  const allLeafOnly = activeAliases.every(a => isLeafOnlySelection(a.selectionSet));
+  const mixedEntityTypes = activeAliases.some(
+    a => a.entityTypeName !== activeAliases[0]!.entityTypeName,
+  );
+  if (node.document && (allLeafOnly || mixedEntityTypes)) {
     const prepared: BatchAliasPrep[] = [];
     const allKeys: any[] = [];
     let canRawBatch = true;
@@ -2179,7 +2133,11 @@ function executeBatchFetchNode(
         return;
       }
       const fieldName = mergeEntry.fieldName;
-      const variables = mergeEntry.argsFromKeys(allKeys);
+      const variables = bindMergeHopVariables(
+        mergeEntry.argsFromKeys(allKeys),
+        node.variableNames,
+        ctx,
+      );
       const executor = getSubschemaExecutor(node.subschema);
       return handleMaybePromise(
         () =>
@@ -2268,7 +2226,14 @@ export function executeStitchPlan(
       ? plan.fragments
       : getFragmentsFromDocument(request.document);
 
-  const variableValues = request.variables ?? {};
+  // Live map: defaults from the plan are written in on first read (Condition /
+  // runIf / hop args). Drop Yoga's undefined placeholders without filling defaults.
+  const variableValues: Record<string, any> = { ...(request.variables ?? {}) };
+  for (const key of Object.keys(variableValues)) {
+    if (variableValues[key] === undefined) {
+      delete variableValues[key];
+    }
+  }
 
   const contextValue =
     request.context != null && typeof request.context === 'object'
@@ -2283,6 +2248,7 @@ export function executeStitchPlan(
     operation,
     fragments,
     variableValues,
+    variableDefaults: plan.variableDefaults,
     contextValue,
     rootValue: request.rootValue,
     signal: request.signal,

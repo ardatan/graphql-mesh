@@ -57,13 +57,11 @@ import {
 import { CRITICAL_ERROR } from '@graphql-tools/executor';
 import { buildHTTPExecutor, type HTTPExecutorOptions } from '@graphql-tools/executor-http';
 import {
-  attachBackboneExecutor,
   calculateSelectionScore,
   getDefaultFieldConfigMerger,
-  markChangedRootResolvesAsLocal,
-  snapshotRootFieldResolves,
   stitchSchemas,
   ValidationLevel,
+  type IStitchSchemasOptions,
   type MergeFieldConfigCandidate,
   type TypeMergingOptions,
 } from '@graphql-tools/stitch';
@@ -173,6 +171,12 @@ export interface GetStitchingOptionsFromSupergraphSdlOpts {
   handleProgressiveOverride?: ProgressiveOverrideHandler;
 
   getRng?: () => number;
+
+  /**
+   * Mutate the filtered public schema before backbone root proxies attach.
+   * Runs after `filterInternalFieldsAndTypes`, before the single attach.
+   */
+  onStitchedSchema?(schema: GraphQLSchema): GraphQLSchema | void;
 }
 
 export interface ProgressiveOverrideInfo {
@@ -1641,6 +1645,8 @@ export function getStitchingOptionsFromSupergraphSdl(
     }
     let executor: Executor = buildHTTPExecutor({
       endpoint,
+      // Subgraph error extensions include request method/body (gateway backbone PR parity).
+      exposeHTTPDetailsInExtensions: true,
       ...httpExecutorOpts,
     });
     if (globalThis.process?.env?.DEBUG) {
@@ -2252,6 +2258,7 @@ export function getStitchingOptionsFromSupergraphSdl(
     };
   }
 
+  const userOnStitchedSchema = opts.onStitchedSchema;
   return {
     subschemas,
     typeDefs: additionalTypeDefs,
@@ -2265,37 +2272,40 @@ export function getStitchingOptionsFromSupergraphSdl(
       fieldConfigMerger,
     },
     schemaExtensions,
+    // Filter join internals then user hook — stitch attaches proxies after this.
+    onStitchedSchema(schema: GraphQLSchema) {
+      let next = filterInternalFieldsAndTypes(schema);
+      if (userOnStitchedSchema) {
+        next = userOnStitchedSchema(next) || next;
+      }
+      return next;
+    },
   };
 }
 
+export type StitchingOptionsFromSupergraphSdl = Omit<
+  ReturnType<typeof getStitchingOptionsFromSupergraphSdl>,
+  'typeDefs'
+> &
+  Partial<IStitchSchemasOptions>;
+
 export interface GetStitchedSchemaFromSupergraphSdlOpts extends GetStitchingOptionsFromSupergraphSdlOpts {
   supergraphSdl: string | DocumentNode;
-  onStitchingOptions?(opts: ReturnType<typeof getStitchingOptionsFromSupergraphSdl>): void;
-  onStitchedSchema?(schema: GraphQLSchema): GraphQLSchema | void;
+  /** Mutate stitch options (including `resolvers` / `typeDefs`) before stitch. */
+  onStitchingOptions?(opts: StitchingOptionsFromSupergraphSdl): void;
 }
 
+/**
+ * Build an executable stitched schema from Federation supergraph SDL.
+ * `getStitchingOptionsFromSupergraphSdl` sets `onStitchedSchema` (filter + user
+ * hook); stitch attaches root proxies once on the public schema afterward.
+ * Late root-resolve overrides via `onStitchedSchema` are not auto-marked as
+ * `localFields`. External post-stitch mapSchema is unsupported.
+ */
 export function getStitchedSchemaFromSupergraphSdl(opts: GetStitchedSchemaFromSupergraphSdlOpts) {
   const stitchSchemasOpts = getStitchingOptionsFromSupergraphSdl(opts);
   opts.onStitchingOptions?.(stitchSchemasOpts);
-  let supergraphSchema = stitchSchemas(stitchSchemasOpts);
-  // filterInternalFieldsAndTypes mapSchema -> new schema; re-bind backbone.
-  supergraphSchema = filterInternalFieldsAndTypes(supergraphSchema);
-  if (opts.onStitchedSchema) {
-    const rootResolvesBefore = snapshotRootFieldResolves(supergraphSchema);
-    supergraphSchema = opts.onStitchedSchema(supergraphSchema) || supergraphSchema;
-    // Late root resolver overrides (Query.me -> local) must plan as Islands.
-    markChangedRootResolvesAsLocal(supergraphSchema, rootResolvesBefore);
-  }
-  // Persist progressive-override plan-cache opts on schema.extensions so a
-  // later mapSchema + bare re-attach (e.g. filterInternalFieldsAndTypes) needs
-  // no options bag.
-  return attachBackboneExecutor(supergraphSchema, {
-    // Plan-cache keying only needs label + context; federation's handler also
-    // accepts resolve info when used as a field override callback.
-    handleProgressiveOverride: opts.handleProgressiveOverride
-      ? (label, context) => opts.handleProgressiveOverride!(label, context, undefined as any)
-      : undefined,
-  });
+  return stitchSchemas(stitchSchemasOpts);
 }
 
 const anyTypeDefinitionNode: ScalarTypeDefinitionNode = {
