@@ -19,11 +19,12 @@ import {
 } from 'graphql';
 import {
   createDefaultExecutor,
-  delegateToSchema,
   FIELD_SUBSCHEMA_MAP_SYMBOL,
   mergeFields,
   OBJECT_SUBSCHEMA_SYMBOL,
+  Transformer,
   UNPATHED_ERRORS_SYMBOL,
+  type DelegationContext,
   type StitchingInfo,
   type Subschema,
 } from '@graphql-tools/delegate';
@@ -1080,54 +1081,6 @@ function executeFetchNode(
       maybeAbortMutationAfterNullifiedRoot(ctx, responseKey, rootFieldNode.name.value);
     };
 
-    // Rename / encapsulate / defer transforms need Transformer - prebuilt
-    // documents use gateway field names and would miss subgraph renames.
-    if (node.subschema.transforms?.length) {
-      const hopSubschema = node.subschema;
-      const rootType = getDefinedRootType(ctx.schema, ctx.operation.operation);
-      const fieldDef = rootType.getFields()[rootFieldNode.name.value];
-      ensureUsedVariableValues(
-        collectUsedVariableNames(rootFieldNode),
-        ctx.variableValues,
-        ctx.variableDefaults,
-      );
-      const args = fieldDef
-        ? getArgumentValues(
-            fieldDef,
-            rootFieldNode,
-            asGetArgumentValuesVariables(ctx.variableValues),
-          )
-        : {};
-      const info = {
-        ...(ctx.infoStub as any),
-        schema: ctx.schema,
-        parentType: rootType,
-        returnType: fieldDef?.type,
-        fieldName: rootFieldNode.name.value,
-        fieldNodes: [rootFieldNode],
-        fragments: ctx.fragments,
-        operation: ctx.operation,
-        variableValues: ctx.variableValues,
-        path: { typename: rootType.name, key: responseKey, prev: undefined },
-        rootValue: ctx.rootValue,
-      };
-      return handleMaybePromise(
-        () =>
-          delegateToSchema({
-            schema: hopSubschema,
-            operation: ctx.operation.operation,
-            fieldName: rootFieldNode.name.value,
-            args,
-            selectionSet: rootFieldNode.selectionSet,
-            context: ctx.contextValue,
-            info: info as any,
-            skipTypeMerging: true,
-          }),
-        value => writeRootResult(value),
-        writeRootThrowFailure,
-      );
-    }
-
     let document = node.document;
     let variables: Record<string, any>;
     if (document) {
@@ -1153,19 +1106,63 @@ function executeFetchNode(
       document = built.document;
       variables = built.variables;
     }
+
+    let request: ExecutionRequest = {
+      document,
+      variables,
+      context: ctx.contextValue,
+      rootValue: node.subschema.rootValue ?? ctx.rootValue,
+      operationType: ctx.operation.operation,
+      operationName: ctx.operation.name?.value,
+      signal: ctx.signal,
+      subgraphName: node.subschema.name,
+    };
+
+    // Rename / encapsulate / defer: transformRequest → executor → transformResult
+    // (Hive/Router style). Do not call delegateToSchema.
+    const transforms = node.subschema.transforms;
+    let transformer: Transformer | undefined;
+    if (transforms?.length) {
+      const rootType = getDefinedRootType(ctx.schema, ctx.operation.operation);
+      const fieldDef = rootType.getFields()[rootFieldNode.name.value];
+      const info = {
+        ...(ctx.infoStub as any),
+        schema: ctx.schema,
+        parentType: rootType,
+        returnType: fieldDef?.type,
+        fieldName: rootFieldNode.name.value,
+        fieldNodes: [rootFieldNode],
+        fragments: ctx.fragments,
+        operation: ctx.operation,
+        variableValues: ctx.variableValues,
+        path: { typename: rootType.name, key: responseKey, prev: undefined },
+        rootValue: ctx.rootValue,
+      };
+      const delegationContext: DelegationContext = {
+        subschema: node.subschema,
+        subschemaConfig: node.subschema,
+        targetSchema: node.subschema.schema,
+        operation: ctx.operation.operation,
+        // Response key in the hop document (alias or field name).
+        fieldName: responseKey,
+        context: ctx.contextValue,
+        info: info as any,
+        returnType: fieldDef?.type ?? (rootType as unknown as GraphQLOutputType),
+        transforms,
+        transformedSchema: node.subschema.transformedSchema,
+        skipTypeMerging: true,
+      };
+      transformer = new Transformer(delegationContext);
+      request = transformer.transformRequest(request);
+    }
+
     return handleMaybePromise(
-      () =>
-        executor({
-          document,
-          variables,
-          context: ctx.contextValue,
-          rootValue: node.subschema.rootValue ?? ctx.rootValue,
-          operationType: ctx.operation.operation,
-          operationName: ctx.operation.name?.value,
-          signal: ctx.signal,
-          subgraphName: node.subschema.name,
-        } satisfies ExecutionRequest) as MaybePromise<ExecutionResult>,
+      () => executor(request) as MaybePromise<ExecutionResult>,
       (result: ExecutionResult) => {
+        if (transformer) {
+          writeRootResult(transformer.transformResult(result));
+          return;
+        }
         const located = result.errors?.length ? (result.errors as GraphQLError[]) : [];
         if (result.data && responseKey in result.data) {
           writeRootResult(result.data[responseKey], located);
