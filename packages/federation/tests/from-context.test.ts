@@ -7,6 +7,7 @@ import {
   getBackboneExecutor,
   parseContextSelectionPath,
   readContextValue,
+  resolveContextAncestor,
 } from '@graphql-tools/stitch';
 import type { ExecutionRequest } from '@graphql-tools/utils';
 import {
@@ -1100,16 +1101,34 @@ describe('fromContext gateway-parity (adapted from gateway#2703)', () => {
     }`);
     const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, {});
     let sawProviders = false;
+    let coalescedFetch: any;
     const walk = (n: any) => {
       if (n?.kind === 'Fetch' && n.contextArguments?.[0]?.providerTypeNames?.length) {
         sawProviders = true;
         expect(n.contextArguments[0].providerTypeNames).toContain('User');
+        const paths = (n.flattenPaths ?? []) as string[][];
+        const hasShallow = paths.some(
+          p => p.length === 2 && p[0] === 'users' && p[1] === 'transactions',
+        );
+        const hasDeep = paths.some(
+          p =>
+            p.length === 3 &&
+            p[0] === 'users' &&
+            p[1] === 'wrapper' &&
+            p[2] === 'transactions',
+        );
+        if (hasShallow && hasDeep) {
+          coalescedFetch = n;
+        }
       }
       for (const c of n?.nodes ?? []) walk(c);
       if (n?.continue) walk(n.continue);
     };
     walk(plan.root);
     expect(sawProviders).toBe(true);
+    // Both paths must share one Fetch — the coalesced multi-depth case.
+    expect(coalescedFetch).toBeDefined();
+    expect(coalescedFetch.flattenPaths).toHaveLength(2);
 
     const { executor } = stitchWithCapture(
       MIXED_DEPTH_SUPERGRAPH,
@@ -1132,6 +1151,29 @@ describe('fromContext gateway-parity (adapted from gateway#2703)', () => {
         ],
       },
     });
+  });
+
+  it('response-key collision uses distinct bridge alias for context', async () => {
+    const { bag, executor } = stitchWithCapture(BASIC_SUPERGRAPH, createUsersSubgraph());
+    // Client selects `currency: id` so the natural `currency` response key holds
+    // the id string; the bridge must inject under `__mesh_ctx_currency`.
+    const result = await executor({
+      document: parse(`{ users { currency: id transactions { amount } } }`),
+    });
+    expect(result).toEqual({
+      data: {
+        users: [
+          { currency: 'u1', transactions: [{ amount: 100 }, { amount: 100 }] },
+          { currency: 'u2', transactions: [{ amount: 90 }] },
+        ],
+      },
+    });
+    // Root hop must request the bridge alias so context still reads USD/EUR.
+    const rootReq = bag.find(r => !r.query.includes('_entities'));
+    expect(rootReq?.query).toMatch(/__mesh_ctx_currency\s*:\s*currency/);
+    const payload = JSON.stringify(entityRequests(bag));
+    expect(payload).toContain('USD');
+    expect(payload).toContain('EUR');
   });
 
   it('type-conditioned context branches are alternatives', () => {
@@ -1164,6 +1206,14 @@ describe('fromContext gateway-parity (adapted from gateway#2703)', () => {
     expect(readContextValue({ __typename: 'User', currency: 'USD' }, path, schema)).not.toBe(null);
     // Wrong branch must not require the other type's field.
     expect(readContextValue({ __typename: 'Other', currency: 'USD' }, path, schema)).toBeNull();
+    // Bridge alias when client occupied the natural key (`currency: id`).
+    expect(
+      readContextValue(
+        { __typename: 'User', currency: 'u1', __mesh_ctx_currency: 'USD' },
+        path,
+        schema,
+      ),
+    ).toBe('USD');
   });
 
   it('entity reuse does not copy amount across different context groups', async () => {
@@ -1185,5 +1235,70 @@ describe('fromContext gateway-parity (adapted from gateway#2703)', () => {
     const payload = JSON.stringify(entityRequests(bag));
     expect(payload).toContain('USD');
     expect(payload).toContain('GBP');
+  });
+
+  it('injects contextual args inside entity inline fragments (folded fetch)', async () => {
+    const { bag, executor } = stitchWithCapture(BASIC_SUPERGRAPH, createUsersSubgraph());
+    const result = await executor({
+      document: parse(`{
+        users {
+          transactions {
+            ... on Transaction {
+              amount
+            }
+          }
+        }
+      }`),
+    });
+    expect(result).toEqual({
+      data: {
+        users: [
+          { transactions: [{ amount: 100 }, { amount: 100 }] },
+          { transactions: [{ amount: 90 }] },
+        ],
+      },
+    });
+    const entities = entityRequests(bag);
+    expect(entities.length).toBeGreaterThanOrEqual(1);
+    // Context arg must be present even when amount sits under an inline fragment.
+    expect(entities.some(r => /amount\s*\(\s*code\s*:/.test(r.query))).toBe(true);
+  });
+
+  it('resolveContextAncestor does not fall back when providers miss', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      type Query {
+        _: Boolean
+      }
+      type User {
+        currency: String
+      }
+      type Other {
+        currency: String
+      }
+      type Transaction {
+        id: ID
+      }
+    `);
+    const entity = { __typename: 'Transaction', id: 't1' };
+    // Non-provider concrete on the ancestor path (Other is not in providerTypeNames).
+    const other = { __typename: 'Other', currency: 'EUR' };
+    expect(
+      resolveContextAncestor(
+        entity,
+        [other],
+        { parentDepth: 1, providerTypeNames: ['User'] },
+        schema,
+      ),
+    ).toBeUndefined();
+    // Matching provider still wins.
+    const user = { __typename: 'User', currency: 'USD' };
+    expect(
+      resolveContextAncestor(
+        entity,
+        [user],
+        { parentDepth: 1, providerTypeNames: ['User'] },
+        schema,
+      ),
+    ).toBe(user);
   });
 });

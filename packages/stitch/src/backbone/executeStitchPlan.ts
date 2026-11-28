@@ -1135,6 +1135,12 @@ function tryExecuteEntitiesBatchWithContext(
     }
   }
   if (!located.length) {
+    // All matched entities were context-aware reused. Return a completed
+    // result (not undefined) so the ordinary representation-only fallback
+    // does not re-fetch and overwrite amounts across context groups.
+    if (seen.size > 0) {
+      return Promise.resolve();
+    }
     return undefined;
   }
 

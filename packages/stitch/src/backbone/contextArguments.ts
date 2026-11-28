@@ -757,11 +757,16 @@ function fieldHasConditionalDirective(field: FieldNode): boolean {
   return (field.directives ?? []).some(d => d.name.value === 'skip' || d.name.value === 'include');
 }
 
+/** Internal response-key prefix when a client field occupies the bridge key. */
+export const CONTEXT_BRIDGE_ALIAS_PREFIX = '__mesh_ctx_';
+
 /**
  * Merge bridge fields into a selection set. An aliased client selection of the
  * same schema field (e.g. `localCurrency: currency`) does **not** satisfy the
  * bridge: the rewrite reads the unaliased response key `currency`. Conditional
  * (`@skip`/`@include`) unaliased fields also do not satisfy the bridge.
+ * When the bridge response key is occupied by a different field
+ * (`currency: id`), inject the bridge under `__mesh_ctx_<name>` instead.
  */
 function mergeBridgeFields(
   selections: readonly SelectionNode[],
@@ -771,11 +776,15 @@ function mergeBridgeFields(
     return [...selections];
   }
   const seenUnaliased = new Set<string>();
+  const occupiedResponseKeys = new Set<string>();
   const seenFragmentKeys = new Set<string>();
   const out: SelectionNode[] = [];
   for (const sel of selections) {
-    if (sel.kind === Kind.FIELD && !sel.alias && !fieldHasConditionalDirective(sel)) {
-      seenUnaliased.add(sel.name.value);
+    if (sel.kind === Kind.FIELD) {
+      occupiedResponseKeys.add(sel.alias?.value ?? sel.name.value);
+      if (sel.alias == null && !fieldHasConditionalDirective(sel)) {
+        seenUnaliased.add(sel.name.value);
+      }
     }
     if (sel.kind === Kind.INLINE_FRAGMENT && sel.typeCondition) {
       seenFragmentKeys.add(bridgeSelectionKey(sel));
@@ -821,7 +830,21 @@ function mergeBridgeFields(
       }
       continue;
     }
+    // Response-key collision with a different field (e.g. `currency: id`).
+    if (occupiedResponseKeys.has(b.name.value)) {
+      const aliasName = `${CONTEXT_BRIDGE_ALIAS_PREFIX}${b.name.value}`;
+      if (!occupiedResponseKeys.has(aliasName)) {
+        const aliased: FieldNode = {
+          ...b,
+          alias: { kind: Kind.NAME, value: aliasName },
+        };
+        occupiedResponseKeys.add(aliasName);
+        out.push(aliased);
+      }
+      continue;
+    }
     seenUnaliased.add(b.name.value);
+    occupiedResponseKeys.add(b.name.value);
     out.push(b);
   }
   return out;
@@ -866,6 +889,9 @@ export function resolveContextAncestor(
         return ancestor as Record<string, any>;
       }
     }
+    // Declared providers but none matched (e.g. non-provider concrete on the
+    // same abstract path) — do not fall back to parentDepth.
+    return undefined;
   }
   if (ca.parentDepth === 0) {
     return entity;
@@ -925,10 +951,17 @@ function selectAlongPath(
     }
     return selectAlongPath(value, path, index + 1, schema);
   }
-  if (!Object.hasOwn(value as object, segment.Key)) {
-    return null;
+  const record = value as Record<string, unknown>;
+  // Prefer `__mesh_ctx_<key>` when present: the natural key may hold a
+  // different field's value after a response-key collision (`currency: id`).
+  const bridgedKey = `${CONTEXT_BRIDGE_ALIAS_PREFIX}${segment.Key}`;
+  if (Object.hasOwn(record, bridgedKey)) {
+    return selectAlongPath(record[bridgedKey], path, index + 1, schema);
   }
-  return selectAlongPath((value as Record<string, unknown>)[segment.Key], path, index + 1, schema);
+  if (Object.hasOwn(record, segment.Key)) {
+    return selectAlongPath(record[segment.Key], path, index + 1, schema);
+  }
+  return null;
 }
 
 function typenameSatisfies(schema: GraphQLSchema, typename: string, condition: string): boolean {
