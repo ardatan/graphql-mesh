@@ -5622,6 +5622,8 @@ function buildCompletePlan(
   // Deep recursive entity graphs (many-plans) can leave mutual dependsOn after
   // fold; drop back-edges so the schedule stays a DAG.
   const acyclic = stripDependsOnCycles(folded);
+  // Prebuild hop documents at plan time (queries + mutations). Root
+  // @skip/@include use runIf; nested directives stay on the AST for subgraphs.
   const withDocs = preparePlanDocuments(acyclic, {
     operation,
     fragments,
