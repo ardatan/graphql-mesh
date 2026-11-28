@@ -267,7 +267,9 @@ describe('Federation @context / @fromContext', () => {
         expect(node.contextArguments[0].parentDepth).toBe(1);
         expect(node.contextArguments[0].argName).toBe('code');
         expect(node.contextArguments[0].fieldName).toBe('amount');
-        expect(node.contextArguments[0].selectionPath).toEqual([{ Key: 'currency' }]);
+        expect(node.contextArguments[0].selectionPath).toEqual([
+          { Key: 'currency', ResponseKey: 'currency' },
+        ]);
         expect(print(node.selectionSet)).toContain('amount');
       }
       if (node.nodes) {
@@ -1177,6 +1179,47 @@ describe('fromContext gateway-parity (adapted from gateway#2703)', () => {
     expect(payload).toContain('EUR');
   });
 
+  it('natural currency ResponseKey is not shadowed by client __mesh_ctx_currency', async () => {
+    const { bag, executor } = stitchWithCapture(BASIC_SUPERGRAPH, createUsersSubgraph());
+    // Unaliased `currency` satisfies the bridge; client also selects
+    // `__mesh_ctx_currency: id`. Rewrite must stamp ResponseKey `currency`
+    // and read USD/EUR — never the id under the bare bridge alias.
+    const result = await executor({
+      document: parse(`{
+        users {
+          currency
+          __mesh_ctx_currency: id
+          transactions { amount }
+        }
+      }`),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result).toEqual({
+      data: {
+        users: [
+          {
+            currency: 'USD',
+            __mesh_ctx_currency: 'u1',
+            transactions: [{ amount: 100 }, { amount: 100 }],
+          },
+          {
+            currency: 'EUR',
+            __mesh_ctx_currency: 'u2',
+            transactions: [{ amount: 90 }],
+          },
+        ],
+      },
+    });
+    const rootReq = bag.find(r => !r.query.includes('_entities'));
+    // No injected bridge alias — natural currency already present.
+    expect(rootReq?.query).not.toMatch(/__mesh_ctx_currency\s*:\s*currency/);
+    const payload = JSON.stringify(entityRequests(bag));
+    expect(payload).toContain('USD');
+    expect(payload).toContain('EUR');
+    expect(payload).not.toMatch(/"code"\s*:\s*"u1"/);
+    expect(payload).not.toMatch(/"code"\s*:\s*"u2"/);
+  });
+
   it('allocates unused bridge alias when __mesh_ctx_currency is occupied', async () => {
     const { bag, executor } = stitchWithCapture(BASIC_SUPERGRAPH, createUsersSubgraph());
     // Both `currency` and `__mesh_ctx_currency` hold id; bridge must use `_1`.
@@ -1303,6 +1346,18 @@ describe('fromContext gateway-parity (adapted from gateway#2703)', () => {
           __mesh_ctx_currency_2: 'USD',
         },
         [{ Key: 'currency', ResponseKey: '__mesh_ctx_currency_2' }],
+        schema,
+      ),
+    ).toBe('USD');
+    // Natural ResponseKey must win over a bare `__mesh_ctx_currency` client alias.
+    expect(
+      readContextValue(
+        {
+          __typename: 'User',
+          currency: 'USD',
+          __mesh_ctx_currency: 'u1',
+        },
+        [{ Key: 'currency', ResponseKey: 'currency' }],
         schema,
       ),
     ).toBe('USD');

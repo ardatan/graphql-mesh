@@ -617,9 +617,11 @@ function applyBridgeResponseKeys(
     if ('TypenameEquals' in seg) {
       return seg;
     }
+    // Always stamp ResponseKey — including the natural field name — so the
+    // reader never falls back to a bare `__mesh_ctx_*` client alias that
+    // happens to share the prefix while the bridge is unaliased `currency`.
     const responseKey = predictedBridgeResponseKey(current, seg.Key);
-    const next: StitchContextPathSegment =
-      responseKey !== seg.Key ? { Key: seg.Key, ResponseKey: responseKey } : seg;
+    const next: StitchContextPathSegment = { Key: seg.Key, ResponseKey: responseKey };
     if (responseKey === seg.Key) {
       // Unaliased field already present (or will be injected unaliased) —
       // descend for nested bridge keys.
@@ -1137,14 +1139,19 @@ function selectAlongPath(
     return selectAlongPath(value, path, index + 1, schema);
   }
   const record = value as Record<string, unknown>;
-  // Exact ResponseKey from allocateBridgeAlias (stamped during plan rewrite).
-  // Never scan numbered aliases first — a client field occupying
-  // `__mesh_ctx_currency_1` must not shadow the bridge at `_2`.
-  if (segment.ResponseKey && Object.hasOwn(record, segment.ResponseKey)) {
-    return selectAlongPath(record[segment.ResponseKey], path, index + 1, schema);
+  // Exact ResponseKey stamped during plan rewrite (natural key or allocated
+  // bridge alias). Prefer it exclusively when present so a client
+  // `__mesh_ctx_currency: id` cannot shadow an unaliased `currency` bridge,
+  // and `__mesh_ctx_currency_1` cannot shadow allocated `_2`.
+  if (segment.ResponseKey != null) {
+    if (Object.hasOwn(record, segment.ResponseKey)) {
+      return selectAlongPath(record[segment.ResponseKey], path, index + 1, schema);
+    }
+    return null;
   }
+  // Paths without ResponseKey (unit tests / legacy): bare bridge then Key.
   const bridgedKey = `${CONTEXT_BRIDGE_ALIAS_PREFIX}${segment.Key}`;
-  if (!segment.ResponseKey && Object.hasOwn(record, bridgedKey)) {
+  if (Object.hasOwn(record, bridgedKey)) {
     return selectAlongPath(record[bridgedKey], path, index + 1, schema);
   }
   if (Object.hasOwn(record, segment.Key)) {
