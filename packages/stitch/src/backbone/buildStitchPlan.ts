@@ -2718,7 +2718,84 @@ function planRootField(
         // must not spawn a punished C hop from A's unavailable Book.title).
         if (sel.kind === Kind.INLINE_FRAGMENT && sel.typeCondition) {
           const concreteName = sel.typeCondition.name.value;
-          if (!stitchingInfo.mergedTypes[concreteName]) {
+          const concreteMerged = stitchingInfo.mergedTypes[concreteName];
+          // Shareable union members may appear in mergedTypes without entity
+          // merge targets (GetUsersSuccess). Only real entity types take the
+          // remnant-fields path; others still need nested User.posts hops.
+          const isEntityMerged =
+            concreteMerged?.targetSubschemas != null && concreteMerged.targetSubschemas.size > 0;
+          if (!isEntityMerged) {
+            // Non-entity union/interface member (e.g. GetUsersSuccess): still
+            // plan nested merged-type follow-ups (User.posts @requires under
+            // users). Skipping here dropped stub/requires leftovers entirely.
+            const memberType = schema.getType(concreteName);
+            if (isObjectType(memberType) || isInterfaceType(memberType)) {
+              const rootKey = fieldNode.alias?.value ?? fieldNode.name.value;
+              for (const nestedSel of flattenToFieldNodes(sel.selectionSet.selections, fragments)) {
+                if (!nestedSel.selectionSet || nestedSel.name.value === '__typename') {
+                  continue;
+                }
+                const nestedFieldDef = memberType.getFields()[nestedSel.name.value];
+                if (!nestedFieldDef) {
+                  continue;
+                }
+                const nestedNamed = getNamedType(nestedFieldDef.type);
+                if (!isObjectType(nestedNamed) && !isAbstractType(nestedNamed)) {
+                  continue;
+                }
+                const nestedResponseKey = nestedSel.alias?.value ?? nestedSel.name.value;
+                if (isObjectType(nestedNamed) && stitchingInfo.mergedTypes[nestedNamed.name]) {
+                  const nestedFields = flattenToFieldNodes(
+                    nestedSel.selectionSet.selections,
+                    fragments,
+                  );
+                  const child = planMergedTypeFollowUps(
+                    schema,
+                    stitchingInfo,
+                    nestedNamed.name,
+                    p.owner,
+                    nestedFields,
+                    fragments,
+                    variableValues,
+                    [rootKey, nestedResponseKey],
+                    incompleteReasons,
+                  );
+                  if (child) {
+                    partialUnavailableFollowUps.push(child);
+                  }
+                } else if (isAbstractType(nestedNamed)) {
+                  for (const concrete of schema.getPossibleTypes(nestedNamed)) {
+                    if (!stitchingInfo.mergedTypes[concrete.name]) {
+                      continue;
+                    }
+                    const forConcrete = collectFieldsForConcreteType(
+                      nestedNamed,
+                      concrete,
+                      nestedSel.selectionSet,
+                      fragments,
+                      schema,
+                    );
+                    if (!forConcrete.length) {
+                      continue;
+                    }
+                    const child = planMergedTypeFollowUps(
+                      schema,
+                      stitchingInfo,
+                      concrete.name,
+                      p.owner,
+                      forConcrete,
+                      fragments,
+                      variableValues,
+                      [rootKey, nestedResponseKey],
+                      incompleteReasons,
+                    );
+                    if (child) {
+                      partialUnavailableFollowUps.push(child);
+                    }
+                  }
+                }
+              }
+            }
             continue;
           }
           const remnantFields: FieldNode[] = [];
@@ -3872,20 +3949,31 @@ function resolveSubschemaForUnion(
 function selectionProducesPathSuffix(
   selectionSet: SelectionSetNode,
   suffix: PathSegment[],
+  fragments?: Record<string, FragmentDefinitionNode>,
 ): boolean {
   if (!suffix.length) {
     return true;
   }
   const head = suffix[0];
   if (typeof head !== 'string') {
-    return selectionProducesPathSuffix(selectionSet, suffix.slice(1));
+    return selectionProducesPathSuffix(selectionSet, suffix.slice(1), fragments);
   }
   for (const sel of selectionSet.selections) {
     if (sel.kind === Kind.INLINE_FRAGMENT) {
       // Abstract parent selections nest entity paths under inline fragments
       // (`blocks { ... on BrandSpotlight { brand { … } } }`). Skipping them
       // left nested entity hops with empty dependsOn (wave-0 races).
-      if (selectionProducesPathSuffix(sel.selectionSet, suffix)) {
+      if (selectionProducesPathSuffix(sel.selectionSet, suffix, fragments)) {
+        return true;
+      }
+      continue;
+    }
+    if (sel.kind === Kind.FRAGMENT_SPREAD) {
+      // Stub/requires paths often live under client fragments
+      // (`posts { ...PostPageFragment }` → rating). Without expanding spreads,
+      // deeper entity hops (Rating/Comment) get empty dependsOn and race.
+      const frag = fragments?.[sel.name.value];
+      if (frag && selectionProducesPathSuffix(frag.selectionSet, suffix, fragments)) {
         return true;
       }
       continue;
@@ -3901,7 +3989,7 @@ function selectionProducesPathSuffix(
       return true;
     }
     if (sel.selectionSet) {
-      return selectionProducesPathSuffix(sel.selectionSet, suffix.slice(1));
+      return selectionProducesPathSuffix(sel.selectionSet, suffix.slice(1), fragments);
     }
   }
   return false;
@@ -3937,6 +4025,7 @@ function fetchDependsOn(
   stitchingInfo: StitchingInfo,
   later: Extract<StitchPlanNode, { kind: 'Fetch' }>,
   earlier: Extract<StitchPlanNode, { kind: 'Fetch' }>,
+  fragments?: Record<string, FragmentDefinitionNode>,
 ): boolean {
   const laterPaths = fetchFlattenPaths(later);
   const earlierPaths = fetchFlattenPaths(earlier);
@@ -3950,7 +4039,7 @@ function fetchDependsOn(
       if (lp.length === 1) {
         return true;
       }
-      if (selectionProducesPathSuffix(earlier.selectionSet, lp.slice(1))) {
+      if (selectionProducesPathSuffix(earlier.selectionSet, lp.slice(1), fragments)) {
         return true;
       }
     }
@@ -3962,7 +4051,7 @@ function fetchDependsOn(
         continue;
       }
       const suffix = lp.slice(ep.length);
-      if (selectionProducesPathSuffix(earlier.selectionSet, suffix)) {
+      if (selectionProducesPathSuffix(earlier.selectionSet, suffix, fragments)) {
         return true;
       }
     }
@@ -5498,7 +5587,7 @@ function buildCompletePlan(
           stitchingInfo,
         ),
     stitchingInfo,
-    { serializeSequences: isMutation },
+    { serializeSequences: isMutation, fragments },
   );
   // Entity reuse is always planned for queries; mutations skip at execute.
   const withReuse = isMutation ? annotated : annotateEntityReuse(annotated);
@@ -6161,8 +6250,8 @@ function hopFlattenPaths(hop: ExecutableHop): PathSegment[][] {
  * Remove dependsOn edges that make the hop graph cyclic.
  * Among a cycle, drop edges where an earlier hop waits on a later hop
  * (annotate order); keep later→earlier so providers still gate consumers.
- * Prefer keeping the deepest remaining path-parent wait for any consumer
- * flatten path so strip does not strand nested leaves (many-plans f4).
+ * Prefer keeping key path-parent waits (exact parent flatten path, not also
+ * at the consumer path) so strip does not strand nested leaves (many-plans f4).
  */
 function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
   const hops: ExecutableHop[] = [];
@@ -6219,12 +6308,55 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
     return best;
   };
 
+  const maxPathLen = (idx: number): number => {
+    let m = 0;
+    for (const path of hopFlattenPaths(hops[idx]!)) {
+      if (path.length > m) {
+        m = path.length;
+      }
+    }
+    return m;
+  };
+
+  /**
+   * Pred owns the exact immediate parent flatten path of some consumer path
+   * and does not also fetch at that consumer path. Multi-path hops include
+   * shallow ancestors that must not count as key producers for peers —
+   * otherwise A↔B both look like immediate parents.
+   */
+  const isKeyParentEdge = (i: number, j: number): boolean => {
+    const consumerPaths = hopFlattenPaths(hops[i]!);
+    const predPaths = hopFlattenPaths(hops[j]!);
+    if (!consumerPaths.length || !predPaths.length) {
+      return false;
+    }
+    for (const cp of consumerPaths) {
+      if (cp.length < 1) {
+        continue;
+      }
+      const parent = cp.slice(0, -1);
+      if (
+        predPaths.some(pp => pathsEqual(pp, parent)) &&
+        !predPaths.some(pp => pathsEqual(pp, cp))
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   /**
    * Keep this wait if `pred` uniquely supplies the deepest remaining path
    * prefix for any consumer flatten path. Shallower ancestors must not count
    * as substitutes — they do not create the child entity key.
    */
   const isLastPathParentEdge = (i: number, j: number): boolean => {
+    if (isKeyParentEdge(i, j)) {
+      // Peer key parents at the same depth are all needed until only one
+      // remains; treat every remaining key parent as protected so step 4
+      // cannot strand the sole producer of a nested leaf (many-plans f4).
+      return true;
+    }
     const consumerPaths = hopFlattenPaths(hops[i]!);
     const predPaths = hopFlattenPaths(hops[j]!);
     if (!consumerPaths.length || !predPaths.length) {
@@ -6291,9 +6423,40 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
     return stuck;
   };
 
+  // Break mutual waits toward deeper consumers / non-key-parent directions
+  // before the iterative SCC strip so peer key parents stay intact.
+  for (let i = 0; i < hops.length; i++) {
+    for (const j of [...preds[i]!]) {
+      if (j <= i || !preds[j]!.includes(i)) {
+        continue;
+      }
+      const iNeedsJ = isKeyParentEdge(i, j);
+      const jNeedsI = isKeyParentEdge(j, i);
+      if (iNeedsJ && !jNeedsI) {
+        markDrop(j, i);
+      } else if (jNeedsI && !iNeedsJ) {
+        markDrop(i, j);
+      } else if (iNeedsJ && jNeedsI) {
+        if (maxPathLen(i) >= maxPathLen(j)) {
+          markDrop(j, i);
+        } else {
+          markDrop(i, j);
+        }
+      } else {
+        // Neither is a key parent: drop the shallower→deeper wait.
+        if (maxPathLen(i) >= maxPathLen(j)) {
+          markDrop(j, i);
+        } else {
+          markDrop(i, j);
+        }
+      }
+    }
+  }
+
   // Iteratively break SCCs. Prefer dropping reuseFrom waits, then one
-  // earlier→later edge at a time (never the deepest remaining path-parent),
-  // then any non-last-parent, and only then a last path-parent.
+  // earlier→later edge at a time (never a key / last path-parent),
+  // then any non-protected edge, then reverse parent→child, and only then
+  // a protected path-parent.
   for (let guard = 0; guard < hops.length * hops.length; guard++) {
     const stuck = stuckOf();
     if (!stuck.length) {
@@ -6302,7 +6465,7 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
     const stuckSet = new Set(stuck);
     let removed = false;
     // 1) Drop one reuseFrom edge inside the stuck set (annotation-added waits),
-    //    unless it is the deepest remaining path-parent for a consumer path.
+    //    unless it is a protected path-parent for a consumer path.
     reuseOuter: for (const i of stuck) {
       const hop = hops[i]!;
       const reuse =
@@ -6319,8 +6482,7 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
         const pred = hops[j]!;
         const predIds = hopCompletesIdList(pred as FoldableEntityHop);
         const predId = pred.id;
-        const isReuse =
-          (predId != null && reuse.has(predId)) || predIds.some(id => reuse.has(id));
+        const isReuse = (predId != null && reuse.has(predId)) || predIds.some(id => reuse.has(id));
         if (isReuse) {
           markDrop(i, j);
           removed = true;
@@ -6329,7 +6491,7 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
       }
     }
     if (!removed) {
-      // 2) Drop one earlier-waits-on-later edge (i < j), skipping last path-parents.
+      // 2) Drop one earlier-waits-on-later edge (i < j), skipping protected parents.
       outer2: for (const i of stuck) {
         for (const j of preds[i]!) {
           if (stuckSet.has(j) && i < j && !isLastPathParentEdge(i, j)) {
@@ -6341,7 +6503,7 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
       }
     }
     if (!removed) {
-      // 3) Drop any one non-last-path-parent edge inside the stuck set.
+      // 3) Drop any one non-protected edge inside the stuck set.
       outer3: for (const i of stuck) {
         for (const j of preds[i]!) {
           if (stuckSet.has(j) && !isLastPathParentEdge(i, j)) {
@@ -6353,13 +6515,26 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
       }
     }
     if (!removed) {
-      // 4) Last resort: drop any one stuck edge so the schedule can become a DAG.
+      // 4) Prefer dropping reverse edges where the waiter is a key parent of the
+      //    dep (parent waits on child) — breaks cycles without stranding leaves.
       outer4: for (const i of stuck) {
+        for (const j of preds[i]!) {
+          if (stuckSet.has(j) && isKeyParentEdge(j, i)) {
+            markDrop(i, j);
+            removed = true;
+            break outer4;
+          }
+        }
+      }
+    }
+    if (!removed) {
+      // 5) Last resort: drop any one stuck edge so the schedule can become a DAG.
+      outer5: for (const i of stuck) {
         for (const j of preds[i]!) {
           if (stuckSet.has(j)) {
             markDrop(i, j);
             removed = true;
-            break outer4;
+            break outer5;
           }
         }
       }
@@ -7001,7 +7176,10 @@ function annotateEntityReuse(root: StitchPlanNode): StitchPlanNode {
 function annotateFetchDeps(
   root: StitchPlanNode,
   stitchingInfo: StitchingInfo,
-  opts: { serializeSequences?: boolean } = {},
+  opts: {
+    serializeSequences?: boolean;
+    fragments?: Record<string, FragmentDefinitionNode>;
+  } = {},
 ): StitchPlanNode {
   const fetches: Array<Extract<StitchPlanNode, { kind: 'Fetch' }>> = [];
   collectExecutableFetches(root, fetches);
@@ -7018,7 +7196,7 @@ function annotateFetchDeps(
       if (i === j) {
         continue;
       }
-      if (fetchDependsOn(stitchingInfo, fetches[i]!, fetches[j]!)) {
+      if (fetchDependsOn(stitchingInfo, fetches[i]!, fetches[j]!, opts.fragments)) {
         depIds[i]!.push(ids[j]!);
       }
     }
