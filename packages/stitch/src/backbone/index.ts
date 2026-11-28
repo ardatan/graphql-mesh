@@ -7,11 +7,7 @@ export {
 export { defaultMergedResolver } from './defaultMergedResolver.js';
 export { buildStitchPlan } from './buildStitchPlan.js';
 export { executeStitchPlan } from './executeStitchPlan.js';
-export {
-  isLocalField,
-  markChangedRootResolvesAsLocal,
-  snapshotRootFieldResolves,
-} from './localFields.js';
+export { isLocalField } from './localFields.js';
 export { projectDataToOperation } from './projectResult.js';
 export {
   BACKBONE_EXECUTING,
