@@ -1,10 +1,4 @@
-import {
-  GraphQLError,
-  Kind,
-  type DocumentNode,
-  type GraphQLSchema,
-  type OperationDefinitionNode,
-} from 'graphql';
+import { GraphQLError, Kind, type DocumentNode, type GraphQLSchema } from 'graphql';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { getFragmentsFromDocument } from '@graphql-tools/executor';
 import {
@@ -68,62 +62,17 @@ const OVERRIDE_LABELS_CONTEXT_KEY = Symbol.for('hive.gateway.overrideLabels');
 /** When context has no active labels object — stable WeakMap key for memoize2. */
 const EMPTY_ACTIVE_LABELS: object = Object.freeze({});
 
-/**
- * Build inputs for the memoize2 miss path (fragments / vars / context are not
- * cache keys — same as the previous document+string-key cache).
- */
-let planBuildInput:
-  | {
-      schema: GraphQLSchema;
-      operation: OperationDefinitionNode;
-      fragments: ReturnType<typeof getFragmentsFromDocument>;
-      coerced: Record<string, any>;
-      context: ExecutionRequest['context'];
-    }
-  | undefined;
+/** Miss-path builder for per-schema memoize2(document, activeLabels). */
+let planBuild: (() => StitchPlan) | undefined;
 
-/** Per-schema plan cache: memoize2(request.document, activeLabels). */
-const getPlanMemoForSchema = memoize1(function getPlanMemoForSchema(_schema: GraphQLSchema) {
-  return memoize2(function cachedPlanByDocumentAndLabels(
+const planMemoBySchema = memoize1(function planMemoBySchema(_schema: GraphQLSchema) {
+  return memoize2(function planByDocumentAndLabels(
     _document: DocumentNode,
     _activeLabels: object,
   ): StitchPlan {
-    const input = planBuildInput!;
-    try {
-      return buildStitchPlan(input.schema, input.operation, input.fragments, input.coerced, {
-        context: input.context,
-      });
-    } catch (err) {
-      return {
-        operation: input.operation,
-        fragments: input.fragments,
-        root: { kind: 'Parallel', nodes: [] },
-        incomplete: true,
-        incompleteReasons: [err instanceof Error ? err.message : 'Plan build failed'],
-      };
-    }
+    return planBuild!();
   });
 });
-
-function buildPlanUncached(
-  schema: GraphQLSchema,
-  operation: OperationDefinitionNode,
-  fragments: ReturnType<typeof getFragmentsFromDocument>,
-  coerced: Record<string, any>,
-  context: ExecutionRequest['context'],
-): StitchPlan {
-  try {
-    return buildStitchPlan(schema, operation, fragments, coerced, { context });
-  } catch (err) {
-    return {
-      operation,
-      fragments,
-      root: { kind: 'Parallel', nodes: [] },
-      incomplete: true,
-      incompleteReasons: [err instanceof Error ? err.message : 'Plan build failed'],
-    };
-  }
-}
 
 function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): StitchPlan {
   const operation = getOperationASTFromRequest(request);
@@ -142,23 +91,35 @@ function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): Stitch
   const activeLabels = request.context?.[OVERRIDE_LABELS_CONTEXT_KEY] as
     (Iterable<string> & object) | undefined;
   const enabled = activeLabels != null ? [...activeLabels] : [];
-  // percent(...) rolls RNG inside field override at plan time — never cache.
-  if (enabled.some(l => l.startsWith('percent('))) {
-    return buildPlanUncached(schema, operation, fragments, coerced, request.context);
-  }
   const labelsKey: object =
     activeLabels != null && typeof activeLabels === 'object' ? activeLabels : EMPTY_ACTIVE_LABELS;
-  planBuildInput = {
-    schema,
-    operation,
-    fragments,
-    coerced,
-    context: request.context,
+
+  const build = (): StitchPlan => {
+    try {
+      return buildStitchPlan(schema, operation, fragments, coerced, {
+        context: request.context,
+      });
+    } catch (err) {
+      return {
+        operation,
+        fragments,
+        root: { kind: 'Parallel', nodes: [] },
+        incomplete: true,
+        incompleteReasons: [err instanceof Error ? err.message : 'Plan build failed'],
+      };
+    }
   };
+
+  // percent(...) rolls RNG inside field override at plan time — never cache.
+  if (enabled.some(l => l.startsWith('percent('))) {
+    return build();
+  }
+
+  planBuild = build;
   try {
-    return getPlanMemoForSchema(schema)(request.document, labelsKey);
+    return planMemoBySchema(schema)(request.document, labelsKey);
   } finally {
-    planBuildInput = undefined;
+    planBuild = undefined;
   }
 }
 

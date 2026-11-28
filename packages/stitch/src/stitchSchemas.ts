@@ -33,7 +33,10 @@ import {
 import { inspect, type IResolvers } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { defaultMergedResolver as backboneDefaultMergedResolver } from './backbone/defaultMergedResolver.js';
-import { installRootProxyingResolvers, BACKBONE_EXECUTING } from './backbone/rootProxyingResolvers.js';
+import {
+  BACKBONE_EXECUTING,
+  installRootProxyingResolvers,
+} from './backbone/rootProxyingResolvers.js';
 import { resolveLocalFieldResult } from './resolveLocalFieldResult.js';
 import { addStitchingInfo, completeStitchingInfo, createStitchingInfo } from './stitchingInfo.js';
 import {
