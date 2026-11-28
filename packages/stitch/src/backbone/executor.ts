@@ -13,7 +13,6 @@ import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { buildStitchPlan } from './buildStitchPlan.js';
 import { executeStitchPlan } from './executeStitchPlan.js';
 import { projectDataToOperation } from './projectResult.js';
-import { ensureVariableValue } from './runIf.js';
 import type { StitchPlan } from './types.js';
 
 /** Full SDL introspection - schema execute (Hive also special-cases these). */
@@ -149,23 +148,13 @@ export function executor(
       if (isAsyncIterable(result)) {
         return result;
       }
-      // Projection @skip/@include: fill missing vars from plan defaults on demand.
-      const variables: Record<string, any> = { ...(request.variables ?? {}) };
-      for (const key of Object.keys(variables)) {
-        if (variables[key] === undefined) {
-          delete variables[key];
-        }
-      }
-      for (const name of Object.keys(plan.variableDefaults ?? {})) {
-        ensureVariableValue(variables, name, plan.variableDefaults);
-      }
       return {
         ...result,
         data: projectDataToOperation(
           activeSchema,
           op,
           plan.fragments,
-          variables,
+          request.variables ?? {},
           result.data as any,
         ) as any,
       };
