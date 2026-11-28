@@ -48,7 +48,7 @@ import {
   type ScheduledHop,
 } from './planSchedule.js';
 import { BACKBONE_EXECUTING, getOriginalRootResolve } from './rootProxyingResolvers.js';
-import { evaluateRunIf } from './runIf.js';
+import { ensureVariableValue, evaluateRunIf } from './runIf.js';
 import type {
   BackboneExecutionContext,
   PathSegment,
@@ -937,6 +937,16 @@ function unwrapNullabilityAliases(value: any): any {
   return out;
 }
 
+function ensureUsedVariableValues(
+  names: Iterable<string>,
+  variableValues: Record<string, any>,
+  variableDefaults?: Record<string, any>,
+): void {
+  for (const name of names) {
+    ensureVariableValue(variableValues, name, variableDefaults);
+  }
+}
+
 function buildRootDocument(
   operationName: string | undefined,
   operationType: OperationTypeNode,
@@ -944,6 +954,7 @@ function buildRootDocument(
   variableDefinitions: StitchPlan['operation']['variableDefinitions'],
   variableValues: Record<string, any>,
   targetSchema?: GraphQLSchema,
+  variableDefaults?: Record<string, any>,
 ) {
   // Keep nested @skip/@include - subgraph evaluates them (Condition / peel
   // already decided which root fields run).
@@ -957,6 +968,7 @@ function buildRootDocument(
   const usedVars = collectUsedVariableNames(cleaned);
   const filteredDefs = filterVariableDefinitions(variableDefinitions, usedVars);
   const filteredVars: Record<string, any> = {};
+  ensureUsedVariableValues(usedVars, variableValues, variableDefaults);
   for (const name of usedVars) {
     if (name in variableValues) {
       filteredVars[name] = variableValues[name];
@@ -1074,6 +1086,11 @@ function executeFetchNode(
       const hopSubschema = node.subschema;
       const rootType = getDefinedRootType(ctx.schema, ctx.operation.operation);
       const fieldDef = rootType.getFields()[rootFieldNode.name.value];
+      ensureUsedVariableValues(
+        collectUsedVariableNames(rootFieldNode),
+        ctx.variableValues,
+        ctx.variableDefaults,
+      );
       const args = fieldDef
         ? getArgumentValues(
             fieldDef,
@@ -1118,6 +1135,7 @@ function executeFetchNode(
       const op = document.definitions.find(d => d.kind === Kind.OPERATION_DEFINITION);
       for (const def of op?.variableDefinitions ?? []) {
         const name = def.variable.name.value;
+        ensureVariableValue(ctx.variableValues, name, ctx.variableDefaults);
         if (name in ctx.variableValues) {
           variables[name] = ctx.variableValues[name];
         }
@@ -1130,6 +1148,7 @@ function executeFetchNode(
         ctx.operation.variableDefinitions,
         ctx.variableValues,
         node.subschema.schema,
+        ctx.variableDefaults,
       );
       document = built.document;
       variables = built.variables;
@@ -1490,6 +1509,11 @@ function executeIslandNode(
   const rootType = getDefinedRootType(ctx.schema, ctx.operation.operation);
   const isRootIsland = parentType === rootType;
   const resolve = (isRootIsland ? getOriginalRootResolve(field) : undefined) ?? field.resolve;
+  ensureUsedVariableValues(
+    collectUsedVariableNames(node.fieldNode),
+    ctx.variableValues,
+    ctx.variableDefaults,
+  );
   const args = getArgumentValues(
     field,
     node.fieldNode,
@@ -1606,7 +1630,7 @@ function selectedEntityFields(hop: Extract<StitchPlanNode, { kind: 'Fetch' }>): 
 }
 
 function runOneHop(hop: ExecutableHop, ctx: BackboneExecutionContext): MaybePromise<void> {
-  if (!evaluateRunIf(hop.runIf, ctx.variableValues)) {
+  if (!evaluateRunIf(hop.runIf, ctx.variableValues, ctx.variableDefaults)) {
     return;
   }
   if (hop.kind === 'BatchFetch') {
@@ -1669,7 +1693,9 @@ function runSameKeyRootFetches(
   ctx: BackboneExecutionContext,
 ): MaybePromise<void> {
   // Grouped shared-root path bypasses executeHop's runIf check; filter here.
-  const runnable = fetches.filter(child => evaluateRunIf(child.runIf, ctx.variableValues));
+  const runnable = fetches.filter(child =>
+    evaluateRunIf(child.runIf, ctx.variableValues, ctx.variableDefaults),
+  );
   if (!runnable.length) {
     return;
   }
@@ -1734,7 +1760,7 @@ export function executeDataflowPlan(
   cachedSchedule?: StitchPlanSchedule,
 ): MaybePromise<void> {
   const hops: ExecutableHop[] = [];
-  collectExecutableHops(root, hops, ctx.variableValues ?? {});
+  collectExecutableHops(root, hops, ctx.variableValues ?? {}, ctx.variableDefaults);
   if (!hops.length) {
     return;
   }
@@ -2109,7 +2135,7 @@ function executeBatchFetchNode(
     return;
   }
   const activeAliases = node.aliases.filter(a =>
-    evaluateRunIf(a.runIf ?? node.runIf, ctx.variableValues),
+    evaluateRunIf(a.runIf ?? node.runIf, ctx.variableValues, ctx.variableDefaults),
   );
   if (!activeAliases.length) {
     return;
@@ -2268,7 +2294,14 @@ export function executeStitchPlan(
       ? plan.fragments
       : getFragmentsFromDocument(request.document);
 
-  const variableValues = request.variables ?? {};
+  // Live map: defaults from the plan are written in on first read (Condition /
+  // runIf / hop args). Drop Yoga's undefined placeholders without filling defaults.
+  const variableValues: Record<string, any> = { ...(request.variables ?? {}) };
+  for (const key of Object.keys(variableValues)) {
+    if (variableValues[key] === undefined) {
+      delete variableValues[key];
+    }
+  }
 
   const contextValue =
     request.context != null && typeof request.context === 'object'
@@ -2283,6 +2316,7 @@ export function executeStitchPlan(
     operation,
     fragments,
     variableValues,
+    variableDefaults: plan.variableDefaults,
     contextValue,
     rootValue: request.rootValue,
     signal: request.signal,

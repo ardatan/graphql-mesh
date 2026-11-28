@@ -1,3 +1,4 @@
+import { ensureVariableValue } from './runIf.js';
 import type { StitchPlanNode, StitchPlanSchedule } from './types.js';
 
 export type ScheduledHop =
@@ -25,24 +26,26 @@ export function collectExecutableHops(
   node: StitchPlanNode,
   out: ScheduledHop[],
   variableValues: Record<string, any>,
+  variableDefaults?: Record<string, any>,
 ): void {
   if (node.kind === 'Fetch' || node.kind === 'BatchFetch' || node.kind === 'Island') {
     out.push(node);
     if (node.kind === 'Island' && node.continue) {
-      collectExecutableHops(node.continue, out, variableValues);
+      collectExecutableHops(node.continue, out, variableValues, variableDefaults);
     }
     return;
   }
   if (node.kind === 'Condition') {
-    const taken = variableValues?.[node.condition] === true ? node.ifClause : node.elseClause;
+    const value = ensureVariableValue(variableValues, node.condition, variableDefaults);
+    const taken = value === true ? node.ifClause : node.elseClause;
     if (taken) {
-      collectExecutableHops(taken, out, variableValues);
+      collectExecutableHops(taken, out, variableValues, variableDefaults);
     }
     return;
   }
   if (node.kind === 'Sequence' || node.kind === 'Parallel') {
     for (const child of node.nodes) {
-      collectExecutableHops(child, out, variableValues);
+      collectExecutableHops(child, out, variableValues, variableDefaults);
     }
   }
 }

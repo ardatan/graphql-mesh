@@ -1,4 +1,49 @@
+import { valueFromASTUntyped, type OperationDefinitionNode } from 'graphql';
 import type { StitchPlanNode, StitchRunIf, StitchRunIfClause } from './types.js';
+
+/**
+ * Operation variable defaults from the document AST (plan-time). Execute fills
+ * a missing name into the live `variableValues` map on first read.
+ */
+export function collectVariableDefaults(
+  operation: OperationDefinitionNode,
+): Record<string, any> | undefined {
+  let defaults: Record<string, any> | undefined;
+  for (const def of operation.variableDefinitions ?? []) {
+    if (def.defaultValue == null) {
+      continue;
+    }
+    if (!defaults) {
+      defaults = {};
+    }
+    const name = def.variable.name.value;
+    defaults[name] = valueFromASTUntyped(def.defaultValue, defaults);
+  }
+  return defaults;
+}
+
+/**
+ * Resolve one variable, writing a plan default into `variableValues` once when
+ * the name is missing/undefined. Drops lingering `undefined` entries (Yoga).
+ */
+export function ensureVariableValue(
+  variableValues: Record<string, any>,
+  name: string,
+  defaults?: Record<string, any>,
+): any {
+  if (variableValues[name] !== undefined) {
+    return variableValues[name];
+  }
+  const fallback = defaults?.[name];
+  if (fallback !== undefined) {
+    variableValues[name] = fallback;
+    return fallback;
+  }
+  if (name in variableValues) {
+    delete variableValues[name];
+  }
+  return undefined;
+}
 
 /**
  * Sentinel AND-group that never matches variable values. Used when
@@ -181,6 +226,7 @@ export function simplifyRunIf(dnf: StitchRunIf | undefined): StitchRunIf | undef
 export function evaluateRunIf(
   runIf: StitchRunIf | StitchRunIfClause[] | undefined,
   variableValues: Record<string, any> | undefined,
+  variableDefaults?: Record<string, any>,
 ): boolean {
   const dnf = asRunIfDnf(runIf);
   if (!dnf?.length) {
@@ -190,7 +236,8 @@ export function evaluateRunIf(
   for (const and of dnf) {
     let ok = true;
     for (const c of and) {
-      if ((vars[c.variable] === true) !== c.equals) {
+      const value = ensureVariableValue(vars, c.variable, variableDefaults);
+      if ((value === true) !== c.equals) {
         ok = false;
         break;
       }

@@ -6,7 +6,6 @@ import {
   isObjectType,
   isUnionType,
   Kind,
-  valueFromASTUntyped,
   type FieldNode,
   type FragmentDefinitionNode,
   type GraphQLInterfaceType,
@@ -25,7 +24,7 @@ import { getBatchedMergeEntry, inferMergeArgName } from './mergeEntry.js';
 import { buildPlanSchedule, collectExecutableHops, planHasCondition } from './planSchedule.js';
 import { flattenPlanControlFlow } from './planShape.js';
 import { preparePlanDocuments } from './preparePlanDocuments.js';
-import { orRunIf, runIfKey } from './runIf.js';
+import { collectVariableDefaults, orRunIf, runIfKey } from './runIf.js';
 import type { PathSegment, StitchPlan, StitchPlanNode } from './types.js';
 
 /**
@@ -48,30 +47,6 @@ const OVERRIDE_LABELS_CONTEXT_KEY = Symbol.for('hive.gateway.overrideLabels');
  * / delegationPlanBuilder handlers see this instead of full request context.
  */
 let planningContext: any;
-
-/**
- * Fill omitted operation variables from their GraphQL default values so
- * `@skip`/`@include` and collectFields can evaluate without throwing.
- */
-export function coerceOperationVariables(
-  operation: OperationDefinitionNode,
-  variableValues: Record<string, any>,
-): Record<string, any> {
-  const out: Record<string, any> = { ...variableValues };
-  for (const def of operation.variableDefinitions ?? []) {
-    const name = def.variable.name.value;
-    if (out[name] === undefined && def.defaultValue != null) {
-      out[name] = valueFromASTUntyped(def.defaultValue, out);
-    }
-  }
-  // Drop remaining undefined entries (Yoga may inject them).
-  for (const key of Object.keys(out)) {
-    if (out[key] === undefined) {
-      delete out[key];
-    }
-  }
-  return out;
-}
 
 function ensureTypename(selectionSet: SelectionSetNode): SelectionSetNode {
   const hasTypename = selectionSet.selections.some(
@@ -3282,6 +3257,7 @@ export function buildStitchPlan(
       operation,
       fragments,
       root: { kind: 'Parallel', nodes: [] },
+      variableDefaults: collectVariableDefaults(operation),
       incomplete: true,
       incompleteReasons: ['Schema is not a stitched schema'],
     };
@@ -3305,6 +3281,7 @@ export function buildStitchPlan(
       operation,
       fragments,
       root: { kind: 'Parallel', nodes: [] },
+      variableDefaults: collectVariableDefaults(operation),
       incomplete: true,
       incompleteReasons: incompleteReasons.length ? incompleteReasons : ['Plan build failed'],
     };
@@ -5313,6 +5290,7 @@ function buildCompletePlan(
     fragments,
     root,
     schedule,
+    variableDefaults: collectVariableDefaults(operation),
     incomplete: incompleteReasons.length > 0,
     incompleteReasons,
   };

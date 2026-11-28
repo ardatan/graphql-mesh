@@ -166,6 +166,11 @@ export interface StitchPlan {
    * the hop set is fixed and schedule is always present.
    */
   schedule?: StitchPlanSchedule;
+  /**
+   * Operation variable defaults from the document AST. Execute fills a missing
+   * variable into `variableValues` on first read (Condition / runIf / hop args).
+   */
+  variableDefaults?: Record<string, any>;
   /** When true, executor must fall back to schema execute. */
   incomplete: boolean;
   /** Reasons the plan is incomplete (hooks, unsupported nodes, etc.). */
@@ -178,6 +183,8 @@ export interface BackboneExecutionContext {
   operation: OperationDefinitionNode;
   fragments: Record<string, FragmentDefinitionNode>;
   variableValues: Record<string, any>;
+  /** From {@link StitchPlan.variableDefaults}; used by on-demand fill. */
+  variableDefaults?: Record<string, any>;
   contextValue: any;
   rootValue: any;
   signal?: AbortSignal;

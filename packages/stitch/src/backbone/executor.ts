@@ -10,9 +10,10 @@ import {
   type Executor,
 } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
-import { buildStitchPlan, coerceOperationVariables } from './buildStitchPlan.js';
+import { buildStitchPlan } from './buildStitchPlan.js';
 import { executeStitchPlan } from './executeStitchPlan.js';
 import { projectDataToOperation } from './projectResult.js';
+import { ensureVariableValue } from './runIf.js';
 import type { StitchPlan } from './types.js';
 
 /** Full SDL introspection - schema execute (Hive also special-cases these). */
@@ -129,11 +130,6 @@ export function executor(
 
   const plan = getCachedPlan(activeSchema, request);
   const op = operation ?? plan.operation;
-  const coerced = coerceOperationVariables(op, request.variables ?? {});
-  const requestWithCoercedVars: ExecutionRequest = {
-    ...request,
-    variables: coerced,
-  };
 
   if (plan.incomplete) {
     return {
@@ -148,10 +144,20 @@ export function executor(
   }
 
   return handleMaybePromise(
-    () => executeStitchPlan(activeSchema, plan, requestWithCoercedVars),
+    () => executeStitchPlan(activeSchema, plan, request),
     (result: ExecutionResult) => {
       if (isAsyncIterable(result)) {
         return result;
+      }
+      // Projection @skip/@include: fill missing vars from plan defaults on demand.
+      const variables: Record<string, any> = { ...(request.variables ?? {}) };
+      for (const key of Object.keys(variables)) {
+        if (variables[key] === undefined) {
+          delete variables[key];
+        }
+      }
+      for (const name of Object.keys(plan.variableDefaults ?? {})) {
+        ensureVariableValue(variables, name, plan.variableDefaults);
       }
       return {
         ...result,
@@ -159,7 +165,7 @@ export function executor(
           activeSchema,
           op,
           plan.fragments,
-          coerced,
+          variables,
           result.data as any,
         ) as any,
       };
