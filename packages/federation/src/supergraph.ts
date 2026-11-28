@@ -60,11 +60,8 @@ import {
 import { CRITICAL_ERROR } from '@graphql-tools/executor';
 import { buildHTTPExecutor, type HTTPExecutorOptions } from '@graphql-tools/executor-http';
 import {
-  attachBackboneExecutor,
   calculateSelectionScore,
   getDefaultFieldConfigMerger,
-  markChangedRootResolvesAsLocal,
-  snapshotRootFieldResolves,
   stitchSchemas,
   ValidationLevel,
   type MergeFieldConfigCandidate,
@@ -2426,7 +2423,6 @@ export function getStitchingOptionsFromSupergraphSdl(
 export interface GetStitchedSchemaFromSupergraphSdlOpts extends GetStitchingOptionsFromSupergraphSdlOpts {
   supergraphSdl: string | DocumentNode;
   onStitchingOptions?(opts: ReturnType<typeof getStitchingOptionsFromSupergraphSdl>): void;
-  onStitchedSchema?(schema: GraphQLSchema): GraphQLSchema | void;
 }
 
 export function getStitchedSchemaFromSupergraphSdl(opts: GetStitchedSchemaFromSupergraphSdlOpts) {
@@ -2434,26 +2430,11 @@ export function getStitchedSchemaFromSupergraphSdl(opts: GetStitchedSchemaFromSu
   opts.onStitchingOptions?.(stitchSchemasOpts);
   let supergraphSchema = stitchSchemas(stitchSchemasOpts);
   // Subgraph schemas keep `@fromContext` args for entity documents; strip them
-  // from the public gateway schema (join SDL never exposes them).
+  // from the public gateway schema (join SDL never exposes them). Root proxies
+  // installed by stitchSchemas survive this mapSchema (same field configs).
+  // Filter / shared info.schema backbone wiring is #9896 (GM-81); no re-attach.
   supergraphSchema = stripContextualArgsFromPublicSchema(supergraphSchema);
-  // filterInternalFieldsAndTypes mapSchema -> new schema; re-bind backbone.
-  // Backbone retarget (same runtime / ORIGINAL_RESOLVE) lives in a separate PR
-  // (GM-81); this fromContext PR re-attaches with progressive-override options.
-  supergraphSchema = filterInternalFieldsAndTypes(supergraphSchema);
-  if (opts.onStitchedSchema) {
-    const rootResolvesBefore = snapshotRootFieldResolves(supergraphSchema);
-    supergraphSchema = opts.onStitchedSchema(supergraphSchema) || supergraphSchema;
-    // Late root resolver overrides (Query.me -> local) must plan as Islands.
-    markChangedRootResolvesAsLocal(supergraphSchema, rootResolvesBefore);
-  }
-  return attachBackboneExecutor(supergraphSchema, {
-    ...(stitchSchemasOpts.overrideLabels != null
-      ? { overrideLabels: stitchSchemasOpts.overrideLabels }
-      : {}),
-    handleProgressiveOverride: opts.handleProgressiveOverride
-      ? (label, context) => opts.handleProgressiveOverride!(label, context, undefined as any)
-      : undefined,
-  });
+  return filterInternalFieldsAndTypes(supergraphSchema);
 }
 
 /**
