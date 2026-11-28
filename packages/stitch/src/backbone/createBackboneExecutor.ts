@@ -1,4 +1,10 @@
-import { GraphQLError, Kind, type DocumentNode, type GraphQLSchema } from 'graphql';
+import {
+  GraphQLError,
+  Kind,
+  type DocumentNode,
+  type GraphQLSchema,
+  type OperationDefinitionNode,
+} from 'graphql';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { getFragmentsFromDocument } from '@graphql-tools/executor';
 import {
@@ -15,24 +21,6 @@ import { buildStitchPlan, coerceOperationVariables } from './buildStitchPlan.js'
 import { executeStitchPlan } from './executeStitchPlan.js';
 import { projectDataToOperation } from './projectResult.js';
 import type { StitchPlan } from './types.js';
-
-/** Same key fusion sets on request context with the per-request active labels. */
-const OVERRIDE_LABELS_CONTEXT_KEY = Symbol.for('hive.gateway.overrideLabels');
-
-/** Stable WeakMap key when context has no active-labels object. */
-const EMPTY_ACTIVE_LABELS: object = Object.freeze({});
-
-/** Miss-path builder for per-schema memoize2(document, activeLabels). */
-let planBuild: (() => StitchPlan) | undefined;
-
-const planBySchema = memoize1(function planBySchema(_schema: GraphQLSchema) {
-  return memoize2(function planByDocumentAndLabels(
-    _document: DocumentNode,
-    _activeLabels: object,
-  ): StitchPlan {
-    return planBuild!();
-  });
-});
 
 /** Full SDL introspection - schema execute (Hive also special-cases these). */
 function isSchemaIntrospectionOperation(request: ExecutionRequest): boolean {
@@ -74,7 +62,50 @@ function documentHasDeferOrStream(request: ExecutionRequest): boolean {
   return false;
 }
 
-function buildPlan(schema: GraphQLSchema, request: ExecutionRequest): StitchPlan {
+/** Same key fusion sets on request context with the per-request active labels. */
+const OVERRIDE_LABELS_CONTEXT_KEY = Symbol.for('hive.gateway.overrideLabels');
+
+/** When context has no active labels object — stable WeakMap key for memoize2. */
+const EMPTY_ACTIVE_LABELS: object = Object.freeze({});
+
+/**
+ * Build inputs for the memoize2 miss path (fragments / vars / context are not
+ * cache keys — same as the previous document+string-key cache).
+ */
+let planBuildInput:
+  | {
+      schema: GraphQLSchema;
+      operation: OperationDefinitionNode;
+      fragments: ReturnType<typeof getFragmentsFromDocument>;
+      coerced: Record<string, any>;
+      context: ExecutionRequest['context'];
+    }
+  | undefined;
+
+/** Per-schema plan cache: memoize2(request.document, activeLabels). */
+const getPlanMemoForSchema = memoize1(function getPlanMemoForSchema(_schema: GraphQLSchema) {
+  return memoize2(function cachedPlanByDocumentAndLabels(
+    _document: DocumentNode,
+    _activeLabels: object,
+  ): StitchPlan {
+    const input = planBuildInput!;
+    try {
+      return buildStitchPlan(input.schema, input.operation, input.fragments, input.coerced, {
+        context: input.context,
+      });
+    } catch (err) {
+      return {
+        operation: input.operation,
+        fragments: input.fragments,
+        root: { kind: 'Parallel', nodes: [] },
+        incomplete: true,
+        incompleteReasons: [err instanceof Error ? err.message : 'Plan build failed'],
+      };
+    }
+  });
+});
+
+function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): StitchPlan {
   const operation = getOperationASTFromRequest(request);
   if (!operation) {
     return {
@@ -87,31 +118,21 @@ function buildPlan(schema: GraphQLSchema, request: ExecutionRequest): StitchPlan
   }
   const fragments = getFragmentsFromDocument(request.document);
   const coerced = coerceOperationVariables(operation, request.variables ?? {});
-  try {
-    return buildStitchPlan(schema, operation, fragments, coerced, {
-      context: request.context,
-    });
-  } catch (err) {
-    return {
-      operation,
-      fragments,
-      root: { kind: 'Parallel', nodes: [] },
-      incomplete: true,
-      incompleteReasons: [err instanceof Error ? err.message : 'Plan build failed'],
-    };
-  }
-}
-
-/** Plan via memoize2(request.document, activeLabels); gateway owns labels. */
-function getPlan(schema: GraphQLSchema, request: ExecutionRequest): StitchPlan {
+  // Per-request active labels only (fusion / gateway context) — no schema.extensions bag.
   const activeLabels = request.context?.[OVERRIDE_LABELS_CONTEXT_KEY];
   const labelsKey: object =
     activeLabels != null && typeof activeLabels === 'object' ? activeLabels : EMPTY_ACTIVE_LABELS;
-  planBuild = () => buildPlan(schema, request);
+  planBuildInput = {
+    schema,
+    operation,
+    fragments,
+    coerced,
+    context: request.context,
+  };
   try {
-    return planBySchema(schema)(request.document, labelsKey);
+    return getPlanMemoForSchema(schema)(request.document, labelsKey);
   } finally {
-    planBuild = undefined;
+    planBuildInput = undefined;
   }
 }
 
@@ -142,7 +163,7 @@ export function backboneExecutor(
     return createDefaultExecutor(activeSchema)(request);
   }
 
-  const plan = getPlan(activeSchema, request);
+  const plan = getCachedPlan(activeSchema, request);
   const op = operation ?? plan.operation;
   const coerced = coerceOperationVariables(op, request.variables ?? {});
   const requestWithCoercedVars: ExecutionRequest = {
