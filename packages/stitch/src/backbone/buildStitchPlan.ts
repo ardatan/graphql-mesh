@@ -4050,12 +4050,22 @@ function fetchDependsOn(
       if (!pathIsPrefix(ep, lp)) {
         continue;
       }
-      // Multi-path peers: if `earlier` also fetches at `lp`, it is not a
-      // parent producer of that path (both own it). Counting it created
-      // A↔B cycles (many-plans f12↔f104) that strip then severed, nulling
-      // nested leaves like n0.n4.n3.n2.f4.
-      if (earlierPaths.some(p => pathsEqual(p, lp))) {
-        continue;
+      // Multi-path peers: if hops share a flatten path and `earlier` also
+      // owns a proper extension of that shared path, `earlier` is the deep hop.
+      // Shallow peers must not wait on it via shallow ancestor production
+      // (many-plans f15→f12 via node.n0 while they also share node.n0.n4).
+      {
+        const sharedPaths = earlierPaths.filter(epShared =>
+          laterPaths.some(lpShared => pathsEqual(epShared, lpShared)),
+        );
+        if (
+          sharedPaths.length > 0 &&
+          earlierPaths.some(epDeep =>
+            sharedPaths.some(sp => pathIsPrefix(sp, epDeep)),
+          )
+        ) {
+          continue;
+        }
       }
       const suffix = lp.slice(ep.length);
       if (selectionProducesPathSuffix(earlier.selectionSet, suffix, fragments)) {
@@ -6357,6 +6367,16 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
    * prefix for any consumer flatten path. Shallower ancestors must not count
    * as substitutes — they do not create the child entity key.
    */
+  const ancestryDepth = (i: number, j: number): number => {
+    let best = 0;
+    for (const cp of hopFlattenPaths(hops[i]!)) {
+      for (const pp of hopFlattenPaths(hops[j]!)) {
+        if (pathIsPrefix(pp, cp) && pp.length > best) best = pp.length;
+      }
+    }
+    return best;
+  };
+
   const isLastPathParentEdge = (i: number, j: number): boolean => {
     if (isKeyParentEdge(i, j)) {
       // Peer key parents at the same depth are all needed until only one
@@ -6526,7 +6546,11 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
       //    dep (parent waits on child) — breaks cycles without stranding leaves.
       outer4: for (const i of stuck) {
         for (const j of preds[i]!) {
-          if (stuckSet.has(j) && isKeyParentEdge(j, i)) {
+          if (
+            stuckSet.has(j) &&
+            isKeyParentEdge(j, i) &&
+            !isKeyParentEdge(i, j)
+          ) {
             markDrop(i, j);
             removed = true;
             break outer4;
@@ -6535,24 +6559,8 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
       }
     }
     if (!removed) {
-      // 5) Last resort: never drop a sole/key-parent edge for a consumer path
-      // (many-plans f12→f15/f46/f105 at n0.n4). Prefer non-key-parent, then
-      // key-parents with an alternate still present. Do NOT absolute-drop a
-      // remaining key-parent — that strands nested leaves (f4).
-      const keyParentCount = (i: number, path: PathSegment[]): number => {
-        let n = 0;
-        for (const j of preds[i]!) {
-          const predPaths = hopFlattenPaths(hops[j]!);
-          const parent = path.slice(0, -1);
-          if (
-            predPaths.some(pp => pathsEqual(pp, parent)) &&
-            !predPaths.some(pp => pathsEqual(pp, path))
-          ) {
-            n++;
-          }
-        }
-        return n;
-      };
+      // 5) Drop non-key-parent edges first, then rank remaining by shallow
+      //    ancestry / later waiter so deep key parents survive when possible.
       outer5a: for (const i of stuck) {
         for (const j of preds[i]!) {
           if (stuckSet.has(j) && !isKeyParentEdge(i, j)) {
@@ -6563,39 +6571,84 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
         }
       }
       if (!removed) {
-        outer5b: for (const i of stuck) {
+        let bestI = -1;
+        let bestJ = -1;
+        let bestDepth = Infinity;
+        let bestIRank = -1;
+        for (const i of stuck) {
           for (const j of preds[i]!) {
-            if (!stuckSet.has(j) || !isKeyParentEdge(i, j)) {
-              continue;
-            }
-            let hasAlt = false;
-            for (const cp of hopFlattenPaths(hops[i]!)) {
-              if (cp.length < 1) continue;
-              const parent = cp.slice(0, -1);
-              const predPaths = hopFlattenPaths(hops[j]!);
-              if (
-                predPaths.some(pp => pathsEqual(pp, parent)) &&
-                !predPaths.some(pp => pathsEqual(pp, cp)) &&
-                keyParentCount(i, cp) > 1
-              ) {
-                hasAlt = true;
-                break;
-              }
-            }
-            if (hasAlt) {
-              markDrop(i, j);
-              removed = true;
-              break outer5b;
+            if (!stuckSet.has(j)) continue;
+            const depth = ancestryDepth(i, j);
+            if (depth < bestDepth || (depth === bestDepth && i > bestIRank)) {
+              bestDepth = depth;
+              bestI = i;
+              bestJ = j;
+              bestIRank = i;
             }
           }
         }
+        if (bestI >= 0) {
+          markDrop(bestI, bestJ);
+          removed = true;
+        }
       }
-      // If only sole key-parents remain, leave them; schedule may still DAG via
-      // other drops in a later iteration, or stay cyclic (fail loud) rather than
-      // silently null nested leaves.
     }
     if (!removed) {
       break;
+    }
+  }
+
+  // Re-attach dropped key-parent waits when doing so stays acyclic.
+  const originalPreds: number[][] = hops.map(() => []);
+  for (let i = 0; i < hops.length; i++) {
+    const seen = new Set<number>();
+    for (const d of hops[i]!.dependsOn ?? []) {
+      const j = idOwner.get(d);
+      if (j == null || j === i || seen.has(j)) continue;
+      seen.add(j);
+      originalPreds[i]!.push(j);
+    }
+  }
+  const wouldCycle = (from: number, to: number): boolean => {
+    const seen = new Set<number>();
+    const stack = [to];
+    while (stack.length) {
+      const cur = stack.pop()!;
+      if (cur === from) return true;
+      if (seen.has(cur)) continue;
+      seen.add(cur);
+      for (const p of preds[cur]!) stack.push(p);
+    }
+    return false;
+  };
+  for (let i = 0; i < hops.length; i++) {
+    const dropped = dropForHop.get(i);
+    if (!dropped?.size) continue;
+    for (const cp of hopFlattenPaths(hops[i]!)) {
+      if (cp.length < 1) continue;
+      const parent = cp.slice(0, -1);
+      const hasKey = preds[i]!.some(j => {
+        const pp = hopFlattenPaths(hops[j]!);
+        return pp.some(p => pathsEqual(p, parent)) && !pp.some(p => pathsEqual(p, cp));
+      });
+      if (hasKey) continue;
+      let bestJ = -1;
+      let bestDepth = -1;
+      for (const j of originalPreds[i]!) {
+        if (!dropped.has(j)) continue;
+        const pp = hopFlattenPaths(hops[j]!);
+        if (!pp.some(p => pathsEqual(p, parent)) || pp.some(p => pathsEqual(p, cp))) continue;
+        if (wouldCycle(i, j)) continue;
+        if (parent.length > bestDepth) {
+          bestDepth = parent.length;
+          bestJ = j;
+        }
+      }
+      if (bestJ >= 0) {
+        preds[i]!.push(bestJ);
+        dropped.delete(bestJ);
+        if (!dropped.size) dropForHop.delete(i);
+      }
     }
   }
 
