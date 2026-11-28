@@ -16,14 +16,9 @@ import {
   UNPATHED_ERRORS_SYMBOL,
 } from '@graphql-tools/delegate';
 import { CRITICAL_ERROR } from '@graphql-tools/executor';
-import type { ExecutionRequest, Executor } from '@graphql-tools/utils';
+import type { ExecutionRequest } from '@graphql-tools/utils';
 import { handleMaybePromise, type MaybePromise } from '@whatwg-node/promise-helpers';
-
-/** Shared backbone runner — optional schema arg (else request.info.schema). */
-export type BackboneRunner = (
-  request: ExecutionRequest,
-  schema?: GraphQLSchema,
-) => ReturnType<Executor<Record<string, any>>>;
+import { backboneExecutor } from './createBackboneExecutor.js';
 
 /** Set on context while backbone execute runs so root Islands skip proxying. */
 export const BACKBONE_EXECUTING = Symbol.for('graphql-tools.stitch.backboneExecuting');
@@ -121,15 +116,12 @@ function applyBackboneResult(
 
 /**
  * Install root Query/Mutation proxying resolvers so stock graphql-js `execute`
- * proxies once into the backbone plan, then returns cached root values -
- * same idea as wrapSchema's proxying resolvers, but the target is the
- * backbone executor rather than a single subgraph.
+ * proxies once into the shared {@link backboneExecutor}, then returns cached
+ * root values — same idea as wrapSchema's proxying resolvers, but the target
+ * is the backbone rather than a single subgraph.
  * Subscription roots are left alone (schema subscribe / backbone schema path).
  */
-export function installRootProxyingResolvers(
-  schema: GraphQLSchema,
-  runBackbone: BackboneRunner,
-): void {
+export function installRootProxyingResolvers(schema: GraphQLSchema): void {
   // Attach-once after filter / onStitchedSchema. External post-stitch mapSchema
   // is unsupported — original resolve lives in a WeakMap for Islands.
   if (schemasWithRootProxying.has(schema)) {
@@ -199,7 +191,7 @@ export function installRootProxyingResolvers(
           // Sync backbone results stay sync (fakePromise) - no Promise.resolve
           // microtask. Share one MaybePromise across sibling root fields.
           pending = handleMaybePromise(
-            () => runBackbone(request, info.schema),
+            () => backboneExecutor(request, info.schema),
             result => {
               planResultByContext.set(context, result);
               return result;

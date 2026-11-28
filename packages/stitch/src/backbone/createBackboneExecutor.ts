@@ -12,7 +12,6 @@ import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { buildStitchPlan, coerceOperationVariables } from './buildStitchPlan.js';
 import { executeStitchPlan } from './executeStitchPlan.js';
 import { projectDataToOperation } from './projectResult.js';
-import { installRootProxyingResolvers } from './rootProxyingResolvers.js';
 import type { StitchPlan } from './types.js';
 
 /** Full SDL introspection - schema execute (Hive also special-cases these). */
@@ -195,25 +194,17 @@ export function backboneExecutor(
 /**
  * Derive an executor for `schema` without storing one on the schema.
  * Always plans against the bound schema via the second arg (nested-gateway safe).
+ * Does not install root proxies — call {@link attachBackboneExecutor} (or
+ * `stitchSchemas`) for that.
  */
 export function getBackboneExecutor(schema: GraphQLSchema): Executor {
   return ((request: ExecutionRequest) => backboneExecutor(request, schema)) as Executor;
 }
 
 /**
- * Install shared root proxies that call {@link backboneExecutor}
- * (pass `info.schema` or omit). Does not store a per-schema Executor.
- */
-export function attachBackboneExecutor(schema: GraphQLSchema): GraphQLSchema {
-  installRootProxyingResolvers(schema, backboneExecutor);
-  return schema;
-}
-
-/**
- * Convenience for tests: attach shared proxies and return a schema-bound
- * {@link getBackboneExecutor} wrapper.
+ * Schema-bound {@link backboneExecutor} wrapper. Does not attach root proxies —
+ * use {@link attachBackboneExecutor} / `stitchSchemas` for install.
  */
 export function createBackboneExecutor(schema: GraphQLSchema): Executor {
-  attachBackboneExecutor(schema);
   return getBackboneExecutor(schema);
 }

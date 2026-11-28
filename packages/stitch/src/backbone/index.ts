@@ -1,5 +1,5 @@
+export { attachBackboneExecutor } from './attachBackboneExecutor.js';
 export {
-  attachBackboneExecutor,
   backboneExecutor,
   createBackboneExecutor,
   getBackboneExecutor,
