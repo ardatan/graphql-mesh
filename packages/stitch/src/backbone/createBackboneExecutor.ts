@@ -58,7 +58,7 @@ function documentHasDeferOrStream(request: ExecutionRequest): boolean {
 /** Same key fusion sets on request context with the per-request active labels. */
 const OVERRIDE_LABELS_CONTEXT_KEY = Symbol.for('hive.gateway.overrideLabels');
 
-/** Plan cache keyed by schema; entries by operation AST (stable across proxy rebuilds). */
+/** Plan cache keyed by schema → request.document (root proxies memoize theirs). */
 const planCacheBySchema = new WeakMap<
   GraphQLSchema,
   WeakMap<object, Map<string | null, StitchPlan>>
@@ -79,20 +79,16 @@ function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): Stitch
   const coerced = coerceOperationVariables(operation, request.variables ?? {});
   // Per-request active labels only (fusion / gateway context) — no schema.extensions bag.
   const activeLabels = request.context?.[OVERRIDE_LABELS_CONTEXT_KEY] as
-    | Iterable<string>
-    | undefined;
+    Iterable<string> | undefined;
   const enabled = activeLabels != null ? [...activeLabels] : [];
   // percent(...) rolls RNG inside field override at plan time — never cache.
   const hasPercentOverride = enabled.some(l => l.startsWith('percent('));
-  const overrideKey = enabled.length && !hasPercentOverride ? `::ov:${enabled.sort().join(',')}` : '';
+  const overrideKey =
+    enabled.length && !hasPercentOverride ? `::ov:${enabled.sort().join(',')}` : '';
   const cacheKey = (operation.name?.value ?? '') + overrideKey;
-  // Root proxies rebuild `document` each call but keep `info.operation` as the
-  // extracted op — key by that stable node. Delegated requests share the outer
-  // `info.operation` while carrying a different extracted op; key by document.
-  const planKey: object =
-    request.info?.operation != null && request.info.operation === operation
-      ? request.info.operation
-      : request.document;
+  // Root proxies memoize `document` by `info.operation` (stable identity).
+  // Delegated requests carry their own document — never share outer op keys.
+  const planKey: object = request.document;
   let planCache = planCacheBySchema.get(schema);
   if (!planCache) {
     planCache = new WeakMap();

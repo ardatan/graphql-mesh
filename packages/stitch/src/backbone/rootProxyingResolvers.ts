@@ -2,9 +2,12 @@ import {
   defaultFieldResolver,
   isObjectType,
   Kind,
+  type DocumentNode,
+  type FragmentDefinitionNode,
   type GraphQLError,
   type GraphQLFieldResolver,
   type GraphQLSchema,
+  type OperationDefinitionNode,
   type SelectionNode,
 } from 'graphql';
 import {
@@ -35,6 +38,27 @@ const originalResolveByField = new WeakMap<object, GraphQLFieldResolver<any, any
 /** Per-request plan result/promise — keyed by context, no context mutation. */
 const planResultByContext = new WeakMap<object, any>();
 const planPromiseByContext = new WeakMap<object, MaybePromise<any>>();
+
+/**
+ * Stable document per `info.operation` so plan cache can key by
+ * `request.document` (root proxies used to rebuild a fresh Document every call).
+ */
+const documentByOperation = new WeakMap<OperationDefinitionNode, DocumentNode>();
+
+function memoizedRootProxyDocument(
+  operation: OperationDefinitionNode,
+  fragments: Record<string, FragmentDefinitionNode> | undefined,
+): DocumentNode {
+  let document = documentByOperation.get(operation);
+  if (!document) {
+    document = {
+      kind: Kind.DOCUMENT,
+      definitions: [operation, ...Object.values(fragments ?? {})],
+    };
+    documentByOperation.set(operation, document);
+  }
+  return document;
+}
 
 function selectionHasDeferOrStream(selections: readonly SelectionNode[]): boolean {
   const stack = [...selections];
@@ -164,10 +188,7 @@ export function installRootProxyingResolvers(
           // so File/upload scalars and other runtime values reach subgraphs
           // (same as classic delegate/createRequest).
           const request: ExecutionRequest = {
-            document: {
-              kind: Kind.DOCUMENT,
-              definitions: [info.operation, ...Object.values(info.fragments ?? {})],
-            },
+            document: memoizedRootProxyDocument(info.operation, info.fragments),
             variables: getCoercedVariableValues(info.variableValues) ?? {},
             context,
             rootValue: root,

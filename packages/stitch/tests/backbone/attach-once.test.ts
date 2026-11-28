@@ -1,11 +1,7 @@
 import { parse } from 'graphql';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import {
-  getBackboneExecutor,
-  getOriginalRootResolve,
-  stitchSchemas,
-} from '@graphql-tools/stitch';
+import { getBackboneExecutor, getOriginalRootResolve, stitchSchemas } from '@graphql-tools/stitch';
 import { isAsyncIterable, type ExecutionResult } from '@graphql-tools/utils';
 
 async function execResult(
