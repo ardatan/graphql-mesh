@@ -1111,11 +1111,7 @@ describe('fromContext gateway-parity (adapted from gateway#2703)', () => {
           p => p.length === 2 && p[0] === 'users' && p[1] === 'transactions',
         );
         const hasDeep = paths.some(
-          p =>
-            p.length === 3 &&
-            p[0] === 'users' &&
-            p[1] === 'wrapper' &&
-            p[2] === 'transactions',
+          p => p.length === 3 && p[0] === 'users' && p[1] === 'wrapper' && p[2] === 'transactions',
         );
         if (hasShallow && hasDeep) {
           coalescedFetch = n;
