@@ -164,17 +164,19 @@ function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): Stitch
 
 /**
  * Shared stitching backbone executor — no per-schema instance stored.
- * Schema from `request.info.schema` only. Plan / locals / progressive-override
- * come from that schema's stitchingInfo.
+ * Schema: explicit `schema` arg, else `request.info.schema`. Plan / locals /
+ * progressive-override come from that schema's stitchingInfo.
  */
 export function backboneExecutor(
   request: ExecutionRequest,
+  schema?: GraphQLSchema,
 ): ReturnType<Executor<Record<string, any>>> {
-  const activeSchema = request.info?.schema;
+  const activeSchema = schema ?? request.info?.schema;
   if (activeSchema == null) {
-    throw new GraphQLError('backboneExecutor requires request.info.schema', {
-      extensions: { code: 'BACKBONE_MISSING_SCHEMA' },
-    });
+    throw new GraphQLError(
+      'backboneExecutor requires a schema (pass schema arg or request.info.schema)',
+      { extensions: { code: 'BACKBONE_MISSING_SCHEMA' } },
+    );
   }
 
   const operation = getOperationASTFromRequest(request);
@@ -228,23 +230,13 @@ export function backboneExecutor(
 }
 
 /**
- * Schema-bound {@link backboneExecutor} (memoized per schema). Forces the bound
- * schema onto `request.info.schema` before calling (nested-gateway safe).
+ * Schema-bound {@link backboneExecutor} (memoized per schema). Calls
+ * `backboneExecutor(request, schema)` — does not mutate `info.schema`.
  * Does not install root proxies — call {@link attachBackboneExecutor} /
  * `stitchSchemas` for that.
  */
-export const getBackboneExecutor = memoize1(function getBackboneExecutor(
+export const getBackboneExecutorBySchema = memoize1(function getBackboneExecutorBySchema(
   schema: GraphQLSchema,
 ): Executor {
-  return ((request: ExecutionRequest) => {
-    if (request.info?.schema !== schema) {
-      request = {
-        ...request,
-        info: request.info
-          ? { ...request.info, schema }
-          : ({ schema } as NonNullable<ExecutionRequest['info']>),
-      };
-    }
-    return backboneExecutor(request);
-  }) as Executor;
+  return ((request: ExecutionRequest) => backboneExecutor(request, schema)) as Executor;
 });

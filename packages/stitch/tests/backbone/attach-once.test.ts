@@ -1,12 +1,16 @@
 import { parse } from 'graphql';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { getBackboneExecutor, getOriginalRootResolve, stitchSchemas } from '@graphql-tools/stitch';
+import {
+  getBackboneExecutorBySchema,
+  getOriginalRootResolve,
+  stitchSchemas,
+} from '@graphql-tools/stitch';
 import { isAsyncIterable, type ExecutionResult } from '@graphql-tools/utils';
 
 async function execResult(
-  executor: NonNullable<ReturnType<typeof getBackboneExecutor>>,
-  request: Parameters<NonNullable<ReturnType<typeof getBackboneExecutor>>>[0],
+  executor: NonNullable<ReturnType<typeof getBackboneExecutorBySchema>>,
+  request: Parameters<NonNullable<ReturnType<typeof getBackboneExecutorBySchema>>>[0],
 ): Promise<ExecutionResult> {
   const result = await executor(request);
   if (isAsyncIterable(result)) {
@@ -16,7 +20,7 @@ async function execResult(
 }
 
 describe('attach-once backbone', () => {
-  it('plain stitch keeps local root Island after attach; getBackboneExecutor derives without storage', async () => {
+  it('plain stitch keeps local root Island after attach; getBackboneExecutorBySchema derives without storage', async () => {
     let localHits = 0;
     const subgraph = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
@@ -56,7 +60,7 @@ describe('attach-once backbone', () => {
     });
     const localField = schema.getQueryType()!.getFields()['localUsers']!;
     expect(getOriginalRootResolve(localField)).toBeTruthy();
-    const executor = getBackboneExecutor(schema);
+    const executor = getBackboneExecutorBySchema(schema);
     const result = await execResult(executor, {
       document: parse(`{
         users { id }
@@ -70,7 +74,7 @@ describe('attach-once backbone', () => {
     expect((result.data as any).users[0].id).toBe('u1');
   });
 
-  it('getBackboneExecutor forces bound schema when info.schema is an outer gateway', async () => {
+  it('getBackboneExecutorBySchema passes bound schema as second arg when info.schema is an outer gateway', async () => {
     const subgraph = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
         type Query {
@@ -98,7 +102,7 @@ describe('attach-once backbone', () => {
         }
       `,
     });
-    const executor = getBackboneExecutor(inner);
+    const executor = getBackboneExecutorBySchema(inner);
     const result = await execResult(executor, {
       document: parse(`{ hello }`),
       context: {},

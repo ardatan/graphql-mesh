@@ -5,13 +5,13 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import type { ExecutionResult } from '@graphql-tools/utils';
 import {
   buildStitchPlan,
-  getBackboneExecutor,
+  getBackboneExecutorBySchema,
   type StitchPlanNode,
 } from '../../src/backbone/index';
 import { stitchSchemas } from '../../src/stitchSchemas';
 
 async function exec(
-  executor: ReturnType<typeof getBackboneExecutor>,
+  executor: ReturnType<typeof getBackboneExecutorBySchema>,
   request: Parameters<typeof executor>[0],
 ): Promise<ExecutionResult> {
   return (await executor(request)) as ExecutionResult;
@@ -129,7 +129,7 @@ describe('stitching backbone', () => {
 
   it('executes a merged query via the backbone executor', async () => {
     const schema = createStitched();
-    const executor = getBackboneExecutor(schema);
+    const executor = getBackboneExecutorBySchema(schema);
     const result = await exec(executor, {
       document: parse(/* GraphQL */ `
         query ($id: ID!) {
@@ -201,7 +201,7 @@ describe('stitching backbone', () => {
     // Same structure regardless of variable map (one cached plan shape).
     expect(planInclude.root.kind).toBe(planSkip.root.kind);
 
-    const executor = getBackboneExecutor(schema);
+    const executor = getBackboneExecutorBySchema(schema);
     const skipped = await exec(executor, {
       document,
       variables: { id: '1', skipEmail: true },
@@ -254,7 +254,7 @@ describe('stitching backbone', () => {
     const stitchingInfo = schema.extensions?.['stitchingInfo'] as StitchingInfo;
     expect(stitchingInfo.localFields.get('Query')?.has('me')).toBe(true);
 
-    const executor = getBackboneExecutor(schema);
+    const executor = getBackboneExecutorBySchema(schema);
     const result = await exec(executor, {
       document: parse(/* GraphQL */ `
         {
@@ -284,7 +284,7 @@ describe('stitching backbone', () => {
     expect(plan.root.kind).toBe('Island');
     expect((plan.root as any).fieldNode.name.value).toBe('__typename');
 
-    const executor = getBackboneExecutor(schema);
+    const executor = getBackboneExecutorBySchema(schema);
     const result = await exec(executor, { document, context: {} });
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({ __typename: 'Query' });
@@ -338,7 +338,7 @@ describe('stitching backbone', () => {
     expect((plan.root as any).continue.kind).toBe('Island');
     expect((plan.root as any).continue.fieldNode.name.value).toBe('echo');
 
-    const executor = getBackboneExecutor(schema);
+    const executor = getBackboneExecutorBySchema(schema);
     const result = await exec(executor, { document, context: {} });
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
@@ -414,7 +414,7 @@ describe('stitching backbone', () => {
     };
     expect(hasLabelIsland(plan.root)).toBe(true);
 
-    const executor = getBackboneExecutor(schema);
+    const executor = getBackboneExecutorBySchema(schema);
     const result = await exec(executor, { document, context: {} });
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
@@ -538,7 +538,7 @@ describe('stitching backbone', () => {
     };
     expect(hasNestedAuthorIsland(plan.root)).toBe(true);
 
-    const executor = getBackboneExecutor(schema);
+    const executor = getBackboneExecutorBySchema(schema);
     const result = await exec(executor, { document, context: {} });
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({
@@ -647,7 +647,7 @@ describe('backbone performance smoke', () => {
   }
 
   it('planned execute returns the expected entity graph on this microbench', async () => {
-    const planned = getBackboneExecutor(schema);
+    const planned = getBackboneExecutorBySchema(schema);
     const request = {
       document,
       variables: { id: '1' },

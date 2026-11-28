@@ -2,11 +2,11 @@ import { parse } from 'graphql';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import type { ExecutionResult, Executor } from '@graphql-tools/utils';
-import { BACKBONE_EXECUTING, getBackboneExecutor } from '../../src/backbone/index';
+import { BACKBONE_EXECUTING, getBackboneExecutorBySchema } from '../../src/backbone/index';
 import { stitchSchemas } from '../../src/stitchSchemas';
 
 async function exec(
-  executor: ReturnType<typeof getBackboneExecutor>,
+  executor: ReturnType<typeof getBackboneExecutorBySchema>,
   request: Parameters<typeof executor>[0],
 ): Promise<ExecutionResult> {
   return (await executor(request)) as ExecutionResult;
@@ -76,7 +76,7 @@ describe('backbone correctness: valuesFromResults', () => {
       ],
     });
 
-    const backbone = getBackboneExecutor(schema);
+    const backbone = getBackboneExecutorBySchema(schema);
     const result = await exec(backbone, {
       document: parse(/* GraphQL */ `
         {
@@ -189,7 +189,7 @@ describe('backbone correctness: percentage progressive-override cache', () => {
     };
 
     try {
-      const backbone = getBackboneExecutor(schema);
+      const backbone = getBackboneExecutorBySchema(schema);
       const document = parse(`{ hello }`);
       // percent(...) in per-request active labels bypasses plan cache so
       // field override handlers re-run every request.
@@ -248,7 +248,7 @@ describe('backbone correctness: BACKBONE_EXECUTING lifecycle', () => {
     const schema = stitchSchemas({
       subschemas: [{ schema: remote, executor: createDefaultExecutor(remote) }],
     });
-    const backbone = getBackboneExecutor(schema);
+    const backbone = getBackboneExecutorBySchema(schema);
     const context: Record<symbol, unknown> = {};
     await exec(backbone, {
       document: parse(`{ hello }`),
@@ -288,7 +288,7 @@ describe('backbone correctness: mutation serial semantics', () => {
     const schema = stitchSchemas({
       subschemas: [{ schema: remote, executor: createDefaultExecutor(remote) }],
     });
-    const backbone = getBackboneExecutor(schema);
+    const backbone = getBackboneExecutorBySchema(schema);
     const result = await exec(backbone, {
       document: parse(/* GraphQL */ `
         mutation {
@@ -349,7 +349,7 @@ describe('backbone correctness: mutation serial semantics', () => {
         },
       ],
     });
-    const backbone = getBackboneExecutor(schema);
+    const backbone = getBackboneExecutorBySchema(schema);
     const result = await exec(backbone, {
       document: parse(/* GraphQL */ `
         mutation {
@@ -398,7 +398,7 @@ describe('backbone correctness: mutation serial semantics', () => {
     const schema = stitchSchemas({
       subschemas: [{ schema: remote, executor: createDefaultExecutor(remote) }],
     });
-    const backbone = getBackboneExecutor(schema);
+    const backbone = getBackboneExecutorBySchema(schema);
     const result = await exec(backbone, {
       document: parse(/* GraphQL */ `
         mutation {
@@ -465,7 +465,7 @@ describe('backbone correctness: mutation serial semantics', () => {
     expect(stitchingInfo.localFields?.get('Mutation')?.has('first')).toBe(true);
     expect(stitchingInfo.localFields?.get('Mutation')?.has('second')).toBe(true);
 
-    const backbone = getBackboneExecutor(schema);
+    const backbone = getBackboneExecutorBySchema(schema);
     const result = await exec(backbone, {
       document: parse(/* GraphQL */ `
         mutation {
@@ -511,7 +511,7 @@ describe('backbone correctness: mutation serial semantics', () => {
     const schema = stitchSchemas({
       subschemas: [{ schema: remote, executor: throwingExecutor }],
     });
-    const backbone = getBackboneExecutor(schema);
+    const backbone = getBackboneExecutorBySchema(schema);
     const result = await exec(backbone, {
       document: parse(/* GraphQL */ `
         mutation {
@@ -548,7 +548,7 @@ describe('backbone correctness: mutation serial semantics', () => {
     const schema = stitchSchemas({
       subschemas: [{ schema: remote, executor: createDefaultExecutor(remote) }],
     });
-    const backbone = getBackboneExecutor(schema);
+    const backbone = getBackboneExecutorBySchema(schema);
     // Same response key via alias — GraphQL collectFields dedupes; one call.
     const result = await exec(backbone, {
       document: parse(/* GraphQL */ `
@@ -622,7 +622,7 @@ describe('backbone correctness: nullable entity hop survival', () => {
         { schema: posts, executor: createDefaultExecutor(posts) },
       ],
     });
-    const backbone = getBackboneExecutor(schema);
+    const backbone = getBackboneExecutorBySchema(schema);
     const result = await exec(backbone, {
       document: parse(/* GraphQL */ `
         {
@@ -664,7 +664,7 @@ describe('backbone correctness: subgraph error path remapping', () => {
     const schema = stitchSchemas({
       subschemas: [{ schema: remote, executor: createDefaultExecutor(remote) }],
     });
-    const backbone = getBackboneExecutor(schema);
+    const backbone = getBackboneExecutorBySchema(schema);
     const result = await exec(backbone, {
       document: parse(/* GraphQL */ `
         {
@@ -738,7 +738,7 @@ describe('backbone correctness: subschema rootValue on raw fetches', () => {
         { schema: posts, executor: createDefaultExecutor(posts) },
       ],
     });
-    const backbone = getBackboneExecutor(schema);
+    const backbone = getBackboneExecutorBySchema(schema);
     const result = await exec(backbone, {
       document: parse(/* GraphQL */ `
         {

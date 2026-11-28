@@ -182,7 +182,7 @@ export function attachBackboneExecutor(schema: GraphQLSchema): GraphQLSchema {
             context,
             rootValue: root,
             operationName: info.operation.name?.value,
-            // Shared backboneExecutor reads schema from info.schema.
+            // Shared backboneExecutor: omit schema → request.info.schema.
             info,
           };
           // Sync backbone results stay sync (fakePromise) - no Promise.resolve

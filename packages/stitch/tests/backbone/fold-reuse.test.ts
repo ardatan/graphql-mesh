@@ -5,14 +5,14 @@ import type { ExecutionResult } from '@graphql-tools/utils';
 import {
   buildStitchPlan,
   evaluateRunIf,
-  getBackboneExecutor,
+  getBackboneExecutorBySchema,
   orRunIf,
   type StitchPlanNode,
 } from '../../src/backbone/index';
 import { stitchSchemas } from '../../src/stitchSchemas';
 
 async function exec(
-  executor: ReturnType<typeof getBackboneExecutor>,
+  executor: ReturnType<typeof getBackboneExecutorBySchema>,
   request: Parameters<typeof executor>[0],
 ): Promise<ExecutionResult> {
   return (await executor(request)) as ExecutionResult;
@@ -309,7 +309,7 @@ describe('backbone aggressive BatchFetch + entityReuse', () => {
   it('executes coalesced Product||Book and returns interface + concrete fields', async () => {
     const calls = { product: 0, book: 0 };
     const schema = createProductBookSchema(calls);
-    const executor = getBackboneExecutor(schema);
+    const executor = getBackboneExecutorBySchema(schema);
     const result = await exec(executor, {
       document: parse(/* GraphQL */ `
         {
@@ -478,7 +478,7 @@ describe('backbone aggressive BatchFetch + entityReuse', () => {
   it('executes BatchFetch Book||Magazine and returns stock fields', async () => {
     const calls = { n: 0 };
     const schema = createBookMagazineSchema(calls);
-    const executor = getBackboneExecutor(schema);
+    const executor = getBackboneExecutorBySchema(schema);
     const result = await exec(executor, {
       document: parse(/* GraphQL */ `
         {
@@ -604,7 +604,7 @@ describe('backbone aggressive BatchFetch + entityReuse', () => {
         }
       }
     `);
-    const executor = getBackboneExecutor(schema);
+    const executor = getBackboneExecutorBySchema(schema);
     const result = await exec(executor, {
       document,
       variables: {},
@@ -684,7 +684,7 @@ describe('backbone aggressive BatchFetch + entityReuse', () => {
         },
       ],
     });
-    const executor = getBackboneExecutor(schema);
+    const executor = getBackboneExecutorBySchema(schema);
     const result = await exec(executor, {
       document: parse(/* GraphQL */ `
         {
@@ -785,7 +785,7 @@ describe('backbone aggressive BatchFetch + entityReuse', () => {
         },
       ],
     });
-    const executor = getBackboneExecutor(schema);
+    const executor = getBackboneExecutorBySchema(schema);
     const result = await exec(executor, {
       document: parse(/* GraphQL */ `
         {
@@ -1072,7 +1072,7 @@ describe('backbone aggressive BatchFetch + entityReuse', () => {
         },
       ],
     });
-    const executor = getBackboneExecutor(schema);
+    const executor = getBackboneExecutorBySchema(schema);
     const result = await exec(executor, {
       document: parse(/* GraphQL */ `
         {

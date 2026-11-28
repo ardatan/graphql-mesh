@@ -9,7 +9,7 @@ import { execute, subscribe } from '@graphql-tools/executor';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import {
   buildStitchPlan,
-  getBackboneExecutor,
+  getBackboneExecutorBySchema,
   stitchSchemas,
   ValidationLevel,
 } from '@graphql-tools/stitch';
@@ -935,7 +935,7 @@ describe('@resolveTo result path when the source field is missing from the gatew
     };
     expect(hasComplexIsland(plan.root)).toBe(true);
 
-    const executor = getBackboneExecutor(stitched);
+    const executor = getBackboneExecutorBySchema(stitched);
     const result = (await executor({
       document,
       context: { ...inContextSDK },
@@ -1112,7 +1112,7 @@ describe('@resolveTo result path when the source field is missing from the gatew
     };
     expect(hasComplexIsland(plan.root)).toBe(true);
 
-    const executor = getBackboneExecutor(stitched);
+    const executor = getBackboneExecutorBySchema(stitched);
     const result = (await executor({
       document,
       context: { ...inContextSDK },
