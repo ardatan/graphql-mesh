@@ -1,4 +1,10 @@
-import { GraphQLError, Kind, type GraphQLSchema, type OperationDefinitionNode } from 'graphql';
+import {
+  GraphQLError,
+  Kind,
+  type DocumentNode,
+  type GraphQLSchema,
+  type OperationDefinitionNode,
+} from 'graphql';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { getFragmentsFromDocument } from '@graphql-tools/executor';
 import {
@@ -69,26 +75,27 @@ const EMPTY_ACTIVE_LABELS: object = Object.freeze({});
 let planBuildInput:
   | {
       schema: GraphQLSchema;
+      operation: OperationDefinitionNode;
       fragments: ReturnType<typeof getFragmentsFromDocument>;
       coerced: Record<string, any>;
       context: ExecutionRequest['context'];
     }
   | undefined;
 
-/** Per-schema plan cache: memoize2(operation, activeLabels). */
+/** Per-schema plan cache: memoize2(request.document, activeLabels). */
 const getPlanMemoForSchema = memoize1(function getPlanMemoForSchema(_schema: GraphQLSchema) {
-  return memoize2(function cachedPlanByOpAndLabels(
-    operation: OperationDefinitionNode,
+  return memoize2(function cachedPlanByDocumentAndLabels(
+    _document: DocumentNode,
     _activeLabels: object,
   ): StitchPlan {
     const input = planBuildInput!;
     try {
-      return buildStitchPlan(input.schema, operation, input.fragments, input.coerced, {
+      return buildStitchPlan(input.schema, input.operation, input.fragments, input.coerced, {
         context: input.context,
       });
     } catch (err) {
       return {
-        operation,
+        operation: input.operation,
         fragments: input.fragments,
         root: { kind: 'Parallel', nodes: [] },
         incomplete: true,
@@ -143,12 +150,13 @@ function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): Stitch
     activeLabels != null && typeof activeLabels === 'object' ? activeLabels : EMPTY_ACTIVE_LABELS;
   planBuildInput = {
     schema,
+    operation,
     fragments,
     coerced,
     context: request.context,
   };
   try {
-    return getPlanMemoForSchema(schema)(operation, labelsKey);
+    return getPlanMemoForSchema(schema)(request.document, labelsKey);
   } finally {
     planBuildInput = undefined;
   }
