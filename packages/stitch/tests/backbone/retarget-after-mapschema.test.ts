@@ -7,7 +7,19 @@ import {
   retargetBackboneToSchema,
   stitchSchemas,
 } from '@graphql-tools/stitch';
+import { isAsyncIterable, type ExecutionResult } from '@graphql-tools/utils';
 import { filterInternalFieldsAndTypes } from '../../../federation/src/utils.js';
+
+async function execResult(
+  executor: NonNullable<ReturnType<typeof getBackboneExecutor>>,
+  request: Parameters<NonNullable<ReturnType<typeof getBackboneExecutor>>>[0],
+): Promise<ExecutionResult> {
+  const result = await executor(request);
+  if (isAsyncIterable(result)) {
+    throw new Error('Expected ExecutionResult, got AsyncIterable');
+  }
+  return result;
+}
 
 describe('retargetBackboneToSchema after mapSchema', () => {
   it('pre-existing local root keeps ORIGINAL_RESOLVE after mapSchema retarget', async () => {
@@ -57,7 +69,7 @@ describe('retargetBackboneToSchema after mapSchema', () => {
     const localField = schema.getQueryType()!.getFields()['localUsers']!;
     expect(getOriginalRootResolve(localField)).toBeTruthy();
     const executor = getBackboneExecutor(schema)!;
-    const result = await executor({
+    const result = await execResult(executor, {
       document: parse(`{
         users { id }
         localUsers { id }
@@ -158,7 +170,7 @@ describe('retargetBackboneToSchema after mapSchema', () => {
     };
     expect(stitchingInfo.localFields?.get('Query')?.has('users')).toBe(true);
     const executor = getBackboneExecutor(schema)!;
-    const result = await executor({
+    const result = await execResult(executor, {
       document: parse(`{
         secondUsers { id }
         users { id }

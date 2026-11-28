@@ -143,8 +143,11 @@ export function createBackboneExecutor(
       };
     }
 
+    // Snapshot so a concurrent setSchema (retarget) cannot project with a
+    // different schema than the one used to execute this request.
+    const executionSchema = activeSchema;
     return handleMaybePromise(
-      () => executeStitchPlan(activeSchema, plan, requestWithCoercedVars),
+      () => executeStitchPlan(executionSchema, plan, requestWithCoercedVars),
       (result: ExecutionResult) => {
         if (isAsyncIterable(result)) {
           return result;
@@ -152,7 +155,7 @@ export function createBackboneExecutor(
         return {
           ...result,
           data: projectDataToOperation(
-            activeSchema,
+            executionSchema,
             op,
             plan.fragments,
             coerced,

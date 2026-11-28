@@ -164,7 +164,14 @@ export function retargetBackboneToSchema(schema: GraphQLSchema): GraphQLSchema {
     }
     for (const [fieldName, field] of Object.entries(root.getFields())) {
       const key = `${root.name}.${fieldName}`;
-      if (getOriginalRootResolve(field) != null) {
+      const stamped = getOriginalRootResolve(field);
+      if (stamped != null) {
+        // Late overrides (markChangedRootResolvesAsLocal) stamp ORIGINAL_RESOLVE
+        // but leave rootOriginals on the first resolver. Sync so a later
+        // mapSchema that drops the symbol restores the override, not the first.
+        if (!isBackboneRootProxy(stamped)) {
+          runtime.rootOriginals.set(key, stamped);
+        }
         continue;
       }
       const current = field.resolve ?? defaultFieldResolver;
