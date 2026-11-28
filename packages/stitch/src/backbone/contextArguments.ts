@@ -366,9 +366,10 @@ export function buildContextArgumentsForFetch(
     entityTypeName,
     selectionSet,
     typeNames,
+    flattenPath,
     variableCounter,
     out,
-    options?.reservedVariableNames,
+    options,
   );
   return out.length ? out : undefined;
 }
@@ -380,9 +381,15 @@ function collectContextArgsFromSelection(
   typeName: string,
   selectionSet: SelectionSetNode,
   typeNamesAlongPath: string[],
+  flattenPath: PathSegment[],
   variableCounter: { n: number },
   out: StitchContextArgument[],
-  reservedVariableNames?: ReadonlySet<string>,
+  options?: {
+    rootType?: GraphQLObjectType | null;
+    operation?: OperationDefinitionNode;
+    fragments?: Record<string, FragmentDefinitionNode>;
+    reservedVariableNames?: ReadonlySet<string>;
+  },
 ): void {
   for (const sel of selectionSet.selections) {
     if (sel.kind === Kind.INLINE_FRAGMENT) {
@@ -394,9 +401,10 @@ function collectContextArgsFromSelection(
         on,
         sel.selectionSet,
         typeNamesAlongPath,
+        flattenPath,
         variableCounter,
         out,
-        reservedVariableNames,
+        options,
       );
       continue;
     }
@@ -425,9 +433,10 @@ function collectContextArgsFromSelection(
         schema,
         stitchingInfo,
         typeNamesAlongPath,
+        flattenPath,
         ca,
         variableCounter,
-        reservedVariableNames,
+        options,
       );
       if (rewrite) {
         out.push({ ...rewrite, fieldName: sel.name.value, typeCondition: typeName });
@@ -452,9 +461,14 @@ function resolveContextRewrite(
   schema: GraphQLSchema,
   stitchingInfo: StitchingInfo,
   typeNamesAlongPath: string[],
+  flattenPath: PathSegment[],
   ca: MergedFieldContextArgument,
   variableCounter: { n: number },
-  reservedVariableNames?: ReadonlySet<string>,
+  options?: {
+    operation?: OperationDefinitionNode;
+    fragments?: Record<string, FragmentDefinitionNode>;
+    reservedVariableNames?: ReadonlySet<string>;
+  },
 ): StitchContextArgument | undefined {
   const providers = getContextProviders(schema, stitchingInfo, ca.context);
   if (!providers.length || typeNamesAlongPath.length < 2) {
@@ -467,17 +481,162 @@ function resolveContextRewrite(
       continue;
     }
     const parentDepth = typeNamesAlongPath.length - 1 - i;
+    let selectionPath = parseContextSelectionPath(ca.selection);
+    // Carry exact bridge response keys from the injected operation selections
+    // so a client `__mesh_ctx_currency_1: id` cannot shadow `__mesh_ctx_currency_2`.
+    if (options?.operation) {
+      const providerSelections = selectionsAtFlattenPrefix(
+        options.operation.selectionSet.selections,
+        flattenPath,
+        flattenPath.length - parentDepth,
+        options.fragments,
+      );
+      selectionPath = applyBridgeResponseKeys(selectionPath, providerSelections);
+    }
     return {
       fieldName: '', // filled by caller
       argName: ca.name,
-      variableName: allocateContextVariableName(variableCounter, reservedVariableNames),
+      variableName: allocateContextVariableName(variableCounter, options?.reservedVariableNames),
       type: ca.type,
       parentDepth,
       providerTypeNames: [...providers],
-      selectionPath: parseContextSelectionPath(ca.selection),
+      selectionPath,
     };
   }
   return undefined;
+}
+
+/**
+ * Child selections under the field at `flattenPath[0..prefixLen)`.
+ * Used to find injected context-bridge aliases on the provider.
+ */
+function selectionsAtFlattenPrefix(
+  selections: readonly SelectionNode[],
+  flattenPath: PathSegment[],
+  prefixLen: number,
+  fragments?: Record<string, FragmentDefinitionNode>,
+): readonly SelectionNode[] {
+  let current: readonly SelectionNode[] = selections;
+  for (let i = 0; i < prefixLen; i++) {
+    const segment = flattenPath[i]!;
+    if (typeof segment === 'number') {
+      continue;
+    }
+    const field = findFieldSelectionByResponseKey(current, segment, fragments);
+    current = field?.selectionSet?.selections ?? [];
+  }
+  return current;
+}
+
+function findFieldSelectionByResponseKey(
+  selections: readonly SelectionNode[],
+  responseKey: string,
+  fragments?: Record<string, FragmentDefinitionNode>,
+): FieldNode | undefined {
+  for (const sel of selections) {
+    if (sel.kind === Kind.FIELD) {
+      if ((sel.alias?.value ?? sel.name.value) === responseKey) {
+        return sel;
+      }
+      continue;
+    }
+    if (sel.kind === Kind.INLINE_FRAGMENT) {
+      const found = findFieldSelectionByResponseKey(
+        sel.selectionSet.selections,
+        responseKey,
+        fragments,
+      );
+      if (found) {
+        return found;
+      }
+      continue;
+    }
+    if (sel.kind === Kind.FRAGMENT_SPREAD && fragments) {
+      const frag = fragments[sel.name.value];
+      if (!frag) {
+        continue;
+      }
+      const found = findFieldSelectionByResponseKey(
+        frag.selectionSet.selections,
+        responseKey,
+        fragments,
+      );
+      if (found) {
+        return found;
+      }
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Predict the response key `mergeBridgeFields` will use for a bridge named
+ * `fieldName`, mirroring its allocation rules against current selections
+ * (bridges are stamped onto the plan later; the client operation alone is
+ * enough to reproduce the alias).
+ */
+function predictedBridgeResponseKey(
+  selections: readonly SelectionNode[],
+  fieldName: string,
+): string {
+  const occupied = new Set<string>();
+  let hasSatisfyingUnaliased = false;
+  for (const sel of selections) {
+    if (sel.kind !== Kind.FIELD) {
+      continue;
+    }
+    occupied.add(sel.alias?.value ?? sel.name.value);
+    if (
+      sel.alias == null &&
+      sel.name.value === fieldName &&
+      !fieldHasConditionalDirective(sel)
+    ) {
+      hasSatisfyingUnaliased = true;
+    }
+  }
+  if (hasSatisfyingUnaliased) {
+    return fieldName;
+  }
+  if (!occupied.has(fieldName)) {
+    return fieldName;
+  }
+  return allocateBridgeAlias(fieldName, occupied);
+}
+
+function applyBridgeResponseKeys(
+  path: StitchContextPathSegment[],
+  selections: readonly SelectionNode[],
+): StitchContextPathSegment[] {
+  let current = selections;
+  return path.map(seg => {
+    if ('Alternatives' in seg) {
+      return {
+        Alternatives: seg.Alternatives.map(alt => applyBridgeResponseKeys(alt, current)),
+      };
+    }
+    if ('TypenameEquals' in seg) {
+      return seg;
+    }
+    const responseKey = predictedBridgeResponseKey(current, seg.Key);
+    const next: StitchContextPathSegment =
+      responseKey !== seg.Key ? { Key: seg.Key, ResponseKey: responseKey } : seg;
+    if (responseKey === seg.Key) {
+      // Unaliased field already present (or will be injected unaliased) —
+      // descend for nested bridge keys.
+      const existing = current.find(
+        (s): s is FieldNode =>
+          s.kind === Kind.FIELD &&
+          !s.alias &&
+          !fieldHasConditionalDirective(s) &&
+          s.name.value === seg.Key,
+      );
+      current = existing?.selectionSet?.selections ?? [];
+    } else {
+      // New aliased bridge — nested keys live only under that injection.
+      current = [];
+    }
+    return next;
+  });
 }
 
 /**
@@ -978,17 +1137,14 @@ function selectAlongPath(
     return selectAlongPath(value, path, index + 1, schema);
   }
   const record = value as Record<string, unknown>;
-  // Prefer numbered bridge aliases first (`__mesh_ctx_key_N`), then bare
-  // `__mesh_ctx_key`, then the natural key. Numbered aliases are allocated
-  // when the bare prefix is already occupied by the client.
-  const bridgedKey = `${CONTEXT_BRIDGE_ALIAS_PREFIX}${segment.Key}`;
-  for (let n = 1; n < 64; n++) {
-    const numbered = `${bridgedKey}_${n}`;
-    if (Object.hasOwn(record, numbered)) {
-      return selectAlongPath(record[numbered], path, index + 1, schema);
-    }
+  // Exact ResponseKey from allocateBridgeAlias (stamped during plan rewrite).
+  // Never scan numbered aliases first — a client field occupying
+  // `__mesh_ctx_currency_1` must not shadow the bridge at `_2`.
+  if (segment.ResponseKey && Object.hasOwn(record, segment.ResponseKey)) {
+    return selectAlongPath(record[segment.ResponseKey], path, index + 1, schema);
   }
-  if (Object.hasOwn(record, bridgedKey)) {
+  const bridgedKey = `${CONTEXT_BRIDGE_ALIAS_PREFIX}${segment.Key}`;
+  if (!segment.ResponseKey && Object.hasOwn(record, bridgedKey)) {
     return selectAlongPath(record[bridgedKey], path, index + 1, schema);
   }
   if (Object.hasOwn(record, segment.Key)) {

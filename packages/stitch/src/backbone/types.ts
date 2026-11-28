@@ -17,7 +17,17 @@ export type PathSegment = string | number;
  * evaluation picks the branch that matches the provider typename.
  */
 export type StitchContextPathSegment =
-  { Key: string } | { TypenameEquals: string[] } | { Alternatives: StitchContextPathSegment[][] };
+  | {
+      Key: string;
+      /**
+       * Concrete response key to read when a context bridge was injected under
+       * an alias (`__mesh_ctx_currency_2`). Omit to use `Key` / bare bridge
+       * fallback.
+       */
+      ResponseKey?: string;
+    }
+  | { TypenameEquals: string[] }
+  | { Alternatives: StitchContextPathSegment[][] };
 
 /**
  * How to fill one `@fromContext` argument on an entity Fetch from an ancestor

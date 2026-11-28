@@ -1214,6 +1214,48 @@ describe('fromContext gateway-parity (adapted from gateway#2703)', () => {
     expect(payload).not.toMatch(/"code"\s*:\s*"u1"/);
   });
 
+  it('reads exact bridge alias when client occupies __mesh_ctx_currency_1', async () => {
+    const { bag, executor } = stitchWithCapture(BASIC_SUPERGRAPH, createUsersSubgraph());
+    // Client owns natural `currency`, bare `__mesh_ctx_currency`, and `_1`.
+    // Bridge must allocate `_2` and the rewrite must read that key — not `_1`.
+    const result = await executor({
+      document: parse(`{
+        users {
+          currency: id
+          __mesh_ctx_currency: id
+          __mesh_ctx_currency_1: id
+          transactions { amount }
+        }
+      }`),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result).toEqual({
+      data: {
+        users: [
+          {
+            currency: 'u1',
+            __mesh_ctx_currency: 'u1',
+            __mesh_ctx_currency_1: 'u1',
+            transactions: [{ amount: 100 }, { amount: 100 }],
+          },
+          {
+            currency: 'u2',
+            __mesh_ctx_currency: 'u2',
+            __mesh_ctx_currency_1: 'u2',
+            transactions: [{ amount: 90 }],
+          },
+        ],
+      },
+    });
+    const rootReq = bag.find(r => !r.query.includes('_entities'));
+    expect(rootReq?.query).toMatch(/__mesh_ctx_currency_2\s*:\s*currency/);
+    const payload = JSON.stringify(entityRequests(bag));
+    expect(payload).toContain('USD');
+    expect(payload).toContain('EUR');
+    expect(payload).not.toMatch(/"code"\s*:\s*"u1"/);
+    expect(payload).not.toMatch(/"code"\s*:\s*"u2"/);
+  });
+
   it('type-conditioned context branches are alternatives', () => {
     const path = parseContextSelectionPath(
       '{ ... on User { currency } ... on Other { otherCurrency } }',
@@ -1249,6 +1291,18 @@ describe('fromContext gateway-parity (adapted from gateway#2703)', () => {
       readContextValue(
         { __typename: 'User', currency: 'u1', __mesh_ctx_currency: 'USD' },
         path,
+        schema,
+      ),
+    ).toBe('USD');
+    // Exact ResponseKey must win over a lower-numbered client alias.
+    expect(
+      readContextValue(
+        {
+          __typename: 'User',
+          __mesh_ctx_currency_1: 'u1',
+          __mesh_ctx_currency_2: 'USD',
+        },
+        [{ Key: 'currency', ResponseKey: '__mesh_ctx_currency_2' }],
         schema,
       ),
     ).toBe('USD');
