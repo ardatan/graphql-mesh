@@ -1,10 +1,11 @@
-import { GraphQLError, Kind, type GraphQLSchema } from 'graphql';
+import { GraphQLError, Kind, type GraphQLSchema, type OperationDefinitionNode } from 'graphql';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { getFragmentsFromDocument } from '@graphql-tools/executor';
 import {
   getOperationASTFromRequest,
   isAsyncIterable,
   memoize1,
+  memoize2,
   type ExecutionRequest,
   type ExecutionResult,
   type Executor,
@@ -58,11 +59,64 @@ function documentHasDeferOrStream(request: ExecutionRequest): boolean {
 /** Same key fusion sets on request context with the per-request active labels. */
 const OVERRIDE_LABELS_CONTEXT_KEY = Symbol.for('hive.gateway.overrideLabels');
 
-/** Plan cache keyed by schema → request.document (root proxies memoize theirs). */
-const planCacheBySchema = new WeakMap<
-  GraphQLSchema,
-  WeakMap<object, Map<string | null, StitchPlan>>
->();
+/** When context has no active labels object — stable WeakMap key for memoize2. */
+const EMPTY_ACTIVE_LABELS: object = Object.freeze({});
+
+/**
+ * Build inputs for the memoize2 miss path (fragments / vars / context are not
+ * cache keys — same as the previous document+string-key cache).
+ */
+let planBuildInput:
+  | {
+      schema: GraphQLSchema;
+      fragments: ReturnType<typeof getFragmentsFromDocument>;
+      coerced: Record<string, any>;
+      context: ExecutionRequest['context'];
+    }
+  | undefined;
+
+/** Per-schema plan cache: memoize2(operation, activeLabels). */
+const getPlanMemoForSchema = memoize1(function getPlanMemoForSchema(_schema: GraphQLSchema) {
+  return memoize2(function cachedPlanByOpAndLabels(
+    operation: OperationDefinitionNode,
+    _activeLabels: object,
+  ): StitchPlan {
+    const input = planBuildInput!;
+    try {
+      return buildStitchPlan(input.schema, operation, input.fragments, input.coerced, {
+        context: input.context,
+      });
+    } catch (err) {
+      return {
+        operation,
+        fragments: input.fragments,
+        root: { kind: 'Parallel', nodes: [] },
+        incomplete: true,
+        incompleteReasons: [err instanceof Error ? err.message : 'Plan build failed'],
+      };
+    }
+  });
+});
+
+function buildPlanUncached(
+  schema: GraphQLSchema,
+  operation: OperationDefinitionNode,
+  fragments: ReturnType<typeof getFragmentsFromDocument>,
+  coerced: Record<string, any>,
+  context: ExecutionRequest['context'],
+): StitchPlan {
+  try {
+    return buildStitchPlan(schema, operation, fragments, coerced, { context });
+  } catch (err) {
+    return {
+      operation,
+      fragments,
+      root: { kind: 'Parallel', nodes: [] },
+      incomplete: true,
+      incompleteReasons: [err instanceof Error ? err.message : 'Plan build failed'],
+    };
+  }
+}
 
 function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): StitchPlan {
   const operation = getOperationASTFromRequest(request);
@@ -79,50 +133,25 @@ function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): Stitch
   const coerced = coerceOperationVariables(operation, request.variables ?? {});
   // Per-request active labels only (fusion / gateway context) — no schema.extensions bag.
   const activeLabels = request.context?.[OVERRIDE_LABELS_CONTEXT_KEY] as
-    Iterable<string> | undefined;
+    (Iterable<string> & object) | undefined;
   const enabled = activeLabels != null ? [...activeLabels] : [];
   // percent(...) rolls RNG inside field override at plan time — never cache.
-  const hasPercentOverride = enabled.some(l => l.startsWith('percent('));
-  const overrideKey =
-    enabled.length && !hasPercentOverride ? `::ov:${enabled.sort().join(',')}` : '';
-  const cacheKey = (operation.name?.value ?? '') + overrideKey;
-  // Root proxies memoize `document` by `info.operation` (stable identity).
-  // Delegated requests carry their own document — never share outer op keys.
-  const planKey: object = request.document;
-  let planCache = planCacheBySchema.get(schema);
-  if (!planCache) {
-    planCache = new WeakMap();
-    planCacheBySchema.set(schema, planCache);
+  if (enabled.some(l => l.startsWith('percent('))) {
+    return buildPlanUncached(schema, operation, fragments, coerced, request.context);
   }
-  let byName = planCache.get(planKey);
-  if (!hasPercentOverride && byName) {
-    const cached = byName.get(cacheKey);
-    if (cached) {
-      return cached;
-    }
-  }
-  let plan: StitchPlan;
+  const labelsKey: object =
+    activeLabels != null && typeof activeLabels === 'object' ? activeLabels : EMPTY_ACTIVE_LABELS;
+  planBuildInput = {
+    schema,
+    fragments,
+    coerced,
+    context: request.context,
+  };
   try {
-    plan = buildStitchPlan(schema, operation, fragments, coerced, {
-      context: request.context,
-    });
-  } catch (err) {
-    plan = {
-      operation,
-      fragments,
-      root: { kind: 'Parallel', nodes: [] },
-      incomplete: true,
-      incompleteReasons: [err instanceof Error ? err.message : 'Plan build failed'],
-    };
+    return getPlanMemoForSchema(schema)(operation, labelsKey);
+  } finally {
+    planBuildInput = undefined;
   }
-  if (!hasPercentOverride) {
-    if (!byName) {
-      byName = new Map();
-      planCache.set(planKey, byName);
-    }
-    byName.set(cacheKey, plan);
-  }
-  return plan;
 }
 
 /**
