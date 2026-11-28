@@ -1256,7 +1256,12 @@ function tryExecuteEntitiesBatchWithContext(
         };
         Object.assign(
           variables,
-          renameGroupVariables(groupVars, aliased.groupedVariables, groupIndex),
+          renameGroupVariables(
+            groupVars,
+            aliased.groupedVariables,
+            groupIndex,
+            aliased.reservedVarNames,
+          ),
         );
       });
       return handleMaybePromise(
@@ -1394,6 +1399,8 @@ interface ContextAliasedDocument {
   document: DocumentNode;
   responseKeys: string[];
   groupedVariables: Set<string>;
+  /** Names that must not be used as `${base}_${group}` (client vars). */
+  reservedVarNames: ReadonlySet<string>;
 }
 
 /**
@@ -1446,26 +1453,31 @@ function writeContextAliasedDocument(
   }
   const responseKeys = fields.map(field => field.alias?.value ?? field.name.value);
   const fragmentNames = new Set(fragments.map(fragment => fragment.name.value));
+  // Client / pre-existing vars in this operation — avoid `${base}_${group}` clashes.
+  const reservedVarNames = new Set(
+    (operation.variableDefinitions ?? []).map(d => d.variable.name.value),
+  );
 
   const variableDefinitions = [...sharedDefinitions];
   const selections: FieldNode[] = [];
   const groupFragments: FragmentDefinitionNode[] = [];
   for (let group = 0; group < groups; group++) {
-    const suffix = (name: string) => `${name}_${group}`;
+    const fieldSuffix = (name: string) => `${name}_${group}`;
+    const varSuffix = (name: string) => aliasedGroupVarName(name, group, reservedVarNames);
     const rename = <T extends ASTNode>(node: T): T =>
       visit(node, {
         Variable: variable =>
           groupedVariables.has(variable.name.value)
             ? {
                 ...variable,
-                name: { ...variable.name, value: suffix(variable.name.value) },
+                name: { ...variable.name, value: varSuffix(variable.name.value) },
               }
             : undefined,
         FragmentSpread: spread =>
           fragmentNames.has(spread.name.value)
             ? {
                 ...spread,
-                name: { ...spread.name, value: suffix(spread.name.value) },
+                name: { ...spread.name, value: fieldSuffix(spread.name.value) },
               }
             : undefined,
       });
@@ -1474,7 +1486,7 @@ function writeContextAliasedDocument(
       selections.push(
         rename({
           ...field,
-          alias: { kind: Kind.NAME, value: suffix(responseKeys[i]!) },
+          alias: { kind: Kind.NAME, value: fieldSuffix(responseKeys[i]!) },
         }),
       );
     });
@@ -1482,7 +1494,7 @@ function writeContextAliasedDocument(
       ...fragments.map(fragment =>
         rename({
           ...fragment,
-          name: { ...fragment.name, value: suffix(fragment.name.value) },
+          name: { ...fragment.name, value: fieldSuffix(fragment.name.value) },
         }),
       ),
     );
@@ -1502,7 +1514,13 @@ function writeContextAliasedDocument(
     },
     responseKeys,
     groupedVariables,
+    reservedVarNames,
   };
+}
+
+function aliasedGroupVarName(base: string, group: number, reserved: ReadonlySet<string>): string {
+  const plain = `${base}_${group}`;
+  return reserved.has(plain) ? `__mesh_${base}_${group}` : plain;
 }
 
 function splitGroup(name: string): [string, number] | null {
@@ -1514,10 +1532,13 @@ function renameGroupVariables(
   variables: Record<string, unknown>,
   groupedVariables: Set<string>,
   group: number,
+  reservedVarNames: ReadonlySet<string> = new Set(),
 ): Record<string, unknown> {
   const renamed: Record<string, unknown> = Object.create(null);
   for (const [name, value] of Object.entries(variables)) {
-    renamed[groupedVariables.has(name) ? `${name}_${group}` : name] = value;
+    renamed[
+      groupedVariables.has(name) ? aliasedGroupVarName(name, group, reservedVarNames) : name
+    ] = value;
   }
   return renamed;
 }
@@ -1589,6 +1610,7 @@ function applyContextArgsToSelectionSet(
   selectionSet: SelectionSetNode,
   contextArguments: StitchContextArgument[],
 ): SelectionSetNode {
+  // One rewrite per fieldName+argName (aliased occurrences share the variable).
   const byField = new Map<string, StitchContextArgument[]>();
   for (const ca of contextArguments) {
     let list = byField.get(ca.fieldName);
@@ -1596,11 +1618,19 @@ function applyContextArgsToSelectionSet(
       list = [];
       byField.set(ca.fieldName, list);
     }
-    list.push(ca);
+    if (!list.some(existing => existing.argName === ca.argName)) {
+      list.push(ca);
+    }
   }
   return {
     kind: Kind.SELECTION_SET,
     selections: selectionSet.selections.map(sel => {
+      if (sel.kind === Kind.INLINE_FRAGMENT) {
+        return {
+          ...sel,
+          selectionSet: applyContextArgsToSelectionSet(sel.selectionSet, contextArguments),
+        };
+      }
       if (sel.kind !== Kind.FIELD) {
         return sel;
       }
@@ -1608,14 +1638,25 @@ function applyContextArgsToSelectionSet(
       if (!fieldArgs?.length) {
         return sel;
       }
-      const extraArgs: ArgumentNode[] = fieldArgs.map((ca): ArgumentNode => ({
-        kind: Kind.ARGUMENT,
-        name: { kind: Kind.NAME, value: ca.argName },
-        value: {
-          kind: Kind.VARIABLE,
-          name: { kind: Kind.NAME, value: ca.variableName },
-        },
-      }));
+      const existingArgNames = new Set((sel.arguments ?? []).map(a => a.name.value));
+      const extraArgs: ArgumentNode[] = [];
+      for (const ca of fieldArgs) {
+        if (existingArgNames.has(ca.argName)) {
+          continue;
+        }
+        existingArgNames.add(ca.argName);
+        extraArgs.push({
+          kind: Kind.ARGUMENT,
+          name: { kind: Kind.NAME, value: ca.argName },
+          value: {
+            kind: Kind.VARIABLE,
+            name: { kind: Kind.NAME, value: ca.variableName },
+          },
+        });
+      }
+      if (!extraArgs.length) {
+        return sel;
+      }
       return {
         ...sel,
         arguments: [...(sel.arguments ?? []), ...extraArgs],

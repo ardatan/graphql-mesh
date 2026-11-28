@@ -216,7 +216,7 @@ describe('Federation @context / @fromContext', () => {
       },
     });
     expect(opts.contextProviders?.['accounts__userContext']).toContain('User');
-    expect(opts.schemaExtensions).toBeUndefined();
+    expect(opts).not.toHaveProperty('schemaExtensions');
   });
 
   it('stores backboneExecutor on stitchingInfo, not schema.extensions', () => {
@@ -896,7 +896,7 @@ describe('fromContext gateway-parity (adapted from gateway#2703)', () => {
       },
     });
     const entities = entityRequests(bag);
-    expect(entities.length).toBeGreaterThanOrEqual(1);
+    expect(entities).toHaveLength(1);
     // Single group: no _entities_N aliases required
     expect(entities.every(r => !hasAliasedEntities(r.query))).toBe(true);
   });

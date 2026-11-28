@@ -23,6 +23,7 @@ import { getDefinedRootType } from '@graphql-tools/utils';
 import {
   buildContextArgumentsForFetch,
   injectContextBridgesIntoSelections,
+  parseContextSelectionPath,
   selectionHasContextArguments,
 } from './contextArguments.js';
 import { isLocalField } from './localFields.js';
@@ -2343,12 +2344,21 @@ function planRootField(
         parentTypeName: rootType.name,
         parentFieldName: fieldName,
       };
-      // Use selectionSetForPartition so `@fromContext` bridge fields
-      // (e.g. Account.currency) survive concrete expansion.
+      // Inject `@fromContext` bridges into the fragment-preserving client
+      // selection — do not feed selectionSetForPartition (which may promote
+      // fragment-only fields to bare abstract selections).
+      const abstractWithBridges = selectionSetOf(
+        injectContextBridgesIntoSelections(
+          schema,
+          stitchingInfo,
+          returnTypeName!,
+          fieldNode.selectionSet.selections,
+        ),
+      );
       const expanded = expandAbstractSelectionsForSubschema(
         owner,
         returnTypeName!,
-        selectionSetForPartition ?? fieldNode.selectionSet,
+        abstractWithBridges,
         fragments,
         stitchingInfo,
         schema,
@@ -3452,7 +3462,7 @@ function findMergeFieldConfig(
   fieldName: string,
 ) {
   const direct = subschema.merge?.[typeName]?.fields?.[fieldName];
-  if (direct?.selectionSet || direct?.computed) {
+  if (direct?.selectionSet || direct?.computed || direct?.contextArguments?.length) {
     return direct;
   }
   for (const s of stitchingInfo.subschemaMap.values()) {
@@ -3460,11 +3470,11 @@ function findMergeFieldConfig(
       continue;
     }
     const field = s.merge?.[typeName]?.fields?.[fieldName];
-    if (field?.selectionSet || field?.computed) {
+    if (field?.selectionSet || field?.computed || field?.contextArguments?.length) {
       return field;
     }
   }
-  return undefined;
+  return direct;
 }
 
 /** @requires bridge field nodes for one client field on a merge target. */
@@ -3859,6 +3869,11 @@ function fetchDependsOn(
   if (nestedEntityKeyDependsOn(stitchingInfo, later, earlier)) {
     return true;
   }
+  // `@fromContext`: earlier hop must produce the provider selection (e.g.
+  // User.currency) before later's contextual entity field (Transaction.amount).
+  if (contextProviderDependsOn(stitchingInfo, later, earlier)) {
+    return true;
+  }
 
   const reqDeps = collectRequiresDeps(stitchingInfo, later).filter(
     d => d.name.value !== '__typename',
@@ -3911,6 +3926,118 @@ function fetchDependsOn(
     }
   }
   return false;
+}
+
+/**
+ * True when `later` has `@fromContext` fields whose context selection is
+ * produced by `earlier` on an ancestor path (e.g. User.currency before
+ * Transaction.amount).
+ */
+function contextProviderDependsOn(
+  stitchingInfo: StitchingInfo,
+  later: Extract<StitchPlanNode, { kind: 'Fetch' }>,
+  earlier: Extract<StitchPlanNode, { kind: 'Fetch' }>,
+): boolean {
+  if (!later.entityTypeName || !later.selectionSet || !earlier.selectionSet) {
+    return false;
+  }
+  if (
+    !selectionHasContextArguments(
+      stitchingInfo,
+      later.subschema,
+      later.entityTypeName,
+      later.selectionSet,
+    )
+  ) {
+    return false;
+  }
+  const neededKeys = new Set<string>();
+  collectContextSelectionKeys(
+    stitchingInfo,
+    later.subschema,
+    later.entityTypeName,
+    later.selectionSet,
+    neededKeys,
+  );
+  if (!neededKeys.size) {
+    return false;
+  }
+  const laterPaths = fetchFlattenPaths(later);
+  const earlierPaths = fetchFlattenPaths(earlier);
+  let ancestor = false;
+  if (earlier.rootField) {
+    const rk = earlier.rootField.alias?.value ?? earlier.rootField.name.value;
+    ancestor = laterPaths.some(lp => lp[0] === rk);
+  }
+  if (!ancestor) {
+    for (const lp of laterPaths) {
+      for (const ep of earlierPaths) {
+        if (pathIsPrefix(ep, lp) && ep.length < lp.length) {
+          ancestor = true;
+          break;
+        }
+      }
+      if (ancestor) {
+        break;
+      }
+    }
+  }
+  if (!ancestor) {
+    return false;
+  }
+  const provided = collectSelectedFieldNames(earlier.selectionSet);
+  for (const key of neededKeys) {
+    if (provided.has(key)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function collectContextSelectionKeys(
+  stitchingInfo: StitchingInfo,
+  subschema: Subschema,
+  typeName: string,
+  selectionSet: SelectionSetNode,
+  out: Set<string>,
+): void {
+  for (const sel of selectionSet.selections) {
+    if (sel.kind === Kind.INLINE_FRAGMENT) {
+      collectContextSelectionKeys(
+        stitchingInfo,
+        subschema,
+        sel.typeCondition?.name.value ?? typeName,
+        sel.selectionSet,
+        out,
+      );
+      continue;
+    }
+    if (sel.kind !== Kind.FIELD || sel.name.value === '__typename') {
+      continue;
+    }
+    const cfg = findMergeFieldConfig(stitchingInfo, subschema, typeName, sel.name.value);
+    if (!cfg?.contextArguments?.length) {
+      continue;
+    }
+    for (const ca of cfg.contextArguments) {
+      addKeysFromContextPath(parseContextSelectionPath(ca.selection), out);
+    }
+  }
+}
+
+function addKeysFromContextPath(
+  path: import('./types.js').StitchContextPathSegment[],
+  out: Set<string>,
+): void {
+  for (const seg of path) {
+    if ('Key' in seg) {
+      out.add(seg.Key);
+    } else if ('Alternatives' in seg) {
+      for (const alt of seg.Alternatives) {
+        addKeysFromContextPath(alt, out);
+      }
+    }
+  }
 }
 
 /**
@@ -5393,9 +5520,14 @@ function buildCompletePlan(
       : operation.operation === 'subscription'
         ? schema.getSubscriptionType()
         : schema.getQueryType();
+  const reservedVariableNames = new Set(
+    (operation.variableDefinitions ?? []).map(d => d.variable.name.value),
+  );
   const withContext = attachContextArgumentsToPlan(folded, schema, stitchingInfo, {
     operation,
     rootType,
+    fragments,
+    reservedVariableNames,
   });
   const withDocs = isMutation
     ? withContext
@@ -5435,6 +5567,8 @@ function attachContextArgumentsToPlan(
   planCtx: {
     operation: OperationDefinitionNode;
     rootType: GraphQLObjectType | null | undefined;
+    fragments?: Record<string, FragmentDefinitionNode>;
+    reservedVariableNames?: ReadonlySet<string>;
   },
   variableCounter: { n: number } = { n: 0 },
 ): StitchPlanNode {
@@ -5511,7 +5645,12 @@ function attachContextArgumentsToPlan(
         alias.selectionSet,
         path,
         variableCounter,
-        { operation: planCtx.operation, rootType: planCtx.rootType },
+        {
+          operation: planCtx.operation,
+          rootType: planCtx.rootType,
+          fragments: planCtx.fragments,
+          reservedVariableNames: planCtx.reservedVariableNames,
+        },
       );
       contextual.push({
         kind: 'Fetch',
@@ -5559,7 +5698,12 @@ function attachContextArgumentsToPlan(
       node.selectionSet,
       path,
       variableCounter,
-      { operation: planCtx.operation, rootType: planCtx.rootType },
+      {
+        operation: planCtx.operation,
+        rootType: planCtx.rootType,
+        fragments: planCtx.fragments,
+        reservedVariableNames: planCtx.reservedVariableNames,
+      },
     );
     return contextArguments ? { ...node, contextArguments } : node;
   }
@@ -6244,6 +6388,35 @@ function withFoldScheduleMeta(
       id: completesIds[0] ?? collapsed.id,
       completesIds: completesIds.length ? completesIds : collapsed.completesIds,
       dependsOn: depList.length ? depList : collapsed.dependsOn,
+    };
+  }
+  if (collapsed.kind === 'Parallel') {
+    // Late fold may return Parallel(ordinary BatchFetch, contextual Fetches).
+    // Stamp schedule metadata onto each child so downstream dependsOn ids stay valid.
+    return {
+      kind: 'Parallel',
+      nodes: collapsed.nodes.map((child, i) => {
+        if (child.kind !== 'Fetch' && child.kind !== 'BatchFetch') {
+          return child;
+        }
+        const childCompletes =
+          child.completesIds ??
+          (child.id ? [child.id] : i === 0 && completesIds.length ? completesIds : undefined);
+        return {
+          ...child,
+          id: child.id ?? completesIds[i] ?? completesIds[0] ?? child.id,
+          completesIds: childCompletes?.length
+            ? childCompletes
+            : completesIds.length
+              ? completesIds
+              : child.completesIds,
+          dependsOn: child.dependsOn?.length
+            ? child.dependsOn
+            : depList.length
+              ? depList
+              : child.dependsOn,
+        };
+      }),
     };
   }
   return collapsed;
