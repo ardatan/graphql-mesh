@@ -2276,7 +2276,7 @@ export function getStitchingOptionsFromSupergraphSdl(
 
 export type StitchingOptionsFromSupergraphSdl = Omit<
   ReturnType<typeof getStitchingOptionsFromSupergraphSdl>,
-  'typeDefs'
+  'typeDefs' | 'overrideLabels'
 > &
   Partial<IStitchSchemasOptions>;
 
