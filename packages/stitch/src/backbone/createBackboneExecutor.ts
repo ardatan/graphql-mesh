@@ -110,8 +110,13 @@ function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): Stitch
     }
   }
   const cacheKey = (operation.name?.value ?? '') + overrideKey;
-  // Root proxies rebuild `document` each call; prefer the stable operation node.
-  const planKey: object = request.info?.operation ?? request.document;
+  // Root proxies rebuild `document` each call but keep `info.operation` as the
+  // extracted op — key by that stable node. Delegated requests share the outer
+  // `info.operation` while carrying a different extracted op; key by document.
+  const planKey: object =
+    request.info?.operation != null && request.info.operation === operation
+      ? request.info.operation
+      : request.document;
   let planCache = planCacheBySchema.get(schema);
   if (!planCache) {
     planCache = new WeakMap();

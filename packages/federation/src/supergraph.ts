@@ -2274,8 +2274,9 @@ export function getStitchingOptionsFromSupergraphSdl(
   };
 }
 
-export type StitchingOptionsFromSupergraphSdl = ReturnType<
-  typeof getStitchingOptionsFromSupergraphSdl
+export type StitchingOptionsFromSupergraphSdl = Omit<
+  ReturnType<typeof getStitchingOptionsFromSupergraphSdl>,
+  'typeDefs'
 > &
   Partial<IStitchSchemasOptions>;
 
