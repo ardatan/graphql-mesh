@@ -848,9 +848,10 @@ it('deduplicates the required fields from @key if they exists in the original qu
 
   expect(subgraphCalls[0]?.subgraphName).toBe('SUBGRAPHB');
   expect(subgraphCalls[0]?.query).toMatchInlineSnapshot(`
-    "mutation ($input: BuyBookInput!) {
-      buyBook(input: $input) {
+    "mutation {
+      buyBook(input: { bookUpc: \"test\" }) {
         book {
+          __typename
           upc
           otherUpc
           shop {
