@@ -6,19 +6,16 @@ import {
   createBackboneExecutor,
   fieldConfigsWithContextArguments,
   getBackboneExecutor,
-  getOriginalRootResolve,
   injectContextBridgesIntoSelections,
   parseContextSelectionPath,
   readContextValue,
   resolveContextAncestor,
-  retargetBackboneToSchema,
 } from '@graphql-tools/stitch';
 import type { ExecutionRequest } from '@graphql-tools/utils';
 import {
   getStitchedSchemaFromSupergraphSdl,
   getStitchingOptionsFromSupergraphSdl,
 } from '../src/supergraph';
-import { filterInternalFieldsAndTypes } from '../src/utils';
 
 /**
  * Hand-written join v0.5 supergraph matching Guild composition output for:
@@ -1302,111 +1299,6 @@ describe('fromContext gateway-parity (adapted from gateway#2703)', () => {
     expect(payload).toContain('USD');
     expect(payload).toContain('EUR');
     expect(payload).not.toMatch(/"code"\s*:\s*"u1"/);
-  });
-
-  it('late onStitchedSchema root override runs as Island in multi-root plan', async () => {
-    let overrideHits = 0;
-    const subgraph = createUsersSubgraph({ withSecondUsers: true });
-    const schema = getStitchedSchemaFromSupergraphSdl({
-      supergraphSdl: DUAL_ROOT_SUPERGRAPH,
-      onSubschemaConfig(subschema) {
-        subschema.executor = createDefaultExecutor(subgraph);
-      },
-      onStitchedSchema(s) {
-        const field = s.getQueryType()!.getFields()['users']!;
-        // Pre-proxy original (restored by retarget after mapSchema). Wrapping
-        // the backbone proxy itself would recurse into the in-flight plan.
-        const original = getOriginalRootResolve(field)!;
-        field.resolve = (root, args, ctx, info) => {
-          overrideHits++;
-          return original(root, args, ctx, info);
-        };
-        return s;
-      },
-    });
-    const stitchingInfo = schema.extensions?.stitchingInfo as {
-      localFields?: Map<string, Set<string>>;
-    };
-    expect(stitchingInfo.localFields?.get('Query')?.has('users')).toBe(true);
-    const executor = getBackboneExecutor(schema)!;
-    // secondUsers (still proxied) starts the shared plan; users is a local
-    // Island that must call the late override via ORIGINAL_RESOLVE.
-    const result = await executor({
-      document: parse(`{
-        secondUsers { id }
-        users { id }
-      }`),
-    });
-    expect(result.errors).toBeUndefined();
-    expect(overrideHits).toBeGreaterThan(0);
-    expect((result.data as any).users[0].id).toBe('u1');
-    expect((result.data as any).secondUsers[0].id).toBe('s1');
-  });
-
-  it('pre-existing local root keeps ORIGINAL_RESOLVE after mapSchema retarget', async () => {
-    const { makeExecutableSchema } = await import('@graphql-tools/schema');
-    const { stitchSchemas } = await import('@graphql-tools/stitch');
-    let localHits = 0;
-    const subgraph = makeExecutableSchema({
-      typeDefs: /* GraphQL */ `
-        type User {
-          id: ID!
-        }
-        type Query {
-          users: [User]
-        }
-      `,
-      resolvers: {
-        Query: {
-          users: () => [{ id: 'u1' }],
-        },
-      },
-    });
-    // Local root registered before filter mapSchema (not a late onStitchedSchema override).
-    let schema = stitchSchemas({
-      subschemas: [
-        {
-          schema: subgraph,
-          executor: createDefaultExecutor(subgraph),
-        },
-      ],
-      typeDefs: /* GraphQL */ `
-        extend type Query {
-          localUsers: [User]
-        }
-      `,
-      resolvers: {
-        Query: {
-          localUsers: () => {
-            localHits++;
-            return [{ id: 'L1' }];
-          },
-        },
-      },
-    });
-    const stitchingInfo = schema.extensions?.stitchingInfo as {
-      localFields?: Map<string, Set<string>>;
-    };
-    expect(stitchingInfo.localFields?.get('Query')?.has('localUsers')).toBe(true);
-    // Federation filter mapSchema drops Symbols; retarget must restore for locals too.
-    schema = filterInternalFieldsAndTypes(schema);
-    schema = retargetBackboneToSchema(schema);
-    const localField = schema.getQueryType()!.getFields()['localUsers']!;
-    expect(getOriginalRootResolve(localField)).toBeTruthy();
-    const executor = getBackboneExecutor(schema)!;
-    // Object context + sibling proxied root: Island must call restored original,
-    // not re-enter the backbone proxy.
-    const result = await executor({
-      document: parse(`{
-        users { id }
-        localUsers { id }
-      }`),
-      context: {},
-    });
-    expect(result.errors).toBeUndefined();
-    expect(localHits).toBeGreaterThan(0);
-    expect((result.data as any).localUsers[0].id).toBe('L1');
-    expect((result.data as any).users[0].id).toBe('u1');
   });
 
   it('coalesced paths re-bind ResponseKey per flatten path', async () => {

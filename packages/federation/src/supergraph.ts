@@ -60,10 +60,10 @@ import {
 import { CRITICAL_ERROR } from '@graphql-tools/executor';
 import { buildHTTPExecutor, type HTTPExecutorOptions } from '@graphql-tools/executor-http';
 import {
+  attachBackboneExecutor,
   calculateSelectionScore,
   getDefaultFieldConfigMerger,
   markChangedRootResolvesAsLocal,
-  retargetBackboneToSchema,
   snapshotRootFieldResolves,
   stitchSchemas,
   ValidationLevel,
@@ -2436,21 +2436,24 @@ export function getStitchedSchemaFromSupergraphSdl(opts: GetStitchedSchemaFromSu
   // Subgraph schemas keep `@fromContext` args for entity documents; strip them
   // from the public gateway schema (join SDL never exposes them).
   supergraphSchema = stripContextualArgsFromPublicSchema(supergraphSchema);
-  // filterInternalFieldsAndTypes mapSchema -> new schema. Retarget the same
-  // backbone executor (labels stay closed over) so getBackboneExecutor and
-  // Islands use this schema — no new executor / no stitchingInfo options bag.
+  // filterInternalFieldsAndTypes mapSchema -> new schema; re-bind backbone.
+  // Backbone retarget (same runtime / ORIGINAL_RESOLVE) lives in a separate PR
+  // (GM-81); this fromContext PR re-attaches with progressive-override options.
   supergraphSchema = filterInternalFieldsAndTypes(supergraphSchema);
-  supergraphSchema = retargetBackboneToSchema(supergraphSchema);
   if (opts.onStitchedSchema) {
     const rootResolvesBefore = snapshotRootFieldResolves(supergraphSchema);
     supergraphSchema = opts.onStitchedSchema(supergraphSchema) || supergraphSchema;
     // Late root resolver overrides (Query.me -> local) must plan as Islands.
     markChangedRootResolvesAsLocal(supergraphSchema, rootResolvesBefore);
-    // Pick up overrides into the live runtime + reinstall proxies so Islands
-    // call getOriginalRootResolve (= override), not the pre-stitch resolver.
-    supergraphSchema = retargetBackboneToSchema(supergraphSchema);
   }
-  return supergraphSchema;
+  return attachBackboneExecutor(supergraphSchema, {
+    ...(stitchSchemasOpts.overrideLabels != null
+      ? { overrideLabels: stitchSchemasOpts.overrideLabels }
+      : {}),
+    handleProgressiveOverride: opts.handleProgressiveOverride
+      ? (label, context) => opts.handleProgressiveOverride!(label, context, undefined as any)
+      : undefined,
+  });
 }
 
 /**
