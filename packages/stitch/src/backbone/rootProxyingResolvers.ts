@@ -16,23 +16,25 @@ import { CRITICAL_ERROR } from '@graphql-tools/executor';
 import type { ExecutionRequest, Executor } from '@graphql-tools/utils';
 import { handleMaybePromise, type MaybePromise } from '@whatwg-node/promise-helpers';
 
+/** Shared backbone runner — optional schema arg (else request.info.schema). */
+export type BackboneRunner = (
+  request: ExecutionRequest,
+  schema?: GraphQLSchema,
+) => ReturnType<Executor<Record<string, any>>>;
+
 /** Set on context while backbone execute runs so root Islands skip proxying. */
 export const BACKBONE_EXECUTING = Symbol.for('graphql-tools.stitch.backboneExecuting');
-
-const ORIGINAL_RESOLVE = Symbol.for('graphql-tools.stitch.backboneOriginalResolve');
 
 /** Schemas that already have root proxying installed (no schema mutation). */
 const schemasWithRootProxying = new WeakSet<GraphQLSchema>();
 /** Resolve fns installed by {@link installRootProxyingResolvers} (no fn mutation). */
 const backboneRootProxies = new WeakSet<object>();
+/** Pre-proxy root resolve for Islands — keyed by field object, no field mutation. */
+const originalResolveByField = new WeakMap<object, GraphQLFieldResolver<any, any>>();
 
 /** Per-request plan result/promise — keyed by context, no context mutation. */
 const planResultByContext = new WeakMap<object, any>();
 const planPromiseByContext = new WeakMap<object, MaybePromise<any>>();
-
-export function isBackboneRootProxy(resolve: GraphQLFieldResolver<any, any> | undefined): boolean {
-  return typeof resolve === 'function' && backboneRootProxies.has(resolve);
-}
 
 function selectionHasDeferOrStream(selections: readonly SelectionNode[]): boolean {
   const stack = [...selections];
@@ -100,9 +102,12 @@ function applyBackboneResult(
  * backbone executor rather than a single subgraph.
  * Subscription roots are left alone (schema subscribe / backbone schema path).
  */
-export function installRootProxyingResolvers(schema: GraphQLSchema, runBackbone: Executor): void {
+export function installRootProxyingResolvers(
+  schema: GraphQLSchema,
+  runBackbone: BackboneRunner,
+): void {
   // Attach-once after filter / onStitchedSchema. External post-stitch mapSchema
-  // is unsupported — ORIGINAL_RESOLVE lives only on the field config.
+  // is unsupported — original resolve lives in a WeakMap for Islands.
   if (schemasWithRootProxying.has(schema)) {
     return;
   }
@@ -118,11 +123,11 @@ export function installRootProxyingResolvers(schema: GraphQLSchema, runBackbone:
       const field = fields[fieldName]!;
       const resolveFn = field.resolve ?? defaultFieldResolver;
       // Already proxied — do not nest (would recurse when Islands call original).
-      if (isBackboneRootProxy(resolveFn)) {
+      if (typeof resolveFn === 'function' && backboneRootProxies.has(resolveFn)) {
         continue;
       }
       const previousResolve: GraphQLFieldResolver<any, any> = resolveFn;
-      (field as any)[ORIGINAL_RESOLVE] = previousResolve;
+      originalResolveByField.set(field, previousResolve);
       // Context is always an object (graphql-js execute) — type it for WeakMap keys.
       const proxy: GraphQLFieldResolver<any, object> = function backboneRootProxyingResolver(
         root,
@@ -167,13 +172,13 @@ export function installRootProxyingResolvers(schema: GraphQLSchema, runBackbone:
             context,
             rootValue: root,
             operationName: info.operation.name?.value,
-            // Shared backboneExecutor plans against info.schema / stitchingInfo.
+            // Shared backboneExecutor: pass info.schema (or omit — same source).
             info,
           };
           // Sync backbone results stay sync (fakePromise) - no Promise.resolve
           // microtask. Share one MaybePromise across sibling root fields.
           pending = handleMaybePromise(
-            () => runBackbone(request),
+            () => runBackbone(request, info.schema),
             result => {
               planResultByContext.set(context, result);
               return result;
@@ -192,9 +197,9 @@ export function installRootProxyingResolvers(schema: GraphQLSchema, runBackbone:
   }
 }
 
-/** Original root resolver before backbone proxying (field stamp). */
+/** Original root resolver before backbone proxying (Island local). */
 export function getOriginalRootResolve(field: {
   resolve?: GraphQLFieldResolver<any, any>;
 }): GraphQLFieldResolver<any, any> | undefined {
-  return (field as any)[ORIGINAL_RESOLVE] as GraphQLFieldResolver<any, any> | undefined;
+  return originalResolveByField.get(field);
 }

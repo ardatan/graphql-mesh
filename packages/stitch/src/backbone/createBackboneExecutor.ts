@@ -157,22 +157,19 @@ function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): Stitch
 
 /**
  * Shared stitching backbone executor — no per-schema instance stored.
- * Plan / locals / progressive-override come from `request.info.schema`
- * (stitchingInfo on that schema). Root proxies pass `info`;
- * {@link getBackboneExecutor} injects a schema-bearing info when absent.
+ * Schema resolution: explicit `schema` arg, else `request.info?.schema`, else throw.
+ * Plan / locals / progressive-override come from that schema's stitchingInfo.
  */
-export const backboneExecutor: Executor = function backboneExecutor(request: ExecutionRequest) {
-  const schema = request.info?.schema;
-  if (schema == null) {
-    return {
-      data: null,
-      errors: [
-        new GraphQLError(
-          'backboneExecutor requires request.info.schema (use getBackboneExecutor(schema) or root proxies)',
-          { extensions: { code: 'BACKBONE_MISSING_SCHEMA' } },
-        ),
-      ],
-    };
+export function backboneExecutor(
+  request: ExecutionRequest,
+  schema?: GraphQLSchema,
+): ReturnType<Executor<Record<string, any>>> {
+  const activeSchema = schema ?? request.info?.schema;
+  if (activeSchema == null) {
+    throw new GraphQLError(
+      'backboneExecutor requires a schema (pass schema arg or request.info.schema)',
+      { extensions: { code: 'BACKBONE_MISSING_SCHEMA' } },
+    );
   }
 
   const operation = getOperationASTFromRequest(request);
@@ -182,10 +179,10 @@ export const backboneExecutor: Executor = function backboneExecutor(request: Exe
     (operation && operation.operation === 'subscription') ||
     documentHasDeferOrStream(request)
   ) {
-    return createDefaultExecutor(schema)(request);
+    return createDefaultExecutor(activeSchema)(request);
   }
 
-  const plan = getCachedPlan(schema, request);
+  const plan = getCachedPlan(activeSchema, request);
   const op = operation ?? plan.operation;
   const coerced = coerceOperationVariables(op, request.variables ?? {});
   const requestWithCoercedVars: ExecutionRequest = {
@@ -206,7 +203,7 @@ export const backboneExecutor: Executor = function backboneExecutor(request: Exe
   }
 
   return handleMaybePromise(
-    () => executeStitchPlan(schema, plan, requestWithCoercedVars),
+    () => executeStitchPlan(activeSchema, plan, requestWithCoercedVars),
     (result: ExecutionResult) => {
       if (isAsyncIterable(result)) {
         return result;
@@ -214,7 +211,7 @@ export const backboneExecutor: Executor = function backboneExecutor(request: Exe
       return {
         ...result,
         data: projectDataToOperation(
-          schema,
+          activeSchema,
           op,
           plan.fragments,
           coerced,
@@ -223,26 +220,14 @@ export const backboneExecutor: Executor = function backboneExecutor(request: Exe
       };
     },
   );
-};
+}
 
 /**
  * Derive an executor for `schema` without storing one on the schema.
- * Always plans against the bound schema — callers may pass outer-gateway
- * `info` when this schema is used as a nested subschema executor.
+ * Always plans against the bound schema via the second arg (nested-gateway safe).
  */
 export function getBackboneExecutor(schema: GraphQLSchema): Executor {
-  return function schemaBoundBackboneExecutor(request: ExecutionRequest) {
-    if (request.info?.schema === schema) {
-      return backboneExecutor(request);
-    }
-    return backboneExecutor({
-      ...request,
-      info: {
-        ...(request.info as object | undefined),
-        schema,
-      } as NonNullable<ExecutionRequest['info']>,
-    });
-  };
+  return ((request: ExecutionRequest) => backboneExecutor(request, schema)) as Executor;
 }
 
 export type BackboneAttachOptions = {
@@ -252,7 +237,7 @@ export type BackboneAttachOptions = {
 
 /**
  * Stash progressive-override inputs on `schema.extensions` and install shared
- * root proxies that call {@link backboneExecutor} with `info.schema`.
+ * root proxies that call {@link backboneExecutor} (pass `info.schema` or omit).
  * Does not create or store a per-schema Executor instance.
  */
 export function attachBackboneExecutor(

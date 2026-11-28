@@ -18,7 +18,6 @@ export {
   BACKBONE_EXECUTING,
   getOriginalRootResolve,
   installRootProxyingResolvers,
-  isBackboneRootProxy,
 } from './rootProxyingResolvers.js';
 export {
   BACKBONE_EXECUTOR_OPTIONS_EXTENSION,
