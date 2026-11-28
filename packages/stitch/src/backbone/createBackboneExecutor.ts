@@ -1,10 +1,11 @@
-import { GraphQLError, Kind, type GraphQLSchema } from 'graphql';
+import { GraphQLError, Kind, type DocumentNode, type GraphQLSchema } from 'graphql';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { getFragmentsFromDocument } from '@graphql-tools/executor';
 import {
   getOperationASTFromRequest,
   isAsyncIterable,
   memoize1,
+  memoize2,
   type ExecutionRequest,
   type ExecutionResult,
   type Executor,
@@ -14,6 +15,24 @@ import { buildStitchPlan, coerceOperationVariables } from './buildStitchPlan.js'
 import { executeStitchPlan } from './executeStitchPlan.js';
 import { projectDataToOperation } from './projectResult.js';
 import type { StitchPlan } from './types.js';
+
+/** Same key fusion sets on request context with the per-request active labels. */
+const OVERRIDE_LABELS_CONTEXT_KEY = Symbol.for('hive.gateway.overrideLabels');
+
+/** Stable WeakMap key when context has no active-labels object. */
+const EMPTY_ACTIVE_LABELS: object = Object.freeze({});
+
+/** Miss-path builder for per-schema memoize2(document, activeLabels). */
+let planBuild: (() => StitchPlan) | undefined;
+
+const planBySchema = memoize1(function planBySchema(_schema: GraphQLSchema) {
+  return memoize2(function planByDocumentAndLabels(
+    _document: DocumentNode,
+    _activeLabels: object,
+  ): StitchPlan {
+    return planBuild!();
+  });
+});
 
 /** Full SDL introspection - schema execute (Hive also special-cases these). */
 function isSchemaIntrospectionOperation(request: ExecutionRequest): boolean {
@@ -83,6 +102,19 @@ function buildPlan(schema: GraphQLSchema, request: ExecutionRequest): StitchPlan
   }
 }
 
+/** Plan via memoize2(request.document, activeLabels); gateway owns labels. */
+function getPlan(schema: GraphQLSchema, request: ExecutionRequest): StitchPlan {
+  const activeLabels = request.context?.[OVERRIDE_LABELS_CONTEXT_KEY];
+  const labelsKey: object =
+    activeLabels != null && typeof activeLabels === 'object' ? activeLabels : EMPTY_ACTIVE_LABELS;
+  planBuild = () => buildPlan(schema, request);
+  try {
+    return planBySchema(schema)(request.document, labelsKey);
+  } finally {
+    planBuild = undefined;
+  }
+}
+
 /**
  * Shared stitching backbone executor — no per-schema instance stored.
  * Schema: explicit `schema` arg, else `request.info.schema`. Plan / locals /
@@ -110,7 +142,7 @@ export function backboneExecutor(
     return createDefaultExecutor(activeSchema)(request);
   }
 
-  const plan = buildPlan(activeSchema, request);
+  const plan = getPlan(activeSchema, request);
   const op = operation ?? plan.operation;
   const coerced = coerceOperationVariables(op, request.variables ?? {});
   const requestWithCoercedVars: ExecutionRequest = {

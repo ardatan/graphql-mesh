@@ -169,17 +169,19 @@ describe('backbone correctness: progressive-override per request', () => {
 
     const backbone = getBackboneExecutorBySchema(schema);
     const document = parse(`{ hello }`);
-    // Gateway-provided active labels on context (not stitch-decided percent).
-    const ctx = {
-      [Symbol.for('hive.gateway.overrideLabels')]: new Set(['rollout']),
-    };
 
     const routes: string[] = [];
     for (let i = 0; i < 10; i++) {
       useDestination = i % 2 === 0;
       const beforeDest = destinationCalls;
       const beforeSrc = sourceCalls;
-      const result = await exec(backbone, { document, context: ctx });
+      // Fresh labels Set per request (gateway-owned); plan memo keys that object.
+      const result = await exec(backbone, {
+        document,
+        context: {
+          [Symbol.for('hive.gateway.overrideLabels')]: new Set(['rollout']),
+        },
+      });
       expect(result.errors).toBeUndefined();
       const hello = String((result.data as any)?.hello);
       routes.push(hello);
