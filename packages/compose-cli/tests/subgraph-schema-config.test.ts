@@ -167,4 +167,43 @@ describe('subgraphs[].schema config', () => {
     expect(supergraphSdl).toContain('hello');
     expect(supergraphSdl).toContain('type Query');
   });
+
+  it('routingUrl writes @join__graph(url:) and keeps @transport(location:) upstream', async () => {
+    const { supergraphSdl } = await getComposedResultFromConfig(
+      {
+        subgraphs: [
+          {
+            name: 'users',
+            routingUrl: 'http://router-facing:4001/graphql',
+            schema: /* GraphQL */ `
+              extend schema
+                @transport(
+                  subgraph: "users"
+                  kind: "http"
+                  location: "http://upstream:8080/graphql"
+                )
+
+              directive @transport(
+                subgraph: String!
+                kind: String!
+                location: String
+              ) repeatable on SCHEMA
+
+              type Query {
+                me: String
+              }
+            `,
+          },
+        ],
+      },
+      log,
+    );
+    expect(supergraphSdl).toMatch(
+      /@join__graph\(name:\s*"users",\s*url:\s*"http:\/\/router-facing:4001\/graphql"\)/,
+    );
+    expect(supergraphSdl).toMatch(/location:\s*"http:\/\/upstream:8080\/graphql"/);
+    expect(supergraphSdl).not.toMatch(
+      /@join__graph\(name:\s*"users",\s*url:\s*"http:\/\/upstream:8080\/graphql"\)/,
+    );
+  });
 });
