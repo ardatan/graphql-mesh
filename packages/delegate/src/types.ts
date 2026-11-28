@@ -293,13 +293,15 @@ export interface StitchingInfo<TContext = Record<string, any>> {
    */
   backboneExecutor?: Executor;
   /**
-   * Last-attached progressive-override options (`overrideLabels`,
-   * `handleProgressiveOverride`) for optionless re-attach after `mapSchema`.
+   * Known progressive-override labels from the supergraph. Stored flat on
+   * `stitchingInfo` for optionless re-attach after `mapSchema`.
    */
-  backboneExecutorOptions?: {
-    handleProgressiveOverride?: (label: string, context: any) => boolean | Promise<boolean>;
-    overrideLabels?: Iterable<string>;
-  };
+  overrideLabels?: Iterable<string>;
+  /**
+   * Progressive override label handler. Stored flat on `stitchingInfo` for
+   * optionless re-attach after `mapSchema`.
+   */
+  handleProgressiveOverride?: (label: string, context: any) => boolean | Promise<boolean>;
 }
 
 export interface ExternalObject<TContext = Record<string, any>> {

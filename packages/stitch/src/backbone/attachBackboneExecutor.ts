@@ -59,21 +59,20 @@ export function markChangedRootResolvesAsLocal(
 }
 
 /**
- * Merge explicit attach options with values already stored on
- * `stitchingInfo.backboneExecutorOptions` so re-attach after `mapSchema` can
- * be optionless. Labels and handlers come from `stitchSchemas` / attach
- * options only.
+ * Merge explicit attach options with values already stored flat on
+ * `stitchingInfo` (`overrideLabels` / `handleProgressiveOverride`) so
+ * re-attach after `mapSchema` can be optionless. Labels and handlers come
+ * from `stitchSchemas` / attach options only.
  */
 export function resolveBackboneExecutorOptions(
   schema: GraphQLSchema,
   options: BackboneExecutorOptions = {},
 ): BackboneExecutorOptions {
   const stitchingInfo = schema.extensions?.stitchingInfo as StitchingInfo | undefined;
-  const stored = stitchingInfo?.backboneExecutorOptions;
   return {
     handleProgressiveOverride:
-      options.handleProgressiveOverride ?? stored?.handleProgressiveOverride,
-    overrideLabels: options.overrideLabels ?? stored?.overrideLabels,
+      options.handleProgressiveOverride ?? stitchingInfo?.handleProgressiveOverride,
+    overrideLabels: options.overrideLabels ?? stitchingInfo?.overrideLabels,
   };
 }
 
@@ -84,9 +83,9 @@ export function resolveBackboneExecutorOptions(
  *
  * Call on the **final** schema after any `mapSchema` transforms that yield a
  * new schema instance (e.g. federation filter). Safe to call again to rebind;
- * progressive override opts persist on `stitchingInfo` so later re-attaches
- * need no bag. Mesh `@pubsubPublish` belongs in fusion-runtime (executor wrap),
- * not here - do not mapSchema-wrap Mutation fields for it.
+ * progressive override fields persist flat on `stitchingInfo` so later
+ * re-attaches need no bag. Mesh `@pubsubPublish` belongs in fusion-runtime
+ * (executor wrap), not here - do not mapSchema-wrap Mutation fields for it.
  */
 export function attachBackboneExecutor(
   schema: GraphQLSchema,
@@ -96,7 +95,8 @@ export function attachBackboneExecutor(
   const executor = createBackboneExecutor(schema, resolved);
   const stitchingInfo = schema.extensions?.stitchingInfo as StitchingInfo | undefined;
   if (stitchingInfo) {
-    stitchingInfo.backboneExecutorOptions = resolved;
+    stitchingInfo.overrideLabels = resolved.overrideLabels;
+    stitchingInfo.handleProgressiveOverride = resolved.handleProgressiveOverride;
     stitchingInfo.backboneExecutor = executor;
   }
   return schema;

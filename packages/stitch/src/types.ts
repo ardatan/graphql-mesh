@@ -81,14 +81,14 @@ export interface IStitchSchemasOptions<TContext = Record<string, any>> extends O
   contextProviders?: Record<string, string[]>;
   /**
    * Known progressive-override labels from the supergraph. Passed through to
-   * `attachBackboneExecutor` and stored on `stitchingInfo.backboneExecutorOptions`
+   * `attachBackboneExecutor` and stored flat on `stitchingInfo.overrideLabels`
    * for plan-cache keying.
    */
   overrideLabels?: Iterable<string>;
   /**
    * Progressive override label handler. Passed through to
-   * `attachBackboneExecutor` with `overrideLabels` and stored on
-   * `stitchingInfo.backboneExecutorOptions`.
+   * `attachBackboneExecutor` with `overrideLabels` and stored flat on
+   * `stitchingInfo.handleProgressiveOverride`.
    */
   handleProgressiveOverride?: (label: string, context: any) => boolean | Promise<boolean>;
 }

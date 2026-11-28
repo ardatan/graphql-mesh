@@ -226,17 +226,23 @@ describe('Federation @context / @fromContext', () => {
     const schema = createGateway();
     const stitchingInfo = schema.extensions?.stitchingInfo as {
       backboneExecutor?: unknown;
-      backboneExecutorOptions?: { overrideLabels?: Iterable<string> };
+      overrideLabels?: Iterable<string>;
+      handleProgressiveOverride?: unknown;
+      backboneExecutorOptions?: unknown;
     };
     expect(stitchingInfo.backboneExecutor).toBe(getBackboneExecutor(schema));
     expect(stitchingInfo.backboneExecutor).toBeDefined();
-    expect(stitchingInfo.backboneExecutorOptions).toBeDefined();
+    // Progressive-override fields are flat on stitchingInfo (no nested bag).
+    expect(stitchingInfo).not.toHaveProperty('backboneExecutorOptions');
     expect(
       (schema.extensions as { backboneExecutor?: unknown } | undefined)?.backboneExecutor,
     ).toBeUndefined();
     expect(
-      (schema.extensions as { backboneExecutorOptions?: unknown } | undefined)
-        ?.backboneExecutorOptions,
+      (schema.extensions as { overrideLabels?: unknown } | undefined)?.overrideLabels,
+    ).toBeUndefined();
+    expect(
+      (schema.extensions as { handleProgressiveOverride?: unknown } | undefined)
+        ?.handleProgressiveOverride,
     ).toBeUndefined();
   });
 
