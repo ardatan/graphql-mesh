@@ -1,11 +1,10 @@
-import { GraphQLError, Kind, type DocumentNode, type GraphQLSchema } from 'graphql';
+import { GraphQLError, Kind, type GraphQLSchema } from 'graphql';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { getFragmentsFromDocument } from '@graphql-tools/executor';
 import {
   getOperationASTFromRequest,
   isAsyncIterable,
   memoize1,
-  memoize2,
   type ExecutionRequest,
   type ExecutionResult,
   type Executor,
@@ -56,25 +55,7 @@ function documentHasDeferOrStream(request: ExecutionRequest): boolean {
   return false;
 }
 
-/** Same key fusion sets on request context with the per-request active labels. */
-const OVERRIDE_LABELS_CONTEXT_KEY = Symbol.for('hive.gateway.overrideLabels');
-
-/** When context has no active labels object — stable WeakMap key for memoize2. */
-const EMPTY_ACTIVE_LABELS: object = Object.freeze({});
-
-/** Miss-path builder for per-schema memoize2(document, activeLabels). */
-let planBuild: (() => StitchPlan) | undefined;
-
-const planMemoBySchema = memoize1(function planMemoBySchema(_schema: GraphQLSchema) {
-  return memoize2(function planByDocumentAndLabels(
-    _document: DocumentNode,
-    _activeLabels: object,
-  ): StitchPlan {
-    return planBuild!();
-  });
-});
-
-function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): StitchPlan {
+function buildPlan(schema: GraphQLSchema, request: ExecutionRequest): StitchPlan {
   const operation = getOperationASTFromRequest(request);
   if (!operation) {
     return {
@@ -87,39 +68,18 @@ function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): Stitch
   }
   const fragments = getFragmentsFromDocument(request.document);
   const coerced = coerceOperationVariables(operation, request.variables ?? {});
-  // Per-request active labels only (fusion / gateway context) — no schema.extensions bag.
-  const activeLabels = request.context?.[OVERRIDE_LABELS_CONTEXT_KEY] as
-    (Iterable<string> & object) | undefined;
-  const enabled = activeLabels != null ? [...activeLabels] : [];
-  const labelsKey: object =
-    activeLabels != null && typeof activeLabels === 'object' ? activeLabels : EMPTY_ACTIVE_LABELS;
-
-  const build = (): StitchPlan => {
-    try {
-      return buildStitchPlan(schema, operation, fragments, coerced, {
-        context: request.context,
-      });
-    } catch (err) {
-      return {
-        operation,
-        fragments,
-        root: { kind: 'Parallel', nodes: [] },
-        incomplete: true,
-        incompleteReasons: [err instanceof Error ? err.message : 'Plan build failed'],
-      };
-    }
-  };
-
-  // percent(...) rolls RNG inside field override at plan time — never cache.
-  if (enabled.some(l => l.startsWith('percent('))) {
-    return build();
-  }
-
-  planBuild = build;
   try {
-    return planMemoBySchema(schema)(request.document, labelsKey);
-  } finally {
-    planBuild = undefined;
+    return buildStitchPlan(schema, operation, fragments, coerced, {
+      context: request.context,
+    });
+  } catch (err) {
+    return {
+      operation,
+      fragments,
+      root: { kind: 'Parallel', nodes: [] },
+      incomplete: true,
+      incompleteReasons: [err instanceof Error ? err.message : 'Plan build failed'],
+    };
   }
 }
 
@@ -150,7 +110,7 @@ export function backboneExecutor(
     return createDefaultExecutor(activeSchema)(request);
   }
 
-  const plan = getCachedPlan(activeSchema, request);
+  const plan = buildPlan(activeSchema, request);
   const op = operation ?? plan.operation;
   const coerced = coerceOperationVariables(op, request.variables ?? {});
   const requestWithCoercedVars: ExecutionRequest = {
