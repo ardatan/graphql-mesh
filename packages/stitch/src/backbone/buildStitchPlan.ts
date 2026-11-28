@@ -20,7 +20,6 @@ import {
 import type { StitchingInfo, Subschema } from '@graphql-tools/delegate';
 import { handleOverrideByDelegation, leftOverByDelegationPlan } from '@graphql-tools/delegate';
 import { getDefinedRootType } from '@graphql-tools/utils';
-import { writeFileSync as __meshDumpWrite } from 'node:fs';
 import { isLocalField } from './localFields.js';
 import { getBatchedMergeEntry, inferMergeArgName } from './mergeEntry.js';
 import { buildPlanSchedule, collectExecutableHops, planHasCondition } from './planSchedule.js';
@@ -6142,17 +6141,31 @@ function hopCompletesIdList(hop: FoldableEntityHop): string[] {
   return hop.id ? [hop.id] : [];
 }
 
+type ExecutableHop =
+  | Extract<StitchPlanNode, { kind: 'Fetch' }>
+  | Extract<StitchPlanNode, { kind: 'BatchFetch' }>
+  | Extract<StitchPlanNode, { kind: 'Island' }>;
+
+/** Flatten paths this hop writes into (Fetch / Island / BatchFetch aliases). */
+function hopFlattenPaths(hop: ExecutableHop): PathSegment[][] {
+  if (hop.kind === 'Fetch') {
+    return fetchFlattenPaths(hop);
+  }
+  if (hop.kind === 'Island') {
+    return islandFlattenPaths(hop);
+  }
+  return hop.aliases.flatMap(a => (a.flattenPaths?.length ? a.flattenPaths.map(p => [...p]) : []));
+}
+
 /**
  * Remove dependsOn edges that make the hop graph cyclic.
  * Among a cycle, drop edges where an earlier hop waits on a later hop
  * (annotate order); keep later→earlier so providers still gate consumers.
+ * Prefer keeping the deepest remaining path-parent wait for any consumer
+ * flatten path so strip does not strand nested leaves (many-plans f4).
  */
 function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
-  const hops: Array<
-    | Extract<StitchPlanNode, { kind: 'Fetch' }>
-    | Extract<StitchPlanNode, { kind: 'BatchFetch' }>
-    | Extract<StitchPlanNode, { kind: 'Island' }>
-  > = [];
+  const hops: ExecutableHop[] = [];
   collectExecutableHops(root, hops, {});
   if (hops.length < 2) {
     return root;
@@ -6196,6 +6209,49 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
     preds[from] = preds[from]!.filter(j => j !== to);
   };
 
+  const bestPrefixLen = (paths: PathSegment[][], cp: PathSegment[]): number => {
+    let best = 0;
+    for (const pp of paths) {
+      if (pathIsPrefix(pp, cp) && pp.length > best) {
+        best = pp.length;
+      }
+    }
+    return best;
+  };
+
+  /**
+   * Keep this wait if `pred` uniquely supplies the deepest remaining path
+   * prefix for any consumer flatten path. Shallower ancestors must not count
+   * as substitutes — they do not create the child entity key.
+   */
+  const isLastPathParentEdge = (i: number, j: number): boolean => {
+    const consumerPaths = hopFlattenPaths(hops[i]!);
+    const predPaths = hopFlattenPaths(hops[j]!);
+    if (!consumerPaths.length || !predPaths.length) {
+      return false;
+    }
+    for (const cp of consumerPaths) {
+      const predBest = bestPrefixLen(predPaths, cp);
+      if (predBest === 0) {
+        continue;
+      }
+      let other = false;
+      for (const k of preds[i]!) {
+        if (k === j) {
+          continue;
+        }
+        if (bestPrefixLen(hopFlattenPaths(hops[k]!), cp) >= predBest) {
+          other = true;
+          break;
+        }
+      }
+      if (!other) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   const stuckOf = (): number[] => {
     const n = hops.length;
     const waits = preds.map(p => p.length);
@@ -6235,8 +6291,9 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
     return stuck;
   };
 
-  // Iteratively break SCCs. Prefer dropping reuseFrom annotation waits first
-  // so path/@requires dependsOn edges stay; then earlier→later; then any.
+  // Iteratively break SCCs. Prefer dropping reuseFrom waits, then one
+  // earlier→later edge at a time (never the deepest remaining path-parent),
+  // then any non-last-parent, and only then a last path-parent.
   for (let guard = 0; guard < hops.length * hops.length; guard++) {
     const stuck = stuckOf();
     if (!stuck.length) {
@@ -6244,7 +6301,8 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
     }
     const stuckSet = new Set(stuck);
     let removed = false;
-    // 1) Drop one reuseFrom edge inside the stuck set (annotation-added waits).
+    // 1) Drop one reuseFrom edge inside the stuck set (annotation-added waits),
+    //    unless it is the deepest remaining path-parent for a consumer path.
     reuseOuter: for (const i of stuck) {
       const hop = hops[i]!;
       const reuse =
@@ -6255,7 +6313,7 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
         continue;
       }
       for (const j of preds[i]!) {
-        if (!stuckSet.has(j)) {
+        if (!stuckSet.has(j) || isLastPathParentEdge(i, j)) {
           continue;
         }
         const pred = hops[j]!;
@@ -6271,24 +6329,37 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
       }
     }
     if (!removed) {
-      // 2) Prefer dropping earlier-waits-on-later (i < j).
-      for (const i of stuck) {
+      // 2) Drop one earlier-waits-on-later edge (i < j), skipping last path-parents.
+      outer2: for (const i of stuck) {
         for (const j of preds[i]!) {
-          if (stuckSet.has(j) && i < j) {
+          if (stuckSet.has(j) && i < j && !isLastPathParentEdge(i, j)) {
             markDrop(i, j);
             removed = true;
+            break outer2;
           }
         }
       }
     }
     if (!removed) {
-      // 3) Fall back: drop any one edge inside the stuck set.
-      outer: for (const i of stuck) {
+      // 3) Drop any one non-last-path-parent edge inside the stuck set.
+      outer3: for (const i of stuck) {
+        for (const j of preds[i]!) {
+          if (stuckSet.has(j) && !isLastPathParentEdge(i, j)) {
+            markDrop(i, j);
+            removed = true;
+            break outer3;
+          }
+        }
+      }
+    }
+    if (!removed) {
+      // 4) Last resort: drop any one stuck edge so the schedule can become a DAG.
+      outer4: for (const i of stuck) {
         for (const j of preds[i]!) {
           if (stuckSet.has(j)) {
             markDrop(i, j);
             removed = true;
-            break outer;
+            break outer4;
           }
         }
       }
@@ -6298,43 +6369,6 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
     }
   }
 
-  if (process.env.MESH_DUMP_STRIP === '1') {
-    const dumpHops = hops.map((h, i) => {
-      const paths = (h as any).flattenPaths?.map((fp: any) =>
-        Array.isArray(fp) ? fp.map((s: any) => (typeof s === 'string' ? s : s?.fieldName ?? s)).join('.') : String(fp),
-      );
-      const fields = (h as any).selectionSet
-        ? JSON.stringify((h as any).selectionSet).slice(0, 200)
-        : undefined;
-      const fieldNames: string[] = [];
-      const ss = (h as any).selectionSet;
-      if (ss?.selections) {
-        for (const sel of ss.selections) {
-          if (sel.kind === 'Field') fieldNames.push(sel.alias?.value ?? sel.name.value);
-        }
-      }
-      return {
-        i,
-        id: h.id,
-        kind: h.kind,
-        completesIds: (h as any).completesIds,
-        dependsOn: h.dependsOn,
-        reuseFrom: (h as any).reuseFrom,
-        paths,
-        fieldNames,
-        entityTypeName: (h as any).entityTypeName,
-        droppedPreds: dropForHop.get(i) ? [...dropForHop.get(i)!] : [],
-      };
-    });
-    const target = dumpHops.filter(h =>
-      (h.paths || []).some((p: string) => p.includes('n0.n4.n3.n2') || p.includes('node.n0.n4.n3.n2')) ||
-      (h.fieldNames || []).includes('f4'),
-    );
-    __meshDumpWrite(
-      '/tmp/many-plans-strip-dump.json',
-      JSON.stringify({ hopCount: hops.length, dropCount: dropForHop.size, target, all: dumpHops }, null, 2),
-    );
-  }
   if (!dropForHop.size) {
     return root;
   }

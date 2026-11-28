@@ -15,6 +15,7 @@ import {
   type GraphQLObjectType,
 } from 'graphql';
 import {
+  defaultMergedResolver as classicDefaultMergedResolver,
   getSubschema,
   getUnpathedErrors,
   isExternalObject,
@@ -349,6 +350,18 @@ function wrapMergedTypeResolversForBackboneHydration<TContext extends Record<str
               undefined,
               skipTypeMerging,
             );
+          }
+          // Classic @defer/@stream: gateway-owned deferred selections are
+          // omitted from the initial subgraph response, so the key is missing.
+          // Classic DMR runs mergeFields / resolveMissingFieldFromSourceSubschema.
+          // Subscription must NOT take this path — missing keys fall through
+          // to local / previous resolvers (Comment.post → Post.title merge
+          // still runs above when the key is present).
+          if (
+            !skipTypeMerging &&
+            info?.operation?.operation !== 'subscription'
+          ) {
+            return classicDefaultMergedResolver(parent, args, context, info);
           }
           // Missing key: rethrow unpathed subgraph errors (shared-root non-null).
           // Otherwise fall through so subscription / local resolvers still run.
