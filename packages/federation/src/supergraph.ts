@@ -58,7 +58,6 @@ import { CRITICAL_ERROR } from '@graphql-tools/executor';
 import { buildHTTPExecutor, type HTTPExecutorOptions } from '@graphql-tools/executor-http';
 import {
   calculateSelectionScore,
-  filterInternalFieldsAndTypes,
   getDefaultFieldConfigMerger,
   markChangedRootResolvesAsLocal,
   snapshotRootFieldResolves,
@@ -83,6 +82,7 @@ import {
   createComplementaryPercentOverrideHandlers,
   extractPercentageFromLabel,
   filterDirectivesByGraph,
+  filterInternalFieldsAndTypes,
   getArgsFromKeysForFederation,
   getCacheKeyFnFromKey,
   getKeyFnForFederation,

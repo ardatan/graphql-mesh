@@ -159,8 +159,8 @@ export function stitchSchemas<TContext extends Record<string, any> = Record<stri
     applyExtensions(schema, mergedSchemaExtensions);
   }
 
-  // Optional pre-attach transform (federation filter / user onStitchedSchema).
-  // Stitch itself stays generic — no join__Graph / federation filter here.
+  // Optional pre-attach transform. Stitch stays generic — federation owns
+  // filterInternalFieldsAndTypes and wires it via this hook.
   if (onStitchedSchema) {
     schema = onStitchedSchema(schema) || schema;
   }
