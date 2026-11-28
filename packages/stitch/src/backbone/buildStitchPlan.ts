@@ -3951,87 +3951,106 @@ function contextProviderDependsOn(
   ) {
     return false;
   }
-  const neededKeys = new Set<string>();
-  collectContextSelectionKeys(
+  // Full Key sequences (e.g. ['preferences','isoCode']), not a flat bag —
+  // nested names must not match unrelated sibling paths.
+  const contextPaths = collectContextSelectionKeyPaths(
     stitchingInfo,
     later.subschema,
     later.entityTypeName,
     later.selectionSet,
-    neededKeys,
   );
-  if (!neededKeys.size) {
+  if (!contextPaths.length) {
+    return false;
+  }
+  const rootKeys = new Set(contextPaths.map(p => p[0]).filter((k): k is string => !!k));
+  if (!rootKeys.size) {
     return false;
   }
   const laterPaths = fetchFlattenPaths(later);
   const earlierPaths = fetchFlattenPaths(earlier);
-  // Ancestor producers, or siblings whose branch is itself a needed context
-  // key (users.preferences before users.transactions for
-  // `{ preferences { isoCode } }`). A same-named field on an unrelated
-  // sibling subtree (users.refunds.currency) must not qualify.
-  let related = false;
+  const provided = collectSelectedFieldNames(earlier.selectionSet);
+
   if (earlier.rootField) {
     const rk = earlier.rootField.alias?.value ?? earlier.rootField.name.value;
-    related = laterPaths.some(lp => lp[0] === rk);
-  }
-  if (!related) {
-    for (const lp of laterPaths) {
-      for (const ep of earlierPaths) {
-        if (pathsRelatedForContextProvider(ep, lp, neededKeys)) {
-          related = true;
-          break;
-        }
-      }
-      if (related) {
-        break;
-      }
+    if (laterPaths.some(lp => lp[0] === rk) && [...rootKeys].some(k => provided.has(k))) {
+      return true;
     }
   }
-  if (!related) {
-    return false;
-  }
-  const provided = collectSelectedFieldNames(earlier.selectionSet);
-  for (const key of neededKeys) {
-    if (provided.has(key)) {
-      return true;
+
+  for (const lp of laterPaths) {
+    for (const ep of earlierPaths) {
+      if (earlierProvidesContextOnPath(ep, lp, contextPaths, rootKeys, provided)) {
+        return true;
+      }
     }
   }
   return false;
 }
 
 /**
- * True when `earlier` is a strict ancestor of `later`, or they share a prefix
- * and earlier's next segment is a needed context selection key (sibling
- * provider path), not an unrelated sibling entity field.
+ * True when `earlier` produces the context selection for `later`:
+ * - strict ancestor selecting a root context key (User.preferences), or
+ * - sibling under a shared prefix whose branch is that root key, selecting
+ *   the field due at that hop (Preference.isoCode under …/preferences).
+ * Nested key names alone (isoCode at …/orders/isoCode) do not qualify.
  */
-function pathsRelatedForContextProvider(
+function earlierProvidesContextOnPath(
   earlier: PathSegment[],
   later: PathSegment[],
-  neededKeys: ReadonlySet<string>,
+  contextPaths: readonly string[][],
+  rootKeys: ReadonlySet<string>,
+  provided: ReadonlySet<string>,
 ): boolean {
   if (pathIsPrefix(earlier, later) && earlier.length < later.length) {
-    return true;
+    return [...rootKeys].some(k => provided.has(k));
   }
-  let i = 0;
-  while (i < earlier.length && i < later.length && earlier[i] === later[i]) {
-    i++;
+  let shared = 0;
+  while (
+    shared < earlier.length &&
+    shared < later.length &&
+    earlier[shared] === later[shared]
+  ) {
+    shared++;
   }
-  if (!(i > 0 && i < earlier.length && i < later.length)) {
+  if (!(shared > 0 && shared < earlier.length && shared < later.length)) {
     return false;
   }
-  const branch = earlier[i];
-  return typeof branch === 'string' && neededKeys.has(branch);
+  const branch = earlier[shared];
+  if (typeof branch !== 'string' || !rootKeys.has(branch)) {
+    return false;
+  }
+  // earlier is under sharedPrefix/branch[/deeper…]
+  const depthIntoCtx = earlier.length - shared - 1;
+  for (const ctxPath of contextPaths) {
+    if (ctxPath[0] !== branch) {
+      continue;
+    }
+    if (depthIntoCtx < 0 || depthIntoCtx >= ctxPath.length) {
+      continue;
+    }
+    if (provided.has(ctxPath[depthIntoCtx]!)) {
+      return true;
+    }
+    // At the root-key hop, a nested selection of the next segment also counts
+    // (…/preferences selecting isoCode).
+    if (depthIntoCtx === 0 && ctxPath.length > 1 && provided.has(ctxPath[1]!)) {
+      return true;
+    }
+  }
+  return false;
 }
 
-function collectContextSelectionKeys(
+/** Key sequences from `@fromContext` selections on fields in `selectionSet`. */
+function collectContextSelectionKeyPaths(
   stitchingInfo: StitchingInfo,
   subschema: Subschema,
   typeName: string,
   selectionSet: SelectionSetNode,
-  out: Set<string>,
-): void {
+  out: string[][] = [],
+): string[][] {
   for (const sel of selectionSet.selections) {
     if (sel.kind === Kind.INLINE_FRAGMENT) {
-      collectContextSelectionKeys(
+      collectContextSelectionKeyPaths(
         stitchingInfo,
         subschema,
         sel.typeCondition?.name.value ?? typeName,
@@ -4048,22 +4067,38 @@ function collectContextSelectionKeys(
       continue;
     }
     for (const ca of cfg.contextArguments) {
-      addKeysFromContextPath(parseContextSelectionPath(ca.selection), out);
+      addKeyPathsFromContextPath(parseContextSelectionPath(ca.selection), out);
     }
   }
+  return out;
 }
 
-function addKeysFromContextPath(
+function addKeyPathsFromContextPath(
   path: import('./types.js').StitchContextPathSegment[],
-  out: Set<string>,
+  out: string[][],
+  prefix: string[] = [],
 ): void {
-  for (const seg of path) {
-    if ('Key' in seg) {
-      out.add(seg.Key);
-    } else if ('Alternatives' in seg) {
-      for (const alt of seg.Alternatives) {
-        addKeysFromContextPath(alt, out);
-      }
+  if (!path.length) {
+    if (prefix.length) {
+      out.push([...prefix]);
+    }
+    return;
+  }
+  const [head, ...rest] = path;
+  if (!head) {
+    return;
+  }
+  if ('Key' in head) {
+    addKeyPathsFromContextPath(rest, out, [...prefix, head.Key]);
+    return;
+  }
+  if ('TypenameEquals' in head) {
+    addKeyPathsFromContextPath(rest, out, prefix);
+    return;
+  }
+  if ('Alternatives' in head) {
+    for (const alt of head.Alternatives) {
+      addKeyPathsFromContextPath([...alt, ...rest], out, prefix);
     }
   }
 }

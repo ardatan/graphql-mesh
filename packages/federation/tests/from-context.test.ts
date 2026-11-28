@@ -1733,3 +1733,126 @@ describe('fromContext gateway-parity (adapted from gateway#2703)', () => {
     expect(printed).toMatch(/currency/);
   });
 });
+
+describe('contextProviderDependsOn overlapping nested keys', () => {
+  it('does not false-cycle when sibling paths share a nested context key name', async () => {
+    const { makeExecutableSchema } = await import('@graphql-tools/schema');
+    const { stitchSchemas } = await import('@graphql-tools/stitch');
+    // User.preferences { isoCode } is the context selection. Sibling paths
+    // …/preferences and …/isoCode both select `isoCode`; with flat neededKeys
+    // each looked like the other's provider → schedule cycle.
+    const subgraph = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Preference {
+          id: ID!
+          isoCode: String
+          label(code: String): String
+        }
+        type Locale {
+          id: ID!
+          isoCode: String
+          label(code: String): String
+        }
+        type Order {
+          id: ID!
+          preferences: Preference
+          isoCode: Locale
+        }
+        type User {
+          id: ID!
+          orders: [Order]
+        }
+        type Query {
+          users: [User]
+          preferenceById(id: ID!): Preference
+          localeById(id: ID!): Locale
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: () => [{ id: 'u1', orders: [{ id: 'o1' }] }],
+          preferenceById: (_: unknown, { id }: { id: string }) => ({
+            id,
+            isoCode: 'USD',
+          }),
+          localeById: (_: unknown, { id }: { id: string }) => ({
+            id,
+            isoCode: 'en',
+          }),
+        },
+        User: {
+          orders: (u: { orders: Array<{ id: string }> }) =>
+            u.orders.map(o => ({
+              ...o,
+              preferences: { id: `p-${o.id}` },
+              isoCode: { id: `l-${o.id}` },
+            })),
+        },
+        Preference: {
+          label: (_: unknown, { code }: { code?: string }) => `pref:${code}`,
+        },
+        Locale: {
+          label: (_: unknown, { code }: { code?: string }) => `loc:${code}`,
+        },
+      },
+    });
+    const fromPrefs = {
+      context: 'userContext',
+      name: 'code',
+      type: 'String',
+      selection: '{ preferences { isoCode } }',
+    };
+    const schema = stitchSchemas({
+      subschemas: [
+        {
+          schema: subgraph,
+          executor: createDefaultExecutor(subgraph),
+          merge: {
+            Preference: {
+              selectionSet: '{ id }',
+              fieldName: 'preferenceById',
+              key: ({ id }: { id: string }) => id,
+              argsFromKeys: (ids: readonly string[]) => ({ id: ids[0] }),
+              fields: {
+                label: {
+                  selectionSet: '{ id }',
+                  computed: true,
+                  contextArguments: [fromPrefs],
+                },
+              },
+            },
+            Locale: {
+              selectionSet: '{ id }',
+              fieldName: 'localeById',
+              key: ({ id }: { id: string }) => id,
+              argsFromKeys: (ids: readonly string[]) => ({ id: ids[0] }),
+              fields: {
+                label: {
+                  selectionSet: '{ id }',
+                  computed: true,
+                  contextArguments: [fromPrefs],
+                },
+              },
+            },
+          },
+        },
+      ],
+      contextProviders: { userContext: ['User'] },
+    });
+    const document = parse(`{
+      users {
+        orders {
+          preferences { isoCode label }
+          isoCode { isoCode label }
+        }
+      }
+    }`);
+    // Must plan without "Stitch plan schedule has a cycle".
+    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, {});
+    expect(plan.incomplete).toBe(false);
+    const executor = createBackboneExecutor(schema);
+    const result = await executor({ document });
+    expect(result.errors).toBeUndefined();
+  });
+});
+
