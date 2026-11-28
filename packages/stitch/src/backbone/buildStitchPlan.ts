@@ -5268,13 +5268,14 @@ function buildCompletePlan(
   // Wave fold: same dependsOn wave + same subgraph → one BatchFetch
   // (or covering Fetch). Runs after reuse so reuse edges affect wave layers.
   const folded = isMutation ? withReuse : foldSameWaveSubgraphFetches(withReuse, stitchingInfo);
-  const withDocs = isMutation
-    ? folded
-    : preparePlanDocuments(folded, {
-        operation,
-        fragments,
-        fieldNodesByField: stitchingInfo.fieldNodesByField,
-      });
+  // Prebuild stable subgraph documents at plan time (including both Condition
+  // branches and mutations). Execute only binds variable values / applies
+  // transforms — it does not rebuild docs for the taken branch.
+  const withDocs = preparePlanDocuments(folded, {
+    operation,
+    fragments,
+    fieldNodesByField: stitchingInfo.fieldNodesByField,
+  });
   // Final plan: no Sequence barriers — flat bag + dependsOn schedule.
   const root = flattenPlanControlFlow(withDocs);
   let schedule: StitchPlan['schedule'];

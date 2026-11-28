@@ -1081,6 +1081,8 @@ function executeFetchNode(
       maybeAbortMutationAfterNullifiedRoot(ctx, responseKey, rootFieldNode.name.value);
     };
 
+    // Prefer plan-prebuilt `node.document` (preparePlanDocuments). Fallback
+    // rebuild is only for hops that skipped prepare (should be rare).
     let document = node.document;
     let variables: Record<string, any>;
     if (document) {
