@@ -23,6 +23,15 @@ export const BACKBONE_EXECUTING = Symbol.for('graphql-tools.stitch.backboneExecu
 
 const ORIGINAL_RESOLVE = Symbol.for('graphql-tools.stitch.backboneOriginalResolve');
 
+/** Marks a resolve fn installed by {@link installRootProxyingResolvers}. */
+const BACKBONE_PROXY_MARK = Symbol.for('graphql-tools.stitch.backboneProxyResolve');
+
+function isBackboneRootProxy(
+  resolve: GraphQLFieldResolver<any, any> | undefined,
+): boolean {
+  return typeof resolve === 'function' && (resolve as any)[BACKBONE_PROXY_MARK] === true;
+}
+
 function selectionHasDeferOrStream(selections: readonly SelectionNode[]): boolean {
   const stack = [...selections];
   while (stack.length) {
@@ -105,10 +114,27 @@ export function installRootProxyingResolvers(schema: GraphQLSchema, runBackbone:
     const fields = rootType.getFields();
     for (const fieldName of Object.keys(fields)) {
       const field = fields[fieldName]!;
-      const previousResolve: GraphQLFieldResolver<any, any> =
+      let previousResolve: GraphQLFieldResolver<any, any> =
         (field as any)[ORIGINAL_RESOLVE] ?? field.resolve ?? defaultFieldResolver;
+      // mapSchema may keep the proxy fn but drop ORIGINAL_RESOLVE. Never nest
+      // a proxy as the "original" — that recurses when Islands call it.
+      if (isBackboneRootProxy(previousResolve)) {
+        if ((field as any)[ORIGINAL_RESOLVE] == null) {
+          // Irrecoverable without the pre-proxy resolve; leave field alone.
+          continue;
+        }
+        previousResolve = (field as any)[ORIGINAL_RESOLVE];
+      }
+      if (isBackboneRootProxy(previousResolve)) {
+        continue;
+      }
       (field as any)[ORIGINAL_RESOLVE] = previousResolve;
-      field.resolve = function backboneRootProxyingResolver(root, args, context, info) {
+      const proxy: GraphQLFieldResolver<any, any> = function backboneRootProxyingResolver(
+        root,
+        args,
+        context,
+        info,
+      ) {
         // @defer/@stream: classic incremental execute. The backbone executor
         // falls back to schemaExecutor for these, which would re-enter this
         // proxy and recurse forever if we ran the plan here.
@@ -166,6 +192,8 @@ export function installRootProxyingResolvers(schema: GraphQLSchema, runBackbone:
           result => applyBackboneResult(result, responseKey),
         );
       };
+      (proxy as any)[BACKBONE_PROXY_MARK] = true;
+      field.resolve = proxy;
     }
   }
 }

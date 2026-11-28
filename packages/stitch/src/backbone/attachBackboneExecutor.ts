@@ -11,7 +11,10 @@ import {
   getBackboneRuntime,
   type BackboneRuntime,
 } from './createBackboneExecutor.js';
-import { installRootProxyingResolvers } from './rootProxyingResolvers.js';
+import {
+  getOriginalRootResolve,
+  installRootProxyingResolvers,
+} from './rootProxyingResolvers.js';
 
 type RootResolveSnapshot = Map<string, GraphQLFieldResolver<any, any> | undefined>;
 
@@ -29,6 +32,8 @@ const backboneExecutors = new WeakMap<GraphQLSchema, Executor>();
  * `onStitchedSchema` without storing the executor on stitchingInfo itself.
  */
 const backboneRuntimeByStitchingInfo = new WeakMap<object, BackboneRuntime>();
+
+const ORIGINAL_RESOLVE = Symbol.for('graphql-tools.stitch.backboneOriginalResolve');
 
 /**
  * Snapshot Query/Mutation field `resolve` refs - compare after
@@ -65,7 +70,6 @@ export function markChangedRootResolvesAsLocal(
   if (!stitchingInfo.localFields) {
     stitchingInfo.localFields = new Map();
   }
-  const ORIGINAL_RESOLVE = Symbol.for('graphql-tools.stitch.backboneOriginalResolve');
   for (const root of [schema.getQueryType(), schema.getMutationType()]) {
     if (!root || !isObjectType(root)) {
       continue;
@@ -126,16 +130,39 @@ export function getBackboneExecutor(schema: GraphQLSchema): Executor | undefined
  * intact) — does not create a new executor or store options on stitchingInfo.
  */
 export function retargetBackboneToSchema(schema: GraphQLSchema): GraphQLSchema {
-  const stitchingInfo = schema.extensions?.stitchingInfo;
+  const stitchingInfo = schema.extensions?.stitchingInfo as StitchingInfo | undefined;
   const runtime =
-    (stitchingInfo && typeof stitchingInfo === 'object'
+    stitchingInfo && typeof stitchingInfo === 'object'
       ? backboneRuntimeByStitchingInfo.get(stitchingInfo)
-      : undefined) ?? undefined;
+      : undefined;
   if (!runtime) {
     return schema;
   }
   runtime.setSchema(schema);
   backboneExecutors.set(schema, runtime.executor);
+
+  // Restore ORIGINAL_RESOLVE symbols dropped by mapSchema before reinstalling
+  // proxies — otherwise install would see only the proxy fn and skip/nest.
+  for (const root of [schema.getQueryType(), schema.getMutationType()]) {
+    if (!root || !isObjectType(root)) {
+      continue;
+    }
+    const locals = stitchingInfo?.localFields?.get(root.name);
+    for (const [fieldName, field] of Object.entries(root.getFields())) {
+      const key = `${root.name}.${fieldName}`;
+      if (locals?.has(fieldName)) {
+        // Late override already stamped on the field by markChangedRootResolvesAsLocal.
+        continue;
+      }
+      if (getOriginalRootResolve(field) == null) {
+        const original = runtime.rootOriginals.get(key);
+        if (original) {
+          (field as any)[ORIGINAL_RESOLVE] = original;
+        }
+      }
+    }
+  }
+
   installRootProxyingResolvers(schema, runtime.executor);
   return schema;
 }

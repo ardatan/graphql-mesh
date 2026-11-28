@@ -1,4 +1,10 @@
-import { GraphQLError, Kind, type GraphQLSchema } from 'graphql';
+import {
+  GraphQLError,
+  isObjectType,
+  Kind,
+  type GraphQLFieldResolver,
+  type GraphQLSchema,
+} from 'graphql';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { getFragmentsFromDocument } from '@graphql-tools/executor';
 import {
@@ -12,7 +18,10 @@ import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { buildStitchPlan, coerceOperationVariables } from './buildStitchPlan.js';
 import { executeStitchPlan } from './executeStitchPlan.js';
 import { projectDataToOperation } from './projectResult.js';
-import { installRootProxyingResolvers } from './rootProxyingResolvers.js';
+import {
+  getOriginalRootResolve,
+  installRootProxyingResolvers,
+} from './rootProxyingResolvers.js';
 import type { StitchPlan } from './types.js';
 
 /** Full SDL introspection - schema execute (Hive also special-cases these). */
@@ -64,6 +73,11 @@ function documentHasDeferOrStream(request: ExecutionRequest): boolean {
 export type BackboneRuntime = {
   schema: GraphQLSchema;
   executor: Executor;
+  /**
+   * Pre-proxy root resolves keyed by `Type.field`, captured at first attach.
+   * Restored after `mapSchema` when the ORIGINAL_RESOLVE symbol is dropped.
+   */
+  rootOriginals: Map<string, import('graphql').GraphQLFieldResolver<any, any>>;
   /** Swap the schema used for plan + Island resolve + introspection. */
   setSchema(next: GraphQLSchema): void;
 };
@@ -156,6 +170,19 @@ export function createBackboneExecutor(
   // `attachBackboneExecutor` records it per schema (WeakMap).
   installRootProxyingResolvers(activeSchema, request => stitchingBackboneExecutor(request));
 
+  const rootOriginals = new Map<string, GraphQLFieldResolver<any, any>>();
+  for (const root of [activeSchema.getQueryType(), activeSchema.getMutationType()]) {
+    if (!root || !isObjectType(root)) {
+      continue;
+    }
+    for (const [fieldName, field] of Object.entries(root.getFields())) {
+      const original = getOriginalRootResolve(field);
+      if (original) {
+        rootOriginals.set(`${root.name}.${fieldName}`, original);
+      }
+    }
+  }
+
   const runtime: BackboneRuntime = {
     get schema() {
       return activeSchema;
@@ -166,6 +193,7 @@ export function createBackboneExecutor(
       schemaGeneration++;
     },
     executor: stitchingBackboneExecutor,
+    rootOriginals,
     setSchema(next: GraphQLSchema) {
       activeSchema = next;
       schemaExecutor = createDefaultExecutor(next);
