@@ -115,6 +115,11 @@ export type StitchPlanNode =
       aliases: StitchBatchAlias[];
       /** Prebuilt single merge-field document for one HTTP round-trip. */
       document?: DocumentNode;
+      /**
+       * Client variable names used by {@link document} (not the merge arg).
+       * Execute binds these from `variableValues` with `argsFromKeys`.
+       */
+      variableNames?: readonly string[];
       /** Hop-level gate (DNF); also checked before any alias work. */
       runIf?: StitchRunIf;
       reuseFrom?: string[];

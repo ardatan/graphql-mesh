@@ -1329,13 +1329,17 @@ function tryExecuteEntitiesBatch(
   };
 
   // Prebuilt document skips Transformer - only safe for leaf-only selections
-  // (inventory/username style). Nested selections (field args, deep merges)
-  // fall through to per-parent merge resolvers so batchDelegate DataLoader
-  // keys include field arguments (sharedRootValue / sortBy memoization).
+  // (inventory/username style, including @include/@skip). Nested selections
+  // (field args, deep merges) fall through to per-parent merge resolvers so
+  // batchDelegate DataLoader keys include field arguments.
   if (!(node.document && isLeafOnlySelection(node.selectionSet))) {
     return undefined;
   }
-  const args = entry.argsFromKeys(keys) as Record<string, any>;
+  const args = bindMergeHopVariables(
+    entry.argsFromKeys(keys) as Record<string, any>,
+    node.variableNames,
+    ctx,
+  );
   const executor = getSubschemaExecutor(hopSubschema);
   return handleMaybePromise(
     () =>
@@ -1990,23 +1994,49 @@ type BatchAliasPrep = {
 };
 
 /**
- * True when selection is only scalar/enum fields (+ __typename) - no nests,
- * fragments, args, or directives. Directives (`@include`/`@skip`) need
- * variable defs that Transformer/finalizeGatewayRequest would attach.
+ * True when selection is only scalar/enum fields (+ __typename) - no nests or
+ * field args. Inline fragments and `@include`/`@skip` are allowed: prebuilt
+ * merge docs declare client variable defs (see buildBatchedMergeDocument).
+ * Nested selections / field args still need Transformer / merge resolvers.
  */
 function isLeafOnlySelection(selectionSet: SelectionSetNode): boolean {
   for (const sel of selectionSet.selections) {
+    if (sel.kind === Kind.INLINE_FRAGMENT) {
+      if (!sel.selectionSet || !isLeafOnlySelection(sel.selectionSet)) {
+        return false;
+      }
+      continue;
+    }
     if (sel.kind !== Kind.FIELD) {
       return false;
     }
     if (sel.name.value === '__typename') {
       continue;
     }
-    if (sel.selectionSet || sel.arguments?.length || sel.directives?.length) {
+    if (sel.selectionSet || sel.arguments?.length) {
       return false;
     }
   }
   return true;
+}
+
+/** Bind client vars from ctx onto merge-arg variables from argsFromKeys. */
+function bindMergeHopVariables(
+  mergeArgs: Record<string, any>,
+  clientVariableNames: readonly string[] | undefined,
+  ctx: BackboneExecutionContext,
+): Record<string, any> {
+  if (!clientVariableNames?.length) {
+    return mergeArgs;
+  }
+  const variables = { ...mergeArgs };
+  for (const name of clientVariableNames) {
+    ensureVariableValue(ctx.variableValues, name, ctx.variableDefaults);
+    if (name in ctx.variableValues) {
+      variables[name] = ctx.variableValues[name];
+    }
+  }
+  return variables;
 }
 
 /**
@@ -2030,9 +2060,9 @@ function executeBatchFetchNode(
   }
 
   // Prefer one concatenated merge-field HTTP whenever the plan attached a
-  // document. Alias selectionSets stay unfiltered for the parallel-Fetch
-  // fallback; the document itself carries subgraph-filtered selections.
-  if (node.document) {
+  // document and every alias is leaf-only (scalars + @include/@skip). Nested
+  // / arg-bearing aliases fall through to parallel Fetch (Transformer).
+  if (node.document && activeAliases.every(a => isLeafOnlySelection(a.selectionSet))) {
     const prepared: BatchAliasPrep[] = [];
     const allKeys: any[] = [];
     let canRawBatch = true;
@@ -2093,7 +2123,11 @@ function executeBatchFetchNode(
         return;
       }
       const fieldName = mergeEntry.fieldName;
-      const variables = mergeEntry.argsFromKeys(allKeys);
+      const variables = bindMergeHopVariables(
+        mergeEntry.argsFromKeys(allKeys),
+        node.variableNames,
+        ctx,
+      );
       const executor = getSubschemaExecutor(node.subschema);
       return handleMaybePromise(
         () =>

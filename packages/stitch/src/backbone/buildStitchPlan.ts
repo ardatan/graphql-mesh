@@ -3071,6 +3071,112 @@ function planRootField(
           }
         }
       }
+
+      // @provides leaves kept in `available` but absent from the subgraph SDL
+      // (Book.price under samePriceProduct @provides): still plan the unique
+      // owner hop so execute can fill if provides re-injection is skipped.
+      const rootKey = fieldNode.alias?.value ?? fieldNode.name.value;
+      const providesFollowUpFields = (sels: readonly SelectionNode[]): FieldNode[] => {
+        const out: FieldNode[] = [];
+        for (const s of sels) {
+          if (s.kind !== Kind.FIELD || s.name.value === '__typename' || !s.selectionSet) {
+            continue;
+          }
+          out.push(s);
+        }
+        return out;
+      };
+      for (const sel of p.available) {
+        const parentFields: FieldNode[] = [];
+        let typeCond: string | null = null;
+        if (sel.kind === Kind.FIELD && sel.selectionSet) {
+          parentFields.push(sel);
+        } else if (sel.kind === Kind.INLINE_FRAGMENT && sel.selectionSet) {
+          typeCond = sel.typeCondition?.name.value ?? null;
+          parentFields.push(...providesFollowUpFields(sel.selectionSet.selections));
+        }
+        for (const fieldSel of parentFields) {
+          const enclosingTypeName = typeCond ?? returnTypeName;
+          if (!enclosingTypeName) {
+            continue;
+          }
+          const enclosingType = schema.getType(enclosingTypeName);
+          if (!isObjectType(enclosingType) && !isInterfaceType(enclosingType)) {
+            continue;
+          }
+          const fieldDef = enclosingType.getFields()[fieldSel.name.value];
+          if (!fieldDef?.type || !fieldSel.selectionSet) {
+            continue;
+          }
+          const namedReturn = getNamedType(fieldDef.type);
+          if (!isObjectType(namedReturn) && !isAbstractType(namedReturn)) {
+            continue;
+          }
+          const nestedResponseKey = fieldSel.alias?.value ?? fieldSel.name.value;
+          const childPath = [rootKey, nestedResponseKey];
+          if (isObjectType(namedReturn) && stitchingInfo.mergedTypes[namedReturn.name]) {
+            const externalLeaves = flattenToFieldNodes(
+              fieldSel.selectionSet.selections,
+              fragments,
+            ).filter(
+              fn =>
+                fn.name.value !== '__typename' &&
+                !fieldAvailableOnSubschema(p.owner, namedReturn.name, fn.name.value),
+            );
+            if (!externalLeaves.length) {
+              continue;
+            }
+            const child = planMergedTypeFollowUps(
+              schema,
+              stitchingInfo,
+              namedReturn.name,
+              p.owner,
+              externalLeaves,
+              fragments,
+              variableValues,
+              childPath,
+              incompleteReasons,
+            );
+            if (child) {
+              partialUnavailableFollowUps.push(child);
+            }
+          } else if (isAbstractType(namedReturn)) {
+            for (const concrete of schema.getPossibleTypes(namedReturn)) {
+              if (!stitchingInfo.mergedTypes[concrete.name]) {
+                continue;
+              }
+              const forConcrete = collectFieldsForConcreteType(
+                namedReturn,
+                concrete,
+                fieldSel.selectionSet,
+                fragments,
+                schema,
+              ).filter(
+                fn =>
+                  fn.name.value !== '__typename' &&
+                  !fieldAvailableOnSubschema(p.owner, concrete.name, fn.name.value),
+              );
+              if (!forConcrete.length) {
+                continue;
+              }
+              const child = planMergedTypeFollowUps(
+                schema,
+                stitchingInfo,
+                concrete.name,
+                p.owner,
+                forConcrete,
+                fragments,
+                variableValues,
+                childPath,
+                incompleteReasons,
+              );
+              if (child) {
+                partialUnavailableFollowUps.push(child);
+              }
+            }
+          }
+        }
+      }
     }
   }
 
@@ -3681,6 +3787,72 @@ function requiresDepsForField(
 }
 
 /**
+ * True when a @requires dep tree selects nested fields this subschema cannot
+ * resolve (e.g. `comments { authorId }` on D where authorId is external).
+ * Those need a follow-up entity hop before the requiring field can run.
+ */
+function requiresTreeNeedsExternalFollowUp(
+  subschema: Subschema,
+  parentTypeName: string,
+  dep: FieldNode,
+): boolean {
+  if (!dep.selectionSet) {
+    return false;
+  }
+  const parentType =
+    subschema.transformedSchema.getType(parentTypeName) ??
+    subschema.schema.getType(parentTypeName);
+  if (!parentType || !('getFields' in parentType)) {
+    return false;
+  }
+  const field = (parentType as GraphQLObjectType).getFields()[dep.name.value];
+  if (!field) {
+    // Dep field itself missing here - treat as needing follow-up.
+    return true;
+  }
+  const namedReturn = getNamedType(field.type);
+  const walk = (typeName: string, ss: SelectionSetNode): boolean => {
+    for (const sel of ss.selections) {
+      if (sel.kind === Kind.FIELD) {
+        if (sel.name.value === '__typename') {
+          continue;
+        }
+        if (!fieldAvailableOnSubschema(subschema, typeName, sel.name.value)) {
+          return true;
+        }
+        if (sel.selectionSet) {
+          const t =
+            subschema.transformedSchema.getType(typeName) ?? subschema.schema.getType(typeName);
+          if (t && 'getFields' in t) {
+            const childField = (t as GraphQLObjectType).getFields()[sel.name.value];
+            if (childField) {
+              const childNamed = getNamedType(childField.type);
+              if (
+                (isObjectType(childNamed) || isInterfaceType(childNamed)) &&
+                walk(childNamed.name, sel.selectionSet)
+              ) {
+                return true;
+              }
+            }
+          }
+        }
+      } else if (sel.kind === Kind.INLINE_FRAGMENT && sel.selectionSet) {
+        const on = sel.typeCondition?.name.value ?? typeName;
+        if (walk(on, sel.selectionSet)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+  const startType =
+    isObjectType(namedReturn) || isInterfaceType(namedReturn) || isUnionType(namedReturn)
+      ? namedReturn.name
+      : parentTypeName;
+  return walk(startType, dep.selectionSet);
+}
+
+/**
  * Collect @requires deps for every field in a Fetch selection. Used both for
  * selection-union safety (arg conflicts) and wave dependency edges.
  */
@@ -3886,6 +4058,15 @@ function tryUnionEntityFetches(
         dep.name.value,
       );
       if (depMerge?.selectionSet || depMerge?.computed) {
+        return null;
+      }
+      // requires-with-argument: author @requires comments { authorId } where
+      // authorId is external on D. Uniting the comments bridge with author
+      // would fetch author before Comment.authorId is resolved on C.
+      if (
+        dep.selectionSet &&
+        requiresTreeNeedsExternalFollowUp(template.subschema, template.entityTypeName!, dep)
+      ) {
         return null;
       }
     }
@@ -5614,14 +5795,17 @@ function buildCompletePlan(
     stitchingInfo,
     { serializeSequences: isMutation, fragments },
   );
+
   // Entity reuse is always planned for queries; mutations skip at execute.
   const withReuse = isMutation ? annotated : annotateEntityReuse(annotated);
   // Wave fold: same dependsOn wave + same subgraph → one BatchFetch
   // (or covering Fetch). Runs after reuse so reuse edges affect wave layers.
   const folded = isMutation ? withReuse : foldSameWaveSubgraphFetches(withReuse, stitchingInfo);
+
   // Deep recursive entity graphs (many-plans) can leave mutual dependsOn after
   // fold; drop back-edges so the schedule stays a DAG.
   const acyclic = stripDependsOnCycles(folded);
+
   // Prebuild hop documents at plan time (queries + mutations). Root
   // @skip/@include use runIf; nested directives stay on the AST for subgraphs.
   const withDocs = preparePlanDocuments(acyclic, {
@@ -6036,12 +6220,20 @@ function possibleEntityTypeNames(stitchingInfo: StitchingInfo, typeName: string)
  * When entity types nest (Book possibles ⊆ Product possibles) under the same
  * flatten paths, merge into one Fetch on the covering type with inline
  * fragments for more-specific selections (Product||Book → one hop).
+ *
+ * Same concrete type twice (Post comments-bridge ‖ Post.author @requires) must
+ * stay split — covering coalescence would wrap author in `... on Post` and
+ * schedule it before nested requires providers.
  */
 function tryCoalesceOverlappingEntityFetches(
   stitchingInfo: StitchingInfo,
   fetches: Array<Extract<StitchPlanNode, { kind: 'Fetch' }>>,
 ): Extract<StitchPlanNode, { kind: 'Fetch' }> | null {
   if (fetches.length < 2) {
+    return null;
+  }
+  const distinctTypes = new Set(fetches.map(f => f.entityTypeName));
+  if (distinctTypes.size < 2) {
     return null;
   }
   const annotated = fetches.map(f => ({
@@ -6052,6 +6244,7 @@ function tryCoalesceOverlappingEntityFetches(
     return null;
   }
   // Covering type: possibles ⊇ every other type's possibles (widest abstract).
+  // Require a strict superset vs at least one peer so Post||Post never merges.
   let cover: (typeof annotated)[number] | null = null;
   for (const cand of annotated) {
     const coversAll = annotated.every(o => {
@@ -6063,6 +6256,12 @@ function tryCoalesceOverlappingEntityFetches(
       return true;
     });
     if (!coversAll) {
+      continue;
+    }
+    const strictlyWider = annotated.some(
+      o => o !== cand && [...o.set].every(n => cand.set.has(n)) && cand.set.size > o.set.size,
+    );
+    if (!strictlyWider) {
       continue;
     }
     if (!cover || cand.set.size > cover.set.size) {
@@ -6144,18 +6343,21 @@ function isFoldableEntityHop(n: StitchPlanNode): n is FoldableEntityHop {
   return isEntityFetchHop(n) || n.kind === 'BatchFetch';
 }
 
-/** Subschema identity for BatchFetch grouping (name, else object identity). */
+/**
+ * Subschema identity for BatchFetch grouping. Always object identity — not
+ * `name` alone. Federation computed-isolation clones share a graph name
+ * (`A`) but only expose their own @requires fields (shippingEstimate vs
+ * shippingEstimateEUR); name-keyed BatchFetch filtered the second alias
+ * against the first clone and stripped it to bare `upc`.
+ */
 function makeSubschemaKeyFn(): (s: Subschema) => string {
-  const anonIds = new WeakMap<object, string>();
-  let anonSeq = 0;
+  const ids = new WeakMap<object, string>();
+  let seq = 0;
   return (s: Subschema): string => {
-    if (s.name) {
-      return `n:${s.name}`;
-    }
-    let id = anonIds.get(s);
+    let id = ids.get(s);
     if (!id) {
-      id = `a:${anonSeq++}`;
-      anonIds.set(s, id);
+      id = `${s.name ?? 'anon'}:${seq++}`;
+      ids.set(s, id);
     }
     return id;
   };
@@ -6794,8 +6996,9 @@ function groupParallelBatchFetches(
   }
   if (node.kind === 'Sequence') {
     const mapped = node.nodes.map(c => groupParallelBatchFetches(c, stitchingInfo));
-    // Consecutive entity Fetches in a Sequence are parallel-ready after the
-    // shared prefix - BatchFetch them like a Parallel group.
+    // Consecutive independent entity Fetches can BatchFetch. Stop the run when
+    // a hop depends on an earlier hop in the run (requires-with-argument:
+    // D.comments → C.authorId → D.author must stay sequenced).
     const out: StitchPlanNode[] = [];
     let i = 0;
     while (i < mapped.length) {
@@ -6808,6 +7011,14 @@ function groupParallelBatchFetches(
       while (i < mapped.length) {
         const hop = mapped[i]!;
         if (!isEntityFetchHop(hop)) {
+          break;
+        }
+        const blocked = run.some(
+          earlier =>
+            fetchDependsOn(stitchingInfo, hop, earlier) ||
+            fetchDependsOn(stitchingInfo, earlier, hop),
+        );
+        if (blocked) {
           break;
         }
         run.push(hop);

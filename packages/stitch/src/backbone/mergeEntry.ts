@@ -4,15 +4,18 @@ import {
   isListType,
   isNonNullType,
   Kind,
+  visit,
   type DocumentNode,
   type GraphQLSchema,
   type GraphQLType,
   type ListTypeNode,
   type NamedTypeNode,
   type NameNode,
+  type OperationDefinitionNode,
   type OperationTypeNode,
   type SelectionSetNode,
   type TypeNode,
+  type VariableDefinitionNode,
 } from 'graphql';
 import type { MergedTypeEntryPoint, Subschema } from '@graphql-tools/delegate';
 import { parseSelectionSet } from '@graphql-tools/utils';
@@ -218,17 +221,32 @@ function mergeFieldSelection(
   };
 }
 
+export type BatchedMergeDocumentResult = {
+  document: DocumentNode;
+  /**
+   * Client variables used by the selection (`@include`/`@skip`/field args),
+   * excluding the merge-arg name (`representations`). Execute binds these from
+   * `variableValues` alongside `argsFromKeys`.
+   */
+  clientVariableNames: readonly string[];
+};
+
 /**
  * Prebuilt merge hop document from MergedTypeConfig + subgraph schema
  * (not federation-hardcoded `_entities` / `representations` / `_Any`).
  * Forwards the client operation name when present (subgraph tracing/logs).
+ *
+ * When `operation` is provided, client variables referenced by alias
+ * selections (e.g. `@include(if: $title)`) are declared on the document so
+ * execute can skip Transformer without "Variable $x is not defined".
  */
 export function buildBatchedMergeDocument(
   schema: GraphQLSchema,
   entry: BatchedMergeEntry,
   aliases: Array<{ entityTypeName: string; selectionSet: SelectionSetNode }>,
   operationName?: NameNode | string | null,
-): DocumentNode | null {
+  operation?: OperationDefinitionNode | null,
+): BatchedMergeDocumentResult | null {
   if (!aliases.length) {
     return null;
   }
@@ -246,45 +264,71 @@ export function buildBatchedMergeDocument(
   if (!fieldSelection) {
     return null;
   }
-  const nameValue = typeof operationName === 'string' ? operationName : operationName?.value;
-  return {
-    kind: Kind.DOCUMENT,
-    definitions: [
-      {
-        kind: Kind.OPERATION_DEFINITION,
-        operation: 'query' as OperationTypeNode,
-        name: nameValue ? { kind: Kind.NAME, value: nameValue } : undefined,
-        variableDefinitions: [
-          {
-            kind: Kind.VARIABLE_DEFINITION,
-            variable: {
-              kind: Kind.VARIABLE,
-              name: { kind: Kind.NAME, value: argName },
-            },
-            type: typeToAST(argDef.type),
-          },
-        ],
-        selectionSet: {
-          kind: Kind.SELECTION_SET,
-          selections: [
-            {
-              kind: Kind.FIELD,
-              name: { kind: Kind.NAME, value: entry.fieldName },
-              arguments: [
-                {
-                  kind: Kind.ARGUMENT,
-                  name: { kind: Kind.NAME, value: argName },
-                  value: {
-                    kind: Kind.VARIABLE,
-                    name: { kind: Kind.NAME, value: argName },
-                  },
-                },
-              ],
-              selectionSet: fieldSelection,
-            },
-          ],
-        },
+  const usedClientVars = new Set<string>();
+  for (const a of aliases) {
+    visit(a.selectionSet, {
+      Variable(v) {
+        if (v.name.value !== argName) {
+          usedClientVars.add(v.name.value);
+        }
       },
-    ],
+    });
+  }
+  const clientDefs: VariableDefinitionNode[] = [];
+  const clientVariableNames: string[] = [];
+  if (usedClientVars.size && operation?.variableDefinitions?.length) {
+    for (const def of operation.variableDefinitions) {
+      const name = def.variable.name.value;
+      if (usedClientVars.has(name) && name !== argName) {
+        clientDefs.push(def);
+        clientVariableNames.push(name);
+      }
+    }
+  }
+  const nameValue = typeof operationName === 'string' ? operationName : operationName?.value;
+  const variableDefinitions: VariableDefinitionNode[] = [
+    {
+      kind: Kind.VARIABLE_DEFINITION,
+      variable: {
+        kind: Kind.VARIABLE,
+        name: { kind: Kind.NAME, value: argName },
+      },
+      type: typeToAST(argDef.type),
+    },
+    ...clientDefs,
+  ];
+  return {
+    document: {
+      kind: Kind.DOCUMENT,
+      definitions: [
+        {
+          kind: Kind.OPERATION_DEFINITION,
+          operation: 'query' as OperationTypeNode,
+          name: nameValue ? { kind: Kind.NAME, value: nameValue } : undefined,
+          variableDefinitions,
+          selectionSet: {
+            kind: Kind.SELECTION_SET,
+            selections: [
+              {
+                kind: Kind.FIELD,
+                name: { kind: Kind.NAME, value: entry.fieldName },
+                arguments: [
+                  {
+                    kind: Kind.ARGUMENT,
+                    name: { kind: Kind.NAME, value: argName },
+                    value: {
+                      kind: Kind.VARIABLE,
+                      name: { kind: Kind.NAME, value: argName },
+                    },
+                  },
+                ],
+                selectionSet: fieldSelection,
+              },
+            ],
+          },
+        },
+      ],
+    },
+    clientVariableNames,
   };
 }

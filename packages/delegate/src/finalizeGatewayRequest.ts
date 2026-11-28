@@ -251,7 +251,8 @@ function finalizeGatewayDocument<TContext>(
                 return undefined;
               }
               const typeConfig = stitchingInfo?.mergedTypes?.[parentType.name];
-              const providedSelectionsByField = typeConfig?.providedSelectionsByField?.get(
+              const providedSelectionsByField = getProvidedSelectionsByField(
+                typeConfig,
                 delegationContext.subschema as Subschema,
               );
               const providedSelection = providedSelectionsByField?.[fieldNode.name.value];
@@ -641,6 +642,34 @@ function nextInlineFragmentPathSegment(
   return `inline:${typeName}:${idx}`;
 }
 
+/**
+ * Resolve `providedSelectionsByField` for a subschema. Prefer object identity;
+ * fall back to matching `subschema.name` so clone / transform wrappers still
+ * re-inject `@provides` fields (circular-reference-interface Book.price).
+ */
+function getProvidedSelectionsByField(
+  typeConfig: StitchingInfo['mergedTypes'][string] | undefined,
+  subschema: Subschema,
+): Record<string, SelectionSetNode> | undefined {
+  const map = typeConfig?.providedSelectionsByField;
+  if (!map) {
+    return undefined;
+  }
+  const direct = map.get(subschema);
+  if (direct) {
+    return direct;
+  }
+  if (!subschema.name) {
+    return undefined;
+  }
+  for (const [key, value] of map) {
+    if (key.name === subschema.name) {
+      return value;
+    }
+  }
+  return undefined;
+}
+
 function subschemaHasProvidedSelectionsImpl(
   stitchingInfo: StitchingInfo,
   subschema: Subschema,
@@ -650,7 +679,7 @@ function subschemaHasProvidedSelectionsImpl(
     return false;
   }
   for (const typeConfig of Object.values(mergedTypes)) {
-    if (typeConfig?.providedSelectionsByField?.has(subschema)) {
+    if (getProvidedSelectionsByField(typeConfig, subschema) != null) {
       return true;
     }
   }
@@ -1677,7 +1706,8 @@ function collectDeferredDependencySelections(
       }
     }
     // Also honour @provides-style dependency maps when present.
-    const provided = typeConfig?.providedSelectionsByField?.get(
+    const provided = getProvidedSelectionsByField(
+      typeConfig,
       delegationContext.subschema as Subschema,
     )?.[fieldName];
     if (provided?.selections) {

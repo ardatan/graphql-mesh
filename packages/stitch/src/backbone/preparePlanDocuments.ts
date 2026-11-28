@@ -1,5 +1,7 @@
 import {
   getNamedType,
+  isAbstractType,
+  isInterfaceType,
   isNullableType,
   isObjectType,
   isUnionType,
@@ -82,6 +84,14 @@ export function filterSelectionSetForSubschema(
     const next: SelectionNode[] = [];
     let hasTypename = false;
     const members = new Set(type.getTypes().map(t => t.name));
+    const pushFiltered = (filtered: SelectionSetNode) => {
+      for (const s of filtered.selections) {
+        if (s.kind === Kind.FIELD && s.name.value === '__typename') {
+          hasTypename = true;
+        }
+        next.push(s);
+      }
+    };
     for (const sel of selectionSet.selections) {
       if (sel.kind === Kind.FIELD) {
         if (sel.name.value === '__typename') {
@@ -92,14 +102,26 @@ export function filterSelectionSetForSubschema(
       }
       if (sel.kind === Kind.INLINE_FRAGMENT) {
         const on = sel.typeCondition?.name.value;
-        if (on) {
-          if (!schema.getType(on) || !members.has(on)) {
-            continue;
-          }
+        // Fragment/inline on the union itself (`... on PublisherType`): expand
+        // in place so nested member fragments survive filtering.
+        if (!on || on === typeName) {
+          pushFiltered(
+            filterSelectionSetForSubschema(
+              sel.selectionSet,
+              typeName,
+              schema,
+              fragments,
+              fieldNodesByField,
+            ),
+          );
+          continue;
+        }
+        if (!schema.getType(on) || !members.has(on)) {
+          continue;
         }
         const filtered = filterSelectionSetForSubschema(
           sel.selectionSet,
-          on ?? typeName,
+          on,
           schema,
           fragments,
           fieldNodesByField,
@@ -115,7 +137,23 @@ export function filterSelectionSetForSubschema(
           continue;
         }
         const on = frag.typeCondition.name.value;
-        if (!schema.getType(on) || !members.has(on)) {
+        if (!schema.getType(on)) {
+          continue;
+        }
+        // `fragment Publisher on PublisherType` — not a union member; expand.
+        if (on === typeName) {
+          pushFiltered(
+            filterSelectionSetForSubschema(
+              frag.selectionSet,
+              typeName,
+              schema,
+              fragments,
+              fieldNodesByField,
+            ),
+          );
+          continue;
+        }
+        if (!members.has(on)) {
           continue;
         }
         const filtered = filterSelectionSetForSubschema(
@@ -161,10 +199,14 @@ export function filterSelectionSetForSubschema(
       }
       const field = fields[name];
       if (!field) {
-        // Gateway-local field stripped here - still pull its key deps
-        // (authorId for Book.author) so nested Islands can resolve.
-        const deps = fieldNodesByField?.[typeName]?.[name];
-        if (deps?.length) {
+        // Field absent on this subgraph - still pull key deps (authorId for
+        // Book.author; Book.sku → id) so nested entity hops can resolve.
+        // fieldNodesByField is keyed by concrete types; under an abstract
+        // parent (Product.sku) also consult each possible concrete.
+        const pushDeps = (deps: readonly FieldNode[] | undefined) => {
+          if (!deps?.length) {
+            return;
+          }
           for (const dep of deps) {
             if (dep.name.value === '__typename') {
               continue;
@@ -173,6 +215,17 @@ export function filterSelectionSetForSubschema(
             if (fields[dep.name.value]) {
               pushField(dep);
             }
+          }
+        };
+        pushDeps(fieldNodesByField?.[typeName]?.[name]);
+        if (isAbstractType(type) && fieldNodesByField) {
+          const concretes = isInterfaceType(type)
+            ? schema.getPossibleTypes(type)
+            : isUnionType(type)
+              ? type.getTypes()
+              : [];
+          for (const concrete of concretes) {
+            pushDeps(fieldNodesByField[concrete.name]?.[name]);
           }
         }
         continue;
@@ -458,9 +511,9 @@ export function preparePlanDocuments(
       fieldNodesByField,
     );
     const entry = getBatchedMergeEntry(root.subschema, root.entityTypeName);
-    const document =
+    const built =
       entry != null
-        ? (buildBatchedMergeDocument(
+        ? buildBatchedMergeDocument(
             schema,
             entry,
             [
@@ -470,11 +523,13 @@ export function preparePlanDocuments(
               },
             ],
             operation.name,
-          ) ?? undefined)
-        : undefined;
+            operation,
+          )
+        : null;
     return {
       ...root,
-      document,
+      document: built?.document,
+      variableNames: built?.clientVariableNames,
     };
   }
   if (root.kind === 'BatchFetch') {
@@ -508,8 +563,8 @@ export function preparePlanDocuments(
       ...a,
       representationsVariable: canBatchDoc ? argName! : undefined,
     }));
-    const document = canBatchDoc
-      ? (buildBatchedMergeDocument(
+    const built = canBatchDoc
+      ? buildBatchedMergeDocument(
           schema,
           first!,
           aliases.map(a => ({
@@ -517,12 +572,14 @@ export function preparePlanDocuments(
             selectionSet: a.selectionSet,
           })),
           operation.name,
-        ) ?? undefined)
-      : undefined;
+          operation,
+        )
+      : null;
     return {
       ...root,
       aliases,
-      document,
+      document: built?.document,
+      variableNames: built?.clientVariableNames,
     };
   }
   return root;
