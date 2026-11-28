@@ -9,6 +9,7 @@ export { defaultMergedResolver } from './defaultMergedResolver.js';
 export { buildStitchPlan } from './buildStitchPlan.js';
 export {
   bindContextSelectionPathForFlattenPath,
+  contextProviderParentDepth,
   fieldConfigsWithContextArguments,
   injectContextBridgesIntoSelections,
   parseContextSelectionPath,

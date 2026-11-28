@@ -1158,6 +1158,49 @@ describe('fromContext gateway-parity (adapted from gateway#2703)', () => {
     });
   });
 
+  it('mixed-depth coalesce with currency:id still reads User bridge', async () => {
+    const { bag, executor } = stitchWithCapture(
+      MIXED_DEPTH_SUPERGRAPH,
+      createUsersSubgraph({ withMixedDepth: true }),
+    );
+    // Response-key collision on User (`currency: id`) forces `__mesh_ctx_currency`.
+    // Coalesced shallow + deep Transaction paths must each bind that bridge from
+    // User selections — not scan Wrapper when parentDepth came from the shallow path.
+    const result = await executor({
+      document: parse(`{
+        users {
+          currency: id
+          transactions { amount }
+          wrapper { transactions { amount } }
+        }
+      }`),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result).toEqual({
+      data: {
+        users: [
+          {
+            currency: 'u1',
+            transactions: [{ amount: 100 }],
+            wrapper: { transactions: [{ amount: 100 }] },
+          },
+          {
+            currency: 'u2',
+            transactions: [{ amount: 90 }],
+            wrapper: { transactions: [{ amount: 90 }] },
+          },
+        ],
+      },
+    });
+    const rootReq = bag.find(r => !r.query.includes('_entities'));
+    expect(rootReq?.query).toMatch(/__mesh_ctx_currency\s*:\s*currency/);
+    const payload = JSON.stringify(entityRequests(bag));
+    expect(payload).toContain('USD');
+    expect(payload).toContain('EUR');
+    expect(payload).not.toMatch(/"code"\s*:\s*"u1"/);
+    expect(payload).not.toMatch(/"code"\s*:\s*"u2"/);
+  });
+
   it('response-key collision uses distinct bridge alias for context', async () => {
     const { bag, executor } = stitchWithCapture(BASIC_SUPERGRAPH, createUsersSubgraph());
     // Client selects `currency: id` so the natural `currency` response key holds

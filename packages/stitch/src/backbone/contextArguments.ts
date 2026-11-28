@@ -642,10 +642,36 @@ function applyBridgeResponseKeys(
 }
 
 /**
+ * How many object parents from `entity` up to `ancestor` in the located
+ * ancestors chain (`0` = entity itself). Matches `resolveContextAncestor`'s
+ * depth indexing.
+ */
+export function contextProviderParentDepth(
+  entity: Record<string, any>,
+  ancestors: ReadonlyArray<object>,
+  ancestor: Record<string, any>,
+): number {
+  if (ancestor === entity) {
+    return 0;
+  }
+  for (let d = 1; d <= ancestors.length; d++) {
+    if (ancestors[ancestors.length - d] === ancestor) {
+      return d;
+    }
+  }
+  return 0;
+}
+
+/**
  * Re-bind bridge ResponseKeys for one concrete flatten path. Coalesced
  * Fetches may stamp ResponseKey from `flattenPaths[0]` only; execute must
  * re-bind per entity path so `users` (natural currency) and `otherUsers`
  * (`currency: id` → aliased bridge) do not share the wrong key.
+ *
+ * `parentDepth` must be the provider depth for **this** flatten path (not the
+ * representative depth from `flattenPaths[0]`): mixed-depth coalesce with
+ * `users.transactions` + `users.wrapper.transactions` needs depth 1 vs 2 so
+ * the selection prefix stays on `User`, not `Wrapper`.
  */
 export function bindContextSelectionPathForFlattenPath(
   selectionPath: StitchContextPathSegment[],

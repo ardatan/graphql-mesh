@@ -47,6 +47,7 @@ import { handleMaybePromise, isPromise, type MaybePromise } from '@whatwg-node/p
 import { asGetArgumentValuesVariables } from '../variableValues.js';
 import {
   bindContextSelectionPathForFlattenPath,
+  contextProviderParentDepth,
   readContextValue,
   resolveContextAncestor,
   stableStringifyContext,
@@ -1131,12 +1132,17 @@ function tryExecuteEntitiesBatchWithContext(
         // Per-entity nearest provider (not the Fetch's representative parentDepth)
         // so coalesced paths at different depths still get the right ancestor.
         const ancestor = resolveContextAncestor(entity, ancestors, ca, ctx.schema);
-        // Re-bind bridge ResponseKey for this entity's flatten path — coalesced
-        // Fetches may have stamped keys from flattenPaths[0] only.
+        // Re-bind bridge ResponseKey using this path's actual provider depth —
+        // ca.parentDepth is from flattenPaths[0] and is wrong for mixed-depth
+        // siblings (users.wrapper.transactions must not scan Wrapper selections).
+        const providerDepth =
+          ancestor === undefined
+            ? ca.parentDepth
+            : contextProviderParentDepth(entity, ancestors, ancestor);
         const selectionPath = bindContextSelectionPathForFlattenPath(
           ca.selectionPath,
           path,
-          ca.parentDepth,
+          providerDepth,
           ctx.operation,
           ctx.fragments,
         );
