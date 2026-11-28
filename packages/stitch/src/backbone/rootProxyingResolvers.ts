@@ -112,18 +112,24 @@ export function installRootProxyingResolvers(schema: GraphQLSchema, runBackbone:
     const fields = rootType.getFields();
     for (const fieldName of Object.keys(fields)) {
       const field = fields[fieldName]!;
+      const resolveFn = field.resolve ?? defaultFieldResolver;
+      // mapSchema keeps the proxy fn but drops field-config symbols. Prefer
+      // ORIGINAL_RESOLVE stamped on the proxy itself (survives toConfig).
+      const stampedOnField = (field as any)[ORIGINAL_RESOLVE] as
+        | GraphQLFieldResolver<any, any>
+        | undefined;
+      const stampedOnProxy = isBackboneRootProxy(resolveFn)
+        ? ((resolveFn as any)[ORIGINAL_RESOLVE] as GraphQLFieldResolver<any, any> | undefined)
+        : undefined;
       let previousResolve: GraphQLFieldResolver<any, any> =
-        (field as any)[ORIGINAL_RESOLVE] ?? field.resolve ?? defaultFieldResolver;
-      // mapSchema may keep the proxy fn but drop ORIGINAL_RESOLVE. Never nest
-      // a proxy as the "original" — that recurses when Islands call it.
+        stampedOnField ?? stampedOnProxy ?? resolveFn;
+      // Never nest a proxy as the "original" — that recurses when Islands call it.
       if (isBackboneRootProxy(previousResolve)) {
-        if ((field as any)[ORIGINAL_RESOLVE] == null) {
-          // Irrecoverable without the pre-proxy resolve; leave field alone.
-          continue;
-        }
-        previousResolve = (field as any)[ORIGINAL_RESOLVE];
+        continue;
       }
-      if (isBackboneRootProxy(previousResolve)) {
+      if (isBackboneRootProxy(resolveFn) && stampedOnProxy === previousResolve) {
+        // Already proxied; restore field stamp dropped by mapSchema and keep proxy.
+        (field as any)[ORIGINAL_RESOLVE] = previousResolve;
         continue;
       }
       (field as any)[ORIGINAL_RESOLVE] = previousResolve;
@@ -193,14 +199,25 @@ export function installRootProxyingResolvers(schema: GraphQLSchema, runBackbone:
         );
       };
       (proxy as any)[BACKBONE_PROXY_MARK] = true;
+      // Stamp on the proxy fn so mapSchema/toConfig that drops field symbols
+      // still exposes the original to Islands via getOriginalRootResolve.
+      (proxy as any)[ORIGINAL_RESOLVE] = previousResolve;
       field.resolve = proxy;
     }
   }
 }
 
-/** Original root resolver before backbone proxying (for tests / debugging). */
+/** Original root resolver before backbone proxying (field stamp or proxy stamp). */
 export function getOriginalRootResolve(field: {
   resolve?: GraphQLFieldResolver<any, any>;
 }): GraphQLFieldResolver<any, any> | undefined {
-  return (field as any)[ORIGINAL_RESOLVE];
+  const fromField = (field as any)[ORIGINAL_RESOLVE] as GraphQLFieldResolver<any, any> | undefined;
+  if (fromField) {
+    return fromField;
+  }
+  const resolve = field.resolve;
+  if (isBackboneRootProxy(resolve)) {
+    return (resolve as any)[ORIGINAL_RESOLVE] as GraphQLFieldResolver<any, any> | undefined;
+  }
+  return undefined;
 }

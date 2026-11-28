@@ -70,10 +70,10 @@ function readProgressiveOverride(schema: GraphQLSchema): {
   };
 }
 
-/** Plan cache keyed by schema so mapSchema copies do not share plans. */
+/** Plan cache keyed by schema; entries by operation AST (stable across proxy rebuilds). */
 const planCacheBySchema = new WeakMap<
   GraphQLSchema,
-  WeakMap<ExecutionRequest['document'], Map<string | null, StitchPlan>>
+  WeakMap<object, Map<string | null, StitchPlan>>
 >();
 
 function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): StitchPlan {
@@ -110,12 +110,14 @@ function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): Stitch
     }
   }
   const cacheKey = (operation.name?.value ?? '') + overrideKey;
+  // Root proxies rebuild `document` each call; prefer the stable operation node.
+  const planKey: object = request.info?.operation ?? request.document;
   let planCache = planCacheBySchema.get(schema);
   if (!planCache) {
     planCache = new WeakMap();
     planCacheBySchema.set(schema, planCache);
   }
-  let byName = planCache.get(request.document);
+  let byName = planCache.get(planKey);
   if (!hasPercentOverride && byName) {
     const cached = byName.get(cacheKey);
     if (cached) {
@@ -141,7 +143,7 @@ function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): Stitch
   if (!hasPercentOverride) {
     if (!byName) {
       byName = new Map();
-      planCache.set(request.document, byName);
+      planCache.set(planKey, byName);
     }
     byName.set(cacheKey, plan);
   }
@@ -220,16 +222,20 @@ export const backboneExecutor: Executor = function backboneExecutor(request: Exe
 
 /**
  * Derive an executor for `schema` without storing one on the schema.
- * Injects `info.schema` when the caller omits `info` (gateway / tests).
+ * Always plans against the bound schema — callers may pass outer-gateway
+ * `info` when this schema is used as a nested subschema executor.
  */
 export function getBackboneExecutor(schema: GraphQLSchema): Executor {
   return function schemaBoundBackboneExecutor(request: ExecutionRequest) {
-    if (request.info?.schema != null) {
+    if (request.info?.schema === schema) {
       return backboneExecutor(request);
     }
     return backboneExecutor({
       ...request,
-      info: { schema } as NonNullable<ExecutionRequest['info']>,
+      info: {
+        ...(request.info as object | undefined),
+        schema,
+      } as NonNullable<ExecutionRequest['info']>,
     });
   };
 }

@@ -63,6 +63,7 @@ export function stitchSchemas<TContext extends Record<string, any> = Record<stri
     schemaExtensions,
     overrideLabels: overrideLabelsOption,
     handleProgressiveOverride: handleProgressiveOverrideOption,
+    filterFederationInternals: filterFederationInternalsOption,
     ...rest
   } = options;
   let {
@@ -159,9 +160,12 @@ export function stitchSchemas<TContext extends Record<string, any> = Record<stri
     applyExtensions(schema, mergedSchemaExtensions);
   }
 
-  // Filter federation join internals before installing shared root proxies so
-  // the backbone binds once to the public schema (no retarget / re-attach).
-  schema = filterInternalFieldsAndTypes(schema);
+  // Federation join internals only — not every stitchSchemas caller (plain
+  // stitch may keep `_entities` / subgraph SDL). Filter before proxies so the
+  // backbone binds once to the public schema (no retarget / re-attach).
+  if (filterFederationInternalsOption || schema.getType('join__Graph') != null) {
+    schema = filterInternalFieldsAndTypes(schema);
+  }
 
   // Shared backboneExecutor + root proxies. Progressive-override inputs live on
   // schema.extensions; plan/locals are read from info.schema at execute time.

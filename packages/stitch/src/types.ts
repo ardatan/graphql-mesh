@@ -80,6 +80,12 @@ export interface IStitchSchemasOptions<TContext = Record<string, any>> extends O
    * shared backbone executor for plan-cache keying.
    */
   handleProgressiveOverride?: (label: string, context: any) => boolean | Promise<boolean>;
+  /**
+   * When true, run {@link filterInternalFieldsAndTypes} before installing
+   * backbone root proxies (federation supergraph path). Also auto-enabled when
+   * the built schema has a `join__Graph` type. Plain stitch callers stay unfiltered.
+   */
+  filterFederationInternals?: boolean;
 }
 
 export type SubschemaConfigTransform<TContext = Record<string, any>> = (

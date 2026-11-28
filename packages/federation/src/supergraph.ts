@@ -61,6 +61,7 @@ import {
   getDefaultFieldConfigMerger,
   stitchSchemas,
   ValidationLevel,
+  type IStitchSchemasOptions,
   type MergeFieldConfigCandidate,
   type TypeMergingOptions,
 } from '@graphql-tools/stitch';
@@ -2253,6 +2254,8 @@ export function getStitchingOptionsFromSupergraphSdl(
     typeDefs: additionalTypeDefs,
     assumeValid: true,
     assumeValidSDL: true,
+    // Strip join__/inaccessible before backbone proxies (also auto via join__Graph).
+    filterFederationInternals: true,
     typeMergingOptions: {
       useNonNullableFieldOnConflict: true,
       validationSettings: {
@@ -2271,9 +2274,15 @@ export function getStitchingOptionsFromSupergraphSdl(
   };
 }
 
+export type StitchingOptionsFromSupergraphSdl = ReturnType<
+  typeof getStitchingOptionsFromSupergraphSdl
+> &
+  Partial<IStitchSchemasOptions>;
+
 export interface GetStitchedSchemaFromSupergraphSdlOpts extends GetStitchingOptionsFromSupergraphSdlOpts {
   supergraphSdl: string | DocumentNode;
-  onStitchingOptions?(opts: ReturnType<typeof getStitchingOptionsFromSupergraphSdl>): void;
+  /** Mutate stitch options (including `resolvers` / `typeDefs`) before stitch. */
+  onStitchingOptions?(opts: StitchingOptionsFromSupergraphSdl): void;
 }
 
 /**
