@@ -414,6 +414,7 @@ export function preparePlanDocuments(
     };
   }
   if (root.kind === 'Condition') {
+    // @skip/@include: prebuild both branches; execute only selects one.
     return {
       ...root,
       ifClause: root.ifClause ? preparePlanDocuments(root.ifClause, options) : undefined,

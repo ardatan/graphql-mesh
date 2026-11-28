@@ -15,7 +15,6 @@ import {
   type GraphQLSchema,
   type SelectionNode,
   type SelectionSetNode,
-  type VariableDefinitionNode,
 } from 'graphql';
 import {
   createDefaultExecutor,
@@ -822,93 +821,6 @@ function collectUsedVariableNames(node: SelectionNode): Set<string> {
   return used;
 }
 
-function filterVariableDefinitions(
-  defs: readonly VariableDefinitionNode[] | undefined,
-  used: Set<string>,
-): VariableDefinitionNode[] | undefined {
-  if (!defs?.length) {
-    return undefined;
-  }
-  const filtered = defs.filter(d => used.has(d.variable.name.value));
-  return filtered.length ? filtered : undefined;
-}
-
-/**
- * When sibling inline fragments select the same field with conflicting
- * nullability (User.id: ID! vs Admin.id: ID), rewrite with `_nullable_` /
- * `_nonNullable_` aliases - same as finalizeGatewayRequest.
- */
-function rewriteNullabilityConflicts(
-  selectionSet: SelectionSetNode,
-  schema: GraphQLSchema,
-): SelectionSetNode {
-  const seenNonNullable = new Set<string>();
-  const seenNullable = new Set<string>();
-  const selections = selectionSet.selections.map(sel => {
-    if (sel.kind !== Kind.INLINE_FRAGMENT || !sel.typeCondition) {
-      if (sel.kind === Kind.FIELD && sel.selectionSet) {
-        return {
-          ...sel,
-          selectionSet: rewriteNullabilityConflicts(sel.selectionSet, schema),
-        };
-      }
-      return sel;
-    }
-    const type = schema.getType(sel.typeCondition.name.value);
-    if (!type || !('getFields' in type) || !sel.selectionSet) {
-      return sel;
-    }
-    const fields = (type as GraphQLObjectType).getFields();
-    const nextSels = sel.selectionSet.selections.map(sub => {
-      if (sub.kind !== Kind.FIELD || sub.alias) {
-        if (sub.kind === Kind.FIELD && sub.selectionSet) {
-          return {
-            ...sub,
-            selectionSet: rewriteNullabilityConflicts(sub.selectionSet, schema),
-          };
-        }
-        return sub;
-      }
-      const field = fields[sub.name.value];
-      if (!field) {
-        return sub;
-      }
-      const nullable = isNullableType(field.type);
-      if (nullable) {
-        seenNullable.add(sub.name.value);
-      } else {
-        seenNonNullable.add(sub.name.value);
-      }
-      if (seenNullable.has(sub.name.value) && seenNonNullable.has(sub.name.value)) {
-        return {
-          ...sub,
-          alias: {
-            kind: Kind.NAME,
-            value: nullable ? `_nullable_${sub.name.value}` : `_nonNullable_${sub.name.value}`,
-          },
-          selectionSet: sub.selectionSet
-            ? rewriteNullabilityConflicts(sub.selectionSet, schema)
-            : undefined,
-        };
-      }
-      return sub.selectionSet
-        ? {
-            ...sub,
-            selectionSet: rewriteNullabilityConflicts(sub.selectionSet, schema),
-          }
-        : sub;
-    });
-    return {
-      ...sel,
-      selectionSet: {
-        ...sel.selectionSet,
-        selections: nextSels as readonly SelectionNode[],
-      },
-    };
-  });
-  return { ...selectionSet, selections: selections as readonly SelectionNode[] };
-}
-
 function isPlainObject(value: object): boolean {
   const proto = Object.getPrototypeOf(value);
   return proto === Object.prototype || proto === null;
@@ -946,54 +858,6 @@ function ensureUsedVariableValues(
   for (const name of names) {
     ensureVariableValue(variableValues, name, variableDefaults);
   }
-}
-
-function buildRootDocument(
-  operationName: string | undefined,
-  operationType: OperationTypeNode,
-  fieldNode: FieldNode,
-  variableDefinitions: StitchPlan['operation']['variableDefinitions'],
-  variableValues: Record<string, any>,
-  targetSchema?: GraphQLSchema,
-  variableDefaults?: Record<string, any>,
-) {
-  // Keep nested @skip/@include - subgraph evaluates them (Condition / peel
-  // already decided which root fields run).
-  let cleaned = fieldNode;
-  if (targetSchema && cleaned.selectionSet) {
-    cleaned = {
-      ...cleaned,
-      selectionSet: rewriteNullabilityConflicts(cleaned.selectionSet, targetSchema),
-    };
-  }
-  const usedVars = collectUsedVariableNames(cleaned);
-  const filteredDefs = filterVariableDefinitions(variableDefinitions, usedVars);
-  const filteredVars: Record<string, any> = {};
-  ensureUsedVariableValues(usedVars, variableValues, variableDefaults);
-  for (const name of usedVars) {
-    if (name in variableValues) {
-      filteredVars[name] = variableValues[name];
-    }
-  }
-  const document: DocumentNode = {
-    kind: Kind.DOCUMENT,
-    definitions: [
-      {
-        kind: Kind.OPERATION_DEFINITION,
-        operation: operationType,
-        name: operationName ? { kind: Kind.NAME, value: operationName } : undefined,
-        variableDefinitions: filteredDefs,
-        selectionSet: {
-          kind: Kind.SELECTION_SET,
-          selections: [cleaned],
-        },
-      },
-    ],
-  };
-  return {
-    document,
-    variables: filteredVars,
-  };
 }
 
 function collectEntitiesAtPath(data: any, path: PathSegment[]): Array<Record<string, any>> {
@@ -1081,32 +945,24 @@ function executeFetchNode(
       maybeAbortMutationAfterNullifiedRoot(ctx, responseKey, rootFieldNode.name.value);
     };
 
-    // Prefer plan-prebuilt `node.document` (preparePlanDocuments). Fallback
-    // rebuild is only for hops that skipped prepare (should be rare).
-    let document = node.document;
-    let variables: Record<string, any>;
-    if (document) {
-      variables = {};
-      const op = document.definitions.find(d => d.kind === Kind.OPERATION_DEFINITION);
-      for (const def of op?.variableDefinitions ?? []) {
-        const name = def.variable.name.value;
-        ensureVariableValue(ctx.variableValues, name, ctx.variableDefaults);
-        if (name in ctx.variableValues) {
-          variables[name] = ctx.variableValues[name];
-        }
-      }
-    } else {
-      const built = buildRootDocument(
-        ctx.operation.name?.value,
-        ctx.operation.operation,
-        node.rootField,
-        ctx.operation.variableDefinitions,
-        ctx.variableValues,
-        node.subschema.schema,
-        ctx.variableDefaults,
+    // Plan prebuilds documents (both @skip/@include Condition branches).
+    // Execute only selects the hop and binds variables — never rebuilds docs.
+    const document = node.document;
+    if (!document) {
+      return writeRootThrowFailure(
+        new GraphQLError(`Missing prebuilt document for root field ${rootFieldNode.name.value}`, {
+          extensions: { code: 'MISSING_STITCH_PLAN_DOCUMENT' },
+        }),
       );
-      document = built.document;
-      variables = built.variables;
+    }
+    const variables: Record<string, any> = {};
+    const op = document.definitions.find(d => d.kind === Kind.OPERATION_DEFINITION);
+    for (const def of op?.variableDefinitions ?? []) {
+      const name = def.variable.name.value;
+      ensureVariableValue(ctx.variableValues, name, ctx.variableDefaults);
+      if (name in ctx.variableValues) {
+        variables[name] = ctx.variableValues[name];
+      }
     }
 
     let request: ExecutionRequest = {

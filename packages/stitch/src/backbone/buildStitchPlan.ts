@@ -5268,9 +5268,9 @@ function buildCompletePlan(
   // Wave fold: same dependsOn wave + same subgraph → one BatchFetch
   // (or covering Fetch). Runs after reuse so reuse edges affect wave layers.
   const folded = isMutation ? withReuse : foldSameWaveSubgraphFetches(withReuse, stitchingInfo);
-  // Prebuild stable subgraph documents at plan time (including both Condition
-  // branches and mutations). Execute only binds variable values / applies
-  // transforms — it does not rebuild docs for the taken branch.
+  // Prebuild hop documents at plan time (queries + mutations). For root
+  // @skip/@include Condition, both branches get documents; execute only picks
+  // the taken branch and binds variables / applies transforms — no rebuild.
   const withDocs = preparePlanDocuments(folded, {
     operation,
     fragments,
