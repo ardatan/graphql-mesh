@@ -26,6 +26,10 @@ const ORIGINAL_RESOLVE = Symbol.for('graphql-tools.stitch.backboneOriginalResolv
 /** Marks a resolve fn installed by {@link installRootProxyingResolvers}. */
 const BACKBONE_PROXY_MARK = Symbol.for('graphql-tools.stitch.backboneProxyResolve');
 
+/** Per-request plan result/promise — keyed by context, no context mutation. */
+const planResultByContext = new WeakMap<object, any>();
+const planPromiseByContext = new WeakMap<object, MaybePromise<any>>();
+
 export function isBackboneRootProxy(resolve: GraphQLFieldResolver<any, any> | undefined): boolean {
   return typeof resolve === 'function' && (resolve as any)[BACKBONE_PROXY_MARK] === true;
 }
@@ -101,9 +105,6 @@ export function installRootProxyingResolvers(schema: GraphQLSchema, runBackbone:
   // to the new executor without nesting (always wrap the pre-proxy resolve).
   (schema as any)[PROXYING_INSTALLED] = true;
 
-  const CONTEXT_PLAN_RESULT = Symbol('backboneRootProxyResult');
-  const CONTEXT_PLAN_PROMISE = Symbol('backboneRootProxyPromise');
-
   for (const op of ['query', 'mutation'] as const) {
     const rootType = op === 'query' ? schema.getQueryType() : schema.getMutationType();
     if (!rootType || !isObjectType(rootType)) {
@@ -151,21 +152,20 @@ export function installRootProxyingResolvers(schema: GraphQLSchema, runBackbone:
         ) {
           return previousResolve(root, args, context, info);
         }
-        if (context == null || typeof context !== 'object') {
-          return previousResolve(root, args, context, info);
-        }
+        // Context is always an object (graphql-js execute); WeakMap keys require it.
+        const ctx = context as object;
         const responseKey = info.path.key;
 
         // Share one plan across sibling roots. Never fall through to classic
         // proxying while a plan is in flight - that re-delegates e.g.
         // topProducts and schedules a duplicate inventory mergeFields hop.
         // Root Islands call getOriginalRootResolve() so they do not hit this.
-        const cached = (context as any)[CONTEXT_PLAN_RESULT];
+        const cached = planResultByContext.get(ctx);
         if (cached != null) {
           return applyBackboneResult(cached, responseKey);
         }
 
-        let pending = (context as any)[CONTEXT_PLAN_PROMISE] as MaybePromise<any> | undefined;
+        let pending = planPromiseByContext.get(ctx);
         if (!pending) {
           // GraphQL 17: info.variableValues is `{ coerced, sources }` — unwrap
           // so File/upload scalars and other runtime values reach subgraphs
@@ -187,11 +187,11 @@ export function installRootProxyingResolvers(schema: GraphQLSchema, runBackbone:
           pending = handleMaybePromise(
             () => runBackbone(request),
             result => {
-              (context as any)[CONTEXT_PLAN_RESULT] = result;
+              planResultByContext.set(ctx, result);
               return result;
             },
           );
-          (context as any)[CONTEXT_PLAN_PROMISE] = pending;
+          planPromiseByContext.set(ctx, pending);
         }
         return handleMaybePromise(
           () => pending,
