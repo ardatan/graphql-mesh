@@ -1,7 +1,13 @@
-import { Kind, parse, print, type DocumentNode } from 'graphql';
+import { buildSchema, Kind, parse, print, type DocumentNode } from 'graphql';
 import { buildSubgraphSchema } from '@apollo/subgraph';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
-import { buildStitchPlan, createBackboneExecutor } from '@graphql-tools/stitch';
+import {
+  buildStitchPlan,
+  createBackboneExecutor,
+  getBackboneExecutor,
+  parseContextSelectionPath,
+  readContextValue,
+} from '@graphql-tools/stitch';
 import type { ExecutionRequest } from '@graphql-tools/utils';
 import {
   getStitchedSchemaFromSupergraphSdl,
@@ -211,6 +217,24 @@ describe('Federation @context / @fromContext', () => {
     });
     expect(opts.contextProviders?.['accounts__userContext']).toContain('User');
     expect(opts.schemaExtensions).toBeUndefined();
+  });
+
+  it('stores backboneExecutor on stitchingInfo, not schema.extensions', () => {
+    const schema = createGateway();
+    const stitchingInfo = schema.extensions?.stitchingInfo as {
+      backboneExecutor?: unknown;
+      backboneExecutorOptions?: { overrideLabels?: Iterable<string> };
+    };
+    expect(stitchingInfo.backboneExecutor).toBe(getBackboneExecutor(schema));
+    expect(stitchingInfo.backboneExecutor).toBeDefined();
+    expect(stitchingInfo.backboneExecutorOptions).toBeDefined();
+    expect(
+      (schema.extensions as { backboneExecutor?: unknown } | undefined)?.backboneExecutor,
+    ).toBeUndefined();
+    expect(
+      (schema.extensions as { backboneExecutorOptions?: unknown } | undefined)
+        ?.backboneExecutorOptions,
+    ).toBeUndefined();
   });
 
   it('plans a context-bearing entity hop with parentDepth rewrite', () => {
@@ -529,6 +553,38 @@ const DUAL_ROOT_SUPERGRAPH = /* GraphQL */ `
   }
 `;
 
+/** Direct + wrapped transactions so one selection coalesces paths at depth 1 and 2. */
+const MIXED_DEPTH_SUPERGRAPH = /* GraphQL */ `
+  ${JOIN_PREAMBLE}
+  type Query @join__type(graph: ACCOUNTS) {
+    users: [User]
+  }
+  type User @join__type(graph: ACCOUNTS, key: "id") @context(name: "accounts__userContext") {
+    id: ID!
+    currency: String
+    transactions: [Transaction]
+    wrapper: Wrapper
+  }
+  type Wrapper @join__type(graph: ACCOUNTS) {
+    transactions: [Transaction]
+  }
+  type Transaction @join__type(graph: ACCOUNTS, key: "id") {
+    id: ID!
+    amount: Int
+      @join__field(
+        graph: ACCOUNTS
+        contextArguments: [
+          {
+            context: "accounts__userContext"
+            name: "code"
+            type: "String"
+            selection: " { currency }"
+          }
+        ]
+      )
+  }
+`;
+
 function capturingExecutor(inner: ReturnType<typeof createDefaultExecutor>, bag: Captured[]) {
   return (request: ExecutionRequest) => {
     bag.push({
@@ -542,24 +598,30 @@ function capturingExecutor(inner: ReturnType<typeof createDefaultExecutor>, bag:
 function createUsersSubgraph(opts?: {
   nonNullCode?: boolean;
   withWrapper?: boolean;
+  withMixedDepth?: boolean;
   withMultiplier?: boolean;
   withSecondUsers?: boolean;
+  /** secondUsers share transaction ids with users (reuse / context key). */
+  sharedSecondTx?: boolean;
   nullCurrencyUser?: boolean;
 }) {
   const codeArg = opts?.nonNullCode ? 'code: String!' : 'code: String';
   const amountArgs = opts?.withMultiplier
     ? `(${codeArg} @fromContext(field: "$userContext { currency }"), multiplier: Int)`
     : `(${codeArg} @fromContext(field: "$userContext { currency }"))`;
-  const userFields = opts?.withWrapper
-    ? 'id: ID! currency: String wrapper: Wrapper'
-    : 'id: ID! currency: String transactions: [Transaction]';
-  const wrapperType = opts?.withWrapper
-    ? /* GraphQL */ `
-        type Wrapper {
-          transactions: [Transaction]
-        }
-      `
-    : '';
+  const userFields = opts?.withMixedDepth
+    ? 'id: ID! currency: String transactions: [Transaction] wrapper: Wrapper'
+    : opts?.withWrapper
+      ? 'id: ID! currency: String wrapper: Wrapper'
+      : 'id: ID! currency: String transactions: [Transaction]';
+  const wrapperType =
+    opts?.withWrapper || opts?.withMixedDepth
+      ? /* GraphQL */ `
+          type Wrapper {
+            transactions: [Transaction]
+          }
+        `
+      : '';
   const secondUsers = opts?.withSecondUsers ? 'secondUsers: [User]' : '';
 
   return buildSubgraphSchema([
@@ -590,34 +652,48 @@ function createUsersSubgraph(opts?: {
               {
                 id: 'u1',
                 currency: 'USD',
-                ...(opts?.withWrapper
+                ...(opts?.withMixedDepth
                   ? {
+                      transactions: [{ __typename: 'Transaction', id: 't1' }],
                       wrapper: {
+                        transactions: [{ __typename: 'Transaction', id: 't2' }],
+                      },
+                    }
+                  : opts?.withWrapper
+                    ? {
+                        wrapper: {
+                          transactions: [
+                            { __typename: 'Transaction', id: 't1' },
+                            { __typename: 'Transaction', id: 't2' },
+                          ],
+                        },
+                      }
+                    : {
                         transactions: [
                           { __typename: 'Transaction', id: 't1' },
                           { __typename: 'Transaction', id: 't2' },
                         ],
-                      },
-                    }
-                  : {
-                      transactions: [
-                        { __typename: 'Transaction', id: 't1' },
-                        { __typename: 'Transaction', id: 't2' },
-                      ],
-                    }),
+                      }),
               },
               {
                 id: 'u2',
                 currency: 'EUR',
-                ...(opts?.withWrapper
+                ...(opts?.withMixedDepth
                   ? {
+                      transactions: [{ __typename: 'Transaction', id: 't3' }],
                       wrapper: {
-                        transactions: [{ __typename: 'Transaction', id: 't3' }],
+                        transactions: [{ __typename: 'Transaction', id: 't4' }],
                       },
                     }
-                  : {
-                      transactions: [{ __typename: 'Transaction', id: 't3' }],
-                    }),
+                  : opts?.withWrapper
+                    ? {
+                        wrapper: {
+                          transactions: [{ __typename: 'Transaction', id: 't3' }],
+                        },
+                      }
+                    : {
+                        transactions: [{ __typename: 'Transaction', id: 't3' }],
+                      }),
               },
             ];
             if (opts?.nullCurrencyUser) {
@@ -641,7 +717,12 @@ function createUsersSubgraph(opts?: {
             {
               id: 's1',
               currency: 'GBP',
-              transactions: [{ __typename: 'Transaction', id: 't5' }],
+              transactions: [
+                {
+                  __typename: 'Transaction',
+                  id: opts?.sharedSecondTx ? 't1' : 't5',
+                },
+              ],
             },
           ],
         },
@@ -1002,5 +1083,107 @@ describe('fromContext gateway-parity (adapted from gateway#2703)', () => {
     // follow-up; assert correct fills across both roots for now.
     expect(result.data.users[1].transactions[0].amount).toBe(90);
     void bag;
+  });
+
+  it('mixed provider depths on coalesced paths still fill correctly', async () => {
+    const schema = getStitchedSchemaFromSupergraphSdl({
+      supergraphSdl: MIXED_DEPTH_SUPERGRAPH,
+      onSubschemaConfig(s) {
+        s.executor = createDefaultExecutor(createUsersSubgraph({ withMixedDepth: true }));
+      },
+    });
+    const document = parse(`{
+      users {
+        transactions { amount }
+        wrapper { transactions { amount } }
+      }
+    }`);
+    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, {});
+    let sawProviders = false;
+    const walk = (n: any) => {
+      if (n?.kind === 'Fetch' && n.contextArguments?.[0]?.providerTypeNames?.length) {
+        sawProviders = true;
+        expect(n.contextArguments[0].providerTypeNames).toContain('User');
+      }
+      for (const c of n?.nodes ?? []) walk(c);
+      if (n?.continue) walk(n.continue);
+    };
+    walk(plan.root);
+    expect(sawProviders).toBe(true);
+
+    const { executor } = stitchWithCapture(
+      MIXED_DEPTH_SUPERGRAPH,
+      createUsersSubgraph({ withMixedDepth: true }),
+    );
+    const result = await executor({ document });
+    // Depth-1 (users.transactions) and depth-2 (users.wrapper.transactions)
+    // must both resolve User.currency even if the Fetch shares one parentDepth.
+    expect(result).toEqual({
+      data: {
+        users: [
+          {
+            transactions: [{ amount: 100 }],
+            wrapper: { transactions: [{ amount: 100 }] },
+          },
+          {
+            transactions: [{ amount: 90 }],
+            wrapper: { transactions: [{ amount: 90 }] },
+          },
+        ],
+      },
+    });
+  });
+
+  it('type-conditioned context branches are alternatives', () => {
+    const path = parseContextSelectionPath(
+      '{ ... on User { currency } ... on Other { otherCurrency } }',
+    );
+    expect(path).toEqual([
+      {
+        Alternatives: [
+          [{ TypenameEquals: ['User'] }, { Key: 'currency' }],
+          [{ TypenameEquals: ['Other'] }, { Key: 'otherCurrency' }],
+        ],
+      },
+    ]);
+    const schema = buildSchema(/* GraphQL */ `
+      type Query {
+        _: Boolean
+      }
+      type User {
+        currency: String
+      }
+      type Other {
+        otherCurrency: String
+      }
+    `);
+    expect(readContextValue({ __typename: 'User', currency: 'USD' }, path, schema)).toBe('USD');
+    expect(readContextValue({ __typename: 'Other', otherCurrency: 'EUR' }, path, schema)).toBe(
+      'EUR',
+    );
+    expect(readContextValue({ __typename: 'User', currency: 'USD' }, path, schema)).not.toBe(null);
+    // Wrong branch must not require the other type's field.
+    expect(readContextValue({ __typename: 'Other', currency: 'USD' }, path, schema)).toBeNull();
+  });
+
+  it('entity reuse does not copy amount across different context groups', async () => {
+    const { bag, executor } = stitchWithCapture(
+      DUAL_ROOT_SUPERGRAPH,
+      createUsersSubgraph({ withSecondUsers: true, sharedSecondTx: true }),
+    );
+    const result = (await executor({
+      document: parse(`{
+        users { transactions { amount } }
+        secondUsers { transactions { amount } }
+      }`),
+    })) as { data?: any; errors?: unknown };
+    expect(result.errors).toBeUndefined();
+    // Same representation id `t1` under USD then GBP — must not reuse USD amount.
+    expect(result.data.users[0].transactions[0].amount).toBe(100);
+    expect(result.data.secondUsers[0].transactions[0].amount).toBe(80);
+    // Both context values must reach the subgraph (one aliased HTTP or many).
+    const payload = JSON.stringify(entityRequests(bag));
+    expect(payload).toContain('USD');
+    expect(payload).toContain('GBP');
   });
 });

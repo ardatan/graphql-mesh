@@ -70,7 +70,7 @@ export function createBackboneExecutor(
   const planCache = new WeakMap<ExecutionRequest['document'], Map<string | null, StitchPlan>>();
 
   // Root proxying resolvers: stock graphql-js execute -> this executor. Prefer
-  // `attachBackboneExecutor` so the executor also lands on schema.extensions;
+  // `attachBackboneExecutor` so the executor also lands on stitchingInfo;
   // safe to call again after mapSchema on the final schema object.
   installRootProxyingResolvers(schema, request => stitchingBackboneExecutor(request));
 

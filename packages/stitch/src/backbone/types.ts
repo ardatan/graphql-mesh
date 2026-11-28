@@ -13,9 +13,11 @@ export type PathSegment = string | number;
 
 /**
  * One segment of a Federation context rewrite path after `Parent` depth is
- * peeled off.
+ * peeled off. Sibling type-conditioned fragments become `Alternatives` so
+ * evaluation picks the branch that matches the provider typename.
  */
-export type StitchContextPathSegment = { Key: string } | { TypenameEquals: string[] };
+export type StitchContextPathSegment =
+  { Key: string } | { TypenameEquals: string[] } | { Alternatives: StitchContextPathSegment[][] };
 
 /**
  * How to fill one `@fromContext` argument on an entity Fetch from an ancestor
@@ -30,9 +32,15 @@ export interface StitchContextArgument {
   variableName: string;
   /** GraphQL input type string for the variable. */
   type: string;
-  /** How many object parents to walk up from the entity. */
+  /** How many object parents to walk up from the entity (from a representative path). */
   parentDepth: number;
-  /** Selection from that ancestor (`Key` / `TypenameEquals` segments). */
+  /**
+   * Types that provide this context (`@context` providers). Execute walks
+   * ancestors per entity to the nearest provider so coalesced multi-path
+   * Fetches still resolve the correct depth.
+   */
+  providerTypeNames: string[];
+  /** Selection from that ancestor (`Key` / `TypenameEquals` / `Alternatives`). */
   selectionPath: StitchContextPathSegment[];
 }
 
@@ -216,21 +224,19 @@ export interface BackboneExecutorOptions {
   /**
    * Progressive override label handler (gateway `progressiveOverride`).
    * Used for plan-cache keying when `overrideLabels` is also set.
-   * Persisted on `schema.extensions` so a post-`mapSchema` re-attach needs
-   * no options bag.
+   * Persisted on `stitchingInfo.backboneExecutorOptions` so a post-`mapSchema`
+   * re-attach needs no options bag.
    */
   handleProgressiveOverride?: (label: string, context: any) => boolean | Promise<boolean>;
   /**
    * Known progressive-override labels from the supergraph. Combined with
    * `handleProgressiveOverride` + request context to cache plans per enabled set.
    * Prefer `stitchSchemas({ overrideLabels })` / attach options; persisted on
-   * `backboneExecutorOptions` for optionless re-attach after `mapSchema`.
+   * `stitchingInfo.backboneExecutorOptions` for optionless re-attach after
+   * `mapSchema`.
    */
   overrideLabels?: Iterable<string>;
 }
-
-/** `schema.extensions` key for last-attached {@link BackboneExecutorOptions}. */
-export const BACKBONE_EXECUTOR_OPTIONS_EXTENSION = 'backboneExecutorOptions';
 
 /** Per-call inputs for `buildStitchPlan` (static opts + request context). */
 export interface BuildStitchPlanOptions extends BackboneExecutorOptions {

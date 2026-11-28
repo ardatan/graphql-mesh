@@ -98,13 +98,29 @@ export function parseContextSelectionPath(selection: string): StitchContextPathS
   return selectionSetToPath(op.selectionSet.selections);
 }
 
+/**
+ * Flatten a context selection into rewrite segments. Sibling inline fragments
+ * with type conditions are kept as `Alternatives` (not one sequential path),
+ * so `... on A { x } ... on B { y }` matches whichever provider type applies.
+ */
 function selectionSetToPath(selections: readonly SelectionNode[]): StitchContextPathSegment[] {
-  const path: StitchContextPathSegment[] = [];
+  const typedFrags: Array<{ typeName: string; selections: readonly SelectionNode[] }> = [];
+  const rest: SelectionNode[] = [];
   for (const sel of selections) {
+    if (sel.kind === Kind.INLINE_FRAGMENT && sel.typeCondition) {
+      typedFrags.push({
+        typeName: sel.typeCondition.name.value,
+        selections: sel.selectionSet.selections,
+      });
+      continue;
+    }
+    rest.push(sel);
+  }
+
+  const path: StitchContextPathSegment[] = [];
+  for (const sel of rest) {
     if (sel.kind === Kind.INLINE_FRAGMENT) {
-      if (sel.typeCondition) {
-        path.push({ TypenameEquals: [sel.typeCondition.name.value] });
-      }
+      // Untyped fragment: fold children into this path.
       path.push(...selectionSetToPath(sel.selectionSet.selections));
       continue;
     }
@@ -115,6 +131,25 @@ function selectionSetToPath(selections: readonly SelectionNode[]): StitchContext
       }
     }
   }
+
+  if (!typedFrags.length) {
+    return path;
+  }
+
+  if (typedFrags.length === 1) {
+    const frag = typedFrags[0]!;
+    path.push({ TypenameEquals: [frag.typeName] });
+    path.push(...selectionSetToPath(frag.selections));
+    return path;
+  }
+
+  // Disjoint type-conditioned branches are alternatives, not a sequence.
+  path.push({
+    Alternatives: typedFrags.map(frag => [
+      { TypenameEquals: [frag.typeName] },
+      ...selectionSetToPath(frag.selections),
+    ]),
+  });
   return path;
 }
 
@@ -344,6 +379,7 @@ function resolveContextRewrite(
       variableName,
       type: ca.type,
       parentDepth,
+      providerTypeNames: [...providers],
       selectionPath: parseContextSelectionPath(ca.selection),
     };
   }
@@ -675,6 +711,40 @@ export function readContextValue(
   return selectAlongPath(ancestor, selectionPath, 0, schema);
 }
 
+/**
+ * Nearest context-provider ancestor for a located entity. Prefers walking
+ * `providerTypeNames` from the entity toward the root so multi-path Fetches
+ * with different provider depths still resolve correctly; falls back to
+ * `parentDepth` when providers are unknown.
+ */
+export function resolveContextAncestor(
+  entity: Record<string, any>,
+  ancestors: ReadonlyArray<Record<string, any>>,
+  ca: Pick<StitchContextArgument, 'parentDepth' | 'providerTypeNames'>,
+  schema: GraphQLSchema,
+): Record<string, any> | undefined {
+  const providers = ca.providerTypeNames ?? [];
+  if (providers.length) {
+    for (let d = 0; d <= ancestors.length; d++) {
+      const ancestor = d === 0 ? entity : ancestors[ancestors.length - d];
+      if (ancestor == null || typeof ancestor !== 'object') {
+        continue;
+      }
+      const typename = (ancestor as Record<string, unknown>).__typename;
+      if (typeof typename !== 'string') {
+        continue;
+      }
+      if (providers.some(p => typename === p || typenameSatisfies(schema, typename, p))) {
+        return ancestor as Record<string, any>;
+      }
+    }
+  }
+  if (ca.parentDepth === 0) {
+    return entity;
+  }
+  return ancestors[ancestors.length - ca.parentDepth];
+}
+
 function selectAlongPath(
   value: unknown,
   path: StitchContextPathSegment[],
@@ -694,6 +764,28 @@ function selectAlongPath(
     return null;
   }
   const segment = path[index]!;
+  if ('Alternatives' in segment) {
+    // Try each type-conditioned branch; first matching typename wins.
+    for (const alt of segment.Alternatives) {
+      if (!alt.length) {
+        continue;
+      }
+      const head = alt[0]!;
+      if ('TypenameEquals' in head) {
+        const typename = (value as Record<string, unknown>).__typename;
+        if (typeof typename !== 'string') {
+          continue;
+        }
+        const matches = head.TypenameEquals.some(cond => typenameSatisfies(schema, typename, cond));
+        if (!matches) {
+          continue;
+        }
+        return selectAlongPath(value, [...alt.slice(1), ...path.slice(index + 1)], 0, schema);
+      }
+      return selectAlongPath(value, [...alt, ...path.slice(index + 1)], 0, schema);
+    }
+    return null;
+  }
   if ('TypenameEquals' in segment) {
     const typename = (value as Record<string, unknown>).__typename;
     if (typeof typename !== 'string') {

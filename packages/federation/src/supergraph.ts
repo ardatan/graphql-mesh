@@ -2445,8 +2445,8 @@ export function getStitchedSchemaFromSupergraphSdl(opts: GetStitchedSchemaFromSu
     markChangedRootResolvesAsLocal(supergraphSchema, rootResolvesBefore);
   }
   // Re-attach after mapSchema. Progressive-override inputs come from
-  // stitchSchemas options (stored on backboneExecutorOptions); pass them again
-  // so a fresh schema instance still keys the plan cache correctly.
+  // stitchSchemas options (stored on stitchingInfo.backboneExecutorOptions);
+  // pass them again so a fresh schema instance still keys the plan cache.
   return attachBackboneExecutor(supergraphSchema, {
     overrideLabels: stitchSchemasOpts.overrideLabels,
     handleProgressiveOverride: stitchSchemasOpts.handleProgressiveOverride,

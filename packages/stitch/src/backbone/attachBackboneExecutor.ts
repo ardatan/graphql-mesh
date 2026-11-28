@@ -2,10 +2,7 @@ import { isObjectType, type GraphQLFieldResolver, type GraphQLSchema } from 'gra
 import type { StitchingInfo } from '@graphql-tools/delegate';
 import type { Executor } from '@graphql-tools/utils';
 import { createBackboneExecutor } from './createBackboneExecutor.js';
-import { BACKBONE_EXECUTOR_OPTIONS_EXTENSION, type BackboneExecutorOptions } from './types.js';
-
-/** Schema extension key for the operation-level backbone executor. */
-export const BACKBONE_EXECUTOR_EXTENSION = 'backboneExecutor';
+import type { BackboneExecutorOptions } from './types.js';
 
 type RootResolveSnapshot = Map<string, GraphQLFieldResolver<any, any> | undefined>;
 
@@ -62,17 +59,17 @@ export function markChangedRootResolvesAsLocal(
 }
 
 /**
- * Merge explicit attach options with values already stored on the schema
- * (`backboneExecutorOptions`) so re-attach after `mapSchema` can be optionless.
- * Labels and handlers come from `stitchSchemas` / attach options only (not
- * `schema.extensions.overrideLabels`).
+ * Merge explicit attach options with values already stored on
+ * `stitchingInfo.backboneExecutorOptions` so re-attach after `mapSchema` can
+ * be optionless. Labels and handlers come from `stitchSchemas` / attach
+ * options only.
  */
 export function resolveBackboneExecutorOptions(
   schema: GraphQLSchema,
   options: BackboneExecutorOptions = {},
 ): BackboneExecutorOptions {
-  const stored = schema.extensions?.[BACKBONE_EXECUTOR_OPTIONS_EXTENSION] as
-    BackboneExecutorOptions | undefined;
+  const stitchingInfo = schema.extensions?.stitchingInfo as StitchingInfo | undefined;
+  const stored = stitchingInfo?.backboneExecutorOptions;
   return {
     handleProgressiveOverride:
       options.handleProgressiveOverride ?? stored?.handleProgressiveOverride,
@@ -83,13 +80,13 @@ export function resolveBackboneExecutorOptions(
 /**
  * Install the stitching backbone on a schema:
  * - root Query/Mutation proxying resolvers (stock `graphql-js` execute -> backbone)
- * - `schema.extensions.backboneExecutor` for gateway / direct execute
+ * - `stitchingInfo.backboneExecutor` for gateway / direct execute
  *
  * Call on the **final** schema after any `mapSchema` transforms that yield a
  * new schema instance (e.g. federation filter). Safe to call again to rebind;
- * progressive override opts persist on `schema.extensions` so later
- * re-attaches need no bag. Mesh `@pubsubPublish` belongs in fusion-runtime
- * (executor wrap), not here - do not mapSchema-wrap Mutation fields for it.
+ * progressive override opts persist on `stitchingInfo` so later re-attaches
+ * need no bag. Mesh `@pubsubPublish` belongs in fusion-runtime (executor wrap),
+ * not here - do not mapSchema-wrap Mutation fields for it.
  */
 export function attachBackboneExecutor(
   schema: GraphQLSchema,
@@ -97,15 +94,16 @@ export function attachBackboneExecutor(
 ): GraphQLSchema {
   const resolved = resolveBackboneExecutorOptions(schema, options);
   const executor = createBackboneExecutor(schema, resolved);
-  schema.extensions = {
-    ...schema.extensions,
-    [BACKBONE_EXECUTOR_OPTIONS_EXTENSION]: resolved,
-    [BACKBONE_EXECUTOR_EXTENSION]: executor,
-  };
+  const stitchingInfo = schema.extensions?.stitchingInfo as StitchingInfo | undefined;
+  if (stitchingInfo) {
+    stitchingInfo.backboneExecutorOptions = resolved;
+    stitchingInfo.backboneExecutor = executor;
+  }
   return schema;
 }
 
-/** Read the backbone executor from schema extensions, if attached. */
+/** Read the backbone executor from `stitchingInfo`, if attached. */
 export function getBackboneExecutor(schema: GraphQLSchema): Executor | undefined {
-  return schema.extensions?.[BACKBONE_EXECUTOR_EXTENSION] as Executor | undefined;
+  const stitchingInfo = schema.extensions?.stitchingInfo as StitchingInfo | undefined;
+  return stitchingInfo?.backboneExecutor;
 }

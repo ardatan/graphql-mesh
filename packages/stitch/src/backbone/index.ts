@@ -1,6 +1,5 @@
 export {
   attachBackboneExecutor,
-  BACKBONE_EXECUTOR_EXTENSION,
   getBackboneExecutor,
   markChangedRootResolvesAsLocal,
   resolveBackboneExecutorOptions,
@@ -8,6 +7,11 @@ export {
 } from './attachBackboneExecutor.js';
 export { defaultMergedResolver } from './defaultMergedResolver.js';
 export { buildStitchPlan } from './buildStitchPlan.js';
+export {
+  parseContextSelectionPath,
+  readContextValue,
+  resolveContextAncestor,
+} from './contextArguments.js';
 export { createBackboneExecutor } from './createBackboneExecutor.js';
 export { executeStitchPlan } from './executeStitchPlan.js';
 export { isLocalField } from './localFields.js';
@@ -18,7 +22,6 @@ export {
   installRootProxyingResolvers,
 } from './rootProxyingResolvers.js';
 export {
-  BACKBONE_EXECUTOR_OPTIONS_EXTENSION,
   type BackboneExecutorOptions,
   type BuildStitchPlanOptions,
   type StitchPlan,

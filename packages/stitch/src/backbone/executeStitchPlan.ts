@@ -45,7 +45,11 @@ import {
 } from '@graphql-tools/utils';
 import { handleMaybePromise, isPromise, type MaybePromise } from '@whatwg-node/promise-helpers';
 import { asGetArgumentValuesVariables } from '../variableValues.js';
-import { readContextValue, stableStringifyContext } from './contextArguments.js';
+import {
+  readContextValue,
+  resolveContextAncestor,
+  stableStringifyContext,
+} from './contextArguments.js';
 import {
   buildBatchedMergeDocument,
   getBatchedMergeEntry,
@@ -294,8 +298,12 @@ function representationHash(
   parent: Record<string, any>,
   hopSubschema: Subschema,
   entityTypeName: string,
+  /** Context value tuple identity; required for contextual hops. */
+  contextIdentity?: string | null,
 ): string | null {
   const sub = hopSubschema.name ?? `anon:${entityTypeName}`;
+  const withContext = (base: string) =>
+    contextIdentity != null && contextIdentity !== '' ? `${base}::ctx:${contextIdentity}` : base;
   const entry = getBatchedMergeEntry(hopSubschema, entityTypeName);
   if (entry) {
     const key = entry.key(parent);
@@ -304,8 +312,8 @@ function representationHash(
     }
     const cacheKeyFn = entry.dataLoaderOptions?.cacheKeyFn;
     const identity = cacheKeyFn != null ? String(cacheKeyFn(key)) : JSON.stringify(key);
-    // Scope by subgraph + type + key (entity-reuse representation hash).
-    return `${sub}::${entityTypeName}::${identity}`;
+    // Scope by subgraph + type + key (+ context when contextual).
+    return withContext(`${sub}::${entityTypeName}::${identity}`);
   }
   // Classic stitching merge (`args` / selectionSet) — hash the merge args
   // or key fields so same-rep parents share one fetch.
@@ -319,7 +327,7 @@ function representationHash(
       if (args == null) {
         return null;
       }
-      return `${sub}::${entityTypeName}::args:${JSON.stringify(args)}`;
+      return withContext(`${sub}::${entityTypeName}::args:${JSON.stringify(args)}`);
     } catch {
       return null;
     }
@@ -329,7 +337,7 @@ function representationHash(
     if (key == null) {
       return null;
     }
-    return `${sub}::${entityTypeName}::key:${JSON.stringify(key)}`;
+    return withContext(`${sub}::${entityTypeName}::key:${JSON.stringify(key)}`);
   }
   return null;
 }
@@ -339,11 +347,12 @@ function rememberEntityForReuse(
   hopSubschema: Subschema,
   entityTypeName: string,
   parent: Record<string, any>,
+  contextIdentity?: string | null,
 ): void {
   if (!entityReuseAllowed(ctx)) {
     return;
   }
-  const hash = representationHash(parent, hopSubschema, entityTypeName);
+  const hash = representationHash(parent, hopSubschema, entityTypeName, contextIdentity);
   if (!hash) {
     return;
   }
@@ -357,6 +366,8 @@ function rememberEntityForReuse(
 /**
  * Copy reused fields onto parent when a prior hop already produced the same
  * representation with the needed leaves. Returns true when parent is complete.
+ * Pass `contextIdentity` for `@fromContext` hops so reuse does not cross
+ * distinct context value groups.
  */
 function tryReuseEntityIntoParent(
   ctx: BackboneExecutionContext,
@@ -364,6 +375,7 @@ function tryReuseEntityIntoParent(
   entityTypeName: string,
   parent: Record<string, any>,
   selectionSet: SelectionSetNode,
+  contextIdentity?: string | null,
 ): boolean {
   if (!entityReuseAllowed(ctx) || !ctx.entityByRepHash?.size) {
     // Fall back: parent already has the needed selection from an earlier merge.
@@ -372,7 +384,7 @@ function tryReuseEntityIntoParent(
   if (selectionSatisfiedBy(parent, selectionSet)) {
     return true;
   }
-  const hash = representationHash(parent, hopSubschema, entityTypeName);
+  const hash = representationHash(parent, hopSubschema, entityTypeName, contextIdentity);
   if (!hash) {
     return false;
   }
@@ -1095,18 +1107,29 @@ function tryExecuteEntitiesBatchWithContext(
       seen.add(entity);
       const contextVars: Record<string, unknown> = {};
       for (const ca of contextArguments) {
-        const ancestor =
-          ca.parentDepth === 0 ? entity : ancestors[ancestors.length - ca.parentDepth];
+        // Per-entity nearest provider (not the Fetch's representative parentDepth)
+        // so coalesced paths at different depths still get the right ancestor.
+        const ancestor = resolveContextAncestor(entity, ancestors, ca, ctx.schema);
         const value =
           ancestor === undefined
             ? null
             : (readContextValue(ancestor, ca.selectionPath, ctx.schema) ?? null);
         contextVars[ca.variableName] = value;
       }
+      const groupKey = stableStringifyContext(
+        contextArguments.map(ca => contextVars[ca.variableName]),
+      );
+      // Reuse only when a prior hop stored this representation under the same
+      // context identity (rep-only keys must not satisfy contextual fields).
+      if (
+        tryReuseEntityIntoParent(ctx, hopSubschema, typeName, entity, node.selectionSet, groupKey)
+      ) {
+        continue;
+      }
       located.push({
         entity,
         ancestors,
-        groupKey: stableStringifyContext(contextArguments.map(ca => contextVars[ca.variableName])),
+        groupKey,
         contextVars,
       });
     }
@@ -1209,7 +1232,13 @@ function tryExecuteEntitiesBatchWithContext(
         ctx.schema,
         node.subschema,
       );
-      rememberEntityForReuse(ctx, node.subschema, typeName, prep.items[i]!.entity);
+      rememberEntityForReuse(
+        ctx,
+        node.subschema,
+        typeName,
+        prep.items[i]!.entity,
+        prep.items[i]!.groupKey,
+      );
     }
   };
 
@@ -1815,7 +1844,9 @@ function executeFetchNode(
   }
 
   // Always-on entity reuse (queries): copy by rep-hash / parent leaves, skip HTTP.
-  if (entityReuseAllowed(ctx)) {
+  // Contextual hops resolve reuse inside tryExecuteEntitiesBatchWithContext so
+  // the cache key can include the context value tuple.
+  if (entityReuseAllowed(ctx) && !node.contextArguments?.length) {
     parents = parents.filter(
       p =>
         !tryReuseEntityIntoParent(ctx, node.subschema, node.entityTypeName!, p, node.selectionSet),

@@ -165,10 +165,10 @@ export function stitchSchemas<TContext extends Record<string, any> = Record<stri
     ).contextProviders = contextProvidersOption;
   }
 
-  // Backbone executor + root proxying resolvers on the stitched schema.
-  // Callers that mapSchema afterward (e.g. federation filter) must re-attach
-  // on the new instance. Progressive-override inputs come from stitchSchemas
-  // options (not schema.extensions.overrideLabels).
+  // Backbone executor + root proxying resolvers on the stitched schema
+  // (stored on stitchingInfo). Callers that mapSchema afterward (e.g.
+  // federation filter) must re-attach on the new instance. Progressive-override
+  // inputs come from stitchSchemas options.
   return attachBackboneExecutor(schema, {
     ...(overrideLabelsOption != null ? { overrideLabels: overrideLabelsOption } : {}),
     ...(handleProgressiveOverrideOption != null

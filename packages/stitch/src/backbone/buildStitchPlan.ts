@@ -5486,6 +5486,8 @@ function attachContextArgumentsToPlan(
   if (node.kind === 'BatchFetch') {
     // Contextual aliases must not share the raw BatchFetch document (no arg
     // injection). Expand them to Fetch hops that carry contextArguments.
+    // Preserve BatchFetch id/dependsOn on each expanded Fetch so dataflow
+    // schedule stays valid (completesIds covers the original batch id).
     const ordinary: typeof node.aliases = [];
     const contextual: StitchPlanNode[] = [];
     for (const alias of node.aliases) {
@@ -5513,6 +5515,9 @@ function attachContextArgumentsToPlan(
       );
       contextual.push({
         kind: 'Fetch',
+        id: node.id,
+        completesIds: node.completesIds ?? (node.id ? [node.id] : undefined),
+        dependsOn: node.dependsOn,
         subschema: node.subschema,
         entityTypeName: alias.entityTypeName,
         selectionSet: alias.selectionSet,
@@ -5543,6 +5548,8 @@ function attachContextArgumentsToPlan(
     ) {
       return node;
     }
+    // Representative parentDepth from flattenPaths[0]; execute resolves the
+    // nearest provider per entity via providerTypeNames (multi-path safe).
     const path = node.flattenPaths[0]!;
     const contextArguments = buildContextArgumentsForFetch(
       schema,
