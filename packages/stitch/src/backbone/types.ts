@@ -92,7 +92,7 @@ export type StitchPlanNode =
       variableNames?: readonly string[];
       /**
        * When set, hop runs only if any DNF AND-group matches `variableValues`.
-       * Root `@skip`/`@include` use Condition nodes; runIf remains for fold/batch.
+       * Root `@skip`/`@include` stamp runIf so the hop set stays cacheable.
        */
       runIf?: StitchRunIf;
       /**

@@ -10,7 +10,7 @@ import {
   type Executor,
 } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
-import { buildStitchPlan } from './buildStitchPlan.js';
+import { buildStitchPlan, coerceOperationVariables } from './buildStitchPlan.js';
 import { executeStitchPlan } from './executeStitchPlan.js';
 import { projectDataToOperation } from './projectResult.js';
 import type { StitchPlan } from './types.js';
@@ -129,6 +129,11 @@ export function executor(
 
   const plan = getCachedPlan(activeSchema, request);
   const op = operation ?? plan.operation;
+  const coerced = coerceOperationVariables(op, request.variables ?? {});
+  const requestWithCoercedVars: ExecutionRequest = {
+    ...request,
+    variables: coerced,
+  };
 
   if (plan.incomplete) {
     return {
@@ -143,7 +148,7 @@ export function executor(
   }
 
   return handleMaybePromise(
-    () => executeStitchPlan(activeSchema, plan, request),
+    () => executeStitchPlan(activeSchema, plan, requestWithCoercedVars),
     (result: ExecutionResult) => {
       if (isAsyncIterable(result)) {
         return result;
@@ -154,7 +159,7 @@ export function executor(
           activeSchema,
           op,
           plan.fragments,
-          request.variables ?? {},
+          coerced,
           result.data as any,
         ) as any,
       };

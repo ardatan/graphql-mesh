@@ -1,6 +1,6 @@
 export { executor, getBackboneExecutorBySchema } from './executor.js';
 export { defaultMergedResolver } from './defaultMergedResolver.js';
-export { buildStitchPlan } from './buildStitchPlan.js';
+export { buildStitchPlan, coerceOperationVariables } from './buildStitchPlan.js';
 export { executeStitchPlan } from './executeStitchPlan.js';
 export { isLocalField } from './localFields.js';
 export { projectDataToOperation } from './projectResult.js';
