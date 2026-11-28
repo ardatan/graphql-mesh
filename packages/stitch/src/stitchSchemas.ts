@@ -32,7 +32,7 @@ import {
 } from '@graphql-tools/schema';
 import { inspect, type IResolvers } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
-import { attachBackboneExecutor } from './backbone/attachBackboneExecutor.js';
+import { attachBackboneExecutor } from './backbone/createBackboneExecutor.js';
 import { defaultMergedResolver as backboneDefaultMergedResolver } from './backbone/defaultMergedResolver.js';
 import { BACKBONE_EXECUTING } from './backbone/rootProxyingResolvers.js';
 import { resolveLocalFieldResult } from './resolveLocalFieldResult.js';
