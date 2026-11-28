@@ -4,7 +4,11 @@ schema
   query: Query
 }
 
-directive @core(as: String, feature: String!, for: core__Purpose) repeatable on SCHEMA
+directive @core(
+  as: String
+  feature: String!
+  for: core__Purpose
+) repeatable on SCHEMA
 
 directive @join__field(
   graph: join__Graph
@@ -16,7 +20,10 @@ directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
 directive @join__owner(graph: join__Graph!) on INTERFACE | OBJECT
 
-directive @join__type(graph: join__Graph!, key: join__FieldSet) repeatable on INTERFACE | OBJECT
+directive @join__type(
+  graph: join__Graph!
+  key: join__FieldSet
+) repeatable on INTERFACE | OBJECT
 
 enum ReviewsOrder @join__type(graph: SERVICE2) {
   ASC @join__enumValue(graph: SERVICE2)

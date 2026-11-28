@@ -1,10 +1,12 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { parse } from 'graphql';
 import { ApolloServer } from '@apollo/server';
 import { buildSubgraphSchema } from '@apollo/subgraph';
+import { parse } from 'graphql';
 
-export const typeDefs = parse(readFileSync(join(__dirname, 'typeDefs.graphql'), 'utf8'));
+export const typeDefs = parse(
+  readFileSync(join(__dirname, 'typeDefs.graphql'), 'utf8'),
+);
 
 export const resolvers = {
   Review: {
@@ -14,19 +16,19 @@ export const resolvers = {
   },
   User: {
     reviews(user: any) {
-      return reviews.filter(review => review.authorID === user.id);
+      return reviews.filter((review) => review.authorID === user.id);
     },
     numberOfReviews(user: any) {
-      return reviews.filter(review => review.authorID === user.id).length;
+      return reviews.filter((review) => review.authorID === user.id).length;
     },
     username(user: any) {
-      const found = usernames.find(username => username.id === user.id);
+      const found = usernames.find((username) => username.id === user.id);
       return found ? found.username : null;
     },
   },
   Product: {
     reviews(product: any) {
-      return reviews.filter(review => review.product.upc === product.upc);
+      return reviews.filter((review) => review.product.upc === product.upc);
     },
   },
 };

@@ -18,12 +18,11 @@ import {
 } from 'graphql';
 import {
   createDefaultExecutor,
+  delegateToSchema,
   FIELD_SUBSCHEMA_MAP_SYMBOL,
   mergeFields,
   OBJECT_SUBSCHEMA_SYMBOL,
-  Transformer,
   UNPATHED_ERRORS_SYMBOL,
-  type DelegationContext,
   type StitchingInfo,
   type Subschema,
 } from '@graphql-tools/delegate';
@@ -789,12 +788,25 @@ function mergeRootValues(existing: any, incoming: any): any {
     !Array.isArray(existing) &&
     !Array.isArray(incoming)
   ) {
-    // mergeDeep copies enumerable props; re-apply annotation symbols from either side.
-    const merged = mergeDeep([existing, incoming], undefined, true, true);
-    const sourceSub =
-      (existing as any)[OBJECT_SUBSCHEMA_SYMBOL] ?? (incoming as any)[OBJECT_SUBSCHEMA_SYMBOL];
-    if (sourceSub && merged && typeof merged === 'object') {
-      stampSubschema(merged, sourceSub);
+    // mergeDeep drops non-enumerable symbols unless asked; shared-root Parallel
+    // must keep ExternalObject annotations so alias-aware gateway resolvers run.
+    // Do not merge symbols via mergeDeep — Subschema graphs are cyclic.
+    const merged = mergeDeep([existing, incoming], false, true, true);
+    if (merged && typeof merged === 'object') {
+      const sourceSub =
+        (existing as any)[OBJECT_SUBSCHEMA_SYMBOL] ?? (incoming as any)[OBJECT_SUBSCHEMA_SYMBOL];
+      if (sourceSub) {
+        const leftErrors = (existing as any)[UNPATHED_ERRORS_SYMBOL] as any[] | undefined;
+        const rightErrors = (incoming as any)[UNPATHED_ERRORS_SYMBOL] as any[] | undefined;
+        const errors =
+          leftErrors?.length || rightErrors?.length
+            ? [...(leftErrors ?? []), ...(rightErrors ?? [])]
+            : [];
+        stampSubschema(merged, sourceSub, errors);
+      } else if ((merged as any)[UNPATHED_ERRORS_SYMBOL] == null) {
+        // Still mark as external so defaultMergedResolver reads alias keys.
+        (merged as any)[UNPATHED_ERRORS_SYMBOL] = [];
+      }
       const leftMap = (existing as any)[FIELD_SUBSCHEMA_MAP_SYMBOL];
       const rightMap = (incoming as any)[FIELD_SUBSCHEMA_MAP_SYMBOL];
       if (leftMap || rightMap) {
@@ -945,6 +957,50 @@ function executeFetchNode(
       maybeAbortMutationAfterNullifiedRoot(ctx, responseKey, rootFieldNode.name.value);
     };
 
+    // Rename / encapsulate / defer transforms need delegateToSchema —
+    // prebuilt documents use gateway field names and would miss subgraph renames.
+    // Match Hive #2734: fieldName = schema field name, write returned value.
+    if (node.subschema.transforms?.length) {
+      const hopSubschema = node.subschema;
+      const rootType = getDefinedRootType(ctx.schema, ctx.operation.operation);
+      const fieldDef = rootType.getFields()[rootFieldNode.name.value];
+      const args = fieldDef
+        ? getArgumentValues(
+            fieldDef,
+            rootFieldNode,
+            asGetArgumentValuesVariables(ctx.variableValues),
+          )
+        : {};
+      const info = {
+        ...(ctx.infoStub as any),
+        schema: ctx.schema,
+        parentType: rootType,
+        returnType: fieldDef?.type,
+        fieldName: rootFieldNode.name.value,
+        fieldNodes: [rootFieldNode],
+        fragments: ctx.fragments,
+        operation: ctx.operation,
+        variableValues: ctx.variableValues,
+        path: { typename: rootType.name, key: responseKey, prev: undefined },
+        rootValue: ctx.rootValue,
+      };
+      return handleMaybePromise(
+        () =>
+          delegateToSchema({
+            schema: hopSubschema,
+            operation: ctx.operation.operation,
+            fieldName: rootFieldNode.name.value,
+            args,
+            selectionSet: rootFieldNode.selectionSet,
+            context: ctx.contextValue,
+            info: info as any,
+            skipTypeMerging: true,
+          }),
+        value => writeRootResult(value),
+        writeRootThrowFailure,
+      );
+    }
+
     // Plan prebuilds documents (both @skip/@include Condition branches).
     // Execute only selects the hop and binds variables — never rebuilds docs.
     const document = node.document;
@@ -966,7 +1022,7 @@ function executeFetchNode(
       }
     }
 
-    let request: ExecutionRequest = {
+    const request: ExecutionRequest = {
       document,
       variables,
       context: ctx.contextValue,
@@ -977,51 +1033,9 @@ function executeFetchNode(
       subgraphName: node.subschema.name,
     };
 
-    // Rename / encapsulate / defer: transformRequest → executor → transformResult
-    // (Hive/Router style). Do not call delegateToSchema.
-    const transforms = node.subschema.transforms;
-    let transformer: Transformer | undefined;
-    if (transforms?.length) {
-      const rootType = getDefinedRootType(ctx.schema, ctx.operation.operation);
-      const fieldDef = rootType.getFields()[rootFieldNode.name.value];
-      const info = {
-        ...(ctx.infoStub as any),
-        schema: ctx.schema,
-        parentType: rootType,
-        returnType: fieldDef?.type,
-        fieldName: rootFieldNode.name.value,
-        fieldNodes: [rootFieldNode],
-        fragments: ctx.fragments,
-        operation: ctx.operation,
-        variableValues: ctx.variableValues,
-        path: { typename: rootType.name, key: responseKey, prev: undefined },
-        rootValue: ctx.rootValue,
-      };
-      const delegationContext: DelegationContext = {
-        subschema: node.subschema,
-        subschemaConfig: node.subschema,
-        targetSchema: node.subschema.schema,
-        operation: ctx.operation.operation,
-        // Response key in the hop document (alias or field name).
-        fieldName: responseKey,
-        context: ctx.contextValue,
-        info: info as any,
-        returnType: fieldDef?.type ?? (rootType as unknown as GraphQLOutputType),
-        transforms,
-        transformedSchema: node.subschema.transformedSchema,
-        skipTypeMerging: true,
-      };
-      transformer = new Transformer(delegationContext);
-      request = transformer.transformRequest(request);
-    }
-
     return handleMaybePromise(
       () => executor(request) as MaybePromise<ExecutionResult>,
       (result: ExecutionResult) => {
-        if (transformer) {
-          writeRootResult(transformer.transformResult(result));
-          return;
-        }
         const located = result.errors?.length ? (result.errors as GraphQLError[]) : [];
         if (result.data && responseKey in result.data) {
           writeRootResult(result.data[responseKey], located);
@@ -1589,6 +1603,14 @@ function runSameKeyRootFetches(
         }
         if (merged === undefined || failedFetchExplainsHole(runnable[i]!, merged)) {
           ctx.errors.push(...part.errors);
+          // Stamp onto the merged ExternalObject so nested field resolves can
+          // rethrow the original subgraph error (not a nullability bubble).
+          if (merged != null && typeof merged === 'object') {
+            const existing = (merged as any)[UNPATHED_ERRORS_SYMBOL] as any[] | undefined;
+            (merged as any)[UNPATHED_ERRORS_SYMBOL] = existing?.length
+              ? [...existing, ...part.errors]
+              : [...part.errors];
+          }
         }
       }
       if (merged !== undefined) {

@@ -660,27 +660,29 @@ function fieldFetchableOnSubschema(
   return true;
 }
 
+/** Origin of @provides on a parent field - used to expand type-conditioned provides. */
+type ProvidesOrigin = {
+  parentTypeName: string;
+  parentFieldName: string;
+  /**
+   * Current `@provides` selection set at this nesting level. Root origins look
+   * this up from stitchingInfo; nested origins carry the subtree under the
+   * parent provided field so deeper externals stay covered.
+   */
+  providedSelectionSet?: SelectionSetNode;
+};
+
 /**
- * Field names covered by `@provides` on a parent field for a given subschema.
+ * Field names covered by a `@provides` selection set.
  *
  * - `forTypeName` omitted: only unconditional fields (e.g. `categories { id }`).
  * - `forTypeName` set: also fields under `... on forTypeName` (e.g. media
  *   provides `... on Book { title }` -> title when partitioning Book).
  */
-function getProvidedFieldNames(
-  stitchingInfo: StitchingInfo,
-  parentTypeName: string,
-  parentFieldName: string,
-  subschema: Subschema,
+function fieldNamesFromProvidesSelectionSet(
+  provided: SelectionSetNode,
   forTypeName?: string,
 ): Set<string> {
-  const provided =
-    stitchingInfo.mergedTypes[parentTypeName]?.providedSelectionsByField?.get(subschema)?.[
-      parentFieldName
-    ];
-  if (!provided) {
-    return new Set();
-  }
   const names = new Set<string>();
   const visit = (selections: readonly SelectionNode[], activeType: string | null) => {
     for (const sel of selections) {
@@ -702,15 +704,61 @@ function getProvidedFieldNames(
 }
 
 /**
+ * Field names covered by `@provides` on a parent field for a given subschema.
+ */
+function getProvidedFieldNames(
+  stitchingInfo: StitchingInfo,
+  parentTypeName: string,
+  parentFieldName: string,
+  subschema: Subschema,
+  forTypeName?: string,
+): Set<string> {
+  const provided =
+    stitchingInfo.mergedTypes[parentTypeName]?.providedSelectionsByField?.get(subschema)?.[
+      parentFieldName
+    ];
+  if (!provided) {
+    return new Set();
+  }
+  return fieldNamesFromProvidesSelectionSet(provided, forTypeName);
+}
+
+/**
+ * Nested `@provides` coverage under `fieldName` in an origin's selection set
+ * (e.g. Query.products provides `categories { id name subCategories { … } }`
+ * → under `categories` the provided names are id/name/subCategories).
+ */
+function getNestedProvidesSelectionSet(
+  origin: ProvidesOrigin | undefined,
+  fieldName: string,
+): SelectionSetNode | undefined {
+  const provided = origin?.providedSelectionSet;
+  if (!provided) {
+    return undefined;
+  }
+  let found: SelectionSetNode | undefined;
+  const visit = (selections: readonly SelectionNode[]) => {
+    for (const sel of selections) {
+      if (sel.kind === Kind.FIELD && sel.name.value === fieldName && sel.selectionSet) {
+        found = sel.selectionSet;
+        return;
+      }
+      if (sel.kind === Kind.INLINE_FRAGMENT && sel.selectionSet) {
+        visit(sel.selectionSet.selections);
+        if (found) {
+          return;
+        }
+      }
+    }
+  };
+  visit(provided.selections);
+  return found;
+}
+
+/**
  * Split a selection set into fields available on `subschema` vs the rest.
  * Used when building a root/entity Fetch for one subgraph.
  */
-/** Origin of @provides on a parent field - used to expand type-conditioned provides. */
-type ProvidesOrigin = {
-  parentTypeName: string;
-  parentFieldName: string;
-};
-
 function partitionSelectionsForSubschema(
   subschema: Subschema,
   typeName: string,
@@ -724,16 +772,18 @@ function partitionSelectionsForSubschema(
 ): { available: SelectionNode[]; unavailable: SelectionNode[] } {
   const available: SelectionNode[] = [];
   const unavailable: SelectionNode[] = [];
+  // Resolve the provides selection set for this origin (root lookup or nested subtree).
+  const originSelectionSet =
+    providesOrigin?.providedSelectionSet ??
+    (stitchingInfo && providesOrigin
+      ? stitchingInfo.mergedTypes[providesOrigin.parentTypeName]?.providedSelectionsByField?.get(
+          subschema,
+        )?.[providesOrigin.parentFieldName]
+      : undefined);
   // Merge type-conditioned provides (e.g. `... on Book { title }`) for this typeName.
   let effectiveProvided = providedFieldNames;
-  if (stitchingInfo && providesOrigin) {
-    const typed = getProvidedFieldNames(
-      stitchingInfo,
-      providesOrigin.parentTypeName,
-      providesOrigin.parentFieldName,
-      subschema,
-      typeName,
-    );
+  if (originSelectionSet) {
+    const typed = fieldNamesFromProvidesSelectionSet(originSelectionSet, typeName);
     if (typed.size) {
       effectiveProvided = new Set([...(providedFieldNames ?? []), ...typed]);
     }
@@ -874,24 +924,49 @@ function partitionSelectionsForSubschema(
             ? getNamedType(gatewayField.type)
             : undefined;
         const nestedTypeName = nestedReturn?.name ?? typeName;
-        // @provides on this field (e.g. products.categories -> name) apply to
-        // the nested type's partition, not the parent type's.
-        const nestedOrigin: ProvidesOrigin | undefined = stitchingInfo
+        // Nested @provides coverage: prefer a provides entry registered on this
+        // field, else walk into the parent origin's selection under this field
+        // (Query.products provides `categories { subCategories {…} }` → Category
+        // sees subCategories as provided without an owner hop).
+        const directNestedProvided =
+          stitchingInfo != null
+            ? getProvidedFieldNames(stitchingInfo, typeName, selection.name.value, subschema)
+            : undefined;
+        const nestedProvidesSs = getNestedProvidesSelectionSet(
+          originSelectionSet
+            ? {
+                parentTypeName: providesOrigin?.parentTypeName ?? typeName,
+                parentFieldName: providesOrigin?.parentFieldName ?? selection.name.value,
+                providedSelectionSet: originSelectionSet,
+              }
+            : providesOrigin,
+          selection.name.value,
+        );
+        const fromNestedOrigin = nestedProvidesSs
+          ? fieldNamesFromProvidesSelectionSet(nestedProvidesSs)
+          : undefined;
+        const nestedProvided = new Set<string>([
+          ...(directNestedProvided ?? []),
+          ...(fromNestedOrigin ?? []),
+        ]);
+        const nestedOrigin: ProvidesOrigin | undefined = nestedProvidesSs
           ? {
               parentTypeName: typeName,
               parentFieldName: selection.name.value,
+              providedSelectionSet: nestedProvidesSs,
             }
-          : undefined;
-        const nestedProvided =
-          stitchingInfo != null
-            ? getProvidedFieldNames(stitchingInfo, typeName, selection.name.value, subschema)
+          : stitchingInfo
+            ? {
+                parentTypeName: typeName,
+                parentFieldName: selection.name.value,
+              }
             : undefined;
         const nested = partitionSelectionsForSubschema(
           subschema,
           nestedTypeName,
           selection.selectionSet,
           fragments,
-          nestedProvided?.size ? nestedProvided : undefined,
+          nestedProvided.size ? nestedProvided : undefined,
           stitchingInfo,
           gatewaySchema,
           nestedOrigin,

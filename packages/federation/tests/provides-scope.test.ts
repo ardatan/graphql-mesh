@@ -1,7 +1,7 @@
-import { parse, print } from 'graphql';
 import { buildSubgraphSchema } from '@apollo/subgraph';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { ExecutionRequest } from '@graphql-tools/utils';
+import { parse, print } from 'graphql';
 import { getStitchedSchemaFromLocalSchemas } from './getStitchedSchemaFromLocalSchemas';
 
 describe('@provides only fetches client-requested fields', () => {
@@ -9,68 +9,64 @@ describe('@provides only fetches client-requested fields', () => {
   // `@provides` on a field, the gateway should only fetch the @provides fields
   // the client actually requested, not every field listed in @provides.
   it('does not request @provides fields the client did not ask for', async () => {
-    const a = buildSubgraphSchema([
-      {
-        typeDefs: parse(/* GraphQL */ `
-          type Query {
-            _aPlaceholder: Boolean
-          }
+    const a = buildSubgraphSchema([{
+      typeDefs: parse(/* GraphQL */ `
+        type Query {
+          _aPlaceholder: Boolean
+        }
 
-          type Entity @key(fields: "id") {
-            id: ID!
-            name: String!
-            description: String!
-          }
-        `),
-        resolvers: {
-          Entity: {
-            __resolveReference({ id }: { id: string }) {
-              return {
-                id,
-                name: `name from A for ${id}`,
-                description: `description from A for ${id}`,
-              };
-            },
+        type Entity @key(fields: "id") {
+          id: ID!
+          name: String!
+          description: String!
+        }
+      `),
+      resolvers: {
+        Entity: {
+          __resolveReference({ id }: { id: string }) {
+            return {
+              id,
+              name: `name from A for ${id}`,
+              description: `description from A for ${id}`,
+            };
           },
         },
       },
-    ]);
+    }]);
 
-    const b = buildSubgraphSchema([
-      {
-        typeDefs: parse(/* GraphQL */ `
-          type Query {
-            entity: Entity @provides(fields: "name description")
-          }
+    const b = buildSubgraphSchema([{
+      typeDefs: parse(/* GraphQL */ `
+        type Query {
+          entity: Entity @provides(fields: "name description")
+        }
 
-          type Entity @key(fields: "id") {
-            id: ID!
-            name: String! @external
-            description: String! @external
-          }
-        `),
-        resolvers: {
-          Query: {
-            entity() {
-              return {
-                id: '1',
-                name: 'name from B',
-                description: 'description from B',
-              };
-            },
+        type Entity @key(fields: "id") {
+          id: ID!
+          name: String! @external
+          description: String! @external
+        }
+      `),
+      resolvers: {
+        Query: {
+          entity() {
+            return {
+              id: '1',
+              name: 'name from B',
+              description: 'description from B',
+            };
           },
-          Entity: {
-            __resolveReference({ id }: { id: string }) {
-              return {
-                id,
-                name: `name from B for ${id}`,
-                description: `description from B for ${id}`,
-              };
-            },
+        },
+        Entity: {
+          __resolveReference({ id }: { id: string }) {
+            return {
+              id,
+              name: `name from B for ${id}`,
+              description: `description from B for ${id}`,
+            };
           },
         },
       },
-    ]);
+    }]);
 
     const subgraphCalls: { subgraph: string; query: string }[] = [];
     const schema = await getStitchedSchemaFromLocalSchemas({
@@ -111,70 +107,66 @@ describe('@provides only fetches client-requested fields', () => {
   });
 
   it('requests every @provides field that was asked for and skips the rest', async () => {
-    const a = buildSubgraphSchema([
-      {
-        typeDefs: parse(/* GraphQL */ `
-          type Query {
-            _aPlaceholder: Boolean
-          }
+    const a = buildSubgraphSchema([{
+      typeDefs: parse(/* GraphQL */ `
+        type Query {
+          _aPlaceholder: Boolean
+        }
 
-          type Entity @key(fields: "id") {
-            id: ID!
-            name: String!
-            description: String!
-            extra: String!
-          }
-        `),
-        resolvers: {
-          Entity: {
-            __resolveReference({ id }: { id: string }) {
-              return {
-                id,
-                name: `A:name`,
-                description: `A:description`,
-                extra: `A:extra`,
-              };
-            },
+        type Entity @key(fields: "id") {
+          id: ID!
+          name: String!
+          description: String!
+          extra: String!
+        }
+      `),
+      resolvers: {
+        Entity: {
+          __resolveReference({ id }: { id: string }) {
+            return {
+              id,
+              name: `A:name`,
+              description: `A:description`,
+              extra: `A:extra`,
+            };
           },
         },
       },
-    ]);
+    }]);
 
-    const b = buildSubgraphSchema([
-      {
-        typeDefs: parse(/* GraphQL */ `
-          type Query {
-            entity: Entity @provides(fields: "name description")
-          }
+    const b = buildSubgraphSchema([{
+      typeDefs: parse(/* GraphQL */ `
+        type Query {
+          entity: Entity @provides(fields: "name description")
+        }
 
-          type Entity @key(fields: "id") {
-            id: ID!
-            name: String! @external
-            description: String! @external
-          }
-        `),
-        resolvers: {
-          Query: {
-            entity() {
-              return {
-                id: '1',
-                name: 'B:name',
-                description: 'B:description',
-              };
-            },
+        type Entity @key(fields: "id") {
+          id: ID!
+          name: String! @external
+          description: String! @external
+        }
+      `),
+      resolvers: {
+        Query: {
+          entity() {
+            return {
+              id: '1',
+              name: 'B:name',
+              description: 'B:description',
+            };
           },
-          Entity: {
-            __resolveReference({ id }: { id: string }) {
-              return {
-                id,
-                name: `B:name for ${id}`,
-                description: `B:description for ${id}`,
-              };
-            },
+        },
+        Entity: {
+          __resolveReference({ id }: { id: string }) {
+            return {
+              id,
+              name: `B:name for ${id}`,
+              description: `B:description for ${id}`,
+            };
           },
         },
       },
-    ]);
+    }]);
 
     const subgraphCalls: { subgraph: string; query: string }[] = [];
     const schema = await getStitchedSchemaFromLocalSchemas({
@@ -216,67 +208,63 @@ describe('@provides only fetches client-requested fields', () => {
   });
 
   it('falls back to the owning subgraph when client requests a field outside of @provides', async () => {
-    const a = buildSubgraphSchema([
-      {
-        typeDefs: parse(/* GraphQL */ `
-          type Query {
-            _aPlaceholder: Boolean
-          }
+    const a = buildSubgraphSchema([{
+      typeDefs: parse(/* GraphQL */ `
+        type Query {
+          _aPlaceholder: Boolean
+        }
 
-          type Entity @key(fields: "id") {
-            id: ID!
-            name: String!
-            description: String!
-            extra: String!
-          }
-        `),
-        resolvers: {
-          Entity: {
-            __resolveReference({ id }: { id: string }) {
-              return {
-                id,
-                name: `A:name`,
-                description: `A:description`,
-                extra: `A:extra`,
-              };
-            },
+        type Entity @key(fields: "id") {
+          id: ID!
+          name: String!
+          description: String!
+          extra: String!
+        }
+      `),
+      resolvers: {
+        Entity: {
+          __resolveReference({ id }: { id: string }) {
+            return {
+              id,
+              name: `A:name`,
+              description: `A:description`,
+              extra: `A:extra`,
+            };
           },
         },
       },
-    ]);
+    }]);
 
-    const b = buildSubgraphSchema([
-      {
-        typeDefs: parse(/* GraphQL */ `
-          type Query {
-            entity: Entity @provides(fields: "name")
-          }
+    const b = buildSubgraphSchema([{
+      typeDefs: parse(/* GraphQL */ `
+        type Query {
+          entity: Entity @provides(fields: "name")
+        }
 
-          type Entity @key(fields: "id") {
-            id: ID!
-            name: String! @external
-          }
-        `),
-        resolvers: {
-          Query: {
-            entity() {
-              return {
-                id: '1',
-                name: 'B:name',
-              };
-            },
+        type Entity @key(fields: "id") {
+          id: ID!
+          name: String! @external
+        }
+      `),
+      resolvers: {
+        Query: {
+          entity() {
+            return {
+              id: '1',
+              name: 'B:name',
+            };
           },
-          Entity: {
-            __resolveReference({ id }: { id: string }) {
-              return {
-                id,
-                name: `B:name for ${id}`,
-              };
-            },
+        },
+        Entity: {
+          __resolveReference({ id }: { id: string }) {
+            return {
+              id,
+              name: `B:name for ${id}`,
+            };
           },
         },
       },
-    ]);
+    }]);
 
     const subgraphCalls: { subgraph: string; query: string }[] = [];
     const schema = await getStitchedSchemaFromLocalSchemas({
@@ -312,7 +300,10 @@ describe('@provides only fetches client-requested fields', () => {
       },
     });
 
-    expect(subgraphCalls.map(({ subgraph }) => subgraph).sort()).toEqual(['a', 'b']);
+    expect(subgraphCalls.map(({ subgraph }) => subgraph).sort()).toEqual([
+      'a',
+      'b',
+    ]);
     const bCall = subgraphCalls.find(({ subgraph }) => subgraph === 'b');
     expect(bCall?.query).toMatch(/\bname\b/);
     const aCall = subgraphCalls.find(({ subgraph }) => subgraph === 'a');
@@ -322,70 +313,65 @@ describe('@provides only fetches client-requested fields', () => {
     expect(aCall?.query).not.toMatch(/(?<!__type)\bname\b/);
   });
 
-  // backbone gap: @provides scope / abstract resolveType
-  it.failing('only requests @provides fields when client uses an alias too', async () => {
-    const a = buildSubgraphSchema([
-      {
-        typeDefs: parse(/* GraphQL */ `
-          type Query {
-            _aPlaceholder: Boolean
-          }
+  it('only requests @provides fields when client uses an alias too', async () => {
+    const a = buildSubgraphSchema([{
+      typeDefs: parse(/* GraphQL */ `
+        type Query {
+          _aPlaceholder: Boolean
+        }
 
-          type Entity @key(fields: "id") {
-            id: ID!
-            name: String!
-            description: String!
-          }
-        `),
-        resolvers: {
-          Entity: {
-            __resolveReference({ id }: { id: string }) {
-              return {
-                id,
-                name: `A:name`,
-                description: `A:description`,
-              };
-            },
+        type Entity @key(fields: "id") {
+          id: ID!
+          name: String!
+          description: String!
+        }
+      `),
+      resolvers: {
+        Entity: {
+          __resolveReference({ id }: { id: string }) {
+            return {
+              id,
+              name: `A:name`,
+              description: `A:description`,
+            };
           },
         },
       },
-    ]);
+    }]);
 
-    const b = buildSubgraphSchema([
-      {
-        typeDefs: parse(/* GraphQL */ `
-          type Query {
-            entity: Entity @provides(fields: "name description")
-          }
+    const b = buildSubgraphSchema([{
+      typeDefs: parse(/* GraphQL */ `
+        type Query {
+          entity: Entity @provides(fields: "name description")
+        }
 
-          type Entity @key(fields: "id") {
-            id: ID!
-            name: String! @external
-            description: String! @external
-          }
-        `),
-        resolvers: {
-          Query: {
-            entity() {
-              return {
-                id: '1',
-                name: 'B:name',
-                description: 'B:description',
-              };
-            },
+        type Entity @key(fields: "id") {
+          id: ID!
+          name: String! @external
+          description: String! @external
+        }
+      `),
+      resolvers: {
+        Query: {
+          entity() {
+            return {
+              id: '1',
+              name: 'B:name',
+              description: 'B:description',
+            };
           },
-          Entity: {
-            __resolveReference({ id }: { id: string }) {
-              return {
-                id,
-                name: `B:name for ${id}`,
-                description: `B:description for ${id}`,
-              };
-            },
+        },
+        Entity: {
+          __resolveReference({ id }: { id: string }) {
+            return {
+              id,
+              name: `B:name for ${id}`,
+              description: `B:description for ${id}`,
+            };
           },
         },
       },
-    ]);
+    }]);
 
     const subgraphCalls: { subgraph: string; query: string }[] = [];
     const schema = await getStitchedSchemaFromLocalSchemas({
@@ -425,68 +411,64 @@ describe('@provides only fetches client-requested fields', () => {
   });
 
   it('only injects @provides fields the client requested via a fragment spread', async () => {
-    const a = buildSubgraphSchema([
-      {
-        typeDefs: parse(/* GraphQL */ `
-          type Query {
-            _aPlaceholder: Boolean
-          }
+    const a = buildSubgraphSchema([{
+      typeDefs: parse(/* GraphQL */ `
+        type Query {
+          _aPlaceholder: Boolean
+        }
 
-          type Entity @key(fields: "id") {
-            id: ID!
-            name: String!
-            description: String!
-          }
-        `),
-        resolvers: {
-          Entity: {
-            __resolveReference({ id }: { id: string }) {
-              return {
-                id,
-                name: `A:name`,
-                description: `A:description`,
-              };
-            },
+        type Entity @key(fields: "id") {
+          id: ID!
+          name: String!
+          description: String!
+        }
+      `),
+      resolvers: {
+        Entity: {
+          __resolveReference({ id }: { id: string }) {
+            return {
+              id,
+              name: `A:name`,
+              description: `A:description`,
+            };
           },
         },
       },
-    ]);
+    }]);
 
-    const b = buildSubgraphSchema([
-      {
-        typeDefs: parse(/* GraphQL */ `
-          type Query {
-            entity: Entity @provides(fields: "name description")
-          }
+    const b = buildSubgraphSchema([{
+      typeDefs: parse(/* GraphQL */ `
+        type Query {
+          entity: Entity @provides(fields: "name description")
+        }
 
-          type Entity @key(fields: "id") {
-            id: ID!
-            name: String! @external
-            description: String! @external
-          }
-        `),
-        resolvers: {
-          Query: {
-            entity() {
-              return {
-                id: '1',
-                name: 'B:name',
-                description: 'B:description',
-              };
-            },
+        type Entity @key(fields: "id") {
+          id: ID!
+          name: String! @external
+          description: String! @external
+        }
+      `),
+      resolvers: {
+        Query: {
+          entity() {
+            return {
+              id: '1',
+              name: 'B:name',
+              description: 'B:description',
+            };
           },
-          Entity: {
-            __resolveReference({ id }: { id: string }) {
-              return {
-                id,
-                name: `B:name for ${id}`,
-                description: `B:description for ${id}`,
-              };
-            },
+        },
+        Entity: {
+          __resolveReference({ id }: { id: string }) {
+            return {
+              id,
+              name: `B:name for ${id}`,
+              description: `B:description for ${id}`,
+            };
           },
         },
       },
-    ]);
+    }]);
 
     const subgraphCalls: { subgraph: string; query: string }[] = [];
     const schema = await getStitchedSchemaFromLocalSchemas({
@@ -530,68 +512,64 @@ describe('@provides only fetches client-requested fields', () => {
   });
 
   it('preserves @include / @skip directives on the fragment wrapping a @provides field', async () => {
-    const a = buildSubgraphSchema([
-      {
-        typeDefs: parse(/* GraphQL */ `
-          type Query {
-            _aPlaceholder: Boolean
-          }
+    const a = buildSubgraphSchema([{
+      typeDefs: parse(/* GraphQL */ `
+        type Query {
+          _aPlaceholder: Boolean
+        }
 
-          type Entity @key(fields: "id") {
-            id: ID!
-            name: String!
-            description: String!
-          }
-        `),
-        resolvers: {
-          Entity: {
-            __resolveReference({ id }: { id: string }) {
-              return {
-                id,
-                name: `A:name`,
-                description: `A:description`,
-              };
-            },
+        type Entity @key(fields: "id") {
+          id: ID!
+          name: String!
+          description: String!
+        }
+      `),
+      resolvers: {
+        Entity: {
+          __resolveReference({ id }: { id: string }) {
+            return {
+              id,
+              name: `A:name`,
+              description: `A:description`,
+            };
           },
         },
       },
-    ]);
+    }]);
 
-    const b = buildSubgraphSchema([
-      {
-        typeDefs: parse(/* GraphQL */ `
-          type Query {
-            entity: Entity @provides(fields: "name description")
-          }
+    const b = buildSubgraphSchema([{
+      typeDefs: parse(/* GraphQL */ `
+        type Query {
+          entity: Entity @provides(fields: "name description")
+        }
 
-          type Entity @key(fields: "id") {
-            id: ID!
-            name: String! @external
-            description: String! @external
-          }
-        `),
-        resolvers: {
-          Query: {
-            entity() {
-              return {
-                id: '1',
-                name: 'B:name',
-                description: 'B:description',
-              };
-            },
+        type Entity @key(fields: "id") {
+          id: ID!
+          name: String! @external
+          description: String! @external
+        }
+      `),
+      resolvers: {
+        Query: {
+          entity() {
+            return {
+              id: '1',
+              name: 'B:name',
+              description: 'B:description',
+            };
           },
-          Entity: {
-            __resolveReference({ id }: { id: string }) {
-              return {
-                id,
-                name: `B:name for ${id}`,
-                description: `B:description for ${id}`,
-              };
-            },
+        },
+        Entity: {
+          __resolveReference({ id }: { id: string }) {
+            return {
+              id,
+              name: `B:name for ${id}`,
+              description: `B:description for ${id}`,
+            };
           },
         },
       },
-    ]);
+    }]);
 
     const subgraphCalls: { subgraph: string; query: string }[] = [];
     const schema = await getStitchedSchemaFromLocalSchemas({
@@ -659,70 +637,66 @@ describe('@provides only fetches client-requested fields', () => {
     // each `... { ... }` sibling lives at the same nominal path in the
     // original document but must still be fully considered when intersecting
     // with `@provides`.
-    const a = buildSubgraphSchema([
-      {
-        typeDefs: parse(/* GraphQL */ `
-          type Query {
-            _aPlaceholder: Boolean
-          }
+    const a = buildSubgraphSchema([{
+      typeDefs: parse(/* GraphQL */ `
+        type Query {
+          _aPlaceholder: Boolean
+        }
 
-          type Entity @key(fields: "id") {
-            id: ID!
-            name: String!
-            description: String!
-            extra: String!
-          }
-        `),
-        resolvers: {
-          Entity: {
-            __resolveReference({ id }: { id: string }) {
-              return {
-                id,
-                name: 'A:name',
-                description: 'A:description',
-                extra: 'A:extra',
-              };
-            },
+        type Entity @key(fields: "id") {
+          id: ID!
+          name: String!
+          description: String!
+          extra: String!
+        }
+      `),
+      resolvers: {
+        Entity: {
+          __resolveReference({ id }: { id: string }) {
+            return {
+              id,
+              name: 'A:name',
+              description: 'A:description',
+              extra: 'A:extra',
+            };
           },
         },
       },
-    ]);
+    }]);
 
-    const b = buildSubgraphSchema([
-      {
-        typeDefs: parse(/* GraphQL */ `
-          type Query {
-            entity: Entity @provides(fields: "name description")
-          }
+    const b = buildSubgraphSchema([{
+      typeDefs: parse(/* GraphQL */ `
+        type Query {
+          entity: Entity @provides(fields: "name description")
+        }
 
-          type Entity @key(fields: "id") {
-            id: ID!
-            name: String! @external
-            description: String! @external
-          }
-        `),
-        resolvers: {
-          Query: {
-            entity() {
-              return {
-                id: '1',
-                name: 'B:name',
-                description: 'B:description',
-              };
-            },
+        type Entity @key(fields: "id") {
+          id: ID!
+          name: String! @external
+          description: String! @external
+        }
+      `),
+      resolvers: {
+        Query: {
+          entity() {
+            return {
+              id: '1',
+              name: 'B:name',
+              description: 'B:description',
+            };
           },
-          Entity: {
-            __resolveReference({ id }: { id: string }) {
-              return {
-                id,
-                name: `B:name for ${id}`,
-                description: `B:description for ${id}`,
-              };
-            },
+        },
+        Entity: {
+          __resolveReference({ id }: { id: string }) {
+            return {
+              id,
+              name: `B:name for ${id}`,
+              description: `B:description for ${id}`,
+            };
           },
         },
       },
-    ]);
+    }]);
 
     const subgraphCalls: { subgraph: string; query: string }[] = [];
     const schema = await getStitchedSchemaFromLocalSchemas({
@@ -805,73 +779,73 @@ describe('@provides only fetches client-requested fields', () => {
       `),
     },
   ])('$name', async ({ document }) => {
-    const a = buildSubgraphSchema([
-      {
-        typeDefs: parse(/* GraphQL */ `
-          extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.7", import: ["@key", "@shareable"])
+    const a = buildSubgraphSchema([{
+      typeDefs: parse(/* GraphQL */ `
+        extend schema
+          @link(
+            url: "https://specs.apollo.dev/federation/v2.7"
+            import: ["@key", "@shareable"]
+          )
 
-          type Entity @key(fields: "id") {
-            id: ID!
-            nested: NestedField @shareable
-          }
+        type Entity @key(fields: "id") {
+          id: ID!
+          nested: NestedField @shareable
+        }
 
-          type NestedField @shareable {
-            nestedNested: NestedNestedField!
-          }
+        type NestedField @shareable {
+          nestedNested: NestedNestedField!
+        }
 
-          type NestedNestedField @shareable {
-            name: String
-            description: String
-          }
-        `),
-      },
-    ]);
+        type NestedNestedField @shareable {
+          name: String
+          description: String
+        }
+      `),
+    }]);
 
-    const b = buildSubgraphSchema([
-      {
-        typeDefs: parse(/* GraphQL */ `
-          extend schema
-            @link(
-              url: "https://specs.apollo.dev/federation/v2.7"
-              import: ["@key", "@shareable", "@external", "@provides"]
-            )
+    const b = buildSubgraphSchema([{
+      typeDefs: parse(/* GraphQL */ `
+        extend schema
+          @link(
+            url: "https://specs.apollo.dev/federation/v2.7"
+            import: ["@key", "@shareable", "@external", "@provides"]
+          )
 
-          type Query {
-            entity: Entity @provides(fields: "nested { nestedNested { name description } }")
-          }
+        type Query {
+          entity: Entity
+            @provides(fields: "nested { nestedNested { name description } }")
+        }
 
-          type Entity @key(fields: "id") {
-            id: ID!
-            nested: NestedField @external
-          }
+        type Entity @key(fields: "id") {
+          id: ID!
+          nested: NestedField @external
+        }
 
-          type NestedField @shareable {
-            nestedNested: NestedNestedField!
-          }
+        type NestedField @shareable {
+          nestedNested: NestedNestedField!
+        }
 
-          type NestedNestedField @shareable {
-            name: String
-            description: String
-          }
-        `),
-        resolvers: {
-          Query: {
-            entity() {
-              return {
-                id: 'e1',
-                nested: {
-                  nestedNested: {
-                    name: 'nested name',
-                    description: 'nested description',
-                  },
+        type NestedNestedField @shareable {
+          name: String
+          description: String
+        }
+      `),
+      resolvers: {
+        Query: {
+          entity() {
+            return {
+              id: 'e1',
+              nested: {
+                nestedNested: {
+                  name: 'nested name',
+                  description: 'nested description',
                 },
-              };
-            },
+              },
+            };
           },
         },
       },
-    ]);
+    }]);
 
     const subgraphCalls: string[] = [];
     const schema = await getStitchedSchemaFromLocalSchemas({
@@ -904,314 +878,307 @@ describe('@provides only fetches client-requested fields', () => {
   // Mirrors the `nested-provides` audit case: when @provides covers fields on
   // nested types, the gateway should not delegate to the owning subgraphs for
   // those nested fields.
-  // backbone gap: @provides scope / abstract resolveType
-  it.failing(
-    'does not delegate to the owner subgraphs for nested fields covered by @provides',
-    async () => {
-      const owner = buildSubgraphSchema([
-        {
-          typeDefs: parse(/* GraphQL */ `
-            extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key", "@shareable"])
+  it('does not delegate to the owner subgraphs for nested fields covered by @provides', async () => {
+    const owner = buildSubgraphSchema([{
+      typeDefs: parse(/* GraphQL */ `
+        extend schema
+          @link(
+            url: "https://specs.apollo.dev/federation/v2.3"
+            import: ["@key", "@shareable"]
+          )
 
-            type Product @key(fields: "id") {
-              id: ID!
-            }
-          `),
-          resolvers: {
-            Product: {
-              __resolveReference() {
-                throw new Error(
-                  'owner subgraph should not be hit when @provides covers the request',
-                );
-              },
-            },
+        type Product @key(fields: "id") {
+          id: ID!
+        }
+      `),
+      resolvers: {
+        Product: {
+          __resolveReference() {
+            throw new Error(
+              'owner subgraph should not be hit when @provides covers the request',
+            );
           },
         },
-      ]);
+      },
+    }]);
 
-      const provider = buildSubgraphSchema([
-        {
-          typeDefs: parse(/* GraphQL */ `
-            extend schema
-              @link(
-                url: "https://specs.apollo.dev/federation/v2.3"
-                import: ["@key", "@shareable", "@external", "@provides"]
-              )
+    const provider = buildSubgraphSchema([{
+      typeDefs: parse(/* GraphQL */ `
+        extend schema
+          @link(
+            url: "https://specs.apollo.dev/federation/v2.3"
+            import: ["@key", "@shareable", "@external", "@provides"]
+          )
 
-            type Query {
-              products: [Product]
-                @shareable
-                @provides(fields: "categories { id name subCategories { id name } }")
-            }
+        type Query {
+          products: [Product]
+            @shareable
+            @provides(
+              fields: "categories { id name subCategories { id name } }"
+            )
+        }
 
-            type Product @key(fields: "id") {
-              id: ID!
-              categories: [Category] @external
-            }
+        type Product @key(fields: "id") {
+          id: ID!
+          categories: [Category] @external
+        }
 
-            type Category @key(fields: "id") {
-              id: ID!
-              name: String!
-              subCategories: [Category] @external
-            }
-          `),
-          resolvers: {
-            Query: {
-              products() {
-                return [
+        type Category @key(fields: "id") {
+          id: ID!
+          name: String!
+          subCategories: [Category] @external
+        }
+      `),
+      resolvers: {
+        Query: {
+          products() {
+            return [
+              {
+                id: 'p1',
+                categories: [
                   {
-                    id: 'p1',
-                    categories: [
-                      {
-                        id: 'c1',
-                        name: 'Category 1',
-                        subCategories: [{ id: 'c2', name: 'Category 2' }],
-                      },
-                    ],
+                    id: 'c1',
+                    name: 'Category 1',
+                    subCategories: [{ id: 'c2', name: 'Category 2' }],
                   },
-                ];
+                ],
               },
-            },
-            Category: {
-              __resolveReference() {
-                throw new Error(
-                  'provider Category._entities should not be hit when @provides covers the request',
-                );
-              },
-            },
+            ];
           },
         },
-      ]);
-
-      const subcategories = buildSubgraphSchema([
-        {
-          typeDefs: parse(/* GraphQL */ `
-            extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key", "@shareable"])
-
-            type Product @key(fields: "id") {
-              id: ID!
-              categories: [Category] @shareable
-            }
-
-            type Category @key(fields: "id") {
-              id: ID!
-              subCategories: [Category] @shareable
-            }
-          `),
-          resolvers: {
-            Product: {
-              __resolveReference() {
-                throw new Error(
-                  'subcategories subgraph should not be hit when @provides covers the request',
-                );
-              },
-              categories() {
-                throw new Error(
-                  'subcategories.Product.categories should not be hit when @provides covers the request',
-                );
-              },
-            },
-            Category: {
-              __resolveReference() {
-                throw new Error(
-                  'subcategories.Category._entities should not be hit when @provides covers the request',
-                );
-              },
-              subCategories() {
-                throw new Error(
-                  'subcategories.Category.subCategories should not be hit when @provides covers the request',
-                );
-              },
-            },
+        Category: {
+          __resolveReference() {
+            throw new Error(
+              'provider Category._entities should not be hit when @provides covers the request',
+            );
           },
         },
-      ]);
+      },
+    }]);
 
-      const subgraphCalls: { subgraph: string; query: string }[] = [];
-      const schema = await getStitchedSchemaFromLocalSchemas({
-        localSchemas: { owner, provider, subcategories },
-        onSubgraphExecute(subgraph, executionRequest: ExecutionRequest) {
-          subgraphCalls.push({
-            subgraph,
-            query: print(executionRequest.document),
-          });
+    const subcategories = buildSubgraphSchema([{
+      typeDefs: parse(/* GraphQL */ `
+        extend schema
+          @link(
+            url: "https://specs.apollo.dev/federation/v2.3"
+            import: ["@key", "@shareable"]
+          )
+
+        type Product @key(fields: "id") {
+          id: ID!
+          categories: [Category] @shareable
+        }
+
+        type Category @key(fields: "id") {
+          id: ID!
+          subCategories: [Category] @shareable
+        }
+      `),
+      resolvers: {
+        Product: {
+          __resolveReference() {
+            throw new Error(
+              'subcategories subgraph should not be hit when @provides covers the request',
+            );
+          },
+          categories() {
+            throw new Error(
+              'subcategories.Product.categories should not be hit when @provides covers the request',
+            );
+          },
         },
-      });
+        Category: {
+          __resolveReference() {
+            throw new Error(
+              'subcategories.Category._entities should not be hit when @provides covers the request',
+            );
+          },
+          subCategories() {
+            throw new Error(
+              'subcategories.Category.subCategories should not be hit when @provides covers the request',
+            );
+          },
+        },
+      },
+    }]);
 
-      const result = await normalizedExecutor({
-        schema,
-        document: parse(/* GraphQL */ `
-          query {
-            products {
+    const subgraphCalls: { subgraph: string; query: string }[] = [];
+    const schema = await getStitchedSchemaFromLocalSchemas({
+      localSchemas: { owner, provider, subcategories },
+      onSubgraphExecute(subgraph, executionRequest: ExecutionRequest) {
+        subgraphCalls.push({
+          subgraph,
+          query: print(executionRequest.document),
+        });
+      },
+    });
+
+    const result = await normalizedExecutor({
+      schema,
+      document: parse(/* GraphQL */ `
+        query {
+          products {
+            id
+            categories {
               id
-              categories {
+              name
+              subCategories {
                 id
                 name
-                subCategories {
-                  id
-                  name
-                }
               }
             }
           }
-        `),
-      });
+        }
+      `),
+    });
 
-      expect(result).toEqual({
-        data: {
-          products: [
-            {
-              id: 'p1',
-              categories: [
-                {
-                  id: 'c1',
-                  name: 'Category 1',
-                  subCategories: [{ id: 'c2', name: 'Category 2' }],
-                },
-              ],
-            },
-          ],
-        },
-      });
+    expect(result).toEqual({
+      data: {
+        products: [
+          {
+            id: 'p1',
+            categories: [
+              {
+                id: 'c1',
+                name: 'Category 1',
+                subCategories: [{ id: 'c2', name: 'Category 2' }],
+              },
+            ],
+          },
+        ],
+      },
+    });
 
-      expect(subgraphCalls.map(({ subgraph }) => subgraph)).toEqual(['provider']);
-    },
-  );
+    expect(subgraphCalls.map(({ subgraph }) => subgraph)).toEqual(['provider']);
+  });
 
   // Mirrors the `provides-on-union` audit case: when @provides uses an inline
   // fragment to cover a field on one concrete type, the gateway must not
   // delegate that field to the owner subgraph.
-  // backbone gap: @provides scope / abstract resolveType
-  it.failing(
-    'does not delegate to the owner subgraph for fields covered by @provides on inline fragments',
-    async () => {
-      const owner = buildSubgraphSchema([
-        {
-          typeDefs: parse(/* GraphQL */ `
-            extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@key", "@shareable"])
+  it('does not delegate to the owner subgraph for fields covered by @provides on inline fragments', async () => {
+    const owner = buildSubgraphSchema([{
+      typeDefs: parse(/* GraphQL */ `
+        extend schema
+          @link(
+            url: "https://specs.apollo.dev/federation/v2.3"
+            import: ["@key", "@shareable"]
+          )
 
-            type Book @key(fields: "id") {
-              id: ID!
-              title: String! @shareable
-            }
+        type Book @key(fields: "id") {
+          id: ID!
+          title: String! @shareable
+        }
 
-            type Movie @key(fields: "id") {
-              id: ID!
-              title: String! @shareable
-            }
-          `),
-          resolvers: {
-            Book: {
-              __resolveReference() {
-                throw new Error(
-                  'owner subgraph should not be hit for Book.title when @provides covers it',
-                );
-              },
-            },
-            Movie: {
-              __resolveReference({ id }: { id: string }) {
-                return { id, title: `Movie ${id} title from owner` };
-              },
-            },
+        type Movie @key(fields: "id") {
+          id: ID!
+          title: String! @shareable
+        }
+      `),
+      resolvers: {
+        Book: {
+          __resolveReference() {
+            throw new Error(
+              'owner subgraph should not be hit for Book.title when @provides covers it',
+            );
           },
         },
-      ]);
-
-      const provider = buildSubgraphSchema([
-        {
-          typeDefs: parse(/* GraphQL */ `
-            extend schema
-              @link(
-                url: "https://specs.apollo.dev/federation/v2.3"
-                import: ["@key", "@shareable", "@external", "@provides"]
-              )
-
-            union Media = Book | Movie
-
-            type Query {
-              media: [Media] @shareable @provides(fields: "... on Book { title }")
-            }
-
-            type Book @key(fields: "id") {
-              id: ID!
-              title: String! @external
-            }
-
-            type Movie @key(fields: "id") {
-              id: ID!
-            }
-          `),
-          resolvers: {
-            Query: {
-              media() {
-                return [
-                  {
-                    __typename: 'Book',
-                    id: 'm1',
-                    title: 'Book 1',
-                  },
-                  {
-                    __typename: 'Movie',
-                    id: 'm2',
-                  },
-                ];
-              },
-            },
-            Book: {
-              __resolveReference({ id }: { id: string }) {
-                return { id, title: `Book ${id} from provider` };
-              },
-            },
-            Movie: {
-              __resolveReference({ id }: { id: string }) {
-                return { id };
-              },
-            },
+        Movie: {
+          __resolveReference({ id }: { id: string }) {
+            return { id, title: `Movie ${id} title from owner` };
           },
         },
-      ]);
+      },
+    }]);
 
-      const subgraphCalls: { subgraph: string; query: string }[] = [];
-      const schema = await getStitchedSchemaFromLocalSchemas({
-        localSchemas: { owner, provider },
-        onSubgraphExecute(subgraph, executionRequest: ExecutionRequest) {
-          subgraphCalls.push({
-            subgraph,
-            query: print(executionRequest.document),
-          });
+    const provider = buildSubgraphSchema([{
+      typeDefs: parse(/* GraphQL */ `
+        extend schema
+          @link(
+            url: "https://specs.apollo.dev/federation/v2.3"
+            import: ["@key", "@shareable", "@external", "@provides"]
+          )
+
+        union Media = Book | Movie
+
+        type Query {
+          media: [Media] @shareable @provides(fields: "... on Book { title }")
+        }
+
+        type Book @key(fields: "id") {
+          id: ID!
+          title: String! @external
+        }
+
+        type Movie @key(fields: "id") {
+          id: ID!
+        }
+      `),
+      resolvers: {
+        Query: {
+          media() {
+            return [
+              {
+                __typename: 'Book',
+                id: 'm1',
+                title: 'Book 1',
+              },
+              {
+                __typename: 'Movie',
+                id: 'm2',
+              },
+            ];
+          },
         },
-      });
+        Book: {
+          __resolveReference({ id }: { id: string }) {
+            return { id, title: `Book ${id} from provider` };
+          },
+        },
+        Movie: {
+          __resolveReference({ id }: { id: string }) {
+            return { id };
+          },
+        },
+      },
+    }]);
 
-      const result = await normalizedExecutor({
-        schema,
-        document: parse(/* GraphQL */ `
-          query {
-            media {
-              ... on Book {
-                id
-                title
-              }
-              ... on Movie {
-                id
-              }
+    const subgraphCalls: { subgraph: string; query: string }[] = [];
+    const schema = await getStitchedSchemaFromLocalSchemas({
+      localSchemas: { owner, provider },
+      onSubgraphExecute(subgraph, executionRequest: ExecutionRequest) {
+        subgraphCalls.push({
+          subgraph,
+          query: print(executionRequest.document),
+        });
+      },
+    });
+
+    const result = await normalizedExecutor({
+      schema,
+      document: parse(/* GraphQL */ `
+        query {
+          media {
+            ... on Book {
+              id
+              title
+            }
+            ... on Movie {
+              id
             }
           }
-        `),
-      });
+        }
+      `),
+    });
 
-      expect(result).toEqual({
-        data: {
-          media: [{ id: 'm1', title: 'Book 1' }, { id: 'm2' }],
-        },
-      });
+    expect(result).toEqual({
+      data: {
+        media: [{ id: 'm1', title: 'Book 1' }, { id: 'm2' }],
+      },
+    });
 
-      // Only the providing subgraph should be hit, since @provides covers the
-      // only Book.title that the client requested and Movie.id is already
-      // satisfied by the provider's response.
-      expect(subgraphCalls.map(({ subgraph }) => subgraph)).toEqual(['provider']);
-    },
-  );
+    // Only the providing subgraph should be hit, since @provides covers the
+    // only Book.title that the client requested and Movie.id is already
+    // satisfied by the provider's response.
+    expect(subgraphCalls.map(({ subgraph }) => subgraph)).toEqual(['provider']);
+  });
 });

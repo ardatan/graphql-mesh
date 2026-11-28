@@ -1,17 +1,19 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { parse } from 'graphql';
 import { ApolloServer } from '@apollo/server';
 import { buildSubgraphSchema } from '@apollo/subgraph';
+import { parse } from 'graphql';
 
-export const typeDefs = parse(readFileSync(join(__dirname, 'typeDefs.graphql'), 'utf8'));
+export const typeDefs = parse(
+  readFileSync(join(__dirname, 'typeDefs.graphql'), 'utf8'),
+);
 
 export const resolvers = {
   Product: {
     __resolveReference(object: any) {
       return {
         ...object,
-        ...products.find(product => product.upc === object.upc),
+        ...products.find((product) => product.upc === object.upc),
       };
     },
   },

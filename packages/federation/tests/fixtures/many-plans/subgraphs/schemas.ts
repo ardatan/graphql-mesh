@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { GraphQLSchema, parse } from 'graphql';
 import { buildSubgraphSchema } from '@apollo/subgraph';
+import { GraphQLSchema, parse } from 'graphql';
 
 const typeDefs: string[] = [];
 for (let i = 0; i < 7; i++) {
@@ -41,6 +41,6 @@ const resolvers = {
     n6: () => createNode(),
   },
 };
-export const schemas: GraphQLSchema[] = typeDefs.map(typeDef =>
+export const schemas: GraphQLSchema[] = typeDefs.map((typeDef) =>
   buildSubgraphSchema([{ typeDefs: parse(typeDef), resolvers }]),
 );

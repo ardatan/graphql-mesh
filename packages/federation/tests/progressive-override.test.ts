@@ -1,16 +1,15 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { parse, print } from 'graphql';
-import { createDefaultExecutor } from '@graphql-tools/delegate';
-import { normalizedExecutor } from '@graphql-tools/executor';
-import { addMocksToSchema } from '@graphql-tools/mock';
-import { getStitchedSchemaFromSupergraphSdl } from '../src/supergraph';
-import { extractPercentageFromLabel } from '../src/utils';
-
-/** Skipped suite — Hive gateway-testing not in Mesh; keep cases for later rewrite. */
+/** Matches gateway #2734: suite skipped without gateway-testing rewrite. */
 function createGatewayTester(_opts: any): any {
   throw new Error('progressive-override suite is skipped');
 }
+import { createDefaultExecutor } from '@graphql-tools/delegate';
+import { normalizedExecutor } from '@graphql-tools/executor';
+import { getStitchedSchemaFromSupergraphSdl } from '../src/supergraph';
+import { extractPercentageFromLabel } from '../src/utils';
+import { addMocksToSchema } from '@graphql-tools/mock';
+import { parse, print } from 'graphql';
 
 describe.skip('Progressive Override', () => {
   describe('Label processing', () => {
@@ -338,7 +337,10 @@ describe.skip('Progressive Override', () => {
       let rng: number = 0;
       const schema = getStitchedSchemaFromSupergraphSdl({
         supergraphSdl: readFileSync(
-          join(__dirname, './fixtures/simple-progressive-overrides.supergraph.graphql'),
+          join(
+            __dirname,
+            './fixtures/simple-progressive-overrides.supergraph.graphql',
+          ),
           'utf-8',
         ),
         onSubschemaConfig(subschemaConfig) {
@@ -346,10 +348,16 @@ describe.skip('Progressive Override', () => {
             schema: subschemaConfig.schema,
           });
           const executor = createDefaultExecutor(mockedSchema);
-          subschemaConfig.executor = function executionRequest(executionRequest) {
+          subschemaConfig.executor = function executionRequest(
+            executionRequest,
+          ) {
             const query = print(executionRequest.document);
             if (
-              !plan.some(item => item.query === query && item.subgraph === subschemaConfig.name)
+              !plan.some(
+                (item) =>
+                  item.query === query &&
+                  item.subgraph === subschemaConfig.name,
+              )
             ) {
               plan.push({
                 subgraph: subschemaConfig.name,
@@ -407,7 +415,10 @@ describe.skip('Progressive Override', () => {
       let label = '';
       const schema = getStitchedSchemaFromSupergraphSdl({
         supergraphSdl: readFileSync(
-          join(__dirname, './fixtures/simple-progressive-overrides.supergraph.graphql'),
+          join(
+            __dirname,
+            './fixtures/simple-progressive-overrides.supergraph.graphql',
+          ),
           'utf-8',
         ),
         onSubschemaConfig(subschemaConfig) {
@@ -415,10 +426,16 @@ describe.skip('Progressive Override', () => {
             schema: subschemaConfig.schema,
           });
           const executor = createDefaultExecutor(mockedSchema);
-          subschemaConfig.executor = function executionRequest(executionRequest) {
+          subschemaConfig.executor = function executionRequest(
+            executionRequest,
+          ) {
             const query = print(executionRequest.document).trim();
             if (
-              !plan.some(item => item.query === query && item.subgraph === subschemaConfig.name)
+              !plan.some(
+                (item) =>
+                  item.query === query &&
+                  item.subgraph === subschemaConfig.name,
+              )
             ) {
               plan.push({
                 subgraph: subschemaConfig.name,

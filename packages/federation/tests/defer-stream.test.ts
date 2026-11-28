@@ -1,16 +1,19 @@
 import { setTimeout } from 'timers/promises';
 import { inspect } from 'util';
-import { GraphQLSchema, parse, print } from 'graphql';
-import { createYoga } from 'graphql-yoga';
-import _ from 'lodash';
 import { buildSubgraphSchema } from '@apollo/subgraph';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { asArray, ExecutionResult, mergeDeep } from '@graphql-tools/utils';
 import { useDeferStream } from '@graphql-yoga/plugin-defer-stream';
+import {
+  assertAsyncIterable,
+  composeLocalSchemasWithApollo,
+} from './helpers';
 import { AsyncDisposableStack } from '@whatwg-node/disposablestack';
+import { GraphQLSchema, parse, print } from 'graphql';
+import { createYoga } from 'graphql-yoga';
+import _ from 'lodash';
 import { getStitchedSchemaFromSupergraphSdl } from '../src/supergraph';
-import { assertAsyncIterable, composeLocalSchemasWithApollo } from './helpers';
 
 function mergeIncrementalResults(values: ExecutionResult[]) {
   const result: ExecutionResult = {};
@@ -31,7 +34,7 @@ function mergeIncrementalResults(values: ExecutionResult[]) {
         if (incremental.path) {
           result.data = result.data || {};
           const incrementalItems = incremental.items
-            ? asArray(incremental.items).filter(item => item != null)
+            ? asArray(incremental.items).filter((item) => item != null)
             : [];
           if (incremental.data != null) {
             incrementalItems.unshift(incremental.data);
@@ -44,7 +47,11 @@ function mergeIncrementalResults(values: ExecutionResult[]) {
               if (!existingData) {
                 _.set(result.data, incremental.path, incrementalItem);
               } else {
-                _.set(result.data, incremental.path, mergeDeep([existingData, incrementalItem]));
+                _.set(
+                  result.data,
+                  incremental.path,
+                  mergeDeep([existingData, incrementalItem]),
+                );
               }
             }
           }
@@ -71,88 +78,92 @@ describe('Defer/Stream', () => {
   function resolveWithDelay<T>(value: () => T, delay: number): Promise<T> {
     return setTimeout(delay).then(() => value());
   }
-  const usersSubgraph = buildSubgraphSchema([
-    {
-      typeDefs: parse(/* GraphQL */ `
-        type Query {
-          user(id: ID!): User
-          users: [User]
-          usersStream: [User]
-        }
+  const usersSubgraph = buildSubgraphSchema([{
+    typeDefs: parse(/* GraphQL */ `
+      type Query {
+        user(id: ID!): User
+        users: [User]
+        usersStream: [User]
+      }
 
-        type User @key(fields: "id") {
-          id: ID!
-          name: String!
-        }
-      `),
-      resolvers: {
-        User: {
-          __resolveReference: (user: { id: string }) =>
-            resolveWithDelay(() => users.find(u => u.id === user.id), 500),
-        },
-        Query: {
-          users: () => resolveWithDelay(() => users, 300),
-          user: (_, { id }) => resolveWithDelay(() => users.find(user => user.id === id), 500),
-          usersStream: async function* usersStream() {
-            for (const user of users) {
-              yield user;
-              await setTimeout(500);
-            }
-          },
+      type User @key(fields: "id") {
+        id: ID!
+        name: String!
+      }
+    `),
+    resolvers: {
+      User: {
+        __resolveReference: (user: { id: string }) =>
+          resolveWithDelay(() => users.find((u) => u.id === user.id), 500),
+      },
+      Query: {
+        users: () => resolveWithDelay(() => users, 300),
+        user: (_, { id }) =>
+          resolveWithDelay(() => users.find((user) => user.id === id), 500),
+        usersStream: async function* usersStream() {
+          for (const user of users) {
+            yield user;
+            await setTimeout(500);
+          }
         },
       },
     },
-  ]);
+  }]);
   const usersServer = createYoga({
     logging: false,
     schema: usersSubgraph,
     plugins: [useDeferStream()],
   });
-  const postsSubgraph = buildSubgraphSchema([
-    {
-      typeDefs: parse(/* GraphQL */ `
-        type Query {
-          post(id: ID!): Post
-          posts: [Post]
-        }
+  const postsSubgraph = buildSubgraphSchema([{
+    typeDefs: parse(/* GraphQL */ `
+      type Query {
+        post(id: ID!): Post
+        posts: [Post]
+      }
 
-        type Post @key(fields: "id") {
-          id: ID!
-          title: String
-          author: User!
-        }
+      type Post @key(fields: "id") {
+        id: ID!
+        title: String
+        author: User!
+      }
 
-        extend type User @key(fields: "id") {
-          id: ID! @external
-          posts: [Post]
-        }
-      `),
-      resolvers: {
-        Post: {
-          __resolveReference: (post: { id: string }) =>
-            resolveWithDelay(() => posts.find(p => p.id === post.id), 300),
-          author: (post: { authorId: string }) =>
-            resolveWithDelay(() => users.find(user => user.id === post.authorId), 300),
-        },
-        User: {
-          __resolveReference: (user: { id: string }) =>
-            resolveWithDelay(() => users.find(u => u.id === user.id), 300),
-          posts: (user: { id: string }) =>
-            resolveWithDelay(() => posts.filter(post => post.authorId === user.id), 300),
-        },
-        Query: {
-          post: (_, { id }) => resolveWithDelay(() => posts.find(post => post.id === id), 300),
-          posts: () => resolveWithDelay(() => posts, 300),
-          postsStream: async function* postsStream() {
-            for (const post of posts) {
-              yield post;
-              await setTimeout(500);
-            }
-          },
+      extend type User @key(fields: "id") {
+        id: ID! @external
+        posts: [Post]
+      }
+    `),
+    resolvers: {
+      Post: {
+        __resolveReference: (post: { id: string }) =>
+          resolveWithDelay(() => posts.find((p) => p.id === post.id), 300),
+        author: (post: { authorId: string }) =>
+          resolveWithDelay(
+            () => users.find((user) => user.id === post.authorId),
+            300,
+          ),
+      },
+      User: {
+        __resolveReference: (user: { id: string }) =>
+          resolveWithDelay(() => users.find((u) => u.id === user.id), 300),
+        posts: (user: { id: string }) =>
+          resolveWithDelay(
+            () => posts.filter((post) => post.authorId === user.id),
+            300,
+          ),
+      },
+      Query: {
+        post: (_, { id }) =>
+          resolveWithDelay(() => posts.find((post) => post.id === id), 300),
+        posts: () => resolveWithDelay(() => posts, 300),
+        postsStream: async function* postsStream() {
+          for (const post of posts) {
+            yield post;
+            await setTimeout(500);
+          }
         },
       },
     },
-  ]);
+  }]);
   const postsServer = createYoga({
     logging: false,
     schema: postsSubgraph,
@@ -243,8 +254,7 @@ describe('Defer/Stream', () => {
       `),
     })) as ExecutionResult;
   });
-  // backbone gap: incremental payload shape for deferred root fields
-  it.failing('defers the root fields', async () => {
+  it('defers the root fields', async () => {
     const result = await normalizedExecutor({
       schema,
       document: parse(/* GraphQL */ `
@@ -283,8 +293,10 @@ describe('Defer/Stream', () => {
     assertAsyncIterable(result);
     const values = [];
     for await (const value of result) {
-      if (value.incremental?.some(v => v.errors?.length)) {
-        throw new Error(`Unexpected on incremental response: ${inspect(value, false, Infinity)}`);
+      if (value.incremental?.some((v) => v.errors?.length)) {
+        throw new Error(
+          `Unexpected on incremental response: ${inspect(value, false, Infinity)}`,
+        );
       }
       if (value.errors) {
         throw new Error(`Unexpected error: ${value.errors}`);
@@ -340,8 +352,10 @@ describe('Defer/Stream', () => {
     assertAsyncIterable(result);
     const values = [];
     for await (const value of result) {
-      if (value.incremental?.some(v => v.errors?.length)) {
-        throw new Error(`Unexpected on incremental response: ${inspect(value, false, Infinity)}`);
+      if (value.incremental?.some((v) => v.errors?.length)) {
+        throw new Error(
+          `Unexpected on incremental response: ${inspect(value, false, Infinity)}`,
+        );
       }
       if (value.errors) {
         throw new Error(`Unexpected error: ${value.errors}`);
@@ -375,8 +389,10 @@ describe('Defer/Stream', () => {
     assertAsyncIterable(result);
     const values = [];
     for await (const value of result) {
-      if (value.incremental?.some(v => v.errors?.length)) {
-        throw new Error(`Unexpected on incremental response: ${inspect(value, false, Infinity)}`);
+      if (value.incremental?.some((v) => v.errors?.length)) {
+        throw new Error(
+          `Unexpected on incremental response: ${inspect(value, false, Infinity)}`,
+        );
       }
       if (value.errors) {
         throw new Error(`Unexpected error: ${value.errors}`);
@@ -430,50 +446,47 @@ describe('Defer/Stream - entity-level defer on merged types', () => {
     { id: '1', name: 'Item 1', prepSequenceMultiLocationId: 'p1' },
     { id: '2', name: 'Item 2', prepSequenceMultiLocationId: 'p2' },
   ];
-  const menusSubgraph = buildSubgraphSchema([
-    {
-      typeDefs: parse(/* GraphQL */ `
-        type Query {
-          menuItems: [MenuItem]
-        }
+  const menusSubgraph = buildSubgraphSchema([{
+    typeDefs: parse(/* GraphQL */ `
+      type Query {
+        menuItems: [MenuItem]
+      }
 
-        type MenuItem @key(fields: "id") {
-          id: ID!
-          name: String!
-          prepSequenceMultiLocationId: ID
-        }
-      `),
-      resolvers: {
-        Query: {
-          menuItems: () => menuItems,
+      type MenuItem @key(fields: "id") {
+        id: ID!
+        name: String!
+        prepSequenceMultiLocationId: ID
+      }
+    `),
+    resolvers: {
+      Query: {
+        menuItems: () => menuItems,
+      },
+    },
+  }]);
+  const kitchenSubgraph = buildSubgraphSchema([{
+    typeDefs: parse(/* GraphQL */ `
+      type PrepSequence {
+        id: ID!
+      }
+
+      type MenuItem @key(fields: "id") {
+        id: ID!
+        prepSequenceMultiLocationId: ID @external
+        prepSequence: PrepSequence
+          @requires(fields: "prepSequenceMultiLocationId")
+      }
+    `),
+    resolvers: {
+      MenuItem: {
+        __resolveReference: (ref: { id: string }) => ref,
+        prepSequence: async (ref: { prepSequenceMultiLocationId: string }) => {
+          await setTimeout(slowSubgraphDelayMs);
+          return { id: `seq-${ref.prepSequenceMultiLocationId}` };
         },
       },
     },
-  ]);
-  const kitchenSubgraph = buildSubgraphSchema([
-    {
-      typeDefs: parse(/* GraphQL */ `
-        type PrepSequence {
-          id: ID!
-        }
-
-        type MenuItem @key(fields: "id") {
-          id: ID!
-          prepSequenceMultiLocationId: ID @external
-          prepSequence: PrepSequence @requires(fields: "prepSequenceMultiLocationId")
-        }
-      `),
-      resolvers: {
-        MenuItem: {
-          __resolveReference: (ref: { id: string }) => ref,
-          prepSequence: async (ref: { prepSequenceMultiLocationId: string }) => {
-            await setTimeout(slowSubgraphDelayMs);
-            return { id: `seq-${ref.prepSequenceMultiLocationId}` };
-          },
-        },
-      },
-    },
-  ]);
+  }]);
   const menusServer = createYoga({
     logging: false,
     schema: menusSubgraph,
@@ -496,7 +509,9 @@ describe('Defer/Stream - entity-level defer on merged types', () => {
       supergraphSdl,
       onSubschemaConfig(subschemaConfig) {
         const server =
-          subschemaConfig.name.toLowerCase() === 'kitchen' ? kitchenServer : menusServer;
+          subschemaConfig.name.toLowerCase() === 'kitchen'
+            ? kitchenServer
+            : menusServer;
         subschemaConfig.executor = disposableStack.use(
           buildHTTPExecutor({
             endpoint: 'http://localhost:4003/graphql',
@@ -626,13 +641,13 @@ describe('Defer/Stream - entity-level defer on merged types', () => {
       hasNext: true,
     });
     expect(kitchenQueries.length).toBeGreaterThan(0);
-    if (!kitchenQueries.some(body => body.includes('prepSequence'))) {
+    if (!kitchenQueries.some((body) => body.includes('prepSequence'))) {
       throw new Error(
         `expected kitchen _entities to request prepSequence, got:\n${kitchenQueries.join('\n')}`,
       );
     }
     // Entity follow-ups are not subgraph-forwarded.
-    expect(kitchenQueries.some(body => body.includes('@defer'))).toBe(false);
+    expect(kitchenQueries.some((body) => body.includes('@defer'))).toBe(false);
     expect(mergeIncrementalResults(values)).toEqual({
       data: {
         menuItems: [
@@ -649,24 +664,22 @@ describe('Defer/Stream - scalar streaming via HTTP', () => {
 
   // A minimal subgraph that exposes a [String!]! stream field - mirrors the
   // issue reproduction where `alphabet: [String!]!` is streamed via @stream.
-  const alphabetSubgraph = buildSubgraphSchema([
-    {
-      typeDefs: parse(/* GraphQL */ `
-        type Query {
-          alphabet: [String!]!
-        }
-      `),
-      resolvers: {
-        Query: {
-          alphabet: async function* alphabet() {
-            for (const letter of letters) {
-              yield letter;
-            }
-          },
+  const alphabetSubgraph = buildSubgraphSchema([{
+    typeDefs: parse(/* GraphQL */ `
+      type Query {
+        alphabet: [String!]!
+      }
+    `),
+    resolvers: {
+      Query: {
+        alphabet: async function* alphabet() {
+          for (const letter of letters) {
+            yield letter;
+          }
         },
       },
     },
-  ]);
+  }]);
 
   const alphabetServer = createYoga({
     logging: false,
@@ -718,11 +731,15 @@ describe('Defer/Stream - scalar streaming via HTTP', () => {
     assertAsyncIterable(result);
     const values = [];
     for await (const value of result) {
-      if (value.incremental?.some(v => v.errors?.length)) {
-        throw new Error(`Unexpected on incremental response: ${inspect(value, false, Infinity)}`);
+      if (value.incremental?.some((v) => v.errors?.length)) {
+        throw new Error(
+          `Unexpected on incremental response: ${inspect(value, false, Infinity)}`,
+        );
       }
       if (value.errors) {
-        throw new Error(`Unexpected error: ${inspect(value.errors, false, Infinity)}`);
+        throw new Error(
+          `Unexpected error: ${inspect(value.errors, false, Infinity)}`,
+        );
       }
       values.push(value);
     }

@@ -6,7 +6,11 @@ schema
   mutation: Mutation
 }
 
-directive @core(as: String, feature: String!, for: core__Purpose) repeatable on SCHEMA
+directive @core(
+  as: String
+  feature: String!
+  for: core__Purpose
+) repeatable on SCHEMA
 
 directive @join__field(
   graph: join__Graph
@@ -18,9 +22,14 @@ directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
 directive @join__owner(graph: join__Graph!) on INTERFACE | OBJECT
 
-directive @join__type(graph: join__Graph!, key: join__FieldSet) repeatable on INTERFACE | OBJECT
+directive @join__type(
+  graph: join__Graph!
+  key: join__FieldSet
+) repeatable on INTERFACE | OBJECT
 
-directive @tag(name: String!) repeatable on FIELD_DEFINITION | INTERFACE | OBJECT | UNION
+directive @tag(
+  name: String!
+) repeatable on FIELD_DEFINITION | INTERFACE | OBJECT | UNION
 
 type Mutation {
   setNumber: Int @join__field(graph: PB_BACKEND)
@@ -115,7 +124,18 @@ scalar join__FieldSet
 
 enum join__Graph {
   NODERESOLVER
-    @join__graph(name: "noderesolver", url: "http://graphql-node-resolver.graphql/graphql")
-  PB_BACKEND @join__graph(name: "pb-backend", url: "http://pb-backend-web.default/internal/graphql")
-  PB_SERVICE_B @join__graph(name: "pb-service-b", url: "http://pb-service-b.default/graphql")
+    @join__graph(
+      name: "noderesolver"
+      url: "http://graphql-node-resolver.graphql/graphql"
+    )
+  PB_BACKEND
+    @join__graph(
+      name: "pb-backend"
+      url: "http://pb-backend-web.default/internal/graphql"
+    )
+  PB_SERVICE_B
+    @join__graph(
+      name: "pb-service-b"
+      url: "http://pb-service-b.default/graphql"
+    )
 }

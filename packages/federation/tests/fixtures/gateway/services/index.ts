@@ -1,4 +1,4 @@
-export * as accounts from './accounts';
-export * as inventory from './inventory';
-export * as products from './products';
-export * as reviews from './reviews';
+export * as accounts from './accounts/server';
+export * as inventory from './inventory/server';
+export * as products from './products/server';
+export * as reviews from './reviews/server';

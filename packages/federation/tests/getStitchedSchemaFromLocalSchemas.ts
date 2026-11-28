@@ -1,18 +1,22 @@
-import { GraphQLSchema } from 'graphql';
-import { createDefaultExecutor } from '@graphql-tools/delegate';
-import { ExecutionRequest, ExecutionResult, getDocumentNodeFromSchema } from '@graphql-tools/utils';
-import { composeServices } from '@theguild/federation-composition';
-import { handleMaybePromise } from '@whatwg-node/promise-helpers';
-import { getStitchedSchemaFromSupergraphSdl } from '../src/supergraph';
-import type { ProgressiveOverrideHandler } from '../src/utils';
-import { composeLocalSchemasWithApollo } from './helpers';
-
 function kebabCase(value: string): string {
   return value
     .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
     .replace(/[_\s]+/g, '-')
     .toLowerCase();
 }
+
+import type { ProgressiveOverrideHandler } from '../src/utils';
+import { createDefaultExecutor } from '@graphql-tools/delegate';
+import {
+  ExecutionRequest,
+  ExecutionResult,
+  getDocumentNodeFromSchema,
+} from '@graphql-tools/utils';
+import { composeLocalSchemasWithApollo } from './helpers';
+import { composeServices } from '@theguild/federation-composition';
+import { handleMaybePromise } from '@whatwg-node/promise-helpers';
+import { GraphQLSchema } from 'graphql';
+import { getStitchedSchemaFromSupergraphSdl } from '../src/supergraph';
 
 export interface LocalSchemaItem {
   name: string;
@@ -54,7 +58,7 @@ export async function getStitchedSchemaFromLocalSchemas({
       })),
       { disableValidationRules: ignoreRules },
     );
-    result.errors?.forEach(error => {
+    result.errors?.forEach((error) => {
       console.error(error);
     });
     if (!result.supergraphSdl) {
@@ -69,7 +73,7 @@ export async function getStitchedSchemaFromLocalSchemas({
     return function tracedExecutor(request: ExecutionRequest) {
       return handleMaybePromise(
         () => executor(request),
-        result => {
+        (result) => {
           onSubgraphExecute?.(name, request, result);
           return result;
         },

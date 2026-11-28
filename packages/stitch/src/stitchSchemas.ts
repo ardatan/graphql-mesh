@@ -50,9 +50,6 @@ import {
   type SubschemaConfigTransform,
 } from './types.js';
 
-const BACKBONE_HYDRATED = Symbol.for('graphql-tools.stitch.backboneHydrated');
-const BACKBONE_EXECUTING_SYM = Symbol.for('graphql-tools.stitch.backboneExecuting');
-
 export function stitchSchemas<TContext extends Record<string, any> = Record<string, any>>(
   options: IStitchSchemasOptions<TContext>,
 ): GraphQLSchema {
@@ -256,9 +253,9 @@ function cloneResolverMap(resolverMap: IResolvers, schema: GraphQLSchema): IReso
  * the rest of the fields resolve through regular type merging.
  */
 /**
- * Wrap merged-entity field resolvers: when the backbone plan has hydrated the
- * tree (`BACKBONE_HYDRATED`), skip mergeFields on already-present
- * fields. Otherwise call the previous resolver unchanged.
+ * Wrap merged-entity field resolvers: ExternalObject parents resolve from
+ * response keys (and rethrow matching unpathed errors); otherwise call the
+ * previous resolver (backbone DMR preferred over classic).
  */
 function wrapMergedTypeResolversForBackboneHydration<TContext extends Record<string, any>>(
   schema: GraphQLSchema,
@@ -278,17 +275,23 @@ function wrapMergedTypeResolversForBackboneHydration<TContext extends Record<str
       if (previous == null) {
         continue;
       }
+      // Prefer backbone DMR over classic `@graphql-tools/delegate` DMR (same
+      // function name). Classic ignores aliases on non-ExternalObject parents;
+      // `projectDataToOperation` also drops ExternalObject stamps, so alias
+      // keys must still resolve after projection.
+      const resolvePrevious =
+        previous === backboneDefaultMergedResolver || previous.name !== 'defaultMergedResolver'
+          ? previous
+          : backboneDefaultMergedResolver;
       field.resolve = function defaultMergedResolver(
         parent: any,
         args: any,
         context: any,
         info: any,
       ) {
-        const backboneActive =
-          context != null &&
-          typeof context === 'object' &&
-          ((context as any)[BACKBONE_HYDRATED] || (context as any)[BACKBONE_EXECUTING_SYM]);
-        if (backboneActive && parent != null && isExternalObject(parent)) {
+        // ExternalObject parents are backbone/stitch payloads. Handle them even
+        // when callers omit contextValue (HYDRATED lives on a private bag then).
+        if (parent != null && isExternalObject(parent)) {
           const responseKey = info.fieldNodes[0]?.alias?.value ?? info.fieldName;
           if (Object.prototype.hasOwnProperty.call(parent, responseKey)) {
             return resolveExternalValue(
@@ -301,14 +304,34 @@ function wrapMergedTypeResolversForBackboneHydration<TContext extends Record<str
               true,
             );
           }
-          // Plan still running / already hydrated - do not schedule classic
-          // mergeFields DataLoader batches for missing entity fields.
           if (Object.prototype.hasOwnProperty.call(parent, info.fieldName)) {
-            return parent[info.fieldName];
+            return resolveExternalValue(
+              parent[info.fieldName],
+              getUnpathedErrors(parent),
+              getSubschema(parent, info.fieldName),
+              context,
+              info,
+              undefined,
+              true,
+            );
           }
-          return undefined;
+          // Missing key: rethrow unpathed subgraph errors (shared-root non-null).
+          // Otherwise fall through so subscription / local resolvers still run.
+          const unpathed = getUnpathedErrors(parent);
+          const match = unpathed.find(error => {
+            const path = error.path;
+            if (!path?.length) {
+              return true;
+            }
+            return (
+              path[path.length - 1] === responseKey || path[path.length - 1] === info.fieldName
+            );
+          });
+          if (match) {
+            throw match;
+          }
         }
-        return previous(parent, args, context, info);
+        return resolvePrevious(parent, args, context, info);
       };
     }
   }

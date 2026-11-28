@@ -5,7 +5,10 @@ schema
   @join__directive(
     graphs: [PRODUCTS]
     name: "link"
-    args: { url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"] }
+    args: {
+      url: "https://specs.apollo.dev/connect/v0.2"
+      import: ["@connect", "@source"]
+    }
   )
   @join__directive(
     graphs: [PRODUCTS]
@@ -53,7 +56,10 @@ directive @join__type(
   isInterfaceObject: Boolean! = false
 ) repeatable on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR
 
-directive @join__unionMember(graph: join__Graph!, member: String!) repeatable on UNION
+directive @join__unionMember(
+  graph: join__Graph!
+  member: String!
+) repeatable on UNION
 
 directive @link(
   url: String

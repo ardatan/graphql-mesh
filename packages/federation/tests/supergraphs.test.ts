@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
-import { buildSchema, lexicographicSortSchema, printSchema } from 'graphql';
 import { filterSchema, getDirective } from '@graphql-tools/utils';
+import { buildSchema, lexicographicSortSchema, printSchema } from 'graphql';
 import { getStitchedSchemaFromSupergraphSdl } from '../src/supergraph';
 
 describe('transitive directive type dependencies', () => {
@@ -55,7 +55,8 @@ describe('transitive directive type dependencies', () => {
       scalar join__FieldSet
 
       enum join__Graph {
-        PRODUCTS @join__graph(name: "products", url: "http://products:4000/graphql")
+        PRODUCTS
+          @join__graph(name: "products", url: "http://products:4000/graphql")
       }
 
       scalar link__Import
@@ -76,12 +77,14 @@ describe('transitive directive type dependencies', () => {
     `;
 
     // Should not throw "Unknown type: InputB" (or InputA)
-    expect(() => getStitchedSchemaFromSupergraphSdl({ supergraphSdl })).not.toThrow();
+    expect(() =>
+      getStitchedSchemaFromSupergraphSdl({ supergraphSdl }),
+    ).not.toThrow();
   });
 });
 
 describe('Supergraphs', () => {
-  readdirSync(join(__dirname, 'fixtures', 'supergraphs')).forEach(fixture => {
+  readdirSync(join(__dirname, 'fixtures', 'supergraphs')).forEach((fixture) => {
     describe(fixture, () => {
       const fixturePath = join(__dirname, 'fixtures', 'supergraphs', fixture);
       const supergraphSdl = readFileSync(fixturePath, 'utf8');
@@ -97,13 +100,14 @@ describe('Supergraphs', () => {
         );
         const filteredInputSchema = filterSchema({
           schema: sortedInputSchema,
-          typeFilter: typeName =>
+          typeFilter: (typeName) =>
             !typeName.startsWith('link__') &&
             !typeName.startsWith('join__') &&
             !typeName.startsWith('core__'),
           fieldFilter: (_, __, fieldConfig) =>
-            !getDirective(sortedInputSchema, fieldConfig, 'inaccessible')?.length,
-          directiveFilter: typeName =>
+            !getDirective(sortedInputSchema, fieldConfig, 'inaccessible')
+              ?.length,
+          directiveFilter: (typeName) =>
             !typeName.startsWith('link__') &&
             !typeName.startsWith('join__') &&
             !typeName.startsWith('core__') &&
@@ -111,9 +115,12 @@ describe('Supergraphs', () => {
             typeName !== 'link' &&
             typeName !== 'inaccessible',
           enumValueFilter: (_, __, enumValueConfig) =>
-            !getDirective(sortedInputSchema, enumValueConfig, 'inaccessible')?.length,
+            !getDirective(sortedInputSchema, enumValueConfig, 'inaccessible')
+              ?.length,
         });
-        expect(printSchema(sortedSchema).trim()).toBe(printSchema(filteredInputSchema).trim());
+        expect(printSchema(sortedSchema).trim()).toBe(
+          printSchema(filteredInputSchema).trim(),
+        );
       });
     });
   });

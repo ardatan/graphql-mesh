@@ -26,8 +26,7 @@ async function execute(localSchemas: Record<string, GraphQLSchema>, query: strin
 
 describe('@interfaceObject', () => {
   // https://github.com/graphql-hive/gateway/issues/2463
-  // backbone gap: @interfaceObject resolveType / field resolution
-  it.failing(
+  it(
     'resolves fields from inline fragments nested in a named fragment on the interface',
     async () => {
       const a = buildSubgraphSchema([
@@ -133,8 +132,7 @@ describe('@interfaceObject', () => {
   );
 
   // https://github.com/graphql-hive/gateway/issues/2736
-  // backbone gap: @interfaceObject resolveType / field resolution
-  it.failing(
+  it(
     'resolves the interface object field when another subgraph extends the implementation',
     async () => {
       const kinds: Record<string, string> = { store1: 'Store', spa1: 'Spa' };
@@ -302,8 +300,7 @@ describe('@interfaceObject', () => {
   );
 
   // https://github.com/graphql-hive/gateway/issues/2737
-  // backbone gap: @interfaceObject resolveType / field resolution
-  it.failing(
+  it(
     'sends the @requires fields to the interface object when selected through an inline fragment on the implementation',
     async () => {
       const owner = buildSubgraphSchema([

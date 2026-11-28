@@ -1,14 +1,17 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { parse, print } from 'graphql';
 import { execute } from '@graphql-tools/executor';
+import { parse, print } from 'graphql';
 import { getStitchedSchemaFromSupergraphSdl } from '../src/supergraph';
 
 it('should not do a fragment spread on a union', () => {
   const queries: string[] = [];
 
   const schema = getStitchedSchemaFromSupergraphSdl({
-    supergraphSdl: readFileSync(join(__dirname, 'fixtures', 'supergraphs', 'c.graphql'), 'utf8'),
+    supergraphSdl: readFileSync(
+      join(__dirname, 'fixtures', 'supergraphs', 'c.graphql'),
+      'utf8',
+    ),
     onSubschemaConfig(subschemaConfig) {
       subschemaConfig.executor = function executor(request) {
         queries.push(print(request.document));

@@ -1,8 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { DocumentNode } from 'graphql';
-import { printWithComments } from '@graphql-tools/utils';
 import { getStitchedSchemaFromSupergraphSdl } from '../src/index';
+import { DocumentNode, print } from 'graphql';
 
 it('split subgraphs correctly', () => {
   const supergraphSdl = readFileSync(
@@ -19,7 +18,6 @@ it('split subgraphs correctly', () => {
   });
   for (const subgraphName of Object.keys(subgraphAstMap).sort()) {
     const subgraphAst = subgraphAstMap[subgraphName]!;
-    // the graphql-tools printer prints the same with graphql 16 and 17
-    expect(printWithComments(subgraphAst)).toMatchSnapshot(subgraphName);
+    expect(print(subgraphAst)).toMatchSnapshot(subgraphName);
   }
 });

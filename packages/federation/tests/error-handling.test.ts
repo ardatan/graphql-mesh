@@ -1,72 +1,68 @@
-import { GraphQLSchema, parse } from 'graphql';
 import { buildSubgraphSchema } from '@apollo/subgraph';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { isAsyncIterable } from '@graphql-tools/utils';
-import { getStitchedSchemaFromSupergraphSdl } from '../src/supergraph';
 import { composeLocalSchemasWithApollo } from './helpers';
+import { GraphQLSchema, parse } from 'graphql';
+import { getStitchedSchemaFromSupergraphSdl } from '../src/supergraph';
 
 describe('Error handling', () => {
   let aResult: any;
   let bResult: any;
-  const subgraphA = buildSubgraphSchema([
-    {
-      typeDefs: parse(/* GraphQL */ `
-        type Query {
-          foo: Foo
-        }
+  const subgraphA = buildSubgraphSchema([{
+    typeDefs: parse(/* GraphQL */ `
+      type Query {
+        foo: Foo
+      }
 
-        type Foo @key(fields: "id") {
-          id: ID!
-          bar: String
-        }
-      `),
-      resolvers: {
-        Query: {
-          foo() {
-            return aResult;
-          },
+      type Foo @key(fields: "id") {
+        id: ID!
+        bar: String
+      }
+    `),
+    resolvers: {
+      Query: {
+        foo() {
+          return aResult;
         },
-        Foo: {
-          __resolveReference(root) {
-            return root;
-          },
-          bar() {
-            return 'Bar';
-          },
+      },
+      Foo: {
+        __resolveReference(root) {
+          return root;
+        },
+        bar() {
+          return 'Bar';
         },
       },
     },
-  ]);
-  const subgraphB = buildSubgraphSchema([
-    {
-      typeDefs: parse(/* GraphQL */ `
-        type Query {
-          foo: Foo
-        }
+  }]);
+  const subgraphB = buildSubgraphSchema([{
+    typeDefs: parse(/* GraphQL */ `
+      type Query {
+        foo: Foo
+      }
 
-        extend type Foo @key(fields: "id") {
-          id: ID!
-          baz: String
-        }
-      `),
-      resolvers: {
-        Query: {
-          foo() {
-            return bResult;
-          },
+      extend type Foo @key(fields: "id") {
+        id: ID!
+        baz: String
+      }
+    `),
+    resolvers: {
+      Query: {
+        foo() {
+          return bResult;
         },
-        Foo: {
-          __resolveReference(root) {
-            return root;
-          },
-          baz() {
-            return 'Baz';
-          },
+      },
+      Foo: {
+        __resolveReference(root) {
+          return root;
+        },
+        baz() {
+          return 'Baz';
         },
       },
     },
-  ]);
+  }]);
   let supergraph: GraphQLSchema;
   beforeAll(async () => {
     const supergraphSdl = await composeLocalSchemasWithApollo([

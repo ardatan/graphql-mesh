@@ -1,9 +1,10 @@
-import { GraphQLSchema, parse, print } from 'graphql';
-import { kebabCase } from 'lodash';
 import { buildSubgraphSchema } from '@apollo/subgraph';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { normalizedExecutor } from '@graphql-tools/executor';
 import { ExecutionRequest, Executor } from '@graphql-tools/utils';
+import { composeLocalSchemasWithApollo } from './helpers';
+import { GraphQLSchema, parse, print } from 'graphql';
+import { kebabCase } from 'lodash';
 import { getStitchedSchemaFromSupergraphSdl } from '../src/supergraph';
 import { getServiceInputs, getSupergraph } from './fixtures/gateway/supergraph';
 import {
@@ -14,7 +15,6 @@ import {
   Eschema,
 } from './fixtures/optimizations/awareness-of-other-fields';
 import { getStitchedSchemaFromLocalSchemas } from './getStitchedSchemaFromLocalSchemas';
-import { composeLocalSchemasWithApollo } from './helpers';
 
 describe('Optimizations', () => {
   let serviceCallCnt: Record<string, number>;
@@ -26,21 +26,22 @@ describe('Optimizations', () => {
       supergraphSdl: await getSupergraph(),
       onSubschemaConfig(subschemaConfig) {
         const subgraphName = subschemaConfig.name.toLowerCase();
-        const serviceInput = serviceInputs.find(input => input.name === subgraphName);
+        const serviceInput = serviceInputs.find(
+          (input) => input.name === subgraphName,
+        );
         if (!serviceInput) {
           throw new Error(`Service ${subgraphName} not found`);
         }
         const executor = createDefaultExecutor(serviceInput.schema);
         serviceCallCnt[subgraphName] = 0;
-        subschemaConfig.executor = args => {
+        subschemaConfig.executor = (args) => {
           serviceCallCnt[subgraphName]!++;
           return executor(args);
         };
       },
     });
   });
-  // backbone gap: plan optimization / abstract resolveType parity with Hive suite
-  it.failing('should not do extra calls with "@provides"', async () => {
+  it('should not do extra calls with "@provides"', async () => {
     const query = /* GraphQL */ `
       query {
         topProducts {
@@ -60,8 +61,7 @@ describe('Optimizations', () => {
     });
     expect(serviceCallCnt['accounts']).toBe(0);
   });
-  // backbone gap: plan optimization / abstract resolveType parity with Hive suite
-  it.failing('should do deduplication', async () => {
+  it('should do deduplication', async () => {
     const query = /* GraphQL */ `
       fragment User on User {
         id
@@ -140,7 +140,10 @@ describe('awareness-of-other-fields', () => {
   let supergraphSdl: string;
   let gwSchema: GraphQLSchema;
   let subgraphCalls: { [subgraph: string]: number } = {};
-  function getTracedExecutor(subgraphName: string, schema: GraphQLSchema): Executor {
+  function getTracedExecutor(
+    subgraphName: string,
+    schema: GraphQLSchema,
+  ): Executor {
     const executor = createDefaultExecutor(schema);
     return function tracedExecutor(execReq: ExecutionRequest) {
       subgraphCalls[subgraphName] = (subgraphCalls[subgraphName] || 0) + 1;
@@ -267,135 +270,129 @@ it('prevents recursively depending fields in case of multiple keys', async () =>
       author: authors[2],
     },
   ];
-  const booksSchema = buildSubgraphSchema([
-    {
-      typeDefs: parse(/* GraphQL */ `
-        type Book @key(fields: "id") @key(fields: "upc") {
-          id: ID!
-          upc: ID!
-        }
-      `),
-      resolvers: {
-        Book: {
-          __resolveReference(reference: { id?: string; upc?: string }) {
-            if (reference.id) {
-              return books.find(book => book.id === reference.id);
-            }
-            if (reference.upc && reference.upc !== '3_upc') {
-              return books.find(book => book.upc === reference.upc);
-            }
-            return null;
-          },
+  const booksSchema = buildSubgraphSchema([{
+    typeDefs: parse(/* GraphQL */ `
+      type Book @key(fields: "id") @key(fields: "upc") {
+        id: ID!
+        upc: ID!
+      }
+    `),
+    resolvers: {
+      Book: {
+        __resolveReference(reference: { id?: string; upc?: string }) {
+          if (reference.id) {
+            return books.find((book) => book.id === reference.id);
+          }
+          if (reference.upc && reference.upc !== '3_upc') {
+            return books.find((book) => book.upc === reference.upc);
+          }
+          return null;
         },
       },
     },
-  ]);
-  const multiLocationMgmt = buildSubgraphSchema([
-    {
-      typeDefs: parse(/* GraphQL */ `
-        type BookContainer { # the type that is used in a collection
-          id: ID!
-          # ... other stuff here
-          source: Book!
-        }
+  }]);
+  const multiLocationMgmt = buildSubgraphSchema([{
+    typeDefs: parse(/* GraphQL */ `
+      type BookContainer { # the type that is used in a collection
+        id: ID!
+        # ... other stuff here
+        source: Book!
+      }
 
-        type Book @key(fields: "upc") {
-          upc: ID!
-        }
+      type Book @key(fields: "upc") {
+        upc: ID!
+      }
 
-        type Query {
-          viewer: Viewer
-        }
+      type Query {
+        viewer: Viewer
+      }
 
-        type Viewer {
-          booksContainer: BooksContainerResult
-        }
+      type Viewer {
+        booksContainer: BooksContainerResult
+      }
 
-        type BooksContainerResult {
-          edges: [BooksContainerEdge!]!
-          pageInfo: PageInfo!
-        }
+      type BooksContainerResult {
+        edges: [BooksContainerEdge!]!
+        pageInfo: PageInfo!
+      }
 
-        type BooksContainerEdge {
-          node: BookContainer!
-          cursor: String!
-        }
+      type BooksContainerEdge {
+        node: BookContainer!
+        cursor: String!
+      }
 
-        type PageInfo {
-          endCursor: String
-        }
-      `),
-      resolvers: {
-        Query: {
-          viewer() {
-            return {
-              booksContainer: {
-                edges: [
-                  {
-                    node: {
-                      id: '1',
-                      source: {
-                        upc: '1_upc',
-                      },
+      type PageInfo {
+        endCursor: String
+      }
+    `),
+    resolvers: {
+      Query: {
+        viewer() {
+          return {
+            booksContainer: {
+              edges: [
+                {
+                  node: {
+                    id: '1',
+                    source: {
+                      upc: '1_upc',
                     },
-                    cursor: '1',
                   },
-                  {
-                    node: {
-                      id: '2',
-                      source: {
-                        upc: '2_upc',
-                      },
-                    },
-                    cursor: '2',
-                  },
-                  {
-                    node: {
-                      id: '3',
-                      source: {
-                        upc: '3_upc',
-                      },
-                    },
-                    cursor: '3',
-                  },
-                ],
-                pageInfo: {
-                  endCursor: '3',
+                  cursor: '1',
                 },
+                {
+                  node: {
+                    id: '2',
+                    source: {
+                      upc: '2_upc',
+                    },
+                  },
+                  cursor: '2',
+                },
+                {
+                  node: {
+                    id: '3',
+                    source: {
+                      upc: '3_upc',
+                    },
+                  },
+                  cursor: '3',
+                },
+              ],
+              pageInfo: {
+                endCursor: '3',
               },
-            };
-          },
+            },
+          };
         },
       },
     },
-  ]);
-  const authorsSchema = buildSubgraphSchema([
-    {
-      typeDefs: parse(/* GraphQL */ `
-        type Author @key(fields: "id") {
-          id: ID!
-          name: String!
-        }
-        type Book @key(fields: "id") {
-          id: ID!
-          author: Author
-        }
-      `),
-      resolvers: {
-        Book: {
-          __resolveReference(reference: { id?: string }) {
-            if (!reference) {
-              throw new Error('No reference');
-            }
-            if (!reference.id) {
-              throw new Error('No id');
-            }
-            return books.find(book => book.id === reference.id);
-          },
+  }]);
+  const authorsSchema = buildSubgraphSchema([{
+    typeDefs: parse(/* GraphQL */ `
+      type Author @key(fields: "id") {
+        id: ID!
+        name: String!
+      }
+      type Book @key(fields: "id") {
+        id: ID!
+        author: Author
+      }
+    `),
+    resolvers: {
+      Book: {
+        __resolveReference(reference: { id?: string }) {
+          if (!reference) {
+            throw new Error('No reference');
+          }
+          if (!reference.id) {
+            throw new Error('No id');
+          }
+          return books.find((book) => book.id === reference.id);
         },
       },
     },
-  ]);
+  }]);
 
   const supergraphSdl = await composeLocalSchemasWithApollo([
     {
@@ -418,7 +415,10 @@ it('prevents recursively depending fields in case of multiple keys', async () =>
       variables: any;
     }[]
   > = {};
-  function createTracedExecutor(subgraphName: string, schema: GraphQLSchema): Executor {
+  function createTracedExecutor(
+    subgraphName: string,
+    schema: GraphQLSchema,
+  ): Executor {
     const executor = createDefaultExecutor(schema);
     return function tracedExecutor(execReq) {
       subgraphCallsMap[subgraphName] ||= [];
@@ -435,13 +435,22 @@ it('prevents recursively depending fields in case of multiple keys', async () =>
       const subgraphName = kebabCase(subschemaConfig.name);
       switch (subgraphName) {
         case 'books':
-          subschemaConfig.executor = createTracedExecutor(subgraphName, booksSchema);
+          subschemaConfig.executor = createTracedExecutor(
+            subgraphName,
+            booksSchema,
+          );
           break;
         case 'other-service':
-          subschemaConfig.executor = createTracedExecutor(subgraphName, multiLocationMgmt);
+          subschemaConfig.executor = createTracedExecutor(
+            subgraphName,
+            multiLocationMgmt,
+          );
           break;
         case 'authors':
-          subschemaConfig.executor = createTracedExecutor(subgraphName, authorsSchema);
+          subschemaConfig.executor = createTracedExecutor(
+            subgraphName,
+            authorsSchema,
+          );
           break;
         default:
           throw new Error(`Unknown subgraph ${subgraphName}`);
@@ -537,84 +546,80 @@ it('prevents recursively depending fields in case of multiple keys', async () =>
 });
 
 it('nested recursive requirements', async () => {
-  const inventory = buildSubgraphSchema([
-    {
-      typeDefs: parse(/* GraphQL */ `
-        type Query {
-          colos: [Colo]
-        }
+  const inventory = buildSubgraphSchema([{
+    typeDefs: parse(/* GraphQL */ `
+      type Query {
+        colos: [Colo]
+      }
 
-        type Colo @key(fields: "id") {
-          id: ID!
-          cages: Cages
-        }
+      type Colo @key(fields: "id") {
+        id: ID!
+        cages: Cages
+      }
 
-        type Cages @key(fields: "id") @key(fields: "spatialId") {
-          id: ID!
-          spatialId: String
-          number: Int!
-          cabinets: [Cabinet]
-        }
+      type Cages @key(fields: "id") @key(fields: "spatialId") {
+        id: ID!
+        spatialId: String
+        number: Int!
+        cabinets: [Cabinet]
+      }
 
-        type Cabinet @key(fields: "id") @key(fields: "spatialId") {
-          id: ID!
-          spatialId: String
-          number: Int!
-        }
-      `),
-      resolvers: {
-        Query: {
-          colos() {
-            return [
+      type Cabinet @key(fields: "id") @key(fields: "spatialId") {
+        id: ID!
+        spatialId: String
+        number: Int!
+      }
+    `),
+    resolvers: {
+      Query: {
+        colos() {
+          return [
+            {
+              id: '1',
+            },
+          ];
+        },
+      },
+      Colo: {
+        cages() {
+          return {
+            id: '1',
+            number: 1,
+            cabinets: [
               {
                 id: '1',
+                spatialId: '1',
+                number: 1,
               },
-            ];
-          },
-        },
-        Colo: {
-          cages() {
-            return {
-              id: '1',
-              number: 1,
-              cabinets: [
-                {
-                  id: '1',
-                  spatialId: '1',
-                  number: 1,
-                },
-              ],
-            };
-          },
+            ],
+          };
         },
       },
     },
-  ]);
+  }]);
 
-  const spatial = buildSubgraphSchema([
-    {
-      typeDefs: parse(/* GraphQL */ `
-        type Cabinet @key(fields: "spatialId") {
-          id: ID
-          spatialId: String
-          spatialCabinet: SpatialCabinet
-        }
+  const spatial = buildSubgraphSchema([{
+    typeDefs: parse(/* GraphQL */ `
+      type Cabinet @key(fields: "spatialId") {
+        id: ID
+        spatialId: String
+        spatialCabinet: SpatialCabinet
+      }
 
-        type SpatialCabinet {
-          spatialId: String
-        }
-      `),
-      resolvers: {
-        Cabinet: {
-          spatialCabinet() {
-            return {
-              spatialId: '1',
-            };
-          },
+      type SpatialCabinet {
+        spatialId: String
+      }
+    `),
+    resolvers: {
+      Cabinet: {
+        spatialCabinet() {
+          return {
+            spatialId: '1',
+          };
         },
       },
     },
-  ]);
+  }]);
 
   const subgraphCalls: Record<string, number> = {};
 
@@ -623,7 +628,7 @@ it('nested recursive requirements', async () => {
       inventory,
       spatial,
     },
-    onSubgraphExecute: subgraph => {
+    onSubgraphExecute: (subgraph) => {
       subgraphCalls[subgraph] = (subgraphCalls[subgraph] || 0) + 1;
     },
   });
@@ -677,163 +682,42 @@ it('nested recursive requirements', async () => {
   });
 });
 
-// backbone gap: plan optimization / abstract resolveType parity with Hive suite
-it.failing(
-  'deduplicates the required fields from @key if they exists in the original query',
-  async () => {
-    const SUBGRAPHA = buildSubgraphSchema([
-      {
-        typeDefs: parse(/* GraphQL */ `
-          type Query {
-            _: Boolean
-          }
-          type Book @key(fields: "upc otherUpc shop { id }") {
-            upc: ID!
-            otherUpc: ID!
-            shop: Shop!
-          }
-
-          type Shop @key(fields: "id") {
-            id: ID!
-            name: String!
-            location: Location!
-          }
-
-          type Location {
-            address1: String
-            city: String
-            state: String
-          }
-        `),
-        resolvers: {
-          Book: {
-            __resolveReference(reference: { upc: string; otherUpc: string; shop: { id: string } }) {
-              return {
-                upc: reference.upc,
-                otherUpc: reference.otherUpc,
-                shop: {
-                  id: reference.shop.id,
-                  name: 'The Great Shop',
-                  location: {
-                    address1: 'Address 1',
-                    city: 'City',
-                    state: 'State',
-                  },
-                },
-              };
-            },
-          },
-          Shop: {
-            __resolveReference(reference: { id: string }) {
-              return {
-                id: reference.id,
-                name: 'The Great Shop',
-                location: {
-                  address1: 'Address 1',
-                  city: 'City',
-                  state: 'State',
-                },
-              };
-            },
-          },
-        },
-      },
-    ]);
-
-    const SUBGRAPHB = buildSubgraphSchema([
-      {
-        typeDefs: parse(/* GraphQL */ `
-          type Mutation {
-            buyBook(input: BuyBookInput!): BuyBookPayload
-          }
-
-          input BuyBookInput {
-            bookUpc: ID!
-          }
-
-          type BuyBookPayload {
-            book: Book!
-          }
-
-          type Book @key(fields: "upc otherUpc shop { id }") {
-            upc: ID!
-            otherUpc: ID!
-            shop: Shop!
-          }
-
-          type Shop @key(fields: "id") {
-            id: ID!
-          }
-        `),
-        resolvers: {
-          Mutation: {
-            buyBook(_, __) {
-              return {
-                book: {
-                  upc: 'order-upc',
-                  otherUpc: 'check-upc',
-                  shop: {
-                    id: 'shop-id',
-                  },
-                },
-              };
-            },
-          },
-        },
-      },
-    ]);
-
-    const document = parse(/* GraphQL */ `
-      mutation {
-        buyBook(input: { bookUpc: "test" }) {
-          book {
-            upc
-            otherUpc
-            shop {
-              id
-              name
-              location {
-                address1
-                city
-                state
-              }
-            }
-          }
-        }
+it('deduplicates the required fields from @key if they exists in the original query', async () => {
+  const SUBGRAPHA = buildSubgraphSchema([{
+    typeDefs: parse(/* GraphQL */ `
+      type Query {
+        _: Boolean
       }
-    `);
+      type Book @key(fields: "upc otherUpc shop { id }") {
+        upc: ID!
+        otherUpc: ID!
+        shop: Shop!
+      }
 
-    const subgraphCalls: {
-      subgraphName: string;
-      query: string;
-    }[] = [];
+      type Shop @key(fields: "id") {
+        id: ID!
+        name: String!
+        location: Location!
+      }
 
-    const schema = await getStitchedSchemaFromLocalSchemas({
-      localSchemas: {
-        SUBGRAPHA,
-        SUBGRAPHB,
-      },
-      onSubgraphExecute(subgraphName, executionRequest) {
-        subgraphCalls.push({
-          subgraphName,
-          query: print(executionRequest.document),
-        });
-      },
-    });
-
-    const result = await normalizedExecutor({
-      schema,
-      document,
-    });
-
-    expect(result).toEqual({
-      data: {
-        buyBook: {
-          book: {
-            upc: 'order-upc',
-            otherUpc: 'check-upc',
+      type Location {
+        address1: String
+        city: String
+        state: String
+      }
+    `),
+    resolvers: {
+      Book: {
+        __resolveReference(reference: {
+          upc: string;
+          otherUpc: string;
+          shop: { id: string };
+        }) {
+          return {
+            upc: reference.upc,
+            otherUpc: reference.otherUpc,
             shop: {
-              id: 'shop-id',
+              id: reference.shop.id,
               name: 'The Great Shop',
               location: {
                 address1: 'Address 1',
@@ -841,17 +725,135 @@ it.failing(
                 state: 'State',
               },
             },
+          };
+        },
+      },
+      Shop: {
+        __resolveReference(reference: { id: string }) {
+          return {
+            id: reference.id,
+            name: 'The Great Shop',
+            location: {
+              address1: 'Address 1',
+              city: 'City',
+              state: 'State',
+            },
+          };
+        },
+      },
+    },
+  }]);
+
+  const SUBGRAPHB = buildSubgraphSchema([{
+    typeDefs: parse(/* GraphQL */ `
+      type Mutation {
+        buyBook(input: BuyBookInput!): BuyBookPayload
+      }
+
+      input BuyBookInput {
+        bookUpc: ID!
+      }
+
+      type BuyBookPayload {
+        book: Book!
+      }
+
+      type Book @key(fields: "upc otherUpc shop { id }") {
+        upc: ID!
+        otherUpc: ID!
+        shop: Shop!
+      }
+
+      type Shop @key(fields: "id") {
+        id: ID!
+      }
+    `),
+    resolvers: {
+      Mutation: {
+        buyBook(_, __) {
+          return {
+            book: {
+              upc: 'order-upc',
+              otherUpc: 'check-upc',
+              shop: {
+                id: 'shop-id',
+              },
+            },
+          };
+        },
+      },
+    },
+  }]);
+
+  const document = parse(/* GraphQL */ `
+    mutation {
+      buyBook(input: { bookUpc: "test" }) {
+        book {
+          upc
+          otherUpc
+          shop {
+            id
+            name
+            location {
+              address1
+              city
+              state
+            }
+          }
+        }
+      }
+    }
+  `);
+
+  const subgraphCalls: {
+    subgraphName: string;
+    query: string;
+  }[] = [];
+
+  const schema = await getStitchedSchemaFromLocalSchemas({
+    localSchemas: {
+      SUBGRAPHA,
+      SUBGRAPHB,
+    },
+    onSubgraphExecute(subgraphName, executionRequest) {
+      subgraphCalls.push({
+        subgraphName,
+        query: print(executionRequest.document),
+      });
+    },
+  });
+
+  const result = await normalizedExecutor({
+    schema,
+    document,
+  });
+
+  expect(result).toEqual({
+    data: {
+      buyBook: {
+        book: {
+          upc: 'order-upc',
+          otherUpc: 'check-upc',
+          shop: {
+            id: 'shop-id',
+            name: 'The Great Shop',
+            location: {
+              address1: 'Address 1',
+              city: 'City',
+              state: 'State',
+            },
           },
         },
       },
-    });
+    },
+  });
 
-    // NOTE: we spread out snapshot testing because bun test vs vitest are fighting over formatting
+  // NOTE: we spread out snapshot testing because bun test vs vitest are fighting over formatting
 
-    expect(subgraphCalls.length).toBe(2);
+  expect(subgraphCalls.length).toBe(2);
 
-    expect(subgraphCalls[0]?.subgraphName).toBe('SUBGRAPHB');
-    expect(subgraphCalls[0]?.query).toMatchInlineSnapshot(`
+  expect(subgraphCalls[0]?.subgraphName).toBe('SUBGRAPHB');
+  expect(subgraphCalls[0]?.query).toMatchInlineSnapshot(`
     "mutation ($input: BuyBookInput!) {
       buyBook(input: $input) {
         book {
@@ -866,8 +868,8 @@ it.failing(
     }"
   `);
 
-    expect(subgraphCalls[1]?.subgraphName).toBe('SUBGRAPHA');
-    expect(subgraphCalls[1]?.query).toMatchInlineSnapshot(`
+  expect(subgraphCalls[1]?.subgraphName).toBe('SUBGRAPHA');
+  expect(subgraphCalls[1]?.query).toMatchInlineSnapshot(`
     "query ($representations: [_Any!]!) {
       _entities(representations: $representations) {
         __typename
@@ -882,57 +884,53 @@ it.failing(
       }
     }"
   `);
-  },
-);
+});
 
-// backbone gap: plan optimization / abstract resolveType parity with Hive suite
-it.failing('does not add extra key fields', async () => {
-  const guest = buildSubgraphSchema([
-    {
-      typeDefs: parse(/* GraphQL */ `
-        type Guest @key(fields: "id") @key(fields: "authenticatedPhoneNumber") {
-          id: ID!
-          authenticatedPhoneNumber: String!
-          # other fields...
-        }
+it('does not add extra key fields', async () => {
+  const guest = buildSubgraphSchema([{
+    typeDefs: parse(/* GraphQL */ `
+      type Guest @key(fields: "id") @key(fields: "authenticatedPhoneNumber") {
+        id: ID!
+        authenticatedPhoneNumber: String!
+        # other fields...
+      }
 
-        type Query {
-          guest(id: ID!): Guest
-        }
+      type Query {
+        guest(id: ID!): Guest
+      }
 
-        type Mutation {
-          confirmGuest(input: ConfirmGuestInput!): ConfirmGuestPayload
-        }
+      type Mutation {
+        confirmGuest(input: ConfirmGuestInput!): ConfirmGuestPayload
+      }
 
-        union ConfirmGuestPayload = ConfirmGuestSuccess | ConfirmGuestFailure
+      union ConfirmGuestPayload = ConfirmGuestSuccess | ConfirmGuestFailure
 
-        input ConfirmGuestInput {
-          id: ID!
-        }
+      input ConfirmGuestInput {
+        id: ID!
+      }
 
-        type ConfirmGuestSuccess {
-          guest: Guest!
-        }
+      type ConfirmGuestSuccess {
+        guest: Guest!
+      }
 
-        type ConfirmGuestFailure {
-          reason: String!
-        }
-      `),
-      resolvers: {
-        Mutation: {
-          confirmGuest(_, { input }: { input: { id: string } }) {
-            return {
-              __typename: 'ConfirmGuestSuccess',
-              guest: {
-                id: input.id,
-                authenticatedPhoneNumber: new Error('Should not be called'),
-              },
-            };
-          },
+      type ConfirmGuestFailure {
+        reason: String!
+      }
+    `),
+    resolvers: {
+      Mutation: {
+        confirmGuest(_, { input }: { input: { id: string } }) {
+          return {
+            __typename: 'ConfirmGuestSuccess',
+            guest: {
+              id: input.id,
+              authenticatedPhoneNumber: new Error('Should not be called'),
+            },
+          };
         },
       },
     },
-  ]);
+  }]);
   const schema = await getStitchedSchemaFromLocalSchemas({
     localSchemas: {
       guest,
@@ -973,208 +971,209 @@ it.failing('does not add extra key fields', async () => {
   });
 });
 
-// backbone gap: plan optimization / abstract resolveType parity with Hive suite
-it.failing('does not resolve stub types', async () => {
-  const usersSubgraph = buildSubgraphSchema([
-    {
-      typeDefs: parse(/* GraphQL */ `
-        extend schema
-          @link(url: "https://specs.apollo.dev/federation/v2.7", import: ["@key", "@shareable"])
+it('does not resolve stub types', async () => {
+  const usersSubgraph = buildSubgraphSchema([{
+    typeDefs: parse(/* GraphQL */ `
+      extend schema
+        @link(
+          url: "https://specs.apollo.dev/federation/v2.7"
+          import: ["@key", "@shareable"]
+        )
 
-        type Query {
-          getUsers(userIds: [ID!]!): GetUsersResult!
-        }
+      type Query {
+        getUsers(userIds: [ID!]!): GetUsersResult!
+      }
 
-        union GetUsersResult = GetUsersSuccess | UserDoesNotExistError | UnexpectedError
+      union GetUsersResult =
+        | GetUsersSuccess
+        | UserDoesNotExistError
+        | UnexpectedError
 
-        type GetUsersSuccess {
-          users: [User!]!
-        }
+      type GetUsersSuccess {
+        users: [User!]!
+      }
 
-        type UserDoesNotExistError {
-          message: String!
-        }
+      type UserDoesNotExistError {
+        message: String!
+      }
 
-        type UnexpectedError @shareable {
-          message: String!
-        }
+      type UnexpectedError @shareable {
+        message: String!
+      }
 
-        enum UserVisibility {
-          PUBLIC
-          PRIVATE
-        }
+      enum UserVisibility {
+        PUBLIC
+        PRIVATE
+      }
 
-        type User @key(fields: "id") {
-          id: ID!
-          name: String!
-          isMe: Boolean!
-          userVisibility: UserVisibility!
-        }
-      `),
-      resolvers: {
-        Query: {
-          getUsers: (_: unknown, args: { userIds: string[] }) => {
-            return {
-              __typename: 'GetUsersSuccess',
-              users: args.userIds.map(id => ({
-                id,
-                name: `User ${id}`,
-                isMe: false,
-                userVisibility: 'PUBLIC',
-              })),
-            };
-          },
-        },
-        GetUsersResult: {
-          __resolveType: (obj: { __typename?: string }) => obj.__typename,
-        },
-        User: {
-          __resolveReference: (ref: { id: string }) => {
-            return {
-              id: ref.id,
-              name: `User ${ref.id}`,
+      type User @key(fields: "id") {
+        id: ID!
+        name: String!
+        isMe: Boolean!
+        userVisibility: UserVisibility!
+      }
+    `),
+    resolvers: {
+      Query: {
+        getUsers: (_: unknown, args: { userIds: string[] }) => {
+          return {
+            __typename: 'GetUsersSuccess',
+            users: args.userIds.map((id) => ({
+              id,
+              name: `User ${id}`,
               isMe: false,
               userVisibility: 'PUBLIC',
-            };
-          },
+            })),
+          };
+        },
+      },
+      GetUsersResult: {
+        __resolveType: (obj: { __typename?: string }) => obj.__typename,
+      },
+      User: {
+        __resolveReference: (ref: { id: string }) => {
+          return {
+            id: ref.id,
+            name: `User ${ref.id}`,
+            isMe: false,
+            userVisibility: 'PUBLIC',
+          };
         },
       },
     },
-  ]);
-  const reviewsSubgraph = buildSubgraphSchema([
-    {
-      typeDefs: parse(/* GraphQL */ `
-        extend schema @link(url: "https://specs.apollo.dev/federation/v2.7", import: ["@key"])
+  }]);
+  const reviewsSubgraph = buildSubgraphSchema([{
+    typeDefs: parse(/* GraphQL */ `
+      extend schema
+        @link(url: "https://specs.apollo.dev/federation/v2.7", import: ["@key"])
 
-        type Query {
-          _reviewsPlaceholder: String
-        }
+      type Query {
+        _reviewsPlaceholder: String
+      }
 
-        type Rating @key(fields: "id") {
-          id: ID!
-          score: Int!
-          maxScore: Int!
-        }
+      type Rating @key(fields: "id") {
+        id: ID!
+        score: Int!
+        maxScore: Int!
+      }
 
-        type Comment @key(fields: "id") {
-          id: ID!
-          text: String!
-        }
-      `),
-      resolvers: {
-        Query: { _reviewsPlaceholder: () => null },
-        Rating: {
-          __resolveReference: (ref: { id: string }) => {
-            return { id: ref.id, score: 4, maxScore: 5 };
-          },
+      type Comment @key(fields: "id") {
+        id: ID!
+        text: String!
+      }
+    `),
+    resolvers: {
+      Query: { _reviewsPlaceholder: () => null },
+      Rating: {
+        __resolveReference: (ref: { id: string }) => {
+          return { id: ref.id, score: 4, maxScore: 5 };
         },
-        Comment: {
-          __resolveReference: (ref: { id: string }) => {
-            return { id: ref.id, text: 'Great post!' };
-          },
+      },
+      Comment: {
+        __resolveReference: (ref: { id: string }) => {
+          return { id: ref.id, text: 'Great post!' };
         },
       },
     },
-  ]);
-  const postsSubgraph = buildSubgraphSchema([
-    {
-      typeDefs: parse(/* GraphQL */ `
-        extend schema
-          @link(
-            url: "https://specs.apollo.dev/federation/v2.7"
-            import: ["@key", "@external", "@shareable", "@requires"]
-          )
+  }]);
+  const postsSubgraph = buildSubgraphSchema([{
+    typeDefs: parse(/* GraphQL */ `
+      extend schema
+        @link(
+          url: "https://specs.apollo.dev/federation/v2.7"
+          import: ["@key", "@external", "@shareable", "@requires"]
+        )
 
-        type Query {
-          _postsPlaceholder: String
-        }
+      type Query {
+        _postsPlaceholder: String
+      }
 
-        enum UserVisibility {
-          PUBLIC
-          PRIVATE
-        }
+      enum UserVisibility {
+        PUBLIC
+        PRIVATE
+      }
 
-        type User @key(fields: "id") {
-          id: ID!
-          isMe: Boolean! @external
-          userVisibility: UserVisibility! @external
-          posts(input: PageInput): PostPage @requires(fields: "isMe userVisibility")
-        }
+      type User @key(fields: "id") {
+        id: ID!
+        isMe: Boolean! @external
+        userVisibility: UserVisibility! @external
+        posts(input: PageInput): PostPage
+          @requires(fields: "isMe userVisibility")
+      }
 
-        input PageInput {
-          limit: Int
-          cursor: String
-        }
+      input PageInput {
+        limit: Int
+        cursor: String
+      }
 
-        type PostPage {
-          items: [Post!]!
-          currentPageToken: String
-          nextPageToken: String
-        }
+      type PostPage {
+        items: [Post!]!
+        currentPageToken: String
+        nextPageToken: String
+      }
 
-        type Post @key(fields: "id") {
-          id: ID!
-          visibility: String!
-          content: PostContent!
-        }
+      type Post @key(fields: "id") {
+        id: ID!
+        visibility: String!
+        content: PostContent!
+      }
 
-        type PostContent {
-          text: String
-          createdAt: String
-          meta: PostMeta
-        }
+      type PostContent {
+        text: String
+        createdAt: String
+        meta: PostMeta
+      }
 
-        type PostMeta {
-          rating: Rating
-          commentWrapper: CommentWrapper
-        }
+      type PostMeta {
+        rating: Rating
+        commentWrapper: CommentWrapper
+      }
 
-        type CommentWrapper {
-          comment: Comment
-        }
+      type CommentWrapper {
+        comment: Comment
+      }
 
-        # WORKAROUND: Add "resolvable: false" to prevent the bug:
-        #   @key(fields: "id", resolvable: false)
+      # WORKAROUND: Add "resolvable: false" to prevent the bug:
+      #   @key(fields: "id", resolvable: false)
 
-        type Rating @key(fields: "id") {
-          id: ID!
-        }
+      type Rating @key(fields: "id") {
+        id: ID!
+      }
 
-        type Comment @key(fields: "id") {
-          id: ID!
-        }
+      type Comment @key(fields: "id") {
+        id: ID!
+      }
 
-        type UnexpectedError @shareable {
-          message: String!
-        }
-      `),
-      resolvers: {
-        Query: { _postsPlaceholder: () => null },
-        User: {
-          posts: () => {
-            return {
-              items: [
-                {
-                  id: 'post-1',
-                  visibility: 'PUBLIC',
-                  content: {
-                    text: 'Hello world!',
-                    createdAt: '2024-01-15',
-                    meta: {
-                      rating: { id: 'rating-1' },
-                      commentWrapper: { comment: { id: 'comment-1' } },
-                    },
+      type UnexpectedError @shareable {
+        message: String!
+      }
+    `),
+    resolvers: {
+      Query: { _postsPlaceholder: () => null },
+      User: {
+        posts: () => {
+          return {
+            items: [
+              {
+                id: 'post-1',
+                visibility: 'PUBLIC',
+                content: {
+                  text: 'Hello world!',
+                  createdAt: '2024-01-15',
+                  meta: {
+                    rating: { id: 'rating-1' },
+                    commentWrapper: { comment: { id: 'comment-1' } },
                   },
                 },
-              ],
-              currentPageToken: 'token-1',
-              nextPageToken: null,
-            };
-          },
+              },
+            ],
+            currentPageToken: 'token-1',
+            nextPageToken: null,
+          };
         },
       },
     },
-  ]);
+  }]);
   const subgraphs = {
     users: usersSubgraph,
     reviews: reviewsSubgraph,
