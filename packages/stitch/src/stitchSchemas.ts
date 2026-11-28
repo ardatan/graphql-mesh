@@ -165,7 +165,7 @@ export function stitchSchemas<TContext extends Record<string, any> = Record<stri
     schema = onStitchedSchema(schema) || schema;
   }
 
-  // Shared backboneExecutor + root proxies (plan/locals from info.schema).
+  // Shared executor + root proxies (plan/locals from info.schema).
   return installRootProxyingResolvers(schema);
 }
 

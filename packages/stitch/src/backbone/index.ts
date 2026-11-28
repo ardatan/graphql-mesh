@@ -1,4 +1,4 @@
-export { backboneExecutor, getBackboneExecutorBySchema } from './createBackboneExecutor.js';
+export { executor, getBackboneExecutorBySchema } from './executor.js';
 export { defaultMergedResolver } from './defaultMergedResolver.js';
 export { buildStitchPlan } from './buildStitchPlan.js';
 export { executeStitchPlan } from './executeStitchPlan.js';

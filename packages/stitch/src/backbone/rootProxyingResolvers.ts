@@ -18,7 +18,7 @@ import {
 import { CRITICAL_ERROR } from '@graphql-tools/executor';
 import { memoize2, type ExecutionRequest } from '@graphql-tools/utils';
 import { handleMaybePromise, type MaybePromise } from '@whatwg-node/promise-helpers';
-import { backboneExecutor } from './createBackboneExecutor.js';
+import { executor } from './executor.js';
 
 /** Set on context while backbone execute runs so root Islands skip proxying. */
 export const BACKBONE_EXECUTING = Symbol.for('graphql-tools.stitch.backboneExecuting');
@@ -112,7 +112,7 @@ function applyBackboneResult(
 
 /**
  * Install root Query/Mutation proxying resolvers so stock graphql-js `execute`
- * proxies once into the shared {@link backboneExecutor}, then returns cached
+ * proxies once into the shared {@link executor}, then returns cached
  * root values — same idea as wrapSchema's proxying resolvers, but the target
  * is the backbone rather than a single subgraph.
  * Subscription roots are left alone (schema subscribe / backbone schema path).
@@ -182,13 +182,13 @@ export function installRootProxyingResolvers(schema: GraphQLSchema): GraphQLSche
             context,
             rootValue: root,
             operationName: info.operation.name?.value,
-            // Shared backboneExecutor: omit schema → request.info.schema.
+            // Shared executor: omit schema → request.info.schema.
             info,
           };
           // Sync backbone results stay sync (fakePromise) - no Promise.resolve
           // microtask. Share one MaybePromise across sibling root fields.
           pending = handleMaybePromise(
-            () => backboneExecutor(request),
+            () => executor(request),
             result => {
               planResultByContext.set(context, result);
               return result;

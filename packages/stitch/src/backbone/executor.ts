@@ -106,16 +106,15 @@ function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): Stitch
  * Schema: explicit `schema` arg, else `request.info.schema`. Plan / locals /
  * progressive-override come from that schema's stitchingInfo.
  */
-export function backboneExecutor(
+export function executor(
   request: ExecutionRequest,
   schema?: GraphQLSchema,
 ): ReturnType<Executor<Record<string, any>>> {
   const activeSchema = schema ?? request.info?.schema;
   if (activeSchema == null) {
-    throw new GraphQLError(
-      'backboneExecutor requires a schema (pass schema arg or request.info.schema)',
-      { extensions: { code: 'BACKBONE_MISSING_SCHEMA' } },
-    );
+    throw new GraphQLError('executor requires a schema (pass schema arg or request.info.schema)', {
+      extensions: { code: 'BACKBONE_MISSING_SCHEMA' },
+    });
   }
 
   const operation = getOperationASTFromRequest(request);
@@ -169,13 +168,13 @@ export function backboneExecutor(
 }
 
 /**
- * Schema-bound {@link backboneExecutor} (memoized per schema). Calls
- * `backboneExecutor(request, schema)` — does not mutate `info.schema`.
+ * Schema-bound {@link executor} (memoized per schema). Calls
+ * `executor(request, schema)` — does not mutate `info.schema`.
  * Does not install root proxies — call {@link installRootProxyingResolvers} /
  * `stitchSchemas` for that.
  */
 export const getBackboneExecutorBySchema = memoize1(function getBackboneExecutorBySchema(
   schema: GraphQLSchema,
 ): Executor {
-  return ((request: ExecutionRequest) => backboneExecutor(request, schema)) as Executor;
+  return ((request: ExecutionRequest) => executor(request, schema)) as Executor;
 });
