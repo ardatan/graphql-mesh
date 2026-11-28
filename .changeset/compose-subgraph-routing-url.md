@@ -22,7 +22,6 @@ Optional. Omit `routingUrl` for the previous behavior (join URL equals transport
 // Before: join URL always followed @transport(location:)
 subgraphs: [
   {
-    name: 'users',
     sourceHandler: loadGraphQLHTTPSubgraph('users', {
       endpoint: 'http://upstream:8080/graphql',
     }),
@@ -32,7 +31,6 @@ subgraphs: [
 // After: join URL for the served subgraph; transport location stays upstream
 subgraphs: [
   {
-    name: 'users',
     routingUrl: 'http://localhost:4001/graphql',
     sourceHandler: loadGraphQLHTTPSubgraph('users', {
       endpoint: 'http://upstream:8080/graphql',
