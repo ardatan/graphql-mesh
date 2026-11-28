@@ -54,6 +54,8 @@ import {
   buildBatchedMergeDocument,
   getBatchedMergeEntry,
   inferMergeArgName,
+  mergeVariableName,
+  remapMergeArgsToVariables,
 } from './mergeEntry.js';
 import {
   buildPlanSchedule,
@@ -1171,6 +1173,7 @@ function tryExecuteEntitiesBatchWithContext(
   if (argName == null) {
     return undefined;
   }
+  const mergeVar = mergeVariableName(argName);
   const executor = getSubschemaExecutor(hopSubschema);
 
   const prepared: ContextGroupPrep[] = [];
@@ -1249,7 +1252,7 @@ function tryExecuteEntitiesBatchWithContext(
   };
 
   if (canAlias) {
-    const groupVariableNames = [argName, ...contextArguments.map(ca => ca.variableName)];
+    const groupVariableNames = [mergeVar, ...contextArguments.map(ca => ca.variableName)];
     const aliased = writeContextAliasedDocument(document, groupVariableNames, prepared.length);
     if (aliased) {
       const variables: Record<string, unknown> = {
@@ -1257,7 +1260,7 @@ function tryExecuteEntitiesBatchWithContext(
       };
       prepared.forEach((prep, groupIndex) => {
         const groupVars: Record<string, unknown> = {
-          ...entry.argsFromKeys(prep.keys),
+          ...remapMergeArgsToVariables(entry.argsFromKeys(prep.keys)),
           ...prep.contextVars,
         };
         Object.assign(
@@ -1310,7 +1313,7 @@ function tryExecuteEntitiesBatchWithContext(
   for (const prep of prepared) {
     const variables: Record<string, unknown> = {
       ...pickClientVariables(document, ctx),
-      ...entry.argsFromKeys(prep.keys),
+      ...remapMergeArgsToVariables(entry.argsFromKeys(prep.keys)),
       ...prep.contextVars,
     };
     jobs.push(
@@ -1679,9 +1682,17 @@ function addContextVariableDefinitions(
   if (!op || op.kind !== Kind.OPERATION_DEFINITION) {
     return document;
   }
+  // Only define variables referenced in the document (aliased fields share one
+  // rewrite; unused `$__context_N` would fail subgraph validation).
+  const used = new Set<string>();
+  visit(document, {
+    Variable(v) {
+      used.add(v.name.value);
+    },
+  });
   const existing = new Set((op.variableDefinitions ?? []).map(v => v.variable.name.value));
   const extra: VariableDefinitionNode[] = contextArguments
-    .filter(ca => !existing.has(ca.variableName))
+    .filter(ca => used.has(ca.variableName) && !existing.has(ca.variableName))
     .map((ca): VariableDefinitionNode => ({
       kind: Kind.VARIABLE_DEFINITION,
       variable: {
@@ -2131,7 +2142,7 @@ function tryExecuteEntitiesBatch(
   if (!(node.document && isLeafOnlySelection(node.selectionSet))) {
     return undefined;
   }
-  const args = entry.argsFromKeys(keys) as Record<string, any>;
+  const args = remapMergeArgsToVariables(entry.argsFromKeys(keys) as Record<string, any>);
   const executor = getSubschemaExecutor(hopSubschema);
   return handleMaybePromise(
     () =>
@@ -2874,7 +2885,7 @@ function executeBatchFetchNode(
         return;
       }
       const fieldName = mergeEntry.fieldName;
-      const variables = mergeEntry.argsFromKeys(allKeys);
+      const variables = remapMergeArgsToVariables(mergeEntry.argsFromKeys(allKeys));
       const executor = getSubschemaExecutor(node.subschema);
       return handleMaybePromise(
         () =>

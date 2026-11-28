@@ -168,6 +168,23 @@ export function inferMergeArgName(
   return names.length === 1 ? names[0]! : null;
 }
 
+/**
+ * Operation variable for a merge arg. Prefixed so a client `$representations` (e.g. for
+ * `amount(multiplier: $representations)`) cannot collide with `_entities(representations: $…)`.
+ */
+export function mergeVariableName(argName: string): string {
+  return `__mesh_${argName}`;
+}
+
+/** Remap `argsFromKeys` output keys to {@link mergeVariableName} variable names. */
+export function remapMergeArgsToVariables(args: Record<string, any>): Record<string, any> {
+  const out: Record<string, any> = Object.create(null);
+  for (const [name, value] of Object.entries(args)) {
+    out[mergeVariableName(name)] = value;
+  }
+  return out;
+}
+
 function typeToAST(type: GraphQLType): TypeNode {
   if (isNonNullType(type)) {
     // GraphQLNonNull.ofType is never itself NonNull; AST NonNull only wraps
@@ -236,6 +253,7 @@ export function buildBatchedMergeDocument(
   if (argName == null) {
     return null;
   }
+  const variableName = mergeVariableName(argName);
   const queryType = schema.getQueryType();
   const field = queryType?.getFields()[entry.fieldName];
   const argDef = field?.args.find(a => a.name === argName);
@@ -259,7 +277,7 @@ export function buildBatchedMergeDocument(
             kind: Kind.VARIABLE_DEFINITION,
             variable: {
               kind: Kind.VARIABLE,
-              name: { kind: Kind.NAME, value: argName },
+              name: { kind: Kind.NAME, value: variableName },
             },
             type: typeToAST(argDef.type),
           },
@@ -276,7 +294,7 @@ export function buildBatchedMergeDocument(
                   name: { kind: Kind.NAME, value: argName },
                   value: {
                     kind: Kind.VARIABLE,
-                    name: { kind: Kind.NAME, value: argName },
+                    name: { kind: Kind.NAME, value: variableName },
                   },
                 },
               ],

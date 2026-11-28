@@ -19,6 +19,7 @@ import {
   buildBatchedMergeDocument,
   getBatchedMergeEntry,
   inferMergeArgName,
+  mergeVariableName,
 } from './mergeEntry.js';
 import type { StitchBatchAlias, StitchPlanNode } from './types.js';
 
@@ -495,7 +496,7 @@ export function preparePlanDocuments(
       );
     const aliases: StitchBatchAlias[] = filteredAliases.map(a => ({
       ...a,
-      representationsVariable: canBatchDoc ? argName! : undefined,
+      representationsVariable: canBatchDoc ? mergeVariableName(argName!) : undefined,
     }));
     const document = canBatchDoc
       ? (buildBatchedMergeDocument(

@@ -406,6 +406,13 @@ function collectContextArgsFromSelection(
       continue;
     }
     for (const ca of cfg.contextArguments) {
+      // Aliased occurrences of the same field share one rewrite variable —
+      // allocating per occurrence leaves unused `$__context_N` definitions.
+      if (
+        out.some(existing => existing.fieldName === sel.name.value && existing.argName === ca.name)
+      ) {
+        continue;
+      }
       const rewrite = resolveContextRewrite(
         schema,
         stitchingInfo,
@@ -627,29 +634,27 @@ export function injectContextBridgesIntoSelections(
       if (sel.kind !== Kind.FIELD || sel.name.value.startsWith('__')) {
         continue;
       }
-      const owner = resolveSubschemaOwningField(stitchingInfo, typeName, sel.name.value);
-      if (owner) {
-        const cfg = findMergeFieldConfig(stitchingInfo, owner, typeName, sel.name.value);
-        if (cfg?.contextArguments?.length) {
-          // Resolve the provider independently for each contextual argument.
-          for (const ca of cfg.contextArguments) {
-            const providers = getContextProviders(schema, stitchingInfo, ca.context);
-            let provider: string | undefined;
-            for (let i = ancestorTypes.length - 1; i >= 0; i--) {
-              if (typeMatchesContextProvider(schema, ancestorTypes[i]!, providers)) {
-                provider = ancestorTypes[i];
-                break;
-              }
+      // Check every eligible owner: the first merge config may be computed /
+      // selectionSet-only while a later owner carries contextArguments (or a
+      // different context selection).
+      for (const cfg of fieldConfigsWithContextArguments(stitchingInfo, typeName, sel.name.value)) {
+        for (const ca of cfg.contextArguments!) {
+          const providers = getContextProviders(schema, stitchingInfo, ca.context);
+          let provider: string | undefined;
+          for (let i = ancestorTypes.length - 1; i >= 0; i--) {
+            if (typeMatchesContextProvider(schema, ancestorTypes[i]!, providers)) {
+              provider = ancestorTypes[i];
+              break;
             }
-            if (!provider && typeMatchesContextProvider(schema, typeName, providers)) {
-              provider = typeName;
-            }
-            if (!provider) {
-              continue;
-            }
-            for (const bridge of selectionStringToBridgeFields(ca.selection)) {
-              noteBridge(provider, bridge);
-            }
+          }
+          if (!provider && typeMatchesContextProvider(schema, typeName, providers)) {
+            provider = typeName;
+          }
+          if (!provider) {
+            continue;
+          }
+          for (const bridge of selectionStringToBridgeFields(ca.selection)) {
+            noteBridge(provider, bridge);
           }
         }
       }
@@ -726,31 +731,32 @@ export function injectContextBridgesIntoSelections(
 }
 
 /**
- * Prefer the subschema that owns the contextual / computed field config, not
- * merely the first subschema that merges the type.
+ * All distinct merge field configs that declare `contextArguments` for
+ * `typeName.fieldName`, across every subschema (including entry-split clones).
  */
-function resolveSubschemaOwningField(
+export function fieldConfigsWithContextArguments(
   stitchingInfo: StitchingInfo,
   typeName: string,
   fieldName: string,
-): Subschema | undefined {
-  let fallback: Subschema | undefined;
+): MergedFieldConfig[] {
+  const out: MergedFieldConfig[] = [];
+  const seen = new Set<string>();
   for (const [, sub] of stitchingInfo.subschemaMap) {
-    const fields = sub.merge?.[typeName]?.fields?.[fieldName];
-    if (!fields) {
-      if (!fallback && sub.merge?.[typeName]) {
-        fallback = sub;
-      }
+    const cfg = findMergeFieldConfig(stitchingInfo, sub, typeName, fieldName);
+    if (!cfg?.contextArguments?.length) {
       continue;
     }
-    if (fields.contextArguments?.length || fields.computed || fields.selectionSet) {
-      return sub;
+    // Deduplicate by serialized contextArguments identity.
+    const key = JSON.stringify(
+      cfg.contextArguments.map(ca => [ca.context, ca.name, ca.type, ca.selection]),
+    );
+    if (seen.has(key)) {
+      continue;
     }
-    if (!fallback) {
-      fallback = sub;
-    }
+    seen.add(key);
+    out.push(cfg);
   }
-  return fallback;
+  return out;
 }
 
 function fieldHasConditionalDirective(field: FieldNode): boolean {

@@ -1,10 +1,12 @@
-import { buildSchema, Kind, parse, print, type DocumentNode } from 'graphql';
+import { buildSchema, Kind, parse, print, validate, type DocumentNode } from 'graphql';
 import { buildSubgraphSchema } from '@apollo/subgraph';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import {
   buildStitchPlan,
   createBackboneExecutor,
+  fieldConfigsWithContextArguments,
   getBackboneExecutor,
+  injectContextBridgesIntoSelections,
   parseContextSelectionPath,
   readContextValue,
   resolveContextAncestor,
@@ -1296,5 +1298,183 @@ describe('fromContext gateway-parity (adapted from gateway#2703)', () => {
         schema,
       ),
     ).toBe(user);
+  });
+
+  it('aliased amounts share one context var and validate on the subgraph', async () => {
+    const subgraph = createUsersSubgraph({ withMultiplier: true });
+    const { bag, executor } = stitchWithCapture(MULTIPLIER_SUPERGRAPH, subgraph);
+    const result = await executor({
+      document: parse(`{
+        users {
+          transactions {
+            a: amount(multiplier: 2)
+            b: amount(multiplier: 3)
+          }
+        }
+      }`),
+    });
+    expect(result).toEqual({
+      data: {
+        users: [
+          {
+            transactions: [
+              { a: 200, b: 300 },
+              { a: 200, b: 300 },
+            ],
+          },
+          { transactions: [{ a: 180, b: 270 }] },
+        ],
+      },
+    });
+    const entities = entityRequests(bag);
+    expect(entities.length).toBeGreaterThanOrEqual(1);
+    for (const req of entities) {
+      const doc = parse(req.query);
+      expect(validate(subgraph, doc)).toEqual([]);
+      // One context rewrite var — not a unused `__context_1` leftover.
+      const contextVars = [...req.query.matchAll(/\$__context_(\d+)/g)].map(m => m[1]);
+      expect(new Set(contextVars).size).toBe(1);
+      expect(req.query).toMatch(/a\s*:\s*amount\s*\(/);
+      expect(req.query).toMatch(/b\s*:\s*amount\s*\(/);
+    }
+  });
+
+  it('client $representations multiplier does not collide with merge representations var', async () => {
+    const { bag, executor } = stitchWithCapture(
+      MULTIPLIER_SUPERGRAPH,
+      createUsersSubgraph({ withMultiplier: true }),
+    );
+    const result = await executor({
+      document: parse(`query ($representations: Int) {
+        users { transactions { amount(multiplier: $representations) } }
+      }`),
+      variables: { representations: 2 },
+    });
+    expect(result).toEqual({
+      data: {
+        users: [
+          { transactions: [{ amount: 200 }, { amount: 200 }] },
+          { transactions: [{ amount: 180 }] },
+        ],
+      },
+    });
+    const entities = entityRequests(bag);
+    expect(entities.length).toBeGreaterThanOrEqual(1);
+    for (const req of entities) {
+      // Merge arg stays representations:; variable is __mesh_representations(_N).
+      expect(req.query).toMatch(/representations\s*:\s*\$__mesh_representations/);
+      expect(req.query).toMatch(/multiplier\s*:\s*\$representations\b/);
+      expect(req.variables?.representations).toBe(2);
+      const mergeKeys = Object.keys(req.variables ?? {}).filter(
+        k => k === '__mesh_representations' || k.startsWith('__mesh_representations_'),
+      );
+      expect(mergeKeys.length).toBeGreaterThanOrEqual(1);
+      for (const k of mergeKeys) {
+        expect(Array.isArray(req.variables?.[k])).toBe(true);
+      }
+    }
+  });
+
+  it('collects context bridges from every eligible field owner', () => {
+    const schema = buildSchema(/* GraphQL */ `
+      type Query {
+        users: [User]
+      }
+      type User {
+        currency: String
+        locale: String
+        transactions: [Transaction]
+      }
+      type Transaction {
+        id: ID
+        amount: Int
+      }
+    `);
+    // First owner: computed/selectionSet only (no contextArguments).
+    const early = {
+      merge: {
+        Transaction: {
+          fields: {
+            amount: { selectionSet: '{ id }', computed: true },
+          },
+        },
+      },
+    } as any;
+    // Later owner: carries contextArguments with a distinct selection.
+    const late = {
+      merge: {
+        Transaction: {
+          fields: {
+            amount: {
+              contextArguments: [
+                {
+                  context: 'userContext',
+                  name: 'code',
+                  type: 'String',
+                  selection: ' { currency }',
+                },
+              ],
+            },
+          },
+        },
+      },
+    } as any;
+    const stitchingInfo = {
+      subschemaMap: new Map([
+        [early, early],
+        [late, late],
+      ]),
+      contextProviders: { userContext: ['User'] },
+    } as any;
+
+    const configs = fieldConfigsWithContextArguments(stitchingInfo, 'Transaction', 'amount');
+    expect(configs).toHaveLength(1);
+    expect(configs[0]!.contextArguments![0]!.selection).toContain('currency');
+
+    // Two contextual owners with different selections — both must be returned.
+    const other = {
+      merge: {
+        Transaction: {
+          fields: {
+            amount: {
+              contextArguments: [
+                {
+                  context: 'userContext',
+                  name: 'code',
+                  type: 'String',
+                  selection: ' { locale }',
+                },
+              ],
+            },
+          },
+        },
+      },
+    } as any;
+    stitchingInfo.subschemaMap.set(other, other);
+    const multi = fieldConfigsWithContextArguments(stitchingInfo, 'Transaction', 'amount');
+    expect(multi).toHaveLength(2);
+    const selections = multi.flatMap(c => c.contextArguments!.map(ca => ca.selection)).join(' ');
+    expect(selections).toContain('currency');
+    expect(selections).toContain('locale');
+
+    const op = parse(`{ users { transactions { amount } } }`).definitions[0] as any;
+    const injected = injectContextBridgesIntoSelections(
+      schema,
+      stitchingInfo,
+      'Query',
+      op.selectionSet.selections,
+    );
+    const printed = print({
+      kind: Kind.DOCUMENT,
+      definitions: [
+        {
+          kind: Kind.OPERATION_DEFINITION,
+          operation: 'query',
+          selectionSet: { kind: Kind.SELECTION_SET, selections: injected },
+        },
+      ],
+    });
+    // Bridge from the later contextual owner must appear despite early owner.
+    expect(printed).toMatch(/currency/);
   });
 });
