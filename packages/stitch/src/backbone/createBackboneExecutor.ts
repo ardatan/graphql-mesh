@@ -1,10 +1,4 @@
-import {
-  GraphQLError,
-  Kind,
-  type DocumentNode,
-  type GraphQLSchema,
-  type OperationDefinitionNode,
-} from 'graphql';
+import { GraphQLError, Kind, type DocumentNode, type GraphQLSchema } from 'graphql';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { getFragmentsFromDocument } from '@graphql-tools/executor';
 import {
@@ -69,15 +63,14 @@ const OVERRIDE_LABELS_CONTEXT_KEY = Symbol.for('hive.gateway.overrideLabels');
 const EMPTY_ACTIVE_LABELS: object = Object.freeze({});
 
 /**
- * Build inputs for the memoize3 miss path (fragments / vars / context are not
- * cache keys).
+ * Build inputs for the memoize3 miss path. Plan is independent of request
+ * variables/context (Condition for @skip/@include; labels are the memo key).
  */
 let planBuildInput:
   | {
-      operation: OperationDefinitionNode;
+      operation: NonNullable<ReturnType<typeof getOperationASTFromRequest>>;
       fragments: ReturnType<typeof getFragmentsFromDocument>;
-      coerced: Record<string, any>;
-      context: ExecutionRequest['context'];
+      activeLabels: object | undefined;
     }
   | undefined;
 
@@ -89,8 +82,8 @@ const cachedPlanBySchemaDocumentAndLabels = memoize3(function cachedPlanBySchema
 ): StitchPlan {
   const input = planBuildInput!;
   try {
-    return buildStitchPlan(schema, input.operation, input.fragments, input.coerced, {
-      context: input.context,
+    return buildStitchPlan(schema, input.operation, input.fragments, {}, {
+      activeLabels: input.activeLabels,
     });
   } catch (err) {
     return {
@@ -115,44 +108,6 @@ function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): Stitch
     };
   }
   const fragments = getFragmentsFromDocument(request.document);
-  const coerced = coerceOperationVariables(operation, request.variables ?? {});
-
-  // Variable-driven @skip/@include depends on runtime vars — do not cache.
-  for (const def of request.document.definitions) {
-    if (def.kind !== Kind.OPERATION_DEFINITION && def.kind !== Kind.FRAGMENT_DEFINITION) {
-      continue;
-    }
-    const stack = [...def.selectionSet.selections];
-    while (stack.length) {
-      const sel = stack.pop()!;
-      if (
-        'directives' in sel &&
-        sel.directives?.some(
-          d =>
-            (d.name.value === 'skip' || d.name.value === 'include') &&
-            d.arguments?.some(a => a.name.value === 'if' && a.value.kind === Kind.VARIABLE),
-        )
-      ) {
-        try {
-          return buildStitchPlan(schema, operation, fragments, coerced, {
-            context: request.context,
-          });
-        } catch (err) {
-          return {
-            operation,
-            fragments,
-            root: { kind: 'Parallel', nodes: [] },
-            incomplete: true,
-            incompleteReasons: [err instanceof Error ? err.message : 'Plan build failed'],
-          };
-        }
-      }
-      if ((sel.kind === Kind.FIELD || sel.kind === Kind.INLINE_FRAGMENT) && sel.selectionSet) {
-        stack.push(...sel.selectionSet.selections);
-      }
-    }
-  }
-
   // Per-request active labels only (fusion / gateway context) — no schema.extensions bag.
   const activeLabels = request.context?.[OVERRIDE_LABELS_CONTEXT_KEY];
   const labelsKey: object =
@@ -160,8 +115,7 @@ function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): Stitch
   planBuildInput = {
     operation,
     fragments,
-    coerced,
-    context: request.context,
+    activeLabels: labelsKey === EMPTY_ACTIVE_LABELS ? undefined : labelsKey,
   };
   try {
     return cachedPlanBySchemaDocumentAndLabels(schema, request.document, labelsKey);

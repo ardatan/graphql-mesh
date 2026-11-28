@@ -25,13 +25,12 @@ import { getBatchedMergeEntry, inferMergeArgName } from './mergeEntry.js';
 import { buildPlanSchedule, collectExecutableHops, planHasCondition } from './planSchedule.js';
 import { flattenPlanControlFlow } from './planShape.js';
 import { preparePlanDocuments } from './preparePlanDocuments.js';
-import { flattenConditionsToRunIf, orRunIf, runIfKey, stampRunIf } from './runIf.js';
+import { orRunIf, runIfKey } from './runIf.js';
 import type {
   BuildStitchPlanOptions,
   PathSegment,
   StitchPlan,
   StitchPlanNode,
-  StitchRunIfClause,
 } from './types.js';
 
 /**
@@ -46,10 +45,12 @@ function selectionSetOf(selections: readonly SelectionNode[]): SelectionSetNode 
   return { kind: Kind.SELECTION_SET, selections: [...selections] };
 }
 
+/** Same key fusion sets on request context with per-request active labels. */
+const OVERRIDE_LABELS_CONTEXT_KEY = Symbol.for('hive.gateway.overrideLabels');
+
 /**
- * Request context for the in-flight `buildStitchPlan` call. Used so
- * `delegationPlanBuilder` can evaluate progressive-override handlers without
- * threading context through every recursive plan helper.
+ * Labels-only bag for the in-flight `buildStitchPlan` call. Progressive-override
+ * / delegationPlanBuilder handlers see this instead of full request context.
  */
 let planningContext: any;
 
@@ -3294,11 +3295,17 @@ export function buildStitchPlan(
   // root + entity hops on concrete members). Do not mark incomplete solely for
   // abstracts - Cast/Flatten gaps must fail at execute so we fix plan quality.
 
-  // Apply variable defaults so @skip/@include evaluate safely.
+  // Plan is variable-independent: root @skip/@include are Condition nodes;
+  // nested directives stay on the AST for subgraphs. Callers may still pass
+  // variables for tests / tooling — defaults are applied but not cache keys.
   const coercedVariables = coerceOperationVariables(operation, variableValues);
 
   const previousPlanningContext = planningContext;
-  planningContext = options.context;
+  // Labels-only bag (not full request context) for override handlers.
+  planningContext =
+    options.activeLabels != null
+      ? { [OVERRIDE_LABELS_CONTEXT_KEY]: options.activeLabels }
+      : undefined;
   try {
     if (incompleteReasons.length > 0) {
       // Still attempt a best-effort plan for warming, but never throw out of here.
@@ -3310,7 +3317,6 @@ export function buildStitchPlan(
           fragments,
           coercedVariables,
           incompleteReasons,
-          options,
         );
       } catch {
         return {
@@ -3330,7 +3336,6 @@ export function buildStitchPlan(
       fragments,
       coercedVariables,
       incompleteReasons,
-      options,
     );
   } finally {
     planningContext = previousPlanningContext;
@@ -5219,62 +5224,20 @@ function stripOwnSkipIncludeDirectives(field: FieldNode): FieldNode {
 }
 
 /**
- * Stamp root-field `@skip`/`@include` as `runIf` on every hop. Keeps the hop
- * set variable-independent so schedules cache and conditional entity hops can
- * BatchFetch together.
+ * Router QP-style: root `@include(if: $v)` / `@skip(if: $v)` become Condition
+ * nodes evaluated at execute (ifClause when true, elseClause when false).
  */
-function wrapRootFieldWithRunIf(field: FieldNode, plan: StitchPlanNode): StitchPlanNode {
-  const clauses: StitchRunIfClause[] = [];
+function wrapRootFieldWithCondition(field: FieldNode, plan: StitchPlanNode): StitchPlanNode {
+  let node = plan;
   const includeVar = skipIncludeVariableName(field, 'include');
   if (includeVar) {
-    clauses.push({ variable: includeVar, equals: true });
+    node = { kind: 'Condition', condition: includeVar, ifClause: node };
   }
   const skipVar = skipIncludeVariableName(field, 'skip');
   if (skipVar) {
-    clauses.push({ variable: skipVar, equals: false });
+    node = { kind: 'Condition', condition: skipVar, elseClause: node };
   }
-  return stampRunIf(plan, clauses);
-}
-
-/**
- * Plan-time vars that keep every `@skip`/`@include` selection present so one
- * document plan covers all runtime maps. Nested directives stay on the AST and
- * are evaluated by the subgraph (or by Condition at roots).
- */
-function variablesForcingSkipIncludePresent(
-  operation: OperationDefinitionNode,
-  fragments: Record<string, FragmentDefinitionNode>,
-  variableValues: Record<string, any>,
-): Record<string, any> {
-  const forced = { ...variableValues };
-  const visitSet = (selectionSet: SelectionSetNode) => {
-    for (const sel of selectionSet.selections) {
-      if ((sel.kind === Kind.FIELD || sel.kind === Kind.INLINE_FRAGMENT) && sel.directives) {
-        for (const dir of sel.directives) {
-          if (dir.name.value !== 'skip' && dir.name.value !== 'include') {
-            continue;
-          }
-          const arg = dir.arguments?.find(a => a.name.value === 'if');
-          if (arg?.value.kind !== Kind.VARIABLE) {
-            continue;
-          }
-          const name = arg.value.name.value;
-          // @skip(if: $v) present when $v is false; @include when $v is true.
-          forced[name] = dir.name.value === 'include';
-        }
-      }
-      if ((sel.kind === Kind.FIELD || sel.kind === Kind.INLINE_FRAGMENT) && sel.selectionSet) {
-        visitSet(sel.selectionSet);
-      } else if (sel.kind === Kind.FRAGMENT_SPREAD) {
-        const frag = fragments[sel.name.value];
-        if (frag) {
-          visitSet(frag.selectionSet);
-        }
-      }
-    }
-  };
-  visitSet(operation.selectionSet);
-  return forced;
+  return node;
 }
 
 function buildCompletePlan(
@@ -5284,13 +5247,11 @@ function buildCompletePlan(
   fragments: Record<string, FragmentDefinitionNode>,
   variableValues: Record<string, any>,
   incompleteReasons: string[],
-  options: BuildStitchPlanOptions = {},
 ): StitchPlan {
   const rootNodes: StitchPlanNode[] = [];
 
-  // One plan per document: `runIf` for `@skip`/`@include`. Include all
-  // conditional selections while planning; subgraphs still see the directives.
-  const planVars = variablesForcingSkipIncludePresent(operation, fragments, variableValues);
+  // One plan per document: Condition for root `@skip`/`@include`. Nested
+  // directives stay on the AST for subgraph evaluation.
   for (const fieldNode of collectRootFieldNodesPreservingSkipInclude(
     operation.selectionSet,
     fragments,
@@ -5302,8 +5263,8 @@ function buildCompletePlan(
     if (isUnconditionallyOmittedBySkipInclude(fieldNode)) {
       continue;
     }
-    // runIf decides the root field; strip only own directives so nested
-    // @skip/@include remain for subgraph evaluation / provides-scope.
+    // Condition decides the root field at execute; strip only own directives so
+    // nested @skip/@include remain for subgraph evaluation / provides-scope.
     const cleaned = stripOwnSkipIncludeDirectives(fieldNode);
     const planned = planRootField(
       schema,
@@ -5311,10 +5272,10 @@ function buildCompletePlan(
       operation,
       cleaned,
       fragments,
-      planVars,
+      variableValues,
       incompleteReasons,
     );
-    rootNodes.push(wrapRootFieldWithRunIf(fieldNode, planned));
+    rootNodes.push(wrapRootFieldWithCondition(fieldNode, planned));
   }
 
   if (!rootNodes.length && incompleteReasons.length === 0) {
@@ -5331,10 +5292,8 @@ function buildCompletePlan(
           nodes: rootNodes,
         };
 
-  // Flatten any leftover Condition trees so both branches participate in
-  // coalesce / BatchFetch with per-hop runIf (schedule stays cacheable).
-  const withoutConditions = flattenConditionsToRunIf(rootRaw);
-  const optimized = optimizeStitchPlanNode(withoutConditions, stitchingInfo);
+  // Keep Condition nodes (Router QP style); execute selects the branch.
+  const optimized = optimizeStitchPlanNode(rootRaw, stitchingInfo);
   const coalesced = coalesceSamePathEntityFields(optimized, stitchingInfo);
   const packed = packIndependentWaves(
     optimizeStitchPlanNode(coalesced, stitchingInfo),

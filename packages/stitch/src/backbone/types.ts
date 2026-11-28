@@ -87,7 +87,7 @@ export type StitchPlanNode =
       document?: DocumentNode;
       /**
        * When set, hop runs only if any DNF AND-group matches `variableValues`.
-       * Used for root `@skip`/`@include` instead of Condition nodes.
+       * Root `@skip`/`@include` use Condition nodes; runIf remains for fold/batch.
        */
       runIf?: StitchRunIf;
       /**
@@ -134,10 +134,9 @@ export type StitchPlanNode =
     }
   | {
       /**
-       * Runtime `@skip`/`@include` branch. `condition` is the variable name;
-       * true -> ifClause, otherwise elseClause.
-       * Prefer `runIf` on hops (flattened at plan time); Condition remains for
-       * legacy / un-flattenable trees.
+       * Runtime `@skip`/`@include` branch (Router QP style). `condition` is the
+       * variable name; true -> ifClause, otherwise elseClause. Evaluated at
+       * execute — plan shape is variable-independent.
        */
       kind: 'Condition';
       condition: string;
@@ -176,10 +175,10 @@ export interface StitchPlan {
 /** Per-call inputs for `buildStitchPlan`. */
 export interface BuildStitchPlanOptions {
   /**
-   * Request GraphQL context — progressive override / delegationPlanBuilder
-   * during planning. From `ExecutionRequest.context` (active labels live here).
+   * Gateway-owned active progressive-override labels (plan-cache key). Not the
+   * full request context — override handlers see a labels-only bag.
    */
-  context?: any;
+  activeLabels?: object;
 }
 
 export interface BackboneExecutionContext {

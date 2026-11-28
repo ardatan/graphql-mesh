@@ -156,7 +156,7 @@ describe('stitching backbone', () => {
     });
   });
 
-  it('stamps runIf for root @skip/@include and caches a schedule', async () => {
+  it('wraps root @skip/@include as Condition; execute selects the branch', async () => {
     const schema = createStitched();
     const document = parse(/* GraphQL */ `
       query ($id: ID!, $skipEmail: Boolean!) {
@@ -167,39 +167,17 @@ describe('stitching backbone', () => {
       }
     `);
     const operation = document.definitions[0] as any;
-    const planSkip = buildStitchPlan(
-      schema,
-      operation,
-      {},
-      {
-        id: '1',
-        skipEmail: true,
-      },
-    );
-    const planInclude = buildStitchPlan(
-      schema,
-      operation,
-      {},
-      {
-        id: '1',
-        skipEmail: false,
-      },
-    );
+    const planSkip = buildStitchPlan(schema, operation, {}, {});
+    const planInclude = buildStitchPlan(schema, operation, {}, {});
     expect(planSkip.incompleteReasons).toEqual([]);
-    // runIf keeps the hop set fixed (no Condition) so schedule caches.
-    expect(planSkip.root.kind).not.toBe('Condition');
-    expect(planSkip.schedule).toBeDefined();
-    const hop =
-      planSkip.root.kind === 'Fetch'
-        ? planSkip.root
-        : planSkip.root.kind === 'Parallel'
-          ? planSkip.root.nodes.find(n => n.kind === 'Fetch')
-          : undefined;
-    expect(hop?.kind).toBe('Fetch');
-    // DNF: OR of AND-groups (single skip clause → one group).
-    expect((hop as any).runIf).toEqual([[{ variable: 'skipEmail', equals: false }]]);
+    // Router QP-style Condition; schedule rebuilt at execute for the taken branch.
+    expect(planSkip.root.kind).toBe('Condition');
+    expect((planSkip.root as any).condition).toBe('skipEmail');
+    expect((planSkip.root as any).elseClause).toBeDefined();
+    expect((planSkip.root as any).ifClause).toBeUndefined();
+    expect(planSkip.schedule).toBeUndefined();
     // Same structure regardless of variable map (one cached plan shape).
-    expect(planInclude.root.kind).toBe(planSkip.root.kind);
+    expect(planInclude.root).toEqual(planSkip.root);
 
     const executor = getBackboneExecutorBySchema(schema);
     const skipped = await exec(executor, {
