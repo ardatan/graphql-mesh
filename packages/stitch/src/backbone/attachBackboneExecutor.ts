@@ -14,6 +14,7 @@ import {
 import {
   getOriginalRootResolve,
   installRootProxyingResolvers,
+  isBackboneRootProxy,
 } from './rootProxyingResolvers.js';
 
 type RootResolveSnapshot = Map<string, GraphQLFieldResolver<any, any> | undefined>;
@@ -143,21 +144,29 @@ export function retargetBackboneToSchema(schema: GraphQLSchema): GraphQLSchema {
 
   // Restore ORIGINAL_RESOLVE symbols dropped by mapSchema before reinstalling
   // proxies — otherwise install would see only the proxy fn and skip/nest.
-  // Include pre-existing localFields: skipping them left Islands calling the
-  // root proxy (re-entering the plan). Late overrides stamped by
-  // markChangedRootResolvesAsLocal already have the symbol set, so we do not
-  // overwrite them with the pre-override rootOriginals entry.
+  // Include pre-existing localFields (skipping them left Islands re-entering
+  // the proxy). Prefer a non-proxy `field.resolve` left by mapSchema / loader
+  // transforms over a stale rootOriginals entry (OpenAPI/OData resolveType).
+  // Late overrides stamped by markChangedRootResolvesAsLocal already have the
+  // symbol set and are left intact.
   for (const root of [schema.getQueryType(), schema.getMutationType()]) {
     if (!root || !isObjectType(root)) {
       continue;
     }
     for (const [fieldName, field] of Object.entries(root.getFields())) {
       const key = `${root.name}.${fieldName}`;
-      if (getOriginalRootResolve(field) == null) {
+      if (getOriginalRootResolve(field) != null) {
+        continue;
+      }
+      const current = field.resolve ?? defaultFieldResolver;
+      if (isBackboneRootProxy(current)) {
         const original = runtime.rootOriginals.get(key);
         if (original) {
           (field as any)[ORIGINAL_RESOLVE] = original;
         }
+      } else {
+        (field as any)[ORIGINAL_RESOLVE] = current;
+        runtime.rootOriginals.set(key, current);
       }
     }
   }

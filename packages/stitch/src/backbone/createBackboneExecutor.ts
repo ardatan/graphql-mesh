@@ -18,10 +18,7 @@ import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { buildStitchPlan, coerceOperationVariables } from './buildStitchPlan.js';
 import { executeStitchPlan } from './executeStitchPlan.js';
 import { projectDataToOperation } from './projectResult.js';
-import {
-  getOriginalRootResolve,
-  installRootProxyingResolvers,
-} from './rootProxyingResolvers.js';
+import { getOriginalRootResolve, installRootProxyingResolvers } from './rootProxyingResolvers.js';
 import type { StitchPlan } from './types.js';
 
 /** Full SDL introspection - schema execute (Hive also special-cases these). */

@@ -26,9 +26,7 @@ const ORIGINAL_RESOLVE = Symbol.for('graphql-tools.stitch.backboneOriginalResolv
 /** Marks a resolve fn installed by {@link installRootProxyingResolvers}. */
 const BACKBONE_PROXY_MARK = Symbol.for('graphql-tools.stitch.backboneProxyResolve');
 
-function isBackboneRootProxy(
-  resolve: GraphQLFieldResolver<any, any> | undefined,
-): boolean {
+export function isBackboneRootProxy(resolve: GraphQLFieldResolver<any, any> | undefined): boolean {
   return typeof resolve === 'function' && (resolve as any)[BACKBONE_PROXY_MARK] === true;
 }
 

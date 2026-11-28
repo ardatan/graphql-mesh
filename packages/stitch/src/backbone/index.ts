@@ -27,6 +27,7 @@ export {
   BACKBONE_EXECUTING,
   getOriginalRootResolve,
   installRootProxyingResolvers,
+  isBackboneRootProxy,
 } from './rootProxyingResolvers.js';
 export {
   type BuildStitchPlanOptions,

@@ -586,11 +586,7 @@ function predictedBridgeResponseKey(
       continue;
     }
     occupied.add(sel.alias?.value ?? sel.name.value);
-    if (
-      sel.alias == null &&
-      sel.name.value === fieldName &&
-      !fieldHasConditionalDirective(sel)
-    ) {
+    if (sel.alias == null && sel.name.value === fieldName && !fieldHasConditionalDirective(sel)) {
       hasSatisfyingUnaliased = true;
     }
   }
@@ -691,9 +687,7 @@ export function bindContextSelectionPathForFlattenPath(
   return applyBridgeResponseKeys(keysOnly, providerSelections);
 }
 
-function stripBridgeResponseKeys(
-  path: StitchContextPathSegment[],
-): StitchContextPathSegment[] {
+function stripBridgeResponseKeys(path: StitchContextPathSegment[]): StitchContextPathSegment[] {
   return path.map(seg => {
     if ('Alternatives' in seg) {
       return { Alternatives: seg.Alternatives.map(stripBridgeResponseKeys) };

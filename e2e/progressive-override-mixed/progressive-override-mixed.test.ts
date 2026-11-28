@@ -155,7 +155,7 @@ describe('Progressive Override', () => {
       expect(BReceivedQueries[0]).toContain('createdAt');
 
       expect(BReceivedQueries[1]).toContain(
-        '[service-b] received query: query($representations:[_Any!]!){_entities(representations:',
+        '[service-b] received query: query($__mesh_representations:[_Any!]!){_entities(representations:',
       );
       // Backbone entity hops ensure __typename on the fragment selection.
       expect(BReceivedQueries[1]).toMatch(/\.\.\.on Post\{(__typename )?createdAt/);
@@ -215,7 +215,7 @@ describe('Progressive Override', () => {
       expect(AReceivedQueries[0]).toContain('[service-a] received query: {aFeed');
       expect(AReceivedQueries[0]).toContain('id createdAt');
       expect(AReceivedQueries[1]).toContain(
-        '[service-a] received query: query($representations:[_Any!]!){_entities(representations:',
+        '[service-a] received query: query($__mesh_nxt:[_Any!]!){_entities(representations:',
       );
       // Backbone entity hops ensure __typename on the fragment selection.
       expect(AReceivedQueries[1]).toMatch(/\.\.\.on Post\{(__typename )?createdAt/);

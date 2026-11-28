@@ -146,7 +146,7 @@ const PRE_FOLD_HTTP = {
  * (especially `search`).
  */
 const EXACT_DEPS_HTTP = {
-  product_page: 66,
+  product_page: 71,
   search: 80,
   checkout: 71,
   order_history: 79,
