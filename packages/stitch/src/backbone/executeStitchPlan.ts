@@ -1236,16 +1236,14 @@ function applyContextArgsToSelectionSet(
       if (!fieldArgs?.length) {
         return sel;
       }
-      const extraArgs: ArgumentNode[] = fieldArgs.map(
-        (ca): ArgumentNode => ({
-          kind: Kind.ARGUMENT,
-          name: { kind: Kind.NAME, value: ca.argName },
-          value: {
-            kind: Kind.VARIABLE,
-            name: { kind: Kind.NAME, value: ca.variableName },
-          },
-        }),
-      );
+      const extraArgs: ArgumentNode[] = fieldArgs.map((ca): ArgumentNode => ({
+        kind: Kind.ARGUMENT,
+        name: { kind: Kind.NAME, value: ca.argName },
+        value: {
+          kind: Kind.VARIABLE,
+          name: { kind: Kind.NAME, value: ca.variableName },
+        },
+      }));
       return {
         ...sel,
         arguments: [...(sel.arguments ?? []), ...extraArgs],
@@ -1265,16 +1263,14 @@ function addContextVariableDefinitions(
   const existing = new Set((op.variableDefinitions ?? []).map(v => v.variable.name.value));
   const extra: VariableDefinitionNode[] = contextArguments
     .filter(ca => !existing.has(ca.variableName))
-    .map(
-      (ca): VariableDefinitionNode => ({
-        kind: Kind.VARIABLE_DEFINITION,
-        variable: {
-          kind: Kind.VARIABLE,
-          name: { kind: Kind.NAME, value: ca.variableName },
-        },
-        type: parseTypeString(ca.type),
-      }),
-    );
+    .map((ca): VariableDefinitionNode => ({
+      kind: Kind.VARIABLE_DEFINITION,
+      variable: {
+        kind: Kind.VARIABLE,
+        name: { kind: Kind.NAME, value: ca.variableName },
+      },
+      type: parseTypeString(ca.type),
+    }));
   if (!extra.length) {
     return document;
   }
