@@ -2343,10 +2343,12 @@ function planRootField(
         parentTypeName: rootType.name,
         parentFieldName: fieldName,
       };
+      // Use selectionSetForPartition so `@fromContext` bridge fields
+      // (e.g. Account.currency) survive concrete expansion.
       const expanded = expandAbstractSelectionsForSubschema(
         owner,
         returnTypeName!,
-        fieldNode.selectionSet,
+        selectionSetForPartition ?? fieldNode.selectionSet,
         fragments,
         stitchingInfo,
         schema,
@@ -2672,18 +2674,23 @@ function planRootField(
               remnantFields.push(fn);
               continue;
             }
-            // Field already fetched (animals via @provides id/name) - only keep
-            // nested type-conditioned remnants (`... on Cat { age }`).
+            // Field already fetched (animals via @provides id/name). Keep nested
+            // type-conditioned remnants (`... on Cat { age }`) and nested
+            // unavailable leaves from the partition (Transaction.fromInterface
+            // under Other.transactions) so `@fromContext` entity hops still plan.
             if (!fn.selectionSet) {
               continue;
             }
-            const onlyFragments = fn.selectionSet.selections.filter(
-              s => s.kind === Kind.INLINE_FRAGMENT || s.kind === Kind.FRAGMENT_SPREAD,
-            );
-            if (onlyFragments.length) {
+            const nestedRemnants = fn.selectionSet.selections.filter(s => {
+              if (s.kind === Kind.INLINE_FRAGMENT || s.kind === Kind.FRAGMENT_SPREAD) {
+                return true;
+              }
+              return s.kind === Kind.FIELD && s.name.value !== '__typename';
+            });
+            if (nestedRemnants.length) {
               remnantFields.push({
                 ...fn,
-                selectionSet: selectionSetOf(onlyFragments),
+                selectionSet: selectionSetOf(nestedRemnants),
               });
             }
           }
@@ -5380,7 +5387,16 @@ function buildCompletePlan(
   // (or covering Fetch). Runs after reuse so reuse edges affect wave layers.
   const folded = isMutation ? withReuse : foldSameWaveSubgraphFetches(withReuse, stitchingInfo);
   // Stamp Federation `@fromContext` rewrites onto entity hops before docs.
-  const withContext = attachContextArgumentsToPlan(folded, schema, stitchingInfo);
+  const rootType =
+    operation.operation === 'mutation'
+      ? schema.getMutationType()
+      : operation.operation === 'subscription'
+        ? schema.getSubscriptionType()
+        : schema.getQueryType();
+  const withContext = attachContextArgumentsToPlan(folded, schema, stitchingInfo, {
+    operation,
+    rootType,
+  });
   const withDocs = isMutation
     ? withContext
     : preparePlanDocuments(withContext, {
@@ -5416,13 +5432,17 @@ function attachContextArgumentsToPlan(
   node: StitchPlanNode,
   schema: GraphQLSchema,
   stitchingInfo: StitchingInfo,
+  planCtx: {
+    operation: OperationDefinitionNode;
+    rootType: GraphQLObjectType | null | undefined;
+  },
   variableCounter: { n: number } = { n: 0 },
 ): StitchPlanNode {
   if (node.kind === 'Sequence' || node.kind === 'Parallel') {
     return {
       kind: node.kind,
       nodes: node.nodes.map(n =>
-        attachContextArgumentsToPlan(n, schema, stitchingInfo, variableCounter),
+        attachContextArgumentsToPlan(n, schema, stitchingInfo, planCtx, variableCounter),
       ),
     };
   }
@@ -5430,10 +5450,22 @@ function attachContextArgumentsToPlan(
     return {
       ...node,
       ifClause: node.ifClause
-        ? attachContextArgumentsToPlan(node.ifClause, schema, stitchingInfo, variableCounter)
+        ? attachContextArgumentsToPlan(
+            node.ifClause,
+            schema,
+            stitchingInfo,
+            planCtx,
+            variableCounter,
+          )
         : undefined,
       elseClause: node.elseClause
-        ? attachContextArgumentsToPlan(node.elseClause, schema, stitchingInfo, variableCounter)
+        ? attachContextArgumentsToPlan(
+            node.elseClause,
+            schema,
+            stitchingInfo,
+            planCtx,
+            variableCounter,
+          )
         : undefined,
     };
   }
@@ -5445,38 +5477,58 @@ function attachContextArgumentsToPlan(
             node.continue,
             schema,
             stitchingInfo,
+            planCtx,
             variableCounter,
           ),
         }
       : node;
   }
   if (node.kind === 'BatchFetch') {
-    return {
-      ...node,
-      aliases: node.aliases.map(alias => {
-        if (
-          !selectionHasContextArguments(
-            stitchingInfo,
-            node.subschema,
-            alias.entityTypeName,
-            alias.selectionSet,
-          )
-        ) {
-          return alias;
-        }
-        const path = alias.flattenPaths[0] ?? [];
-        const contextArguments = buildContextArgumentsForFetch(
-          schema,
+    // Contextual aliases must not share the raw BatchFetch document (no arg
+    // injection). Expand them to Fetch hops that carry contextArguments.
+    const ordinary: typeof node.aliases = [];
+    const contextual: StitchPlanNode[] = [];
+    for (const alias of node.aliases) {
+      if (
+        !selectionHasContextArguments(
           stitchingInfo,
           node.subschema,
           alias.entityTypeName,
           alias.selectionSet,
-          path,
-          variableCounter,
-        );
-        return contextArguments ? { ...alias, contextArguments } : alias;
-      }),
-    };
+        )
+      ) {
+        ordinary.push(alias);
+        continue;
+      }
+      const path = alias.flattenPaths[0] ?? [];
+      const contextArguments = buildContextArgumentsForFetch(
+        schema,
+        stitchingInfo,
+        node.subschema,
+        alias.entityTypeName,
+        alias.selectionSet,
+        path,
+        variableCounter,
+        { operation: planCtx.operation, rootType: planCtx.rootType },
+      );
+      contextual.push({
+        kind: 'Fetch',
+        subschema: node.subschema,
+        entityTypeName: alias.entityTypeName,
+        selectionSet: alias.selectionSet,
+        flattenPaths: alias.flattenPaths,
+        runIf: alias.runIf,
+        ...(contextArguments ? { contextArguments } : {}),
+      });
+    }
+    if (!contextual.length) {
+      return node;
+    }
+    if (!ordinary.length) {
+      return contextual.length === 1 ? contextual[0]! : { kind: 'Parallel', nodes: contextual };
+    }
+    const batchRest: StitchPlanNode = { ...node, aliases: ordinary };
+    return { kind: 'Parallel', nodes: [batchRest, ...contextual] };
   }
   if (node.kind === 'Fetch') {
     if (
@@ -5500,6 +5552,7 @@ function attachContextArgumentsToPlan(
       node.selectionSet,
       path,
       variableCounter,
+      { operation: planCtx.operation, rootType: planCtx.rootType },
     );
     return contextArguments ? { ...node, contextArguments } : node;
   }
@@ -6071,6 +6124,46 @@ function collapseSameSubschemaEntityFetches(
   const covering = tryCoalesceOverlappingEntityFetches(stitchingInfo, collapsed);
   if (covering) {
     return covering;
+  }
+
+  // Keep contextual hops out of shared BatchFetch (no arg injection there).
+  const ordinary: EntityFetchHop[] = [];
+  const contextual: EntityFetchHop[] = [];
+  for (const g of collapsed) {
+    if (
+      selectionHasContextArguments(stitchingInfo, g.subschema, g.entityTypeName, g.selectionSet)
+    ) {
+      contextual.push(g);
+    } else {
+      ordinary.push(g);
+    }
+  }
+  if (contextual.length && ordinary.length === 0) {
+    return contextual.length === 1 ? contextual[0]! : { kind: 'Parallel', nodes: contextual };
+  }
+  if (contextual.length && ordinary.length) {
+    const batchOrdinary =
+      ordinary.length === 1
+        ? ordinary[0]!
+        : ({
+            kind: 'BatchFetch' as const,
+            subschema: ordinary[0]!.subschema,
+            aliases: ordinary.map((g, i) => ({
+              alias: `_e${i}`,
+              entityTypeName: g.entityTypeName,
+              selectionSet: g.selectionSet,
+              flattenPaths: fetchFlattenPaths(g),
+              runIf: g.runIf,
+            })),
+            runIf: ordinary.reduce(
+              (acc: ReturnType<typeof orRunIf>, g) => orRunIf(acc, g.runIf),
+              ordinary[0]!.runIf as ReturnType<typeof orRunIf>,
+            ),
+          } satisfies StitchPlanNode);
+    return {
+      kind: 'Parallel',
+      nodes: [batchOrdinary, ...contextual],
+    };
   }
 
   return {

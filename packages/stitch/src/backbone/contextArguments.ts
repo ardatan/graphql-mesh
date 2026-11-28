@@ -6,8 +6,11 @@ import {
   Kind,
   parse,
   type FieldNode,
+  type GraphQLNamedType,
+  type GraphQLObjectType,
   type GraphQLOutputType,
   type GraphQLSchema,
+  type OperationDefinitionNode,
   type SelectionNode,
   type SelectionSetNode,
 } from 'graphql';
@@ -57,6 +60,13 @@ export function selectionHasContextArguments(
   selectionSet: SelectionSetNode,
 ): boolean {
   for (const sel of selectionSet.selections) {
+    if (sel.kind === Kind.INLINE_FRAGMENT) {
+      const on = sel.typeCondition?.name.value ?? typeName;
+      if (selectionHasContextArguments(stitchingInfo, subschema, on, sel.selectionSet)) {
+        return true;
+      }
+      continue;
+    }
     if (sel.kind !== Kind.FIELD || sel.name.value === '__typename') {
       continue;
     }
@@ -111,33 +121,128 @@ function selectionSetToPath(selections: readonly SelectionNode[]): StitchContext
 /**
  * Resolve object type names along a flatten path from the operation root
  * (list indexes are ignored; only field name segments matter).
+ *
+ * Flatten paths use response keys (aliases). When `operation` is provided,
+ * each key is resolved to the schema field via the operation selection tree.
  */
 export function typeNamesAlongFlattenPath(
   schema: GraphQLSchema,
   flattenPath: PathSegment[],
+  options?: {
+    rootType?: GraphQLObjectType | null;
+    operation?: OperationDefinitionNode;
+  },
 ): string[] {
-  const queryType = schema.getQueryType();
-  if (!queryType) {
+  const rootType = options?.rootType ?? schema.getQueryType();
+  if (!rootType) {
     return [];
   }
-  const types: string[] = [queryType.name];
-  let current: any = queryType;
+  const types: string[] = [rootType.name];
+  let current: GraphQLNamedType = rootType;
+  let selections: readonly SelectionNode[] | undefined =
+    options?.operation?.selectionSet.selections;
+
   for (const segment of flattenPath) {
     if (typeof segment === 'number') {
       continue;
     }
-    if (!current || !('getFields' in current)) {
+    if (!current || !(isObjectType(current) || isInterfaceType(current))) {
       break;
     }
-    const field = current.getFields()[segment];
+    let fieldName = segment;
+    let nextSelections: readonly SelectionNode[] | undefined;
+    if (selections) {
+      const resolved = resolveSelectionForResponseKey(schema, current, selections, segment);
+      if (!resolved) {
+        break;
+      }
+      fieldName = resolved.fieldName;
+      nextSelections = resolved.childSelections;
+      if (resolved.concreteType) {
+        // Fragment narrowed the ancestor (e.g. Account -> User).
+        current = resolved.concreteType;
+        types[types.length - 1] = current.name;
+        if (!(isObjectType(current) || isInterfaceType(current))) {
+          break;
+        }
+      }
+    }
+    if (!(isObjectType(current) || isInterfaceType(current))) {
+      break;
+    }
+    const field = current.getFields()[fieldName];
     if (!field) {
       break;
     }
     const named = getNamedType(field.type as GraphQLOutputType);
     types.push(named.name);
     current = named;
+    selections = nextSelections;
   }
   return types;
+}
+
+function resolveSelectionForResponseKey(
+  schema: GraphQLSchema,
+  parentType: GraphQLNamedType,
+  selections: readonly SelectionNode[],
+  responseKey: string,
+): {
+  fieldName: string;
+  childSelections?: readonly SelectionNode[];
+  concreteType?: GraphQLNamedType;
+} | null {
+  for (const sel of selections) {
+    if (sel.kind === Kind.INLINE_FRAGMENT) {
+      let fragType = parentType;
+      if (sel.typeCondition) {
+        const named = schema.getType(sel.typeCondition.name.value);
+        if (named) {
+          fragType = named;
+        }
+      }
+      const found = resolveSelectionForResponseKey(
+        schema,
+        fragType,
+        sel.selectionSet.selections,
+        responseKey,
+      );
+      if (found) {
+        return {
+          ...found,
+          concreteType: found.concreteType ?? (sel.typeCondition ? fragType : undefined),
+        };
+      }
+      continue;
+    }
+    if (sel.kind !== Kind.FIELD) {
+      continue;
+    }
+    const key = sel.alias?.value ?? sel.name.value;
+    if (key !== responseKey) {
+      continue;
+    }
+    return {
+      fieldName: sel.name.value,
+      childSelections: sel.selectionSet?.selections,
+    };
+  }
+  return null;
+}
+
+/** `@context` providers for a context name (stitchingInfo, else schema.extensions). */
+export function getContextProviders(
+  schema: GraphQLSchema,
+  stitchingInfo: StitchingInfo,
+  contextName: string,
+): string[] {
+  const fromInfo = stitchingInfo.contextProviders?.[contextName];
+  if (fromInfo?.length) {
+    return fromInfo;
+  }
+  const fromExt = (schema.extensions as { contextProviders?: Record<string, string[]> } | undefined)
+    ?.contextProviders?.[contextName];
+  return fromExt ?? [];
 }
 
 /**
@@ -152,35 +257,82 @@ export function buildContextArgumentsForFetch(
   selectionSet: SelectionSetNode,
   flattenPath: PathSegment[],
   variableCounter: { n: number },
+  options?: {
+    rootType?: GraphQLObjectType | null;
+    operation?: OperationDefinitionNode;
+  },
 ): StitchContextArgument[] | undefined {
-  const typeNames = typeNamesAlongFlattenPath(schema, flattenPath);
+  const typeNames = typeNamesAlongFlattenPath(schema, flattenPath, options);
   // typeNames includes root; last entry is the entity type at flattenPath.
   const out: StitchContextArgument[] = [];
+  collectContextArgsFromSelection(
+    schema,
+    stitchingInfo,
+    subschema,
+    entityTypeName,
+    selectionSet,
+    typeNames,
+    variableCounter,
+    out,
+  );
+  return out.length ? out : undefined;
+}
+
+function collectContextArgsFromSelection(
+  schema: GraphQLSchema,
+  stitchingInfo: StitchingInfo,
+  subschema: Subschema,
+  typeName: string,
+  selectionSet: SelectionSetNode,
+  typeNamesAlongPath: string[],
+  variableCounter: { n: number },
+  out: StitchContextArgument[],
+): void {
   for (const sel of selectionSet.selections) {
+    if (sel.kind === Kind.INLINE_FRAGMENT) {
+      const on = sel.typeCondition?.name.value ?? typeName;
+      collectContextArgsFromSelection(
+        schema,
+        stitchingInfo,
+        subschema,
+        on,
+        sel.selectionSet,
+        typeNamesAlongPath,
+        variableCounter,
+        out,
+      );
+      continue;
+    }
     if (sel.kind !== Kind.FIELD || sel.name.value === '__typename') {
       continue;
     }
-    const cfg = findMergeFieldConfig(stitchingInfo, subschema, entityTypeName, sel.name.value);
+    const cfg = findMergeFieldConfig(stitchingInfo, subschema, typeName, sel.name.value);
     if (!cfg?.contextArguments?.length) {
       continue;
     }
     for (const ca of cfg.contextArguments) {
-      const rewrite = resolveContextRewrite(stitchingInfo, typeNames, ca, variableCounter);
+      const rewrite = resolveContextRewrite(
+        schema,
+        stitchingInfo,
+        typeNamesAlongPath,
+        ca,
+        variableCounter,
+      );
       if (rewrite) {
         out.push({ ...rewrite, fieldName: sel.name.value });
       }
     }
   }
-  return out.length ? out : undefined;
 }
 
 function resolveContextRewrite(
+  schema: GraphQLSchema,
   stitchingInfo: StitchingInfo,
   typeNamesAlongPath: string[],
   ca: MergedFieldContextArgument,
   variableCounter: { n: number },
 ): StitchContextArgument | undefined {
-  const providers = stitchingInfo.contextProviders?.[ca.context] ?? [];
+  const providers = getContextProviders(schema, stitchingInfo, ca.context);
   if (!providers.length || typeNamesAlongPath.length < 2) {
     return undefined;
   }
@@ -207,6 +359,7 @@ function resolveContextRewrite(
 /**
  * Field nodes to inject onto a context provider ancestor so the rewrite can
  * read them (like `@requires` bridges, but on the ancestor type).
+ * Preserves nested selection trees (e.g. `userCurrency { isoCode }`).
  */
 export function contextBridgeFieldsForSelection(
   stitchingInfo: StitchingInfo,
@@ -221,21 +374,65 @@ export function contextBridgeFieldsForSelection(
   const bridges: FieldNode[] = [];
   const seen = new Set<string>();
   for (const ca of cfg.contextArguments) {
-    for (const segment of parseContextSelectionPath(ca.selection)) {
-      if (!('Key' in segment)) {
+    for (const bridge of selectionStringToBridgeFields(ca.selection)) {
+      const key = bridgeFieldKey(bridge);
+      if (seen.has(key)) {
         continue;
       }
-      if (seen.has(segment.Key)) {
-        continue;
-      }
-      seen.add(segment.Key);
-      bridges.push({
-        kind: Kind.FIELD,
-        name: { kind: Kind.NAME, value: segment.Key },
-      });
+      seen.add(key);
+      bridges.push(bridge);
     }
   }
   return bridges;
+}
+
+function selectionStringToBridgeFields(selection: string): FieldNode[] {
+  const trimmed = selection.trim();
+  const wrapped = trimmed.startsWith('{') ? trimmed : `{ ${trimmed} }`;
+  let document;
+  try {
+    document = parse(wrapped, { noLocation: true });
+  } catch {
+    return [];
+  }
+  const op = document.definitions[0];
+  if (op?.kind !== Kind.OPERATION_DEFINITION) {
+    return [];
+  }
+  return selectionNodesToBridgeFields(op.selectionSet.selections);
+}
+
+function selectionNodesToBridgeFields(selections: readonly SelectionNode[]): FieldNode[] {
+  const out: FieldNode[] = [];
+  for (const sel of selections) {
+    if (sel.kind === Kind.INLINE_FRAGMENT) {
+      out.push(...selectionNodesToBridgeFields(sel.selectionSet.selections));
+      continue;
+    }
+    if (sel.kind === Kind.FIELD) {
+      out.push({
+        kind: Kind.FIELD,
+        name: { kind: Kind.NAME, value: sel.name.value },
+        selectionSet: sel.selectionSet
+          ? {
+              kind: Kind.SELECTION_SET,
+              selections: selectionNodesToBridgeFields(sel.selectionSet.selections),
+            }
+          : undefined,
+      });
+    }
+  }
+  return out;
+}
+
+function bridgeFieldKey(field: FieldNode): string {
+  if (!field.selectionSet?.selections.length) {
+    return field.name.value;
+  }
+  return `${field.name.value}:{${field.selectionSet.selections
+    .filter((s): s is FieldNode => s.kind === Kind.FIELD)
+    .map(bridgeFieldKey)
+    .join(',')}}`;
 }
 
 /**
@@ -262,8 +459,24 @@ export function injectContextBridgesIntoSelections(
       byName = new Map();
       bridgesByProvider.set(providerType, byName);
     }
-    if (!byName.has(bridge.name.value)) {
-      byName.set(bridge.name.value, bridge);
+    const key = bridgeFieldKey(bridge);
+    const existing = byName.get(key);
+    if (!existing) {
+      byName.set(key, bridge);
+      return;
+    }
+    // Merge nested selection sets when the same bridge path is noted twice.
+    if (bridge.selectionSet && existing.selectionSet) {
+      byName.set(key, {
+        ...existing,
+        selectionSet: {
+          kind: Kind.SELECTION_SET,
+          selections: mergeBridgeFields(
+            existing.selectionSet.selections,
+            selectionNodesToBridgeFields(bridge.selectionSet.selections),
+          ),
+        },
+      });
     }
   }
 
@@ -281,30 +494,27 @@ export function injectContextBridgesIntoSelections(
       if (sel.kind !== Kind.FIELD || sel.name.value.startsWith('__')) {
         continue;
       }
-      const owner = resolveSubschemaForType(stitchingInfo, undefined, typeName);
+      const owner = resolveSubschemaOwningField(stitchingInfo, typeName, sel.name.value);
       if (owner) {
         const cfg = findMergeFieldConfig(stitchingInfo, owner, typeName, sel.name.value);
         if (cfg?.contextArguments?.length) {
-          const providers =
-            stitchingInfo.contextProviders?.[cfg.contextArguments[0]!.context] ?? [];
-          let provider: string | undefined;
-          for (let i = ancestorTypes.length - 1; i >= 0; i--) {
-            if (providers.includes(ancestorTypes[i]!)) {
-              provider = ancestorTypes[i];
-              break;
+          // Resolve the provider independently for each contextual argument.
+          for (const ca of cfg.contextArguments) {
+            const providers = getContextProviders(schema, stitchingInfo, ca.context);
+            let provider: string | undefined;
+            for (let i = ancestorTypes.length - 1; i >= 0; i--) {
+              if (providers.includes(ancestorTypes[i]!)) {
+                provider = ancestorTypes[i];
+                break;
+              }
             }
-          }
-          // Same-type provider (rare): treat current type as provider.
-          if (!provider && providers.includes(typeName)) {
-            provider = typeName;
-          }
-          if (provider) {
-            for (const bridge of contextBridgeFieldsForSelection(
-              stitchingInfo,
-              owner,
-              typeName,
-              sel.name.value,
-            )) {
+            if (!provider && providers.includes(typeName)) {
+              provider = typeName;
+            }
+            if (!provider) {
+              continue;
+            }
+            for (const bridge of selectionStringToBridgeFields(ca.selection)) {
               noteBridge(provider, bridge);
             }
           }
@@ -382,22 +592,39 @@ export function injectContextBridgesIntoSelections(
   return mergeBridgeFields(inject(parentTypeName, selections), bridgesFor(parentTypeName));
 }
 
-function resolveSubschemaForType(
+/**
+ * Prefer the subschema that owns the contextual / computed field config, not
+ * merely the first subschema that merges the type.
+ */
+function resolveSubschemaOwningField(
   stitchingInfo: StitchingInfo,
-  hint: Subschema | undefined,
   typeName: string,
+  fieldName: string,
 ): Subschema | undefined {
-  if (hint?.merge?.[typeName]) {
-    return hint;
-  }
+  let fallback: Subschema | undefined;
   for (const [, sub] of stitchingInfo.subschemaMap) {
-    if (sub.merge?.[typeName]) {
+    const fields = sub.merge?.[typeName]?.fields?.[fieldName];
+    if (!fields) {
+      if (!fallback && sub.merge?.[typeName]) {
+        fallback = sub;
+      }
+      continue;
+    }
+    if (fields.contextArguments?.length || fields.computed || fields.selectionSet) {
       return sub;
     }
+    if (!fallback) {
+      fallback = sub;
+    }
   }
-  return hint;
+  return fallback;
 }
 
+/**
+ * Merge bridge fields into a selection set. An aliased client selection of the
+ * same schema field (e.g. `localCurrency: currency`) does **not** satisfy the
+ * bridge: the rewrite reads the unaliased response key `currency`.
+ */
 function mergeBridgeFields(
   selections: readonly SelectionNode[],
   bridges: FieldNode[],
@@ -405,19 +632,38 @@ function mergeBridgeFields(
   if (!bridges.length) {
     return [...selections];
   }
-  const seen = new Set<string>();
+  const seenUnaliased = new Set<string>();
   const out: SelectionNode[] = [];
   for (const sel of selections) {
-    if (sel.kind === Kind.FIELD) {
-      seen.add(sel.name.value);
+    if (sel.kind === Kind.FIELD && !sel.alias) {
+      seenUnaliased.add(sel.name.value);
     }
     out.push(sel);
   }
   for (const b of bridges) {
-    if (seen.has(b.name.value)) {
+    if (seenUnaliased.has(b.name.value)) {
+      // Merge nested bridge selections into the existing unaliased field.
+      if (b.selectionSet) {
+        const idx = out.findIndex(
+          s => s.kind === Kind.FIELD && !s.alias && s.name.value === b.name.value,
+        );
+        if (idx >= 0) {
+          const existing = out[idx] as FieldNode;
+          out[idx] = {
+            ...existing,
+            selectionSet: {
+              kind: Kind.SELECTION_SET,
+              selections: mergeBridgeFields(
+                existing.selectionSet?.selections ?? [],
+                selectionNodesToBridgeFields(b.selectionSet.selections),
+              ),
+            },
+          };
+        }
+      }
       continue;
     }
-    seen.add(b.name.value);
+    seenUnaliased.add(b.name.value);
     out.push(b);
   }
   return out;

@@ -1391,6 +1391,26 @@ export function getStitchingOptionsFromSupergraphSdl(
         const mergedTypeConfig: MergedTypeConfig = (mergeConfig[typeName] ||= {});
         const fieldsConfig: Record<string, MergedFieldConfig> = (mergedTypeConfig.fields ||= {});
         for (const [fieldName, contextArguments] of fieldContextMap) {
+          // Prefer a conflict-group field config that already owns this field
+          // (requires-with-argument split); otherwise attach to the main config.
+          let attached = false;
+          for (const pending of pendingConflictSubschemaConfigs) {
+            const pendingFields = pending.mergeTypeConfig.fields;
+            if (pending.typeName !== typeName || !pendingFields?.[fieldName]) {
+              continue;
+            }
+            const existing = pendingFields[fieldName]!;
+            pendingFields[fieldName] = {
+              ...existing,
+              computed: existing.computed ?? true,
+              contextArguments,
+            };
+            attached = true;
+            break;
+          }
+          if (attached) {
+            continue;
+          }
           const existing = fieldsConfig[fieldName] ?? {};
           fieldsConfig[fieldName] = {
             ...existing,

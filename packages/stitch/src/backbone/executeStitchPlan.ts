@@ -10,8 +10,10 @@ import {
   parseType,
   visit,
   type ArgumentNode,
+  type ASTNode,
   type DocumentNode,
   type FieldNode,
+  type FragmentDefinitionNode,
   type GraphQLObjectType,
   type GraphQLOutputType,
   type GraphQLSchema,
@@ -1053,10 +1055,24 @@ function collectEntitiesWithAncestorsAtPath(
     .map(f => ({ entity: f.value as Record<string, any>, ancestors: f.ancestors }));
 }
 
+type ContextLocatedEntity = {
+  entity: Record<string, any>;
+  ancestors: object[];
+  groupKey: string;
+  contextVars: Record<string, unknown>;
+};
+
+type ContextGroupPrep = {
+  items: ContextLocatedEntity[];
+  keys: any[];
+  parentKeyIndex: number[];
+  contextVars: Record<string, unknown>;
+};
+
 /**
  * Federation `@fromContext` entity hop: group entities by distinct context
- * value tuples, send one `_entities` request per group (MVP: one request per
- * distinct tuple), inject context variables as field arguments.
+ * value tuples. Nullable context args alias `_entities_N` into one request;
+ * non-null args keep one request per group (serial path).
  */
 function tryExecuteEntitiesBatchWithContext(
   node: Extract<StitchPlanNode, { kind: 'Fetch' }>,
@@ -1069,12 +1085,7 @@ function tryExecuteEntitiesBatchWithContext(
   if (!entry) {
     return undefined;
   }
-  const located: Array<{
-    entity: Record<string, any>;
-    ancestors: object[];
-    groupKey: string;
-    contextVars: Record<string, unknown>;
-  }> = [];
+  const located: ContextLocatedEntity[] = [];
   const seen = new Set<Record<string, any>>();
   for (const path of node.flattenPaths ?? []) {
     for (const { entity, ancestors } of collectEntitiesWithAncestorsAtPath(ctx.data, path)) {
@@ -1104,7 +1115,7 @@ function tryExecuteEntitiesBatchWithContext(
     return undefined;
   }
 
-  const groups = new Map<string, typeof located>();
+  const groups = new Map<string, ContextLocatedEntity[]>();
   for (const item of located) {
     let list = groups.get(item.groupKey);
     if (!list) {
@@ -1125,13 +1136,15 @@ function tryExecuteEntitiesBatchWithContext(
   if (!baseDoc) {
     return undefined;
   }
-  const document = addContextVariableDefinitions(baseDoc, contextArguments);
+  let document = addContextVariableDefinitions(baseDoc, contextArguments);
+  document = addClientVariableDefinitions(document, selectionWithArgs, ctx);
   const argName = inferMergeArgName(entry.argsFromKeys);
   if (argName == null) {
     return undefined;
   }
   const executor = getSubschemaExecutor(hopSubschema);
-  const jobs: MaybePromise<unknown>[] = [];
+
+  const prepared: ContextGroupPrep[] = [];
   for (const group of groups.values()) {
     const keys: any[] = [];
     const parentKeyIndex: number[] = new Array(group.length);
@@ -1155,9 +1168,110 @@ function tryExecuteEntitiesBatchWithContext(
     if (!keys.length) {
       continue;
     }
+    prepared.push({
+      items: group,
+      keys,
+      parentKeyIndex,
+      contextVars: group[0]!.contextVars,
+    });
+  }
+  if (!prepared.length) {
+    return undefined;
+  }
+
+  const canAlias =
+    prepared.length > 1 && contextArguments.every(ca => !ca.type.trim().endsWith('!'));
+
+  const mergeGroupResult = (prep: ContextGroupPrep, payload: unknown) => {
+    let entities = payload;
+    if (entry.valuesFromResults != null && entities != null) {
+      entities = entry.valuesFromResults(entities, prep.keys);
+    }
+    if (!Array.isArray(entities)) {
+      return;
+    }
+    for (let i = 0; i < prep.items.length; i++) {
+      const ki = prep.parentKeyIndex[i]!;
+      if (ki < 0) {
+        continue;
+      }
+      const entityResult = entities[ki];
+      if (entityResult instanceof Error) {
+        ctx.errors.push(entityResult);
+        continue;
+      }
+      if (entityResult == null || typeof entityResult !== 'object') {
+        continue;
+      }
+      mergeEntityIntoParent(
+        prep.items[i]!.entity,
+        entityResult as Record<string, any>,
+        ctx.schema,
+        node.subschema,
+      );
+      rememberEntityForReuse(ctx, node.subschema, typeName, prep.items[i]!.entity);
+    }
+  };
+
+  if (canAlias) {
+    const groupVariableNames = [argName, ...contextArguments.map(ca => ca.variableName)];
+    const aliased = writeContextAliasedDocument(document, groupVariableNames, prepared.length);
+    if (aliased) {
+      const variables: Record<string, unknown> = {
+        ...pickClientVariables(document, ctx),
+      };
+      prepared.forEach((prep, groupIndex) => {
+        const groupVars: Record<string, unknown> = {
+          ...entry.argsFromKeys(prep.keys),
+          ...prep.contextVars,
+        };
+        Object.assign(
+          variables,
+          renameGroupVariables(groupVars, aliased.groupedVariables, groupIndex),
+        );
+      });
+      return handleMaybePromise(
+        () =>
+          executor({
+            document: aliased.document,
+            variables,
+            context: ctx.contextValue,
+            rootValue: hopSubschema.rootValue ?? ctx.rootValue,
+            operationType: OperationTypeNode.QUERY,
+            signal: ctx.signal,
+            subgraphName: hopSubschema.name,
+          } satisfies ExecutionRequest) as MaybePromise<ExecutionResult>,
+        (result: ExecutionResult) => {
+          const counts = prepared.map(p => p.keys.length);
+          const unaliased = unaliasContextResult(
+            result,
+            aliased.responseKeys,
+            aliased.responseKeys.map(() => counts),
+          );
+          if (unaliased.errors?.length) {
+            ctx.errors.push(...unaliased.errors);
+          }
+          const payload = unaliased.data?.[entry.fieldName];
+          if (!Array.isArray(payload)) {
+            return null;
+          }
+          let offset = 0;
+          for (const prep of prepared) {
+            mergeGroupResult(prep, payload.slice(offset, offset + prep.keys.length));
+            offset += prep.keys.length;
+          }
+          return null;
+        },
+      );
+    }
+  }
+
+  const jobs: MaybePromise<unknown>[] = [];
+  for (const prep of prepared) {
     const variables: Record<string, unknown> = {
-      ...entry.argsFromKeys(keys),
-      ...group[0]!.contextVars,
+      ...pickClientVariables(document, ctx),
+      ...entry.argsFromKeys(prep.keys),
+      ...prep.contextVars,
     };
     jobs.push(
       handleMaybePromise(
@@ -1175,42 +1289,271 @@ function tryExecuteEntitiesBatchWithContext(
           if (result.errors?.length) {
             ctx.errors.push(...result.errors);
           }
-          let payload = result.data?.[entry.fieldName];
-          if (entry.valuesFromResults != null && payload != null) {
-            payload = entry.valuesFromResults(payload, keys);
-          }
-          if (!Array.isArray(payload)) {
-            return;
-          }
-          for (let i = 0; i < group.length; i++) {
-            const ki = parentKeyIndex[i]!;
-            if (ki < 0) {
-              continue;
-            }
-            const entityResult = payload[ki];
-            if (entityResult instanceof Error) {
-              ctx.errors.push(entityResult);
-              continue;
-            }
-            if (entityResult == null || typeof entityResult !== 'object') {
-              continue;
-            }
-            mergeEntityIntoParent(
-              group[i]!.entity,
-              entityResult as Record<string, any>,
-              ctx.schema,
-              node.subschema,
-            );
-            rememberEntityForReuse(ctx, node.subschema, typeName, group[i]!.entity);
-          }
+          mergeGroupResult(prep, result.data?.[entry.fieldName]);
         },
       ),
     );
   }
+  // Return null (not undefined) on sync completion so the caller does not
+  // fall through to the non-context batch path.
   return handleMaybePromise(
     () => awaitMaybePromises(jobs),
-    () => undefined,
+    () => null,
   );
+}
+
+function addClientVariableDefinitions(
+  document: DocumentNode,
+  selectionSet: SelectionSetNode,
+  ctx: BackboneExecutionContext,
+): DocumentNode {
+  const used = new Set<string>();
+  visit(
+    { kind: Kind.FIELD, name: { kind: Kind.NAME, value: '_' }, selectionSet },
+    {
+      Variable(v) {
+        used.add(v.name.value);
+      },
+    },
+  );
+  const clientDefs = filterVariableDefinitions(ctx.operation.variableDefinitions, used);
+  if (!clientDefs?.length) {
+    return document;
+  }
+  const op = document.definitions.find(d => d.kind === Kind.OPERATION_DEFINITION);
+  if (!op || op.kind !== Kind.OPERATION_DEFINITION) {
+    return document;
+  }
+  const existing = new Set((op.variableDefinitions ?? []).map(v => v.variable.name.value));
+  const extra = clientDefs.filter(d => !existing.has(d.variable.name.value));
+  if (!extra.length) {
+    return document;
+  }
+  return {
+    kind: Kind.DOCUMENT,
+    definitions: document.definitions.map(def => {
+      if (def.kind !== Kind.OPERATION_DEFINITION) {
+        return def;
+      }
+      return {
+        ...def,
+        variableDefinitions: [...(def.variableDefinitions ?? []), ...extra],
+      };
+    }),
+  };
+}
+
+function pickClientVariables(
+  document: DocumentNode,
+  ctx: BackboneExecutionContext,
+): Record<string, unknown> {
+  const op = document.definitions.find(d => d.kind === Kind.OPERATION_DEFINITION);
+  const out: Record<string, unknown> = {};
+  if (!op || op.kind !== Kind.OPERATION_DEFINITION) {
+    return out;
+  }
+  for (const def of op.variableDefinitions ?? []) {
+    const name = def.variable.name.value;
+    if (name in ctx.variableValues) {
+      out[name] = ctx.variableValues[name];
+    }
+  }
+  return out;
+}
+
+interface ContextAliasedDocument {
+  document: DocumentNode;
+  responseKeys: string[];
+  groupedVariables: Set<string>;
+}
+
+/**
+ * Write the merge operation out once per context group with `_entities_N`
+ * aliases and per-group copies of grouped variables (representations / context vars).
+ */
+function writeContextAliasedDocument(
+  document: DocumentNode,
+  groupVariables: string[],
+  groups: number,
+): ContextAliasedDocument | null {
+  let operation:
+    Extract<(typeof document.definitions)[number], { kind: Kind.OPERATION_DEFINITION }> | undefined;
+  const fragments: FragmentDefinitionNode[] = [];
+  for (const definition of document.definitions) {
+    if (definition.kind === Kind.OPERATION_DEFINITION && !operation) {
+      operation = definition;
+    } else if (definition.kind === Kind.FRAGMENT_DEFINITION) {
+      fragments.push(definition);
+    } else if (definition.kind !== Kind.OPERATION_DEFINITION) {
+      return null;
+    }
+  }
+  if (!operation || operation.directives?.length) {
+    return null;
+  }
+
+  const groupedVariables = new Set<string>();
+  const sharedDefinitions: VariableDefinitionNode[] = [];
+  const groupedDefinitions: VariableDefinitionNode[] = [];
+  for (const definition of operation.variableDefinitions ?? []) {
+    const name = definition.variable.name.value;
+    if (groupVariables.includes(name)) {
+      groupedVariables.add(name);
+      groupedDefinitions.push(definition);
+    } else {
+      sharedDefinitions.push(definition);
+    }
+  }
+  if (!groupedDefinitions.length) {
+    return null;
+  }
+
+  const fields: FieldNode[] = [];
+  for (const selection of operation.selectionSet.selections) {
+    if (selection.kind !== Kind.FIELD) {
+      return null;
+    }
+    fields.push(selection);
+  }
+  const responseKeys = fields.map(field => field.alias?.value ?? field.name.value);
+  const fragmentNames = new Set(fragments.map(fragment => fragment.name.value));
+
+  const variableDefinitions = [...sharedDefinitions];
+  const selections: FieldNode[] = [];
+  const groupFragments: FragmentDefinitionNode[] = [];
+  for (let group = 0; group < groups; group++) {
+    const suffix = (name: string) => `${name}_${group}`;
+    const rename = <T extends ASTNode>(node: T): T =>
+      visit(node, {
+        Variable: variable =>
+          groupedVariables.has(variable.name.value)
+            ? {
+                ...variable,
+                name: { ...variable.name, value: suffix(variable.name.value) },
+              }
+            : undefined,
+        FragmentSpread: spread =>
+          fragmentNames.has(spread.name.value)
+            ? {
+                ...spread,
+                name: { ...spread.name, value: suffix(spread.name.value) },
+              }
+            : undefined,
+      });
+    variableDefinitions.push(...groupedDefinitions.map(rename));
+    fields.forEach((field, i) => {
+      selections.push(
+        rename({
+          ...field,
+          alias: { kind: Kind.NAME, value: suffix(responseKeys[i]!) },
+        }),
+      );
+    });
+    groupFragments.push(
+      ...fragments.map(fragment =>
+        rename({
+          ...fragment,
+          name: { ...fragment.name, value: suffix(fragment.name.value) },
+        }),
+      ),
+    );
+  }
+
+  return {
+    document: {
+      ...document,
+      definitions: [
+        {
+          ...operation,
+          variableDefinitions,
+          selectionSet: { ...operation.selectionSet, selections },
+        },
+        ...groupFragments,
+      ],
+    },
+    responseKeys,
+    groupedVariables,
+  };
+}
+
+function splitGroup(name: string): [string, number] | null {
+  const match = /^(.+)_(\d+)$/.exec(name);
+  return match ? [match[1]!, Number(match[2])] : null;
+}
+
+function renameGroupVariables(
+  variables: Record<string, unknown>,
+  groupedVariables: Set<string>,
+  group: number,
+): Record<string, unknown> {
+  const renamed: Record<string, unknown> = Object.create(null);
+  for (const [name, value] of Object.entries(variables)) {
+    renamed[groupedVariables.has(name) ? `${name}_${group}` : name] = value;
+  }
+  return renamed;
+}
+
+function unaliasContextResult(
+  result: ExecutionResult,
+  responseKeys: string[],
+  counts: number[][],
+): ExecutionResult {
+  const groups = counts[0]?.length ?? 0;
+  const offsets = counts.map(keyCounts => {
+    const keyOffsets = [0];
+    for (const count of keyCounts) {
+      keyOffsets.push(keyOffsets[keyOffsets.length - 1]! + count);
+    }
+    return keyOffsets;
+  });
+  const parseResponseKey = (alias: unknown) => {
+    const split = typeof alias === 'string' ? splitGroup(alias) : null;
+    const key = split ? responseKeys.indexOf(split[0]) : -1;
+    return split && key !== -1 && split[1] < groups ? { key, group: split[1] } : null;
+  };
+
+  let data = result.data;
+  if (data && typeof data === 'object') {
+    const merged = offsets.map(keyOffsets => new Array(keyOffsets[groups]).fill(null));
+    for (const [alias, value] of Object.entries(data)) {
+      const parsed = parseResponseKey(alias);
+      if (!parsed || !Array.isArray(value)) {
+        continue;
+      }
+      const start = offsets[parsed.key]![parsed.group]!;
+      const end = offsets[parsed.key]![parsed.group + 1]!;
+      for (let i = 0; i < value.length && start + i < end; i++) {
+        merged[parsed.key]![start + i] = value[i];
+      }
+    }
+    data = Object.fromEntries(responseKeys.map((key, index) => [key, merged[index]]));
+  }
+
+  const errors = result.errors?.flatMap(error => {
+    const parsed = parseResponseKey(error.path?.[0]);
+    if (!parsed) {
+      return [error];
+    }
+    const key = responseKeys[parsed.key]!;
+    const start = offsets[parsed.key]![parsed.group]!;
+    const end = offsets[parsed.key]![parsed.group + 1]!;
+    const index = error.path![1];
+    if (index === undefined) {
+      if (start === end) {
+        return [relocatedError(error, undefined)];
+      }
+      return Array.from({ length: end - start }, (_, i) => relocatedError(error, [key, start + i]));
+    }
+    if (typeof index !== 'number') {
+      return [relocatedError(error, [key, ...error.path!.slice(1)])];
+    }
+    if (start + index >= end) {
+      return [relocatedError(error, undefined)];
+    }
+    return [relocatedError(error, [key, start + index, ...error.path!.slice(2)])];
+  });
+
+  return { ...result, data, errors };
 }
 
 function applyContextArgsToSelectionSet(
@@ -2524,6 +2867,7 @@ function executeBatchFetchNode(
         selectionSet: a.selectionSet,
         flattenPaths: a.flattenPaths,
         runIf: a.runIf,
+        contextArguments: a.contextArguments,
       },
       ctx,
     ),
