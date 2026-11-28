@@ -46,6 +46,7 @@ import {
 import { handleMaybePromise, isPromise, type MaybePromise } from '@whatwg-node/promise-helpers';
 import { asGetArgumentValuesVariables } from '../variableValues.js';
 import {
+  bindContextSelectionPathForFlattenPath,
   readContextValue,
   resolveContextAncestor,
   stableStringifyContext,
@@ -1130,10 +1131,19 @@ function tryExecuteEntitiesBatchWithContext(
         // Per-entity nearest provider (not the Fetch's representative parentDepth)
         // so coalesced paths at different depths still get the right ancestor.
         const ancestor = resolveContextAncestor(entity, ancestors, ca, ctx.schema);
+        // Re-bind bridge ResponseKey for this entity's flatten path — coalesced
+        // Fetches may have stamped keys from flattenPaths[0] only.
+        const selectionPath = bindContextSelectionPathForFlattenPath(
+          ca.selectionPath,
+          path,
+          ca.parentDepth,
+          ctx.operation,
+          ctx.fragments,
+        );
         const value =
           ancestor === undefined
             ? null
-            : (readContextValue(ancestor, ca.selectionPath, ctx.schema) ?? null);
+            : (readContextValue(ancestor, selectionPath, ctx.schema) ?? null);
         contextVars[ca.variableName] = value;
       }
       // Include field/arg names so currency=USD and locale=USD do not collide.
@@ -2268,7 +2278,16 @@ function tryExecuteEntitiesBatch(
   if (!(node.document && isLeafOnlySelection(node.selectionSet))) {
     return undefined;
   }
-  const args = remapMergeArgsToVariables(entry.argsFromKeys(keys) as Record<string, any>);
+  // Match preparePlanDocuments: reserve client op vars so `$__mesh_nxt` forces
+  // `$__mesh_nxt_0` and the remapped variables bind the prebuilt document.
+  const reservedVariableNames = new Set(
+    (ctx.operation.variableDefinitions ?? []).map(d => d.variable.name.value),
+  );
+  const rawArgs = entry.argsFromKeys(keys) as Record<string, any>;
+  const args =
+    node.mergeVariableName != null && Object.keys(rawArgs).length === 1
+      ? { [node.mergeVariableName]: Object.values(rawArgs)[0] }
+      : remapMergeArgsToVariables(rawArgs, reservedVariableNames);
   const executor = getSubschemaExecutor(hopSubschema);
   return handleMaybePromise(
     () =>
@@ -3011,7 +3030,17 @@ function executeBatchFetchNode(
         return;
       }
       const fieldName = mergeEntry.fieldName;
-      const variables = remapMergeArgsToVariables(mergeEntry.argsFromKeys(allKeys));
+      // Prefer the merge var name stamped by preparePlanDocuments when present;
+      // otherwise allocate with the same reserved client op vars.
+      const reservedVariableNames = new Set(
+        (ctx.operation.variableDefinitions ?? []).map(d => d.variable.name.value),
+      );
+      const stamped = node.aliases.find(a => a.representationsVariable)?.representationsVariable;
+      const rawArgs = mergeEntry.argsFromKeys(allKeys) as Record<string, any>;
+      const variables =
+        stamped != null && Object.keys(rawArgs).length === 1
+          ? { [stamped]: Object.values(rawArgs)[0] }
+          : remapMergeArgsToVariables(rawArgs, reservedVariableNames);
       const executor = getSubschemaExecutor(node.subschema);
       return handleMaybePromise(
         () =>

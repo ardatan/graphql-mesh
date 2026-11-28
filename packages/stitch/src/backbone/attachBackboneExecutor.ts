@@ -1,7 +1,17 @@
-import { isObjectType, type GraphQLFieldResolver, type GraphQLSchema } from 'graphql';
+import {
+  defaultFieldResolver,
+  isObjectType,
+  type GraphQLFieldResolver,
+  type GraphQLSchema,
+} from 'graphql';
 import type { StitchingInfo } from '@graphql-tools/delegate';
 import type { Executor } from '@graphql-tools/utils';
-import { createBackboneExecutor } from './createBackboneExecutor.js';
+import {
+  createBackboneExecutor,
+  getBackboneRuntime,
+  type BackboneRuntime,
+} from './createBackboneExecutor.js';
+import { installRootProxyingResolvers } from './rootProxyingResolvers.js';
 
 type RootResolveSnapshot = Map<string, GraphQLFieldResolver<any, any> | undefined>;
 
@@ -12,6 +22,13 @@ type RootResolveSnapshot = Map<string, GraphQLFieldResolver<any, any> | undefine
  * `getBackboneExecutor(original)`.
  */
 const backboneExecutors = new WeakMap<GraphQLSchema, Executor>();
+
+/**
+ * Shared across `mapSchema` copies via the same `stitchingInfo` object so
+ * `retargetBackboneToSchema` can find the live runtime after filter /
+ * `onStitchedSchema` without storing the executor on stitchingInfo itself.
+ */
+const backboneRuntimeByStitchingInfo = new WeakMap<object, BackboneRuntime>();
 
 /**
  * Snapshot Query/Mutation field `resolve` refs - compare after
@@ -33,7 +50,9 @@ export function snapshotRootFieldResolves(schema: GraphQLSchema): RootResolveSna
 /**
  * Fields whose `resolve` changed since `before` are gateway overrides (e.g.
  * ApolloServer test replacing Query.me). Mark them `localFields` so the
- * planner emits Islands instead of subgraph Fetches.
+ * planner emits Islands instead of subgraph Fetches. Also stamp
+ * `ORIGINAL_RESOLVE` to the override so Islands call it (not the pre-proxy
+ * subgraph resolver closed over at stitch time).
  */
 export function markChangedRootResolvesAsLocal(
   schema: GraphQLSchema,
@@ -46,6 +65,7 @@ export function markChangedRootResolvesAsLocal(
   if (!stitchingInfo.localFields) {
     stitchingInfo.localFields = new Map();
   }
+  const ORIGINAL_RESOLVE = Symbol.for('graphql-tools.stitch.backboneOriginalResolve');
   for (const root of [schema.getQueryType(), schema.getMutationType()]) {
     if (!root || !isObjectType(root)) {
       continue;
@@ -61,6 +81,8 @@ export function markChangedRootResolvesAsLocal(
         stitchingInfo.localFields.set(root.name, locals);
       }
       locals.add(fieldName);
+      // Island uses getOriginalRootResolve — must be the late override.
+      (field as any)[ORIGINAL_RESOLVE] = field.resolve ?? defaultFieldResolver;
     }
   }
 }
@@ -85,10 +107,35 @@ export function attachBackboneExecutor(
 ): GraphQLSchema {
   const executor = createBackboneExecutor(schema, options);
   backboneExecutors.set(schema, executor);
+  const runtime = getBackboneRuntime(executor);
+  const stitchingInfo = schema.extensions?.stitchingInfo;
+  if (runtime && stitchingInfo && typeof stitchingInfo === 'object') {
+    backboneRuntimeByStitchingInfo.set(stitchingInfo, runtime);
+  }
   return schema;
 }
 
 /** Read the backbone executor attached to this schema instance, if any. */
 export function getBackboneExecutor(schema: GraphQLSchema): Executor | undefined {
   return backboneExecutors.get(schema);
+}
+
+/**
+ * Point the existing backbone runtime at `schema` after `mapSchema` / late
+ * root overrides. Reuses the same executor (progressive-override closure
+ * intact) — does not create a new executor or store options on stitchingInfo.
+ */
+export function retargetBackboneToSchema(schema: GraphQLSchema): GraphQLSchema {
+  const stitchingInfo = schema.extensions?.stitchingInfo;
+  const runtime =
+    (stitchingInfo && typeof stitchingInfo === 'object'
+      ? backboneRuntimeByStitchingInfo.get(stitchingInfo)
+      : undefined) ?? undefined;
+  if (!runtime) {
+    return schema;
+  }
+  runtime.setSchema(schema);
+  backboneExecutors.set(schema, runtime.executor);
+  installRootProxyingResolvers(schema, runtime.executor);
+  return schema;
 }

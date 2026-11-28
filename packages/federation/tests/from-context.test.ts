@@ -1257,6 +1257,28 @@ describe('fromContext gateway-parity (adapted from gateway#2703)', () => {
     expect(payload).not.toMatch(/"code"\s*:\s*"u1"/);
   });
 
+  it('coalesced paths re-bind ResponseKey per flatten path', async () => {
+    const { bag, executor } = stitchWithCapture(
+      DUAL_ROOT_SUPERGRAPH,
+      createUsersSubgraph({ withSecondUsers: true }),
+    );
+    // users: natural currency bridge; secondUsers: currency:id needs alias.
+    // A shared Transaction Fetch must not read secondUsers' id as code.
+    const result = await executor({
+      document: parse(`{
+        users { currency transactions { amount } }
+        secondUsers { currency: id transactions { amount } }
+      }`),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result.data.users[0].transactions[0].amount).toBe(100);
+    expect(result.data.secondUsers[0].transactions[0].amount).toBe(80);
+    const payload = JSON.stringify(entityRequests(bag));
+    expect(payload).toContain('USD');
+    expect(payload).toContain('GBP');
+    expect(payload).not.toMatch(/"code"\s*:\s*"u/);
+  });
+
   it('reads exact bridge alias when client occupies __mesh_ctx_currency_1', async () => {
     const { bag, executor } = stitchWithCapture(BASIC_SUPERGRAPH, createUsersSubgraph());
     // Client owns natural `currency`, bare `__mesh_ctx_currency`, and `_1`.

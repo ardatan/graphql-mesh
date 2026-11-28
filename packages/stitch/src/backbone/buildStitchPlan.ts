@@ -3964,9 +3964,10 @@ function contextProviderDependsOn(
   }
   const laterPaths = fetchFlattenPaths(later);
   const earlierPaths = fetchFlattenPaths(earlier);
-  // Order after any producer that supplies the context selection — ancestor
-  // or sibling under a shared prefix (e.g. users.preferences before
-  // users.transactions when amount reads preferences.isoCode).
+  // Ancestor producers, or siblings whose branch is itself a needed context
+  // key (users.preferences before users.transactions for
+  // `{ preferences { isoCode } }`). A same-named field on an unrelated
+  // sibling subtree (users.refunds.currency) must not qualify.
   let related = false;
   if (earlier.rootField) {
     const rk = earlier.rootField.alias?.value ?? earlier.rootField.name.value;
@@ -3975,7 +3976,7 @@ function contextProviderDependsOn(
   if (!related) {
     for (const lp of laterPaths) {
       for (const ep of earlierPaths) {
-        if (pathsRelatedForContextProvider(ep, lp)) {
+        if (pathsRelatedForContextProvider(ep, lp, neededKeys)) {
           related = true;
           break;
         }
@@ -3998,10 +3999,15 @@ function contextProviderDependsOn(
 }
 
 /**
- * True when `earlier` is an ancestor of `later`, or they share a non-empty
- * prefix and then diverge (siblings / cousins under the same parent path).
+ * True when `earlier` is a strict ancestor of `later`, or they share a prefix
+ * and earlier's next segment is a needed context selection key (sibling
+ * provider path), not an unrelated sibling entity field.
  */
-function pathsRelatedForContextProvider(earlier: PathSegment[], later: PathSegment[]): boolean {
+function pathsRelatedForContextProvider(
+  earlier: PathSegment[],
+  later: PathSegment[],
+  neededKeys: ReadonlySet<string>,
+): boolean {
   if (pathIsPrefix(earlier, later) && earlier.length < later.length) {
     return true;
   }
@@ -4009,7 +4015,11 @@ function pathsRelatedForContextProvider(earlier: PathSegment[], later: PathSegme
   while (i < earlier.length && i < later.length && earlier[i] === later[i]) {
     i++;
   }
-  return i > 0 && i < earlier.length && i < later.length;
+  if (!(i > 0 && i < earlier.length && i < later.length)) {
+    return false;
+  }
+  const branch = earlier[i];
+  return typeof branch === 'string' && neededKeys.has(branch);
 }
 
 function collectContextSelectionKeys(

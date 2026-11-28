@@ -63,6 +63,7 @@ import {
   calculateSelectionScore,
   getDefaultFieldConfigMerger,
   markChangedRootResolvesAsLocal,
+  retargetBackboneToSchema,
   snapshotRootFieldResolves,
   stitchSchemas,
   ValidationLevel,
@@ -2435,15 +2436,19 @@ export function getStitchedSchemaFromSupergraphSdl(opts: GetStitchedSchemaFromSu
   // Subgraph schemas keep `@fromContext` args for entity documents; strip them
   // from the public gateway schema (join SDL never exposes them).
   supergraphSchema = stripContextualArgsFromPublicSchema(supergraphSchema);
-  // filterInternalFieldsAndTypes mapSchema -> new schema. Root proxies from
-  // stitchSchemas survive; no backbone re-attach (executor is not stored on
-  // shared stitchingInfo / extensions).
+  // filterInternalFieldsAndTypes mapSchema -> new schema. Retarget the same
+  // backbone executor (labels stay closed over) so getBackboneExecutor and
+  // Islands use this schema — no new executor / no stitchingInfo options bag.
   supergraphSchema = filterInternalFieldsAndTypes(supergraphSchema);
+  supergraphSchema = retargetBackboneToSchema(supergraphSchema);
   if (opts.onStitchedSchema) {
     const rootResolvesBefore = snapshotRootFieldResolves(supergraphSchema);
     supergraphSchema = opts.onStitchedSchema(supergraphSchema) || supergraphSchema;
     // Late root resolver overrides (Query.me -> local) must plan as Islands.
     markChangedRootResolvesAsLocal(supergraphSchema, rootResolvesBefore);
+    // Pick up overrides into the live runtime + reinstall proxies so Islands
+    // call getOriginalRootResolve (= override), not the pre-stitch resolver.
+    supergraphSchema = retargetBackboneToSchema(supergraphSchema);
   }
   return supergraphSchema;
 }

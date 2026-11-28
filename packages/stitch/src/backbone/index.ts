@@ -2,11 +2,13 @@ export {
   attachBackboneExecutor,
   getBackboneExecutor,
   markChangedRootResolvesAsLocal,
+  retargetBackboneToSchema,
   snapshotRootFieldResolves,
 } from './attachBackboneExecutor.js';
 export { defaultMergedResolver } from './defaultMergedResolver.js';
 export { buildStitchPlan } from './buildStitchPlan.js';
 export {
+  bindContextSelectionPathForFlattenPath,
   fieldConfigsWithContextArguments,
   injectContextBridgesIntoSelections,
   parseContextSelectionPath,

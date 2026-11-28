@@ -451,6 +451,11 @@ export function preparePlanDocuments(
     const reservedVariableNames = new Set(
       (operation.variableDefinitions ?? []).map(d => d.variable.name.value),
     );
+    const argName = entry != null ? inferMergeArgName(entry.argsFromKeys) : null;
+    const mergeVar =
+      entry != null && argName != null
+        ? mergeVariableName(argName, reservedVariableNames)
+        : undefined;
     const document =
       entry != null
         ? (buildBatchedMergeDocument(
@@ -469,6 +474,7 @@ export function preparePlanDocuments(
     return {
       ...root,
       document,
+      ...(mergeVar ? { mergeVariableName: mergeVar } : {}),
     };
   }
   if (root.kind === 'BatchFetch') {

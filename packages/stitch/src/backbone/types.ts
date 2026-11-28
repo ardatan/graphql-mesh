@@ -137,6 +137,11 @@ export type StitchPlanNode =
        */
       document?: DocumentNode;
       /**
+       * Merge-arg variable name chosen by preparePlanDocuments (avoids client
+       * `$__mesh_nxt` collisions). Raw execute paths must use this name.
+       */
+      mergeVariableName?: string;
+      /**
        * When set, hop runs only if any DNF AND-group matches `variableValues`.
        * Used for root `@skip`/`@include` instead of Condition nodes.
        */

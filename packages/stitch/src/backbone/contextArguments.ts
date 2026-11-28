@@ -642,6 +642,44 @@ function applyBridgeResponseKeys(
 }
 
 /**
+ * Re-bind bridge ResponseKeys for one concrete flatten path. Coalesced
+ * Fetches may stamp ResponseKey from `flattenPaths[0]` only; execute must
+ * re-bind per entity path so `users` (natural currency) and `otherUsers`
+ * (`currency: id` → aliased bridge) do not share the wrong key.
+ */
+export function bindContextSelectionPathForFlattenPath(
+  selectionPath: StitchContextPathSegment[],
+  flattenPath: PathSegment[],
+  parentDepth: number,
+  operation: OperationDefinitionNode,
+  fragments?: Record<string, FragmentDefinitionNode>,
+): StitchContextPathSegment[] {
+  const providerSelections = selectionsAtFlattenPrefix(
+    operation.selectionSet.selections,
+    flattenPath,
+    flattenPath.length - parentDepth,
+    fragments,
+  );
+  // Strip prior ResponseKeys then re-apply for this path's provider selections.
+  const keysOnly = stripBridgeResponseKeys(selectionPath);
+  return applyBridgeResponseKeys(keysOnly, providerSelections);
+}
+
+function stripBridgeResponseKeys(
+  path: StitchContextPathSegment[],
+): StitchContextPathSegment[] {
+  return path.map(seg => {
+    if ('Alternatives' in seg) {
+      return { Alternatives: seg.Alternatives.map(stripBridgeResponseKeys) };
+    }
+    if ('TypenameEquals' in seg) {
+      return seg;
+    }
+    return { Key: seg.Key };
+  });
+}
+
+/**
  * Field nodes to inject onto a context provider ancestor so the rewrite can
  * read them (like `@requires` bridges, but on the ancestor type).
  * Preserves nested selection trees (e.g. `userCurrency { isoCode }`).

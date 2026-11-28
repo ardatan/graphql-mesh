@@ -56,6 +56,26 @@ function documentHasDeferOrStream(request: ExecutionRequest): boolean {
 }
 
 /**
+ * Mutable plan/execute schema for one backbone executor. After `mapSchema` /
+ * `onStitchedSchema`, `retargetBackboneToSchema` updates `schema` so Islands
+ * see late root overrides without creating a new executor (progressive-
+ * override options stay closed over).
+ */
+export type BackboneRuntime = {
+  schema: GraphQLSchema;
+  executor: Executor;
+  /** Swap the schema used for plan + Island resolve + introspection. */
+  setSchema(next: GraphQLSchema): void;
+};
+
+const runtimeByExecutor = new WeakMap<Executor, BackboneRuntime>();
+
+/** Runtime for an executor created by {@link createBackboneExecutor}, if any. */
+export function getBackboneRuntime(executor: Executor): BackboneRuntime | undefined {
+  return runtimeByExecutor.get(executor);
+}
+
+/**
  * Stitching backbone executor - plan once (cached) and run continuous
  * dataflow on Fetch/BatchFetch/Island/Condition. Subscriptions, SDL
  * introspection (`__schema` / `__type`), and @defer/@stream still use schema
@@ -72,14 +92,87 @@ export function createBackboneExecutor(
     handleProgressiveOverride?: (label: string, context: any) => boolean | Promise<boolean>;
   },
 ): Executor {
-  const schemaExecutor = createDefaultExecutor(schema);
+  let activeSchema = schema;
+  let schemaExecutor = createDefaultExecutor(activeSchema);
+  /** Bumped on setSchema so plan cache does not reuse pre-override plans. */
+  let schemaGeneration = 0;
   const planCache = new WeakMap<ExecutionRequest['document'], Map<string | null, StitchPlan>>();
   const overrideLabels = options?.overrideLabels;
   const handleProgressiveOverride = options?.handleProgressiveOverride;
 
+  function stitchingBackboneExecutor(request: ExecutionRequest) {
+    const operation = getOperationASTFromRequest(request);
+
+    // Schema-execute paths (not yet planned end-to-end on the backbone).
+    if (
+      isSchemaIntrospectionOperation(request) ||
+      (operation && operation.operation === 'subscription') ||
+      documentHasDeferOrStream(request)
+    ) {
+      return schemaExecutor(request);
+    }
+
+    const plan = getCachedPlan(request);
+    const op = operation ?? plan.operation;
+    const coerced = coerceOperationVariables(op, request.variables ?? {});
+    const requestWithCoercedVars: ExecutionRequest = {
+      ...request,
+      variables: coerced,
+    };
+
+    if (plan.incomplete) {
+      return {
+        data: null,
+        errors: [
+          new GraphQLError(
+            `Incomplete stitch plan: ${plan.incompleteReasons.join('; ') || 'unknown'}`,
+            { extensions: { code: 'INCOMPLETE_STITCH_PLAN' } },
+          ),
+        ],
+      };
+    }
+
+    return handleMaybePromise(
+      () => executeStitchPlan(activeSchema, plan, requestWithCoercedVars),
+      (result: ExecutionResult) => {
+        if (isAsyncIterable(result)) {
+          return result;
+        }
+        return {
+          ...result,
+          data: projectDataToOperation(
+            activeSchema,
+            op,
+            plan.fragments,
+            coerced,
+            result.data as any,
+          ) as any,
+        };
+      },
+    );
+  }
+
   // Root proxying resolvers: stock graphql-js execute -> this executor.
   // `attachBackboneExecutor` records it per schema (WeakMap).
-  installRootProxyingResolvers(schema, request => stitchingBackboneExecutor(request));
+  installRootProxyingResolvers(activeSchema, request => stitchingBackboneExecutor(request));
+
+  const runtime: BackboneRuntime = {
+    get schema() {
+      return activeSchema;
+    },
+    set schema(next: GraphQLSchema) {
+      activeSchema = next;
+      schemaExecutor = createDefaultExecutor(next);
+      schemaGeneration++;
+    },
+    executor: stitchingBackboneExecutor,
+    setSchema(next: GraphQLSchema) {
+      activeSchema = next;
+      schemaExecutor = createDefaultExecutor(next);
+      schemaGeneration++;
+    },
+  };
+  runtimeByExecutor.set(stitchingBackboneExecutor, runtime);
 
   function getCachedPlan(request: ExecutionRequest): StitchPlan {
     const operation = getOperationASTFromRequest(request);
@@ -116,7 +209,8 @@ export function createBackboneExecutor(
         overrideKey += `::ov:${enabled.sort().join(',')}`;
       }
     }
-    const cacheKey = (operation.name?.value ?? '') + overrideKey;
+    // Bust plan cache when the active schema is retargeted (late overrides).
+    const cacheKey = (operation.name?.value ?? '') + overrideKey + `::s:${schemaGeneration}`;
     let byName = planCache.get(request.document);
     if (!hasPercentOverride && byName) {
       const cached = byName.get(cacheKey);
@@ -126,7 +220,7 @@ export function createBackboneExecutor(
     }
     let plan: StitchPlan;
     try {
-      plan = buildStitchPlan(schema, operation, fragments, coerced, {
+      plan = buildStitchPlan(activeSchema, operation, fragments, coerced, {
         handleProgressiveOverride,
         overrideLabels,
         context: request.context,
@@ -148,58 +242,6 @@ export function createBackboneExecutor(
       byName.set(cacheKey, plan);
     }
     return plan;
-  }
-
-  function stitchingBackboneExecutor(request: ExecutionRequest) {
-    const operation = getOperationASTFromRequest(request);
-
-    // Schema-execute paths (not yet planned end-to-end on the backbone).
-    if (
-      isSchemaIntrospectionOperation(request) ||
-      (operation && operation.operation === 'subscription') ||
-      documentHasDeferOrStream(request)
-    ) {
-      return schemaExecutor(request);
-    }
-
-    const plan = getCachedPlan(request);
-    const op = operation ?? plan.operation;
-    const coerced = coerceOperationVariables(op, request.variables ?? {});
-    const requestWithCoercedVars: ExecutionRequest = {
-      ...request,
-      variables: coerced,
-    };
-
-    if (plan.incomplete) {
-      return {
-        data: null,
-        errors: [
-          new GraphQLError(
-            `Incomplete stitch plan: ${plan.incompleteReasons.join('; ') || 'unknown'}`,
-            { extensions: { code: 'INCOMPLETE_STITCH_PLAN' } },
-          ),
-        ],
-      };
-    }
-
-    return handleMaybePromise(
-      () => executeStitchPlan(schema, plan, requestWithCoercedVars),
-      (result: ExecutionResult) => {
-        if (isAsyncIterable(result)) {
-          return result;
-        }
-        return {
-          ...result,
-          data: projectDataToOperation(
-            schema,
-            op,
-            plan.fragments,
-            coerced,
-            result.data as any,
-          ) as any,
-        };
-      },
-    );
   }
 
   return stitchingBackboneExecutor;
