@@ -1,7 +1,7 @@
 import { isObjectType, type GraphQLFieldResolver, type GraphQLSchema } from 'graphql';
 import type { StitchingInfo } from '@graphql-tools/delegate';
 import type { Executor } from '@graphql-tools/utils';
-import { createBackboneExecutor, type BackboneExecutorOptions } from './createBackboneExecutor.js';
+import { createBackboneExecutor } from './createBackboneExecutor.js';
 
 type RootResolveSnapshot = Map<string, GraphQLFieldResolver<any, any> | undefined>;
 
@@ -78,7 +78,10 @@ export function markChangedRootResolvesAsLocal(
  */
 export function attachBackboneExecutor(
   schema: GraphQLSchema,
-  options?: BackboneExecutorOptions,
+  options?: {
+    overrideLabels?: Iterable<string>;
+    handleProgressiveOverride?: (label: string, context: any) => boolean | Promise<boolean>;
+  },
 ): GraphQLSchema {
   const executor = createBackboneExecutor(schema, options);
   backboneExecutors.set(schema, executor);

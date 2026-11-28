@@ -15,12 +15,6 @@ import { projectDataToOperation } from './projectResult.js';
 import { installRootProxyingResolvers } from './rootProxyingResolvers.js';
 import type { StitchPlan } from './types.js';
 
-/** Progressive-override inputs closed over at create/attach time. */
-export type BackboneExecutorOptions = {
-  overrideLabels?: Iterable<string>;
-  handleProgressiveOverride?: (label: string, context: any) => boolean | Promise<boolean>;
-};
-
 /** Full SDL introspection - schema execute (Hive also special-cases these). */
 function isSchemaIntrospectionOperation(request: ExecutionRequest): boolean {
   for (const def of request.document.definitions) {
@@ -68,21 +62,23 @@ function documentHasDeferOrStream(request: ExecutionRequest): boolean {
  * execute (schema subscribe / incremental) until those are planned end-to-end.
  * Pure `{ __typename }` is an Island on the backbone.
  *
- * Progressive-override inputs are closed over from `options` (passed by
- * `stitchSchemas` / federation attach), not read from shared `stitchingInfo`.
+ * Progressive-override inputs are closed over from `stitchSchemas` options
+ * (not stored on shared `stitchingInfo`).
  */
 export function createBackboneExecutor(
   schema: GraphQLSchema,
-  options?: BackboneExecutorOptions,
+  options?: {
+    overrideLabels?: Iterable<string>;
+    handleProgressiveOverride?: (label: string, context: any) => boolean | Promise<boolean>;
+  },
 ): Executor {
   const schemaExecutor = createDefaultExecutor(schema);
   const planCache = new WeakMap<ExecutionRequest['document'], Map<string | null, StitchPlan>>();
   const overrideLabels = options?.overrideLabels;
   const handleProgressiveOverride = options?.handleProgressiveOverride;
 
-  // Root proxying resolvers: stock graphql-js execute -> this executor. Prefer
-  // `attachBackboneExecutor` so the executor is recorded per schema instance.
-  // Safe to call again after a schema-changing filter on the final schema.
+  // Root proxying resolvers: stock graphql-js execute -> this executor.
+  // `attachBackboneExecutor` records it per schema (WeakMap).
   installRootProxyingResolvers(schema, request => stitchingBackboneExecutor(request));
 
   function getCachedPlan(request: ExecutionRequest): StitchPlan {

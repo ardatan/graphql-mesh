@@ -13,7 +13,7 @@ export {
   readContextValue,
   resolveContextAncestor,
 } from './contextArguments.js';
-export { createBackboneExecutor, type BackboneExecutorOptions } from './createBackboneExecutor.js';
+export { createBackboneExecutor } from './createBackboneExecutor.js';
 export { executeStitchPlan } from './executeStitchPlan.js';
 export { isLocalField } from './localFields.js';
 export { projectDataToOperation } from './projectResult.js';

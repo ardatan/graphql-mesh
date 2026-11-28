@@ -1177,6 +1177,43 @@ describe('fromContext gateway-parity (adapted from gateway#2703)', () => {
     expect(payload).toContain('EUR');
   });
 
+  it('allocates unused bridge alias when __mesh_ctx_currency is occupied', async () => {
+    const { bag, executor } = stitchWithCapture(BASIC_SUPERGRAPH, createUsersSubgraph());
+    // Both `currency` and `__mesh_ctx_currency` hold id; bridge must use `_1`.
+    const result = await executor({
+      document: parse(`{
+        users {
+          currency: id
+          __mesh_ctx_currency: id
+          transactions { amount }
+        }
+      }`),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result).toEqual({
+      data: {
+        users: [
+          {
+            currency: 'u1',
+            __mesh_ctx_currency: 'u1',
+            transactions: [{ amount: 100 }, { amount: 100 }],
+          },
+          {
+            currency: 'u2',
+            __mesh_ctx_currency: 'u2',
+            transactions: [{ amount: 90 }],
+          },
+        ],
+      },
+    });
+    const rootReq = bag.find(r => !r.query.includes('_entities'));
+    expect(rootReq?.query).toMatch(/__mesh_ctx_currency_1\s*:\s*currency/);
+    const payload = JSON.stringify(entityRequests(bag));
+    expect(payload).toContain('USD');
+    expect(payload).toContain('EUR');
+    expect(payload).not.toMatch(/"code"\s*:\s*"u1"/);
+  });
+
   it('type-conditioned context branches are alternatives', () => {
     const path = parseContextSelectionPath(
       '{ ... on User { currency } ... on Other { otherCurrency } }',

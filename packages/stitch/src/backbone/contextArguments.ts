@@ -774,6 +774,19 @@ function fieldHasConditionalDirective(field: FieldNode): boolean {
 /** Internal response-key prefix when a client field occupies the bridge key. */
 export const CONTEXT_BRIDGE_ALIAS_PREFIX = '__mesh_ctx_';
 
+/** First free `__mesh_ctx_<name>` / `__mesh_ctx_<name>_<n>` response key. */
+function allocateBridgeAlias(fieldName: string, occupied: ReadonlySet<string>): string {
+  const base = `${CONTEXT_BRIDGE_ALIAS_PREFIX}${fieldName}`;
+  if (!occupied.has(base)) {
+    return base;
+  }
+  let n = 1;
+  while (occupied.has(`${base}_${n}`)) {
+    n++;
+  }
+  return `${base}_${n}`;
+}
+
 /**
  * Merge bridge fields into a selection set. An aliased client selection of the
  * same schema field (e.g. `localCurrency: currency`) does **not** satisfy the
@@ -844,17 +857,16 @@ function mergeBridgeFields(
       }
       continue;
     }
-    // Response-key collision with a different field (e.g. `currency: id`).
+    // Response-key collision with a different field (e.g. `currency: id`),
+    // or with a client field already using `__mesh_ctx_<name>`.
     if (occupiedResponseKeys.has(b.name.value)) {
-      const aliasName = `${CONTEXT_BRIDGE_ALIAS_PREFIX}${b.name.value}`;
-      if (!occupiedResponseKeys.has(aliasName)) {
-        const aliased: FieldNode = {
-          ...b,
-          alias: { kind: Kind.NAME, value: aliasName },
-        };
-        occupiedResponseKeys.add(aliasName);
-        out.push(aliased);
-      }
+      const aliasName = allocateBridgeAlias(b.name.value, occupiedResponseKeys);
+      const aliased: FieldNode = {
+        ...b,
+        alias: { kind: Kind.NAME, value: aliasName },
+      };
+      occupiedResponseKeys.add(aliasName);
+      out.push(aliased);
       continue;
     }
     seenUnaliased.add(b.name.value);
@@ -966,9 +978,16 @@ function selectAlongPath(
     return selectAlongPath(value, path, index + 1, schema);
   }
   const record = value as Record<string, unknown>;
-  // Prefer `__mesh_ctx_<key>` when present: the natural key may hold a
-  // different field's value after a response-key collision (`currency: id`).
+  // Prefer numbered bridge aliases first (`__mesh_ctx_key_N`), then bare
+  // `__mesh_ctx_key`, then the natural key. Numbered aliases are allocated
+  // when the bare prefix is already occupied by the client.
   const bridgedKey = `${CONTEXT_BRIDGE_ALIAS_PREFIX}${segment.Key}`;
+  for (let n = 1; n < 64; n++) {
+    const numbered = `${bridgedKey}_${n}`;
+    if (Object.hasOwn(record, numbered)) {
+      return selectAlongPath(record[numbered], path, index + 1, schema);
+    }
+  }
   if (Object.hasOwn(record, bridgedKey)) {
     return selectAlongPath(record[bridgedKey], path, index + 1, schema);
   }
