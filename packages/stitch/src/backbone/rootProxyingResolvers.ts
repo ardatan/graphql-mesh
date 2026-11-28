@@ -25,7 +25,7 @@ export const BACKBONE_EXECUTING = Symbol.for('graphql-tools.stitch.backboneExecu
 
 /** Schemas that already have root proxying installed (no schema mutation). */
 const schemasWithRootProxying = new WeakSet<GraphQLSchema>();
-/** Resolve fns installed by {@link installRootProxyingResolvers} (no fn mutation). */
+/** Resolve fns installed by {@link attachBackboneExecutor} (no fn mutation). */
 const backboneRootProxies = new WeakSet<object>();
 /** Pre-proxy root resolve for Islands — keyed by field object, no field mutation. */
 const originalResolveByField = new WeakMap<object, GraphQLFieldResolver<any, any>>();
@@ -120,12 +120,13 @@ function applyBackboneResult(
  * root values — same idea as wrapSchema's proxying resolvers, but the target
  * is the backbone rather than a single subgraph.
  * Subscription roots are left alone (schema subscribe / backbone schema path).
+ * Does not store a per-schema Executor.
  */
-export function installRootProxyingResolvers(schema: GraphQLSchema): void {
+export function attachBackboneExecutor(schema: GraphQLSchema): GraphQLSchema {
   // Attach-once after filter / onStitchedSchema. External post-stitch mapSchema
   // is unsupported — original resolve lives in a WeakMap for Islands.
   if (schemasWithRootProxying.has(schema)) {
-    return;
+    return schema;
   }
   schemasWithRootProxying.add(schema);
 
@@ -208,6 +209,7 @@ export function installRootProxyingResolvers(schema: GraphQLSchema): void {
       field.resolve = proxy;
     }
   }
+  return schema;
 }
 
 /** Original root resolver before backbone proxying (Island local). */

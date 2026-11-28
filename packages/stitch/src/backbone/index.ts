@@ -1,4 +1,3 @@
-export { attachBackboneExecutor } from './attachBackboneExecutor.js';
 export {
   backboneExecutor,
   createBackboneExecutor,
@@ -10,9 +9,9 @@ export { executeStitchPlan } from './executeStitchPlan.js';
 export { isLocalField } from './localFields.js';
 export { projectDataToOperation } from './projectResult.js';
 export {
+  attachBackboneExecutor,
   BACKBONE_EXECUTING,
   getOriginalRootResolve,
-  installRootProxyingResolvers,
 } from './rootProxyingResolvers.js';
 export {
   type BuildStitchPlanOptions,
