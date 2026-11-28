@@ -168,7 +168,7 @@ describe('stitching backbone', () => {
     const planSkip = buildStitchPlan(schema, document);
     const planInclude = buildStitchPlan(schema, document);
     expect(planSkip.incompleteReasons).toEqual([]);
-    // Router QP-style Condition; schedule rebuilt at execute for the taken branch.
+    // Condition at plan time; schedule rebuilt at execute for the taken branch.
     expect(planSkip.root.kind).toBe('Condition');
     expect((planSkip.root as any).condition).toBe('skipEmail');
     expect((planSkip.root as any).elseClause).toBeDefined();

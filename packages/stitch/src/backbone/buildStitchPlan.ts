@@ -5219,8 +5219,8 @@ function stripOwnSkipIncludeDirectives(field: FieldNode): FieldNode {
 }
 
 /**
- * Router QP-style: root `@include(if: $v)` / `@skip(if: $v)` become Condition
- * nodes evaluated at execute (ifClause when true, elseClause when false).
+ * Root `@include(if: $v)` / `@skip(if: $v)` become Condition nodes evaluated at
+ * execute (ifClause when the variable is true, elseClause when false).
  */
 function wrapRootFieldWithCondition(field: FieldNode, plan: StitchPlanNode): StitchPlanNode {
   let node = plan;
@@ -5287,7 +5287,7 @@ function buildCompletePlan(
           nodes: rootNodes,
         };
 
-  // Keep Condition nodes (Router QP style); execute selects the branch.
+  // Keep Condition nodes; execute selects the branch from variable values.
   const optimized = optimizeStitchPlanNode(rootRaw, stitchingInfo);
   const coalesced = coalesceSamePathEntityFields(optimized, stitchingInfo);
   const packed = packIndependentWaves(

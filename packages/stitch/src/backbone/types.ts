@@ -134,9 +134,9 @@ export type StitchPlanNode =
     }
   | {
       /**
-       * Runtime `@skip`/`@include` branch (Router QP style). `condition` is the
-       * variable name; true -> ifClause, otherwise elseClause. Evaluated at
-       * execute — plan shape is variable-independent.
+       * Runtime `@skip`/`@include` branch. `condition` is the variable name;
+       * true -> ifClause, otherwise elseClause. Evaluated at execute so the
+       * plan shape stays variable-independent.
        */
       kind: 'Condition';
       condition: string;
