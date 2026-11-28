@@ -16,22 +16,22 @@ import { CRITICAL_ERROR } from '@graphql-tools/executor';
 import type { ExecutionRequest, Executor } from '@graphql-tools/utils';
 import { handleMaybePromise, type MaybePromise } from '@whatwg-node/promise-helpers';
 
-const PROXYING_INSTALLED = Symbol.for('graphql-tools.stitch.backboneRootProxying');
-
 /** Set on context while backbone execute runs so root Islands skip proxying. */
 export const BACKBONE_EXECUTING = Symbol.for('graphql-tools.stitch.backboneExecuting');
 
 const ORIGINAL_RESOLVE = Symbol.for('graphql-tools.stitch.backboneOriginalResolve');
 
-/** Marks a resolve fn installed by {@link installRootProxyingResolvers}. */
-const BACKBONE_PROXY_MARK = Symbol.for('graphql-tools.stitch.backboneProxyResolve');
+/** Schemas that already have root proxying installed (no schema mutation). */
+const schemasWithRootProxying = new WeakSet<GraphQLSchema>();
+/** Resolve fns installed by {@link installRootProxyingResolvers} (no fn mutation). */
+const backboneRootProxies = new WeakSet<object>();
 
 /** Per-request plan result/promise — keyed by context, no context mutation. */
 const planResultByContext = new WeakMap<object, any>();
 const planPromiseByContext = new WeakMap<object, MaybePromise<any>>();
 
 export function isBackboneRootProxy(resolve: GraphQLFieldResolver<any, any> | undefined): boolean {
-  return typeof resolve === 'function' && (resolve as any)[BACKBONE_PROXY_MARK] === true;
+  return typeof resolve === 'function' && backboneRootProxies.has(resolve);
 }
 
 function selectionHasDeferOrStream(selections: readonly SelectionNode[]): boolean {
@@ -103,7 +103,10 @@ function applyBackboneResult(
 export function installRootProxyingResolvers(schema: GraphQLSchema, runBackbone: Executor): void {
   // Attach-once after filter / onStitchedSchema. External post-stitch mapSchema
   // is unsupported — ORIGINAL_RESOLVE lives only on the field config.
-  (schema as any)[PROXYING_INSTALLED] = true;
+  if (schemasWithRootProxying.has(schema)) {
+    return;
+  }
+  schemasWithRootProxying.add(schema);
 
   for (const op of ['query', 'mutation'] as const) {
     const rootType = op === 'query' ? schema.getQueryType() : schema.getMutationType();
@@ -120,7 +123,8 @@ export function installRootProxyingResolvers(schema: GraphQLSchema, runBackbone:
       }
       const previousResolve: GraphQLFieldResolver<any, any> = resolveFn;
       (field as any)[ORIGINAL_RESOLVE] = previousResolve;
-      const proxy: GraphQLFieldResolver<any, any> = function backboneRootProxyingResolver(
+      // Context is always an object (graphql-js execute) — type it for WeakMap keys.
+      const proxy: GraphQLFieldResolver<any, object> = function backboneRootProxyingResolver(
         root,
         args,
         context,
@@ -138,20 +142,18 @@ export function installRootProxyingResolvers(schema: GraphQLSchema, runBackbone:
         ) {
           return previousResolve(root, args, context, info);
         }
-        // Context is always an object (graphql-js execute); WeakMap keys require it.
-        const ctx = context as object;
         const responseKey = info.path.key;
 
         // Share one plan across sibling roots. Never fall through to classic
         // proxying while a plan is in flight - that re-delegates e.g.
         // topProducts and schedules a duplicate inventory mergeFields hop.
         // Root Islands call getOriginalRootResolve() so they do not hit this.
-        const cached = planResultByContext.get(ctx);
+        const cached = planResultByContext.get(context);
         if (cached != null) {
           return applyBackboneResult(cached, responseKey);
         }
 
-        let pending = planPromiseByContext.get(ctx);
+        let pending = planPromiseByContext.get(context);
         if (!pending) {
           // GraphQL 17: info.variableValues is `{ coerced, sources }` — unwrap
           // so File/upload scalars and other runtime values reach subgraphs
@@ -173,18 +175,18 @@ export function installRootProxyingResolvers(schema: GraphQLSchema, runBackbone:
           pending = handleMaybePromise(
             () => runBackbone(request),
             result => {
-              planResultByContext.set(ctx, result);
+              planResultByContext.set(context, result);
               return result;
             },
           );
-          planPromiseByContext.set(ctx, pending);
+          planPromiseByContext.set(context, pending);
         }
         return handleMaybePromise(
           () => pending,
           result => applyBackboneResult(result, responseKey),
         );
       };
-      (proxy as any)[BACKBONE_PROXY_MARK] = true;
+      backboneRootProxies.add(proxy);
       field.resolve = proxy;
     }
   }
