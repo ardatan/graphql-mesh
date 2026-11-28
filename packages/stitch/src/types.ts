@@ -82,10 +82,10 @@ export interface IStitchSchemasOptions<TContext = Record<string, any>> extends O
   handleProgressiveOverride?: (label: string, context: any) => boolean | Promise<boolean>;
   /**
    * Transform the stitched schema immediately before backbone root proxies are
-   * installed. Federation uses this for `filterInternalFieldsAndTypes` /
-   * `onStitchedSchema` so join internals are stripped before the single attach.
+   * installed. Federation uses this for `filterInternalFieldsAndTypes` and the
+   * user `onStitchedSchema` hook so join internals are stripped before attach.
    */
-  beforeBackboneAttach?: (schema: GraphQLSchema) => GraphQLSchema | void;
+  onStitchedSchema?(schema: GraphQLSchema): GraphQLSchema | void;
 }
 
 export type SubschemaConfigTransform<TContext = Record<string, any>> = (

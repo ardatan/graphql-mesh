@@ -2294,16 +2294,16 @@ export interface GetStitchedSchemaFromSupergraphSdlOpts extends GetStitchingOpti
 
 /**
  * Build an executable stitched schema from Federation supergraph SDL.
- * Filter join internals and run `onStitchedSchema` via `beforeBackboneAttach`
- * so shared root proxies install once on the public schema (no retarget /
- * WeakMap / post-attach mapSchema rebind).
+ * Filter join internals and run user `onStitchedSchema` inside stitch's
+ * `onStitchedSchema` (before attach) so shared root proxies install once on
+ * the public schema. External post-stitch mapSchema is unsupported.
  */
 export function getStitchedSchemaFromSupergraphSdl(opts: GetStitchedSchemaFromSupergraphSdlOpts) {
   const stitchSchemasOpts = getStitchingOptionsFromSupergraphSdl(opts);
   opts.onStitchingOptions?.(stitchSchemasOpts);
   return stitchSchemas({
     ...stitchSchemasOpts,
-    beforeBackboneAttach(schema) {
+    onStitchedSchema(schema) {
       let next = filterInternalFieldsAndTypes(schema);
       if (opts.onStitchedSchema) {
         const rootResolvesBefore = snapshotRootFieldResolves(next);

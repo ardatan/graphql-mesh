@@ -158,7 +158,7 @@ export function getCacheKeyFnFromKey(key: string) {
   });
 }
 
-/** @deprecated Import from `@graphql-tools/stitch` — filter runs inside `stitchSchemas`. */
+/** Re-export — filter is applied from federation `onStitchedSchema` before attach. */
 export { filterInternalFieldsAndTypes } from '@graphql-tools/stitch';
 
 export function getNamedTypeNode(typeNode: TypeNode) {

@@ -182,8 +182,7 @@ export interface BackboneExecutorOptions {
   /**
    * Progressive override label handler (gateway `progressiveOverride`).
    * Used for plan-cache keying when `overrideLabels` is also set.
-   * Persisted on `schema.extensions` so a post-`mapSchema` re-attach needs
-   * no options bag.
+   * Persisted on `schema.extensions` for the attach-once backbone path.
    */
   handleProgressiveOverride?: (label: string, context: any) => boolean | Promise<boolean>;
   /**

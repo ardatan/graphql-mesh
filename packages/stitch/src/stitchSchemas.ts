@@ -62,7 +62,7 @@ export function stitchSchemas<TContext extends Record<string, any> = Record<stri
     schemaExtensions,
     overrideLabels: overrideLabelsOption,
     handleProgressiveOverride: handleProgressiveOverrideOption,
-    beforeBackboneAttach,
+    onStitchedSchema,
     ...rest
   } = options;
   let {
@@ -159,10 +159,10 @@ export function stitchSchemas<TContext extends Record<string, any> = Record<stri
     applyExtensions(schema, mergedSchemaExtensions);
   }
 
-  // Optional pre-attach transform (federation filter / onStitchedSchema). Stitch
-  // itself stays generic — no join__Graph / federation filter here.
-  if (beforeBackboneAttach) {
-    schema = beforeBackboneAttach(schema) || schema;
+  // Optional pre-attach transform (federation filter / user onStitchedSchema).
+  // Stitch itself stays generic — no join__Graph / federation filter here.
+  if (onStitchedSchema) {
+    schema = onStitchedSchema(schema) || schema;
   }
 
   // Shared backboneExecutor + root proxies. Progressive-override inputs live on
