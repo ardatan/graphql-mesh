@@ -2400,16 +2400,15 @@ export function getStitchingOptionsFromSupergraphSdl(
     }
   }
   let schemaExtensions: SchemaExtensions | undefined;
-  const hasContextProviders = Object.keys(contextProviders).length > 0;
-  if (overrideLabels.size || hasContextProviders) {
+  if (overrideLabels.size) {
     schemaExtensions = {
       schemaExtensions: {
-        ...(overrideLabels.size ? { overrideLabels } : {}),
-        ...(hasContextProviders ? { contextProviders } : {}),
+        overrideLabels,
       },
       types: {},
     };
   }
+  const hasContextProviders = Object.keys(contextProviders).length > 0;
 
   return {
     subschemas,
@@ -2423,6 +2422,7 @@ export function getStitchingOptionsFromSupergraphSdl(
       },
       fieldConfigMerger,
     },
+    ...(hasContextProviders ? { contextProviders } : {}),
     schemaExtensions,
   };
 }
@@ -2448,20 +2448,11 @@ export function getStitchedSchemaFromSupergraphSdl(opts: GetStitchedSchemaFromSu
     // Late root resolver overrides (Query.me -> local) must plan as Islands.
     markChangedRootResolvesAsLocal(supergraphSchema, rootResolvesBefore);
   }
-  // Copy composed `@context` providers onto stitchingInfo for the backbone planner.
-  const contextProviders = (
-    supergraphSchema.extensions as { contextProviders?: Record<string, string[]> } | undefined
-  )?.contextProviders;
-  if (contextProviders) {
-    const stitchingInfo = supergraphSchema.extensions?.stitchingInfo as
-      { contextProviders?: Record<string, string[]> } | undefined;
-    if (stitchingInfo) {
-      stitchingInfo.contextProviders = contextProviders;
-    }
-  }
   // Persist progressive-override plan-cache opts on schema.extensions so a
   // later mapSchema + bare re-attach (e.g. filterInternalFieldsAndTypes) needs
   // no options bag.
+  // `contextProviders` are set on stitchingInfo inside stitchSchemas from the
+  // top-level option (mapSchema preserves stitchingInfo).
   return attachBackboneExecutor(supergraphSchema, {
     // Plan-cache keying only needs label + context; federation's handler also
     // accepts resolve info when used as a field override callback.

@@ -3,7 +3,10 @@ import { buildSubgraphSchema } from '@apollo/subgraph';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { buildStitchPlan, createBackboneExecutor } from '@graphql-tools/stitch';
 import type { ExecutionRequest } from '@graphql-tools/utils';
-import { getStitchedSchemaFromSupergraphSdl } from '../src/supergraph';
+import {
+  getStitchedSchemaFromSupergraphSdl,
+  getStitchingOptionsFromSupergraphSdl,
+} from '../src/supergraph';
 
 /**
  * Hand-written join v0.5 supergraph matching Guild composition output for:
@@ -176,6 +179,11 @@ describe('Federation @context / @fromContext', () => {
       subschemaMap: Map<unknown, { merge?: Record<string, { fields?: Record<string, unknown> }> }>;
     };
     expect(stitchingInfo.contextProviders?.['accounts__userContext']).toContain('User');
+    // Providers live on stitchingInfo via stitchSchemas({ contextProviders }),
+    // not schema.extensions.contextProviders.
+    expect(
+      (schema.extensions as { contextProviders?: unknown } | undefined)?.contextProviders,
+    ).toBeUndefined();
     let found = false;
     for (const [, sub] of stitchingInfo.subschemaMap) {
       const amount = sub.merge?.Transaction?.fields?.amount as
@@ -192,6 +200,20 @@ describe('Federation @context / @fromContext', () => {
     // Public API schema omits the contextual argument.
     const tx = schema.getType('Transaction') as any;
     expect(tx.getFields().amount.args).toHaveLength(0);
+  });
+
+  it('feeds contextProviders as a stitchSchemas option from supergraph SDL', () => {
+    const opts = getStitchingOptionsFromSupergraphSdl({
+      supergraphSdl: SUPERGRAPH_SDL,
+      onSubschemaConfig(subschema) {
+        subschema.executor = createDefaultExecutor(createAccountsSubgraph());
+      },
+    });
+    expect(opts.contextProviders?.['accounts__userContext']).toContain('User');
+    expect(
+      (opts.schemaExtensions as { schemaExtensions?: { contextProviders?: unknown } } | undefined)
+        ?.schemaExtensions?.contextProviders,
+    ).toBeUndefined();
   });
 
   it('plans a context-bearing entity hop with parentDepth rewrite', () => {

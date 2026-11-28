@@ -230,19 +230,13 @@ function resolveSelectionForResponseKey(
   return null;
 }
 
-/** `@context` providers for a context name (stitchingInfo, else schema.extensions). */
+/** `@context` providers for a context name (from `stitchSchemas({ contextProviders })`). */
 export function getContextProviders(
-  schema: GraphQLSchema,
+  _schema: GraphQLSchema,
   stitchingInfo: StitchingInfo,
   contextName: string,
 ): string[] {
-  const fromInfo = stitchingInfo.contextProviders?.[contextName];
-  if (fromInfo?.length) {
-    return fromInfo;
-  }
-  const fromExt = (schema.extensions as { contextProviders?: Record<string, string[]> } | undefined)
-    ?.contextProviders?.[contextName];
-  return fromExt ?? [];
+  return stitchingInfo.contextProviders?.[contextName] ?? [];
 }
 
 /**

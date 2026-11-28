@@ -60,6 +60,7 @@ export function stitchSchemas<TContext extends Record<string, any> = Record<stri
     resolverValidationOptions = {},
     updateResolversInPlace = true,
     schemaExtensions,
+    contextProviders: contextProvidersOption,
     ...rest
   } = options;
   let {
@@ -156,17 +157,10 @@ export function stitchSchemas<TContext extends Record<string, any> = Record<stri
     applyExtensions(schema, mergedSchemaExtensions);
   }
 
-  // Federation `@context` providers land on schema.extensions via
-  // getStitchingOptionsFromSupergraphSdl; copy onto stitchingInfo so
-  // stitchSchemas(opts) callers (not only getStitchedSchemaFromSupergraphSdl)
-  // can plan `@fromContext` rewrites.
-  const contextProviders = (
-    schema.extensions as { contextProviders?: Record<string, string[]> } | undefined
-  )?.contextProviders;
-  if (contextProviders && schema.extensions?.stitchingInfo) {
+  if (contextProvidersOption && schema.extensions?.stitchingInfo) {
     (
       schema.extensions.stitchingInfo as { contextProviders?: Record<string, string[]> }
-    ).contextProviders = contextProviders;
+    ).contextProviders = contextProvidersOption;
   }
 
   // Backbone executor + root proxying resolvers on the stitched schema.

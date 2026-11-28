@@ -70,6 +70,15 @@ export interface IStitchSchemasOptions<TContext = Record<string, any>> extends O
   mergeTypes?: boolean | Array<string> | MergeTypeFilter<TContext>;
   typeMergingOptions?: TypeMergingOptions<TContext>;
   subschemaConfigTransforms?: Array<SubschemaConfigTransform<TContext>>;
+  /**
+   * Federation `@context` providers: context name -> type names that declare
+   * that context. Copied onto `stitchingInfo.contextProviders` so the backbone
+   * planner can attach `@fromContext` rewrites.
+   *
+   * Pass this from `getStitchingOptionsFromSupergraphSdl` (or explicitly when
+   * calling `stitchSchemas`). There is no `schema.extensions` fallback.
+   */
+  contextProviders?: Record<string, string[]>;
 }
 
 export type SubschemaConfigTransform<TContext = Record<string, any>> = (
