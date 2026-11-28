@@ -57,10 +57,10 @@ import {
 import { CRITICAL_ERROR } from '@graphql-tools/executor';
 import { buildHTTPExecutor, type HTTPExecutorOptions } from '@graphql-tools/executor-http';
 import {
-  attachBackboneExecutor,
   calculateSelectionScore,
   getDefaultFieldConfigMerger,
   markChangedRootResolvesAsLocal,
+  retargetBackboneToSchema,
   snapshotRootFieldResolves,
   stitchSchemas,
   ValidationLevel,
@@ -2265,6 +2265,13 @@ export function getStitchingOptionsFromSupergraphSdl(
       fieldConfigMerger,
     },
     schemaExtensions,
+    ...(overrideLabels.size ? { overrideLabels } : {}),
+    ...(opts.handleProgressiveOverride
+      ? {
+          handleProgressiveOverride: (label: string, context: any) =>
+            opts.handleProgressiveOverride!(label, context, undefined as any),
+        }
+      : {}),
   };
 }
 
@@ -2278,24 +2285,21 @@ export function getStitchedSchemaFromSupergraphSdl(opts: GetStitchedSchemaFromSu
   const stitchSchemasOpts = getStitchingOptionsFromSupergraphSdl(opts);
   opts.onStitchingOptions?.(stitchSchemasOpts);
   let supergraphSchema = stitchSchemas(stitchSchemasOpts);
-  // filterInternalFieldsAndTypes mapSchema -> new schema; re-bind backbone.
+  // filterInternalFieldsAndTypes mapSchema -> new schema. Retarget the same
+  // backbone executor (labels stay closed over) so getBackboneExecutor and
+  // Islands use this schema — no new executor / no stitchingInfo options bag.
   supergraphSchema = filterInternalFieldsAndTypes(supergraphSchema);
+  supergraphSchema = retargetBackboneToSchema(supergraphSchema);
   if (opts.onStitchedSchema) {
     const rootResolvesBefore = snapshotRootFieldResolves(supergraphSchema);
     supergraphSchema = opts.onStitchedSchema(supergraphSchema) || supergraphSchema;
     // Late root resolver overrides (Query.me -> local) must plan as Islands.
     markChangedRootResolvesAsLocal(supergraphSchema, rootResolvesBefore);
+    // Pick up overrides into the live runtime + reinstall proxies so Islands
+    // call getOriginalRootResolve (= override), not the pre-stitch resolver.
+    supergraphSchema = retargetBackboneToSchema(supergraphSchema);
   }
-  // Persist progressive-override plan-cache opts on schema.extensions so a
-  // later mapSchema + bare re-attach (e.g. filterInternalFieldsAndTypes) needs
-  // no options bag.
-  return attachBackboneExecutor(supergraphSchema, {
-    // Plan-cache keying only needs label + context; federation's handler also
-    // accepts resolve info when used as a field override callback.
-    handleProgressiveOverride: opts.handleProgressiveOverride
-      ? (label, context) => opts.handleProgressiveOverride!(label, context, undefined as any)
-      : undefined,
-  });
+  return supergraphSchema;
 }
 
 const anyTypeDefinitionNode: ScalarTypeDefinitionNode = {

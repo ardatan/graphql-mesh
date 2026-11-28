@@ -1,9 +1,8 @@
 export {
   attachBackboneExecutor,
-  BACKBONE_EXECUTOR_EXTENSION,
   getBackboneExecutor,
   markChangedRootResolvesAsLocal,
-  resolveBackboneExecutorOptions,
+  retargetBackboneToSchema,
   snapshotRootFieldResolves,
 } from './attachBackboneExecutor.js';
 export { defaultMergedResolver } from './defaultMergedResolver.js';
@@ -16,6 +15,7 @@ export {
   BACKBONE_EXECUTING,
   getOriginalRootResolve,
   installRootProxyingResolvers,
+  isBackboneRootProxy,
 } from './rootProxyingResolvers.js';
 export {
   BACKBONE_EXECUTOR_OPTIONS_EXTENSION,

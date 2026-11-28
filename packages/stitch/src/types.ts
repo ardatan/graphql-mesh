@@ -70,6 +70,16 @@ export interface IStitchSchemasOptions<TContext = Record<string, any>> extends O
   mergeTypes?: boolean | Array<string> | MergeTypeFilter<TContext>;
   typeMergingOptions?: TypeMergingOptions<TContext>;
   subschemaConfigTransforms?: Array<SubschemaConfigTransform<TContext>>;
+  /**
+   * Progressive-override labels closed over by `createBackboneExecutor`
+   * (not stored on shared `stitchingInfo`).
+   */
+  overrideLabels?: Iterable<string>;
+  /**
+   * Progressive-override handler closed over by `createBackboneExecutor`
+   * for plan-cache keying.
+   */
+  handleProgressiveOverride?: (label: string, context: any) => boolean | Promise<boolean>;
 }
 
 export type SubschemaConfigTransform<TContext = Record<string, any>> = (
