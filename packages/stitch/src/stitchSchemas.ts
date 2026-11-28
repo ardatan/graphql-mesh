@@ -60,8 +60,6 @@ export function stitchSchemas<TContext extends Record<string, any> = Record<stri
     resolverValidationOptions = {},
     updateResolversInPlace = true,
     schemaExtensions,
-    overrideLabels: overrideLabelsOption,
-    handleProgressiveOverride: handleProgressiveOverrideOption,
     onStitchedSchema,
     ...rest
   } = options;
@@ -165,14 +163,8 @@ export function stitchSchemas<TContext extends Record<string, any> = Record<stri
     schema = onStitchedSchema(schema) || schema;
   }
 
-  // Shared backboneExecutor + root proxies. Progressive-override inputs live on
-  // schema.extensions; plan/locals are read from info.schema at execute time.
-  return attachBackboneExecutor(schema, {
-    ...(overrideLabelsOption != null ? { overrideLabels: overrideLabelsOption } : {}),
-    ...(handleProgressiveOverrideOption != null
-      ? { handleProgressiveOverride: handleProgressiveOverrideOption }
-      : {}),
-  });
+  // Shared backboneExecutor + root proxies (plan/locals from info.schema).
+  return attachBackboneExecutor(schema);
 }
 
 function stripCustomDirectiveUsages(types: GraphQLNamedType[]): void {

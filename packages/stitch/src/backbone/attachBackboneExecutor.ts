@@ -1,11 +1,7 @@
 import { isObjectType, type GraphQLFieldResolver, type GraphQLSchema } from 'graphql';
 import type { StitchingInfo } from '@graphql-tools/delegate';
 
-export {
-  attachBackboneExecutor,
-  getBackboneExecutor,
-  type BackboneAttachOptions,
-} from './createBackboneExecutor.js';
+export { attachBackboneExecutor, getBackboneExecutor } from './createBackboneExecutor.js';
 
 type RootResolveSnapshot = Map<string, GraphQLFieldResolver<any, any> | undefined>;
 

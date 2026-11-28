@@ -55,20 +55,8 @@ function documentHasDeferOrStream(request: ExecutionRequest): boolean {
   return false;
 }
 
-type ProgressiveOverrideHandler = (label: string, context: any) => boolean | Promise<boolean>;
-
-function readProgressiveOverride(schema: GraphQLSchema): {
-  overrideLabels?: Iterable<string>;
-  handleProgressiveOverride?: ProgressiveOverrideHandler;
-} {
-  const ext = schema.extensions ?? {};
-  return {
-    overrideLabels: ext.overrideLabels as Iterable<string> | undefined,
-    handleProgressiveOverride: ext.handleProgressiveOverride as
-      | ProgressiveOverrideHandler
-      | undefined,
-  };
-}
+/** Same key fusion sets on request context with the per-request active labels. */
+const OVERRIDE_LABELS_CONTEXT_KEY = Symbol.for('hive.gateway.overrideLabels');
 
 /** Plan cache keyed by schema; entries by operation AST (stable across proxy rebuilds). */
 const planCacheBySchema = new WeakMap<
@@ -87,28 +75,16 @@ function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): Stitch
       incompleteReasons: ['Missing operation'],
     };
   }
-  const { overrideLabels, handleProgressiveOverride } = readProgressiveOverride(schema);
   const fragments = getFragmentsFromDocument(request.document);
   const coerced = coerceOperationVariables(operation, request.variables ?? {});
-  let overrideKey = '';
-  const hasPercentOverride =
-    overrideLabels != null && [...overrideLabels].some(l => l.startsWith('percent('));
-  if (overrideLabels && request.context != null && !hasPercentOverride) {
-    if (handleProgressiveOverride) {
-      const enabled: string[] = [];
-      for (const label of overrideLabels) {
-        try {
-          const on = handleProgressiveOverride(label, request.context);
-          if (on === true) {
-            enabled.push(label);
-          }
-        } catch {
-          // ignore async/throwing handlers for cache key
-        }
-      }
-      overrideKey += `::ov:${enabled.sort().join(',')}`;
-    }
-  }
+  // Per-request active labels only (fusion / gateway context) — no schema.extensions bag.
+  const activeLabels = request.context?.[OVERRIDE_LABELS_CONTEXT_KEY] as
+    | Iterable<string>
+    | undefined;
+  const enabled = activeLabels != null ? [...activeLabels] : [];
+  // percent(...) rolls RNG inside field override at plan time — never cache.
+  const hasPercentOverride = enabled.some(l => l.startsWith('percent('));
+  const overrideKey = enabled.length && !hasPercentOverride ? `::ov:${enabled.sort().join(',')}` : '';
   const cacheKey = (operation.name?.value ?? '') + overrideKey;
   // Root proxies rebuild `document` each call but keep `info.operation` as the
   // extracted op — key by that stable node. Delegated requests share the outer
@@ -132,8 +108,6 @@ function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): Stitch
   let plan: StitchPlan;
   try {
     plan = buildStitchPlan(schema, operation, fragments, coerced, {
-      handleProgressiveOverride,
-      overrideLabels,
       context: request.context,
     });
   } catch (err) {
@@ -230,32 +204,11 @@ export function getBackboneExecutor(schema: GraphQLSchema): Executor {
   return ((request: ExecutionRequest) => backboneExecutor(request, schema)) as Executor;
 }
 
-export type BackboneAttachOptions = {
-  overrideLabels?: Iterable<string>;
-  handleProgressiveOverride?: ProgressiveOverrideHandler;
-};
-
 /**
- * Stash progressive-override inputs on `schema.extensions` and install shared
- * root proxies that call {@link backboneExecutor} (pass `info.schema` or omit).
- * Does not create or store a per-schema Executor instance.
+ * Install shared root proxies that call {@link backboneExecutor}
+ * (pass `info.schema` or omit). Does not store a per-schema Executor.
  */
-export function attachBackboneExecutor(
-  schema: GraphQLSchema,
-  options?: BackboneAttachOptions,
-): GraphQLSchema {
-  const overrideLabels =
-    options?.overrideLabels ?? (schema.extensions?.overrideLabels as Iterable<string> | undefined);
-  const handleProgressiveOverride =
-    options?.handleProgressiveOverride ??
-    (schema.extensions?.handleProgressiveOverride as ProgressiveOverrideHandler | undefined);
-  if (overrideLabels != null || handleProgressiveOverride != null) {
-    schema.extensions = {
-      ...schema.extensions,
-      ...(overrideLabels != null ? { overrideLabels } : {}),
-      ...(handleProgressiveOverride != null ? { handleProgressiveOverride } : {}),
-    };
-  }
+export function attachBackboneExecutor(schema: GraphQLSchema): GraphQLSchema {
   installRootProxyingResolvers(schema, backboneExecutor);
   return schema;
 }
@@ -264,10 +217,7 @@ export function attachBackboneExecutor(
  * Convenience for tests: attach shared proxies and return a schema-bound
  * {@link getBackboneExecutor} wrapper.
  */
-export function createBackboneExecutor(
-  schema: GraphQLSchema,
-  options?: BackboneAttachOptions,
-): Executor {
-  attachBackboneExecutor(schema, options);
+export function createBackboneExecutor(schema: GraphQLSchema): Executor {
+  attachBackboneExecutor(schema);
   return getBackboneExecutor(schema);
 }

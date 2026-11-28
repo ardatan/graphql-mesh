@@ -7,7 +7,6 @@ export {
   backboneExecutor,
   createBackboneExecutor,
   getBackboneExecutor,
-  type BackboneAttachOptions,
 } from './createBackboneExecutor.js';
 export { defaultMergedResolver } from './defaultMergedResolver.js';
 export { buildStitchPlan } from './buildStitchPlan.js';
@@ -20,8 +19,6 @@ export {
   installRootProxyingResolvers,
 } from './rootProxyingResolvers.js';
 export {
-  BACKBONE_EXECUTOR_OPTIONS_EXTENSION,
-  type BackboneExecutorOptions,
   type BuildStitchPlanOptions,
   type StitchPlan,
   type StitchPlanNode,

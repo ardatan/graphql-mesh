@@ -2265,19 +2265,12 @@ export function getStitchingOptionsFromSupergraphSdl(
       fieldConfigMerger,
     },
     schemaExtensions,
-    ...(overrideLabels.size ? { overrideLabels } : {}),
-    ...(opts.handleProgressiveOverride
-      ? {
-          handleProgressiveOverride: (label: string, context: any) =>
-            opts.handleProgressiveOverride!(label, context, undefined as any),
-        }
-      : {}),
   };
 }
 
 export type StitchingOptionsFromSupergraphSdl = Omit<
   ReturnType<typeof getStitchingOptionsFromSupergraphSdl>,
-  'typeDefs' | 'overrideLabels'
+  'typeDefs'
 > &
   Partial<IStitchSchemasOptions>;
 

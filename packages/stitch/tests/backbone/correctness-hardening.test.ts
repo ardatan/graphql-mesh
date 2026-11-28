@@ -189,11 +189,13 @@ describe('backbone correctness: percentage progressive-override cache', () => {
     };
 
     try {
-      const backbone = createBackboneExecutor(schema, {
-        // percent(...) bypasses plan cache so override handlers re-run every request.
-        overrideLabels: ['percent(50)'],
-      });
+      const backbone = createBackboneExecutor(schema);
       const document = parse(`{ hello }`);
+      // percent(...) in per-request active labels bypasses plan cache so
+      // field override handlers re-run every request.
+      const percentCtx = {
+        [Symbol.for('hive.gateway.overrideLabels')]: new Set(['percent(50)']),
+      };
       active = true;
 
       const routes: string[] = [];
@@ -201,7 +203,7 @@ describe('backbone correctness: percentage progressive-override cache', () => {
         useDestination = i % 2 === 0;
         const beforeDest = destinationCalls;
         const beforeSrc = sourceCalls;
-        const result = await exec(backbone, { document, context: {} });
+        const result = await exec(backbone, { document, context: percentCtx });
         expect(result.errors).toBeUndefined();
         const hello = String((result.data as any)?.hello);
         routes.push(hello);

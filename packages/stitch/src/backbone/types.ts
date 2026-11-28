@@ -173,34 +173,11 @@ export interface StitchPlan {
   incompleteReasons: string[];
 }
 
-/**
- * Static options for `createBackboneExecutor` / plan-cache keying.
- * Per-request GraphQL context is NOT an option - it comes from
- * `ExecutionRequest.context` and is passed into `buildStitchPlan` per call.
- */
-export interface BackboneExecutorOptions {
+/** Per-call inputs for `buildStitchPlan`. */
+export interface BuildStitchPlanOptions {
   /**
-   * Progressive override label handler (gateway `progressiveOverride`).
-   * Used for plan-cache keying when `overrideLabels` is also set.
-   * Persisted on `schema.extensions` for the attach-once backbone path.
-   */
-  handleProgressiveOverride?: (label: string, context: any) => boolean | Promise<boolean>;
-  /**
-   * Known progressive-override labels from the supergraph. Combined with
-   * `handleProgressiveOverride` + request context to cache plans per enabled set.
-   * Falls back to `schema.extensions.overrideLabels` when omitted.
-   */
-  overrideLabels?: Iterable<string>;
-}
-
-/** `schema.extensions` key for last-attached {@link BackboneExecutorOptions}. */
-export const BACKBONE_EXECUTOR_OPTIONS_EXTENSION = 'backboneExecutorOptions';
-
-/** Per-call inputs for `buildStitchPlan` (static opts + request context). */
-export interface BuildStitchPlanOptions extends BackboneExecutorOptions {
-  /**
-   * Request GraphQL context - progressive override / delegationPlanBuilder
-   * during planning. From `ExecutionRequest.context`, never a constructor opt.
+   * Request GraphQL context — progressive override / delegationPlanBuilder
+   * during planning. From `ExecutionRequest.context` (active labels live here).
    */
   context?: any;
 }

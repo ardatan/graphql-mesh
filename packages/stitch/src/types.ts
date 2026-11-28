@@ -71,16 +71,6 @@ export interface IStitchSchemasOptions<TContext = Record<string, any>> extends O
   typeMergingOptions?: TypeMergingOptions<TContext>;
   subschemaConfigTransforms?: Array<SubschemaConfigTransform<TContext>>;
   /**
-   * Progressive-override labels stored on `schema.extensions` and read by the
-   * shared backbone executor from `info.schema` at plan time.
-   */
-  overrideLabels?: Iterable<string>;
-  /**
-   * Progressive-override handler stored on `schema.extensions` and read by the
-   * shared backbone executor for plan-cache keying.
-   */
-  handleProgressiveOverride?: (label: string, context: any) => boolean | Promise<boolean>;
-  /**
    * Transform the stitched schema immediately before backbone root proxies are
    * installed. Federation uses this to filter join internals and run its user
    * `onStitchedSchema` hook before the single attach.
