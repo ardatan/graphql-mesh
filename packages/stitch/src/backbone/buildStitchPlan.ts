@@ -6590,9 +6590,31 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
           }
         }
       }
-      // If only sole key-parents remain, leave them; schedule may still DAG via
-      // other drops in a later iteration, or stay cyclic (fail loud) rather than
-      // silently null nested leaves.
+      // 5c) Cycle of key-parents only: drop the wait from the shallowest
+      // consumer (shortest max flatten path). Keep deeper consumers' waits so
+      // nested leaves (f4 under n0.n4.n3) still gate on n0.n4 producers.
+      if (!removed) {
+        let bestI = -1;
+        let bestJ = -1;
+        let bestDepth = Infinity;
+        for (const i of stuck) {
+          for (const j of preds[i]!) {
+            if (!stuckSet.has(j) || !isKeyParentEdge(i, j)) {
+              continue;
+            }
+            const depth = maxPathLen(i);
+            if (depth < bestDepth || (depth === bestDepth && i > bestI)) {
+              bestDepth = depth;
+              bestI = i;
+              bestJ = j;
+            }
+          }
+        }
+        if (bestI >= 0) {
+          markDrop(bestI, bestJ);
+          removed = true;
+        }
+      }
     }
     if (!removed) {
       break;
