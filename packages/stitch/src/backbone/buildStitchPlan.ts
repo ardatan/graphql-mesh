@@ -4308,6 +4308,9 @@ function tryAbsorbFetches(
   // Identical selections on (possibly different) paths -> one multi-path Fetch
   // (topProducts inventory ∥ reviews->product inventory). Avoids duplicate
   // upstream `_entities` calls that inflate OTEL subgraph.execute counts.
+  // Refuse when paths nest: the same AST under a deeper flatten path resolves
+  // the wrong relative fields (many-plans: Node@n0 selection `n2 { n0 { n3 {
+  // f4 } } }` applied at n0.n4.n3 misses leaf n2.f4).
   if (selectionSetKey(earlier.selectionSet) === selectionSetKey(later.selectionSet)) {
     const pathKeys = new Set(aPaths.map(p => p.join('\0')));
     const mergedPaths = [...aPaths];
@@ -4316,6 +4319,21 @@ function tryAbsorbFetches(
       if (!pathKeys.has(key)) {
         pathKeys.add(key);
         mergedPaths.push(p);
+      }
+    }
+    // Nested flatten paths are safe when the shared selection is leaf-only
+    // (inStock∥shippingEstimate across depths). Nested object selections are
+    // path-relative — applying a shallow deep-tree at a deeper flatten path
+    // misses leaf fields (many-plans n2.f4 under n0.n4.n3). Same for unequal
+    // path depths: a hop at depth 3 vs depth 4 needs different relative ASTs
+    // (f114 mixing n0.n4.n4 with n0.n2.n1.n0 stranded leaf f4).
+    if (!selectionIsLeafOnly(earlier.selectionSet)) {
+      if (pathsHaveNesting(mergedPaths)) {
+        return null;
+      }
+      const depths = new Set(mergedPaths.map(p => p.length));
+      if (depths.size > 1) {
+        return null;
       }
     }
     const united: Extract<StitchPlanNode, { kind: 'Fetch' }> = {
@@ -5604,8 +5622,6 @@ function buildCompletePlan(
   // Deep recursive entity graphs (many-plans) can leave mutual dependsOn after
   // fold; drop back-edges so the schedule stays a DAG.
   const acyclic = stripDependsOnCycles(folded);
-  // Prebuild hop documents at plan time (queries + mutations). Root
-  // @skip/@include use runIf; nested directives stay on the AST for subgraphs.
   const withDocs = preparePlanDocuments(acyclic, {
     operation,
     fragments,
@@ -6562,10 +6578,42 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
           }
         }
       }
+      /**
+       * True when another stuck hop has exactly one flatten path that this hop
+       * also fetches. Dropping key-parents from the multi-path peer lets it
+       * race and clobber the single-path leaf (f112 vs f79 at n0.n4.n3 → f4).
+       */
+      const sharesPathWithSinglePathHop = (i: number): boolean => {
+        const paths = hopFlattenPaths(hops[i]!);
+        if (paths.length < 2) {
+          return false;
+        }
+        for (const s of stuck) {
+          if (s === i) {
+            continue;
+          }
+          const sp = hopFlattenPaths(hops[s]!);
+          if (sp.length !== 1) {
+            continue;
+          }
+          const only = sp[0]!;
+          if (paths.some(p => pathsEqual(p, only))) {
+            return true;
+          }
+        }
+        return false;
+      };
+      // Never drop a key-parent wait onto a single-path pred (f79 at
+      // n0.n4.n3). Child multi-path hops (f114 at n0.n4.n3.n2) must keep that
+      // gate or they race and strand nested leaves (f4).
+      const predIsSinglePath = (j: number): boolean => hopFlattenPaths(hops[j]!).length === 1;
       if (!removed) {
         outer5b: for (const i of stuck) {
+          if (hopFlattenPaths(hops[i]!).length < 2 || sharesPathWithSinglePathHop(i)) {
+            continue;
+          }
           for (const j of preds[i]!) {
-            if (!stuckSet.has(j) || !isKeyParentEdge(i, j)) {
+            if (!stuckSet.has(j) || !isKeyParentEdge(i, j) || predIsSinglePath(j)) {
               continue;
             }
             let hasAlt = false;
@@ -6590,30 +6638,47 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
           }
         }
       }
-      // 5c) Cycle of key-parents only: drop the wait from the shallowest
-      // consumer (shortest max flatten path). Keep deeper consumers' waits so
-      // nested leaves (f4 under n0.n4.n3) still gate on n0.n4 producers.
+      // 5c) Cycle of key-parents only. Prefer multi-path consumers that do NOT
+      // share a flatten path with a single-path leaf gate, and never drop a
+      // wait onto a single-path pred (f114→f79).
       if (!removed) {
-        let bestI = -1;
-        let bestJ = -1;
-        let bestDepth = Infinity;
-        for (const i of stuck) {
-          for (const j of preds[i]!) {
-            if (!stuckSet.has(j) || !isKeyParentEdge(i, j)) {
+        const consider = (requireNoSinglePathShare: boolean): boolean => {
+          let bestI = -1;
+          let bestJ = -1;
+          let bestPaths = -1;
+          let bestDepth = Infinity;
+          for (const i of stuck) {
+            const pathCount = hopFlattenPaths(hops[i]!).length;
+            if (pathCount < 2) {
               continue;
             }
-            const depth = maxPathLen(i);
-            if (depth < bestDepth || (depth === bestDepth && i > bestI)) {
-              bestDepth = depth;
-              bestI = i;
-              bestJ = j;
+            if (requireNoSinglePathShare && sharesPathWithSinglePathHop(i)) {
+              continue;
+            }
+            for (const j of preds[i]!) {
+              if (!stuckSet.has(j) || !isKeyParentEdge(i, j) || predIsSinglePath(j)) {
+                continue;
+              }
+              const depth = maxPathLen(i);
+              const better =
+                pathCount > bestPaths ||
+                (pathCount === bestPaths &&
+                  (depth < bestDepth || (depth === bestDepth && i > bestI)));
+              if (better) {
+                bestPaths = pathCount;
+                bestDepth = depth;
+                bestI = i;
+                bestJ = j;
+              }
             }
           }
-        }
-        if (bestI >= 0) {
-          markDrop(bestI, bestJ);
-          removed = true;
-        }
+          if (bestI >= 0) {
+            markDrop(bestI, bestJ);
+            return true;
+          }
+          return false;
+        };
+        removed = consider(true) || consider(false);
       }
     }
     if (!removed) {
