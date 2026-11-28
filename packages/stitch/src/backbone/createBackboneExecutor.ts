@@ -1,5 +1,6 @@
 import { GraphQLError, Kind, type DocumentNode, type GraphQLSchema } from 'graphql';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
+import { getFragmentsFromDocument } from '@graphql-tools/executor';
 import {
   getOperationASTFromRequest,
   isAsyncIterable,
@@ -61,6 +62,16 @@ const OVERRIDE_LABELS_CONTEXT_KEY = Symbol.for('hive.gateway.overrideLabels');
 const plansBySchema = new WeakMap<GraphQLSchema, WeakMap<DocumentNode, Map<string, StitchPlan>>>();
 
 function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): StitchPlan {
+  const operation = getOperationASTFromRequest(request);
+  if (!operation) {
+    return {
+      operation: operation as any,
+      fragments: {},
+      root: { kind: 'Parallel', nodes: [] },
+      incomplete: true,
+      incompleteReasons: ['Missing operation'],
+    };
+  }
   const activeLabelsRaw = request.context?.[OVERRIDE_LABELS_CONTEXT_KEY];
   const activeLabels: Iterable<string> | undefined =
     activeLabelsRaw != null && typeof (activeLabelsRaw as any)[Symbol.iterator] === 'function'
@@ -84,7 +95,8 @@ function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): Stitch
   if (cached) {
     return cached;
   }
-  const plan = buildStitchPlan(schema, request.document, request.operationName, activeLabels);
+  const fragments = getFragmentsFromDocument(request.document);
+  const plan = buildStitchPlan(schema, operation, fragments, activeLabels);
   cache.set(key, plan);
   return plan;
 }

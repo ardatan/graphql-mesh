@@ -924,7 +924,7 @@ describe('@resolveTo result path when the source field is missing from the gatew
         }
       }
     `);
-    const plan = buildStitchPlan(stitched, document);
+    const plan = buildStitchPlan(stitched, document.definitions[0] as any, {}, undefined);
     expect(plan.incompleteReasons).toEqual([]);
     const hasComplexIsland = (n: any): boolean => {
       if (!n) return false;
@@ -1101,7 +1101,7 @@ describe('@resolveTo result path when the source field is missing from the gatew
         }
       }
     `);
-    const plan = buildStitchPlan(stitched, document);
+    const plan = buildStitchPlan(stitched, document.definitions[0] as any, {}, undefined);
     expect(plan.incompleteReasons).toEqual([]);
     const hasComplexIsland = (n: any): boolean => {
       if (!n) return false;

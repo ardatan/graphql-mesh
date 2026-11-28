@@ -171,6 +171,12 @@ export interface GetStitchingOptionsFromSupergraphSdlOpts {
   handleProgressiveOverride?: ProgressiveOverrideHandler;
 
   getRng?: () => number;
+
+  /**
+   * Mutate the filtered public schema before backbone root proxies attach.
+   * Runs after `filterInternalFieldsAndTypes`, before the single attach.
+   */
+  onStitchedSchema?(schema: GraphQLSchema): GraphQLSchema | void;
 }
 
 export interface ProgressiveOverrideInfo {
@@ -2250,6 +2256,7 @@ export function getStitchingOptionsFromSupergraphSdl(
     };
   }
 
+  const userOnStitchedSchema = opts.onStitchedSchema;
   return {
     subschemas,
     typeDefs: additionalTypeDefs,
@@ -2263,6 +2270,14 @@ export function getStitchingOptionsFromSupergraphSdl(
       fieldConfigMerger,
     },
     schemaExtensions,
+    // Filter join internals then user hook — stitch attaches proxies after this.
+    onStitchedSchema(schema: GraphQLSchema) {
+      let next = filterInternalFieldsAndTypes(schema);
+      if (userOnStitchedSchema) {
+        next = userOnStitchedSchema(next) || next;
+      }
+      return next;
+    },
   };
 }
 
@@ -2276,34 +2291,19 @@ export interface GetStitchedSchemaFromSupergraphSdlOpts extends GetStitchingOpti
   supergraphSdl: string | DocumentNode;
   /** Mutate stitch options (including `resolvers` / `typeDefs`) before stitch. */
   onStitchingOptions?(opts: StitchingOptionsFromSupergraphSdl): void;
-  /**
-   * Mutate the filtered public schema before backbone root proxies attach.
-   * Runs after `filterInternalFieldsAndTypes`, before the single attach.
-   */
-  onStitchedSchema?(schema: GraphQLSchema): GraphQLSchema | void;
 }
 
 /**
  * Build an executable stitched schema from Federation supergraph SDL.
- * Filter join internals and run user `onStitchedSchema` inside stitch's
- * `onStitchedSchema` (before attach) so shared root proxies install once on
- * the public schema. Late root-resolve overrides via `onStitchedSchema` are
- * not auto-marked as `localFields`. External post-stitch mapSchema is
- * unsupported.
+ * `getStitchingOptionsFromSupergraphSdl` sets `onStitchedSchema` (filter + user
+ * hook); stitch attaches root proxies once on the public schema afterward.
+ * Late root-resolve overrides via `onStitchedSchema` are not auto-marked as
+ * `localFields`. External post-stitch mapSchema is unsupported.
  */
 export function getStitchedSchemaFromSupergraphSdl(opts: GetStitchedSchemaFromSupergraphSdlOpts) {
   const stitchSchemasOpts = getStitchingOptionsFromSupergraphSdl(opts);
   opts.onStitchingOptions?.(stitchSchemasOpts);
-  return stitchSchemas({
-    ...stitchSchemasOpts,
-    onStitchedSchema(schema) {
-      let next = filterInternalFieldsAndTypes(schema);
-      if (opts.onStitchedSchema) {
-        next = opts.onStitchedSchema(next) || next;
-      }
-      return next;
-    },
-  });
+  return stitchSchemas(stitchSchemasOpts);
 }
 
 const anyTypeDefinitionNode: ScalarTypeDefinitionNode = {

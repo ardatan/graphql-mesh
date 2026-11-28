@@ -117,7 +117,7 @@ describe('stitching backbone', () => {
         }
       }
     `);
-    const plan = buildStitchPlan(schema, document);
+    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, undefined);
     expect(plan.incompleteReasons).toEqual([]);
     // Final plans flatten Sequence barriers; schedule is cached when there is
     // no Condition.
@@ -165,8 +165,8 @@ describe('stitching backbone', () => {
         }
       }
     `);
-    const planSkip = buildStitchPlan(schema, document);
-    const planInclude = buildStitchPlan(schema, document);
+    const planSkip = buildStitchPlan(schema, document.definitions[0] as any, {}, undefined);
+    const planInclude = buildStitchPlan(schema, document.definitions[0] as any, {}, undefined);
     expect(planSkip.incompleteReasons).toEqual([]);
     // Condition at plan time; schedule rebuilt at execute for the taken branch.
     expect(planSkip.root.kind).toBe('Condition');
@@ -255,7 +255,7 @@ describe('stitching backbone', () => {
         __typename
       }
     `);
-    const plan = buildStitchPlan(schema, document);
+    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, undefined);
     expect(plan.incompleteReasons).toEqual([]);
     expect(plan.root.kind).toBe('Island');
     expect((plan.root as any).fieldNode.name.value).toBe('__typename');
@@ -306,7 +306,7 @@ describe('stitching backbone', () => {
         }
       }
     `);
-    const plan = buildStitchPlan(schema, document);
+    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, undefined);
     expect(plan.incompleteReasons).toEqual([]);
     expect(plan.root.kind).toBe('Island');
     expect((plan.root as any).fieldNode.name.value).toBe('Group');
@@ -379,7 +379,7 @@ describe('stitching backbone', () => {
         }
       }
     `);
-    const plan = buildStitchPlan(schema, document);
+    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, undefined);
     expect(plan.incompleteReasons).toEqual([]);
     const hasLabelIsland = (n: any): boolean => {
       if (!n) return false;
@@ -492,7 +492,7 @@ describe('stitching backbone', () => {
         }
       }
     `);
-    const plan = buildStitchPlan(schema, document);
+    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, undefined);
     expect(plan.incompleteReasons).toEqual([]);
 
     const hasNestedAuthorIsland = (n: any): boolean => {
@@ -781,7 +781,7 @@ describe('backbone plan quality', () => {
         }
       }
     `);
-    const plan = buildStitchPlan(schema, document);
+    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, undefined);
     expect(plan.incomplete).toBe(false);
     const counts = countFetches(plan.root);
     // Shared root `userById`: either Parallel roots (chirps + authors) with no
@@ -809,7 +809,7 @@ describe('backbone plan quality', () => {
         }
       }
     `);
-    const plan = buildStitchPlan(schema, document);
+    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, undefined);
     expect(plan.incomplete).toBe(false);
     const counts = countFetches(plan.root);
     expect(counts.root).toBeGreaterThanOrEqual(2);

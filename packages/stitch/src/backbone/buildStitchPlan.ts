@@ -1,6 +1,5 @@
 import {
   getNamedType,
-  getOperationAST,
   isAbstractType,
   isInterfaceType,
   isLeafType,
@@ -8,7 +7,6 @@ import {
   isUnionType,
   Kind,
   valueFromASTUntyped,
-  type DocumentNode,
   type FieldNode,
   type FragmentDefinitionNode,
   type GraphQLInterfaceType,
@@ -21,7 +19,6 @@ import {
 } from 'graphql';
 import type { StitchingInfo, Subschema } from '@graphql-tools/delegate';
 import { handleOverrideByDelegation, leftOverByDelegationPlan } from '@graphql-tools/delegate';
-import { getFragmentsFromDocument } from '@graphql-tools/executor';
 import { getDefinedRootType } from '@graphql-tools/utils';
 import { isLocalField } from './localFields.js';
 import { getBatchedMergeEntry, inferMergeArgName } from './mergeEntry.js';
@@ -3267,28 +3264,16 @@ function planRootField(
 }
 
 /**
- * Build a stitch plan for one operation in `document`.
- * Variable-independent: root `@skip`/`@include` are Condition nodes.
- * Progressive override uses `activeLabels` only (not full request context).
+ * Build a stitch plan for one operation. Caller extracts `operation` /
+ * `fragments` from the document. Variable-independent: root `@skip`/`@include`
+ * are Condition nodes. Progressive override uses `activeLabels` only.
  */
 export function buildStitchPlan(
   schema: GraphQLSchema,
-  document: DocumentNode,
-  operationName?: string | null,
+  operation: OperationDefinitionNode,
+  fragments: Record<string, FragmentDefinitionNode>,
   activeLabels?: Iterable<string> | null,
 ): StitchPlan {
-  const operation = getOperationAST(document, operationName ?? undefined);
-  const fragments = getFragmentsFromDocument(document);
-  if (!operation) {
-    return {
-      operation: operation as any,
-      fragments,
-      root: { kind: 'Parallel', nodes: [] },
-      incomplete: true,
-      incompleteReasons: ['Missing operation'],
-    };
-  }
-
   const incompleteReasons: string[] = [];
   const stitchingInfo = schema.extensions?.stitchingInfo as StitchingInfo | undefined;
 

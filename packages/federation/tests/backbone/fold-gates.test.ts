@@ -105,7 +105,7 @@ describe('backbone wave-per-subgraph fold (federation)', () => {
       }
     `);
     const op = document.definitions.find(d => d.kind === Kind.OPERATION_DEFINITION)!;
-    const plan = buildStitchPlan(schema, document);
+    const plan = buildStitchPlan(schema, op, {});
     expect(plan.incomplete).toBe(false);
     const { http } = countPlanHttpHops(plan.root);
     // Known target: 2 root Fetches + ≤1 inventory wave (wave fold).
@@ -199,7 +199,7 @@ describe('planning-large fold gates vs Hive Router Rust query planner', () => {
     for (const name of names) {
       const document = parse(QUERIES[name].replaceAll('__ID__', '1'));
       const op = document.definitions.find(d => d.kind === Kind.OPERATION_DEFINITION)!;
-      const plan = buildStitchPlan(schema, document);
+      const plan = buildStitchPlan(schema, op, {});
       expect(plan.incomplete).toBe(false);
       if (plan.incomplete) {
         throw new Error(`${name} incomplete: ${plan.incompleteReasons}`);
