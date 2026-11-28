@@ -1,59 +1,21 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`split subgraphs correctly: LISTINGS 1`] = `
-""""A particular intergalactic location available for booking"""
-type Listing {
-  id: ID!
-  """The listing's title"""
-  title: String!
-  """The number of beds available"""
-  numOfBeds: Int
-  """The cost per night"""
-  costPerNight: Float
-  """Indicates whether listing is closed for bookings (on hiatus)"""
-  closed: Boolean
-}
-
-type Query {
-  """A curated array of listings to feature on the homepage"""
-  featuredListings: [Listing!]!
-  _entities(representations: [_Any!]!): [_Entity]!
-}
-
+"""A particular intergalactic location available for booking"""
+type Listing {id:ID! """The listing's title""" title:String! """The number of beds available""" numOfBeds:Int """The cost per night""" costPerNight:Float """Indicates whether listing is closed for bookings (on hiatus)""" closed:Boolean}
+type Query {"""A curated array of listings to feature on the homepage""" featuredListings:[Listing!]! _entities(representations:[_Any!]!):[_Entity]!}
 union _Entity
+scalar _Any
 
-scalar _Any"
 `;
 
 exports[`split subgraphs correctly: PRODUCTS 1`] = `
-"extend schema @link(url: "https://specs.apollo.dev/connect/v0.2", import: ["@connect", "@source"]) @source(name: "ecomm", http: {baseURL: "https://ecommerce.demo-api.apollo.dev/", headers: []})
-
-type Price @connect(source: "ecomm", http: {GET: "/products/{$this.id}/price"}, selection: "id\\nactive\\ncurrency\\nunitAmount") {
-  id: ID!
-  active: Boolean
-  currency: String
-  unitAmount: Float
-}
-
-type Product @connect(source: "ecomm", http: {GET: "/products/{$this.id}"}, selection: "id\\nname\\ndescription\\nvariants {\\n  id: variantID\\n  name\\n}\\nprice {\\n    id: default_price\\n}") {
-  id: ID!
-  name: String
-  description: String
-  price: Price
-  variants: [Variant]
-}
-
-type Query {
-  products: [Product] @connect(source: "ecomm", http: {GET: "/products"}, selection: "$.products {\\n  id\\n  name\\n  description\\n}")
-  _entities(representations: [_Any!]!): [_Entity]!
-}
-
-type Variant {
-  id: ID!
-  name: String
-}
-
+extend schema @link(url:"https://specs.apollo.dev/connect/v0.2" import:["@connect" "@source"]) @source(name:"ecomm" http:{baseURL:"https://ecommerce.demo-api.apollo.dev/" headers:[]})
+type Price @connect(source:"ecomm" http:{GET:"/products/{$this.id}/price"} selection:"id\\nactive\\ncurrency\\nunitAmount") {id:ID! active:Boolean currency:String unitAmount:Float}
+type Product @connect(source:"ecomm" http:{GET:"/products/{$this.id}"} selection:"id\\nname\\ndescription\\nvariants {\\n  id: variantID\\n  name\\n}\\nprice {\\n    id: default_price\\n}") {id:ID! name:String description:String price:Price variants:[Variant]}
+type Query {products:[Product] @connect(source:"ecomm" http:{GET:"/products"} selection:"$.products {\\n  id\\n  name\\n  description\\n}") _entities(representations:[_Any!]!):[_Entity]!}
+type Variant {id:ID! name:String}
 union _Entity = Price
+scalar _Any
 
-scalar _Any"
 `;
