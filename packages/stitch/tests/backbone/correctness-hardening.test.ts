@@ -101,8 +101,8 @@ describe('backbone correctness: valuesFromResults', () => {
   });
 });
 
-describe('backbone correctness: percentage progressive-override cache', () => {
-  it('re-evaluates percent overrides without unbounded plan-cache growth', async () => {
+describe('backbone correctness: progressive-override per request', () => {
+  it('re-evaluates field override handlers on every request', async () => {
     const remoteA = makeExecutableSchema({
       typeDefs: /* GraphQL */ `
         type Query {
@@ -125,7 +125,8 @@ describe('backbone correctness: percentage progressive-override cache', () => {
     });
 
     // Competing progressive-override routes (destination vs source). Controlled
-    // decisions so each request's selected route is predictable.
+    // decisions so each request's selected route is predictable. Active labels
+    // are gateway-owned on context — stitch does not special-case percent/RNG.
     let useDestination = true;
     let destinationCalls = 0;
     let sourceCalls = 0;
@@ -166,72 +167,42 @@ describe('backbone correctness: percentage progressive-override cache', () => {
       ],
     });
 
-    // Count plan-cache writes by StitchPlan value shape, not key spelling.
-    // Production no longer emits `::pct:` keys; a constant-key regression would
-    // still write one plan entry and pass a `::pct:`-only assertion.
-    let planCacheWrites = 0;
-    const OriginalMap = Map;
-    let active = false;
-    (globalThis as any).Map = class extends OriginalMap<any, any> {
-      set(key: any, value: any) {
-        if (
-          active &&
-          value != null &&
-          typeof value === 'object' &&
-          'root' in value &&
-          'operation' in value &&
-          'fragments' in value
-        ) {
-          planCacheWrites += 1;
-        }
-        return super.set(key, value);
-      }
+    const backbone = getBackboneExecutorBySchema(schema);
+    const document = parse(`{ hello }`);
+    // Gateway-provided active labels on context (not stitch-decided percent).
+    const ctx = {
+      [Symbol.for('hive.gateway.overrideLabels')]: new Set(['rollout']),
     };
 
-    try {
-      const backbone = getBackboneExecutorBySchema(schema);
-      const document = parse(`{ hello }`);
-      // percent(...) in per-request active labels bypasses plan cache so
-      // field override handlers re-run every request.
-      const percentCtx = {
-        [Symbol.for('hive.gateway.overrideLabels')]: new Set(['percent(50)']),
-      };
-      active = true;
-
-      const routes: string[] = [];
-      for (let i = 0; i < 10; i++) {
-        useDestination = i % 2 === 0;
-        const beforeDest = destinationCalls;
-        const beforeSrc = sourceCalls;
-        const result = await exec(backbone, { document, context: percentCtx });
-        expect(result.errors).toBeUndefined();
-        const hello = String((result.data as any)?.hello);
-        routes.push(hello);
-        expect(hello).toBe(useDestination ? 'from-a' : 'from-b');
-        // Each request re-plans: both override handlers run again.
-        expect(destinationCalls).toBeGreaterThan(beforeDest);
-        expect(sourceCalls).toBeGreaterThan(beforeSrc);
-      }
-      active = false;
-
-      expect(planCacheWrites).toBe(0);
-      expect(destinationCalls).toBeGreaterThanOrEqual(10);
-      expect(sourceCalls).toBeGreaterThanOrEqual(10);
-      expect(routes).toEqual([
-        'from-a',
-        'from-b',
-        'from-a',
-        'from-b',
-        'from-a',
-        'from-b',
-        'from-a',
-        'from-b',
-        'from-a',
-        'from-b',
-      ]);
-    } finally {
-      (globalThis as any).Map = OriginalMap;
+    const routes: string[] = [];
+    for (let i = 0; i < 10; i++) {
+      useDestination = i % 2 === 0;
+      const beforeDest = destinationCalls;
+      const beforeSrc = sourceCalls;
+      const result = await exec(backbone, { document, context: ctx });
+      expect(result.errors).toBeUndefined();
+      const hello = String((result.data as any)?.hello);
+      routes.push(hello);
+      expect(hello).toBe(useDestination ? 'from-a' : 'from-b');
+      // Each request re-plans: both override handlers run again.
+      expect(destinationCalls).toBeGreaterThan(beforeDest);
+      expect(sourceCalls).toBeGreaterThan(beforeSrc);
     }
+
+    expect(destinationCalls).toBeGreaterThanOrEqual(10);
+    expect(sourceCalls).toBeGreaterThanOrEqual(10);
+    expect(routes).toEqual([
+      'from-a',
+      'from-b',
+      'from-a',
+      'from-b',
+      'from-a',
+      'from-b',
+      'from-a',
+      'from-b',
+      'from-a',
+      'from-b',
+    ]);
   });
 });
 
