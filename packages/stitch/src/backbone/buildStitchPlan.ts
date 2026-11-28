@@ -65,6 +65,10 @@ let planningContext: any;
 /** Gateway schema for the in-flight plan (provider type walks in dependsOn). */
 let planningSchema: GraphQLSchema | undefined;
 
+/** Operation + fragments for alias-aware provider path walks during dependsOn. */
+let planningOperation: OperationDefinitionNode | undefined;
+let planningFragments: Record<string, FragmentDefinitionNode> | undefined;
+
 /**
  * Fill omitted operation variables from their GraphQL default values so
  * `@skip`/`@include` and collectFields can evaluate without throwing.
@@ -3340,8 +3344,12 @@ export function buildStitchPlan(
 
   const previousPlanningContext = planningContext;
   const previousPlanningSchema = planningSchema;
+  const previousPlanningOperation = planningOperation;
+  const previousPlanningFragments = planningFragments;
   planningContext = options.context;
   planningSchema = schema;
+  planningOperation = operation;
+  planningFragments = fragments;
   try {
     if (incompleteReasons.length > 0) {
       // Still attempt a best-effort plan for warming, but never throw out of here.
@@ -3378,6 +3386,8 @@ export function buildStitchPlan(
   } finally {
     planningContext = previousPlanningContext;
     planningSchema = previousPlanningSchema;
+    planningOperation = previousPlanningOperation;
+    planningFragments = previousPlanningFragments;
   }
 }
 
@@ -4002,6 +4012,8 @@ function contextProviderDependsOn(
 /**
  * Flatten-path prefix ending at the nearest declared `@context` provider for
  * `laterPath` (types along the path: index i ↔ path.slice(0, i)).
+ * Passes the in-flight operation so response-key aliases (`people: users`)
+ * resolve to the real field and the User provider is still found.
  */
 function contextProviderPathPrefix(
   schema: GraphQLSchema,
@@ -4011,7 +4023,18 @@ function contextProviderPathPrefix(
   if (!providers.length) {
     return null;
   }
-  const typeNames = typeNamesAlongFlattenPath(schema, laterPath);
+  const operation = planningOperation;
+  const rootType =
+    operation?.operation === 'mutation'
+      ? schema.getMutationType()
+      : operation?.operation === 'subscription'
+        ? schema.getSubscriptionType()
+        : schema.getQueryType();
+  const typeNames = typeNamesAlongFlattenPath(schema, laterPath, {
+    rootType,
+    operation,
+    fragments: planningFragments,
+  });
   // typeNames[0] is the root; skip the entity at the end.
   for (let i = typeNames.length - 2; i >= 0; i--) {
     if (typeMatchesContextProvider(schema, typeNames[i]!, providers)) {

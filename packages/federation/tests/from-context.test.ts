@@ -2154,5 +2154,176 @@ describe('contextProviderDependsOn overlapping nested keys', () => {
       }
     }
   });
+
+  it('aliased root still finds User provider for separately fetched context', async () => {
+    const { makeExecutableSchema } = await import('@graphql-tools/schema');
+    const { stitchSchemas } = await import('@graphql-tools/stitch');
+    // Flatten path uses response key `people` (alias of users). Without the
+    // operation in typeNamesAlongFlattenPath, Query.people is missing and the
+    // User provider is not found — Locale can schedule before preferences.
+    // Preference.isoCode lives on a second subgraph so it is a real separate Fetch.
+    const accounts = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Preference {
+          id: ID!
+        }
+        type Locale {
+          id: ID!
+          label(code: String): String
+        }
+        type Order {
+          id: ID!
+          locale: Locale
+        }
+        type User {
+          id: ID!
+          preferences: Preference
+          orders: [Order]
+        }
+        type Query {
+          users: [User]
+          localeById(id: ID!): Locale
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: () => [
+            {
+              id: 'u1',
+              preferences: { id: 'p-user' },
+              orders: [{ id: 'o1', locale: { id: 'l1' } }],
+            },
+          ],
+          localeById: (_: unknown, { id }: { id: string }) => ({ id }),
+        },
+        Locale: {
+          label: (_: unknown, { code }: { code?: string }) => `loc:${code ?? 'MISSING'}`,
+        },
+      },
+    });
+    const prefs = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Preference {
+          id: ID!
+          isoCode: String
+        }
+        type Query {
+          preferenceById(id: ID!): Preference
+        }
+      `,
+      resolvers: {
+        Query: {
+          preferenceById: (_: unknown, { id }: { id: string }) => ({
+            id,
+            isoCode: 'USD',
+          }),
+        },
+      },
+    });
+    const fromUserPrefs = {
+      context: 'userContext',
+      name: 'code',
+      type: 'String',
+      selection: '{ preferences { isoCode } }',
+    };
+    const bag: Captured[] = [];
+    const schema = stitchSchemas({
+      subschemas: [
+        {
+          schema: accounts,
+          executor: capturingExecutor(createDefaultExecutor(accounts), bag),
+          merge: {
+            Locale: {
+              selectionSet: '{ id }',
+              fieldName: 'localeById',
+              key: ({ id }: { id: string }) => id,
+              argsFromKeys: (ids: readonly string[]) => ({ id: ids[0] }),
+              fields: {
+                label: {
+                  selectionSet: '{ id }',
+                  computed: true,
+                  contextArguments: [fromUserPrefs],
+                },
+              },
+            },
+          },
+        },
+        {
+          schema: prefs,
+          executor: capturingExecutor(createDefaultExecutor(prefs), bag),
+          merge: {
+            Preference: {
+              selectionSet: '{ id }',
+              fieldName: 'preferenceById',
+              key: ({ id }: { id: string }) => id,
+              argsFromKeys: (ids: readonly string[]) => ({ id: ids[0] }),
+            },
+          },
+        },
+      ],
+      contextProviders: { userContext: ['User'] },
+    });
+    const document = parse(`{
+      people: users {
+        preferences { isoCode }
+        orders {
+          locale { label }
+        }
+      }
+    }`);
+    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, {});
+    expect(plan.incomplete).toBe(false);
+
+    type FetchNode = {
+      kind: string;
+      id?: string;
+      dependsOn?: string[];
+      entityTypeName?: string;
+      flattenPaths?: Array<Array<string | number>>;
+      selectionSet?: { selections: Array<{ kind: string; name?: { value: string } }> };
+    };
+    const fetches: FetchNode[] = [];
+    const walk = (n: any) => {
+      if (!n || typeof n !== 'object') return;
+      if (n.kind === 'Fetch') fetches.push(n);
+      if (Array.isArray(n.nodes)) n.nodes.forEach(walk);
+      if (Array.isArray(n.aliases)) n.aliases.forEach(walk);
+      if (n.continue) walk(n.continue);
+    };
+    walk(plan.root);
+
+    const pathKey = (p: Array<string | number>) => p.join('.');
+    const prefsFetch = fetches.find(
+      f =>
+        f.entityTypeName === 'Preference' &&
+        f.flattenPaths?.some(p => pathKey(p) === 'people.preferences'),
+    );
+    const localeLabel = fetches.find(
+      f =>
+        f.entityTypeName === 'Locale' &&
+        f.flattenPaths?.some(p => pathKey(p) === 'people.orders.locale') &&
+        f.selectionSet?.selections.some(
+          s => (s.kind === Kind.FIELD || s.kind === 'Field') && s.name?.value === 'label',
+        ),
+    );
+    expect(prefsFetch?.id).toBeTruthy();
+    expect(localeLabel?.id).toBeTruthy();
+    // Locale must wait for the separately fetched User.preferences isoCode.
+    expect(localeLabel!.dependsOn ?? []).toContain(prefsFetch!.id);
+
+    const result = await createBackboneExecutor(schema)({ document });
+    expect(result.errors).toBeUndefined();
+    const contextual = bag.filter(r =>
+      Object.keys(r.variables ?? {}).some(k => k.startsWith('__context_')),
+    );
+    expect(contextual.length).toBeGreaterThan(0);
+    for (const req of contextual) {
+      for (const [k, v] of Object.entries(req.variables ?? {})) {
+        if (k.startsWith('__context_')) {
+          expect(v).toBe('USD');
+        }
+      }
+    }
+  });
 });
 
