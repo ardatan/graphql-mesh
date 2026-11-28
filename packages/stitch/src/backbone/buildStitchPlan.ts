@@ -26,6 +26,7 @@ import { flattenPlanControlFlow } from './planShape.js';
 import { preparePlanDocuments } from './preparePlanDocuments.js';
 import { collectVariableDefaults, orRunIf, runIfKey } from './runIf.js';
 import type { PathSegment, StitchPlan, StitchPlanNode } from './types.js';
+import { writeFileSync as __meshDumpWrite } from 'node:fs';
 
 /**
  * Aggressive (earliest-wave) fold only kicks in when the plan still has many
@@ -34,8 +35,6 @@ import type { PathSegment, StitchPlan, StitchPlanNode } from './types.js';
  * planning-large (100+ hops) gets earliest-wave coalesce.
  */
 const AGGRESSIVE_WAVE_FOLD_MIN_ENTITY_HOPS = 16;
-/** Above this, skip pass-2 wave fold (many-plans); exact-deps fold only. */
-const AGGRESSIVE_WAVE_FOLD_MAX_ENTITY_HOPS = 80;
 
 function selectionSetOf(selections: readonly SelectionNode[]): SelectionSetNode {
   return { kind: Kind.SELECTION_SET, selections: [...selections] };
@@ -6222,6 +6221,43 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
     }
   }
 
+  if (process.env.MESH_DUMP_STRIP === '1') {
+    const dumpHops = hops.map((h, i) => {
+      const paths = (h as any).flattenPaths?.map((fp: any) =>
+        Array.isArray(fp) ? fp.map((s: any) => (typeof s === 'string' ? s : s?.fieldName ?? s)).join('.') : String(fp),
+      );
+      const fields = (h as any).selectionSet
+        ? JSON.stringify((h as any).selectionSet).slice(0, 200)
+        : undefined;
+      const fieldNames: string[] = [];
+      const ss = (h as any).selectionSet;
+      if (ss?.selections) {
+        for (const sel of ss.selections) {
+          if (sel.kind === 'Field') fieldNames.push(sel.alias?.value ?? sel.name.value);
+        }
+      }
+      return {
+        i,
+        id: h.id,
+        kind: h.kind,
+        completesIds: (h as any).completesIds,
+        dependsOn: h.dependsOn,
+        reuseFrom: (h as any).reuseFrom,
+        paths,
+        fieldNames,
+        entityTypeName: (h as any).entityTypeName,
+        droppedPreds: dropForHop.get(i) ? [...dropForHop.get(i)!] : [],
+      };
+    });
+    const target = dumpHops.filter(h =>
+      (h.paths || []).some((p: string) => p.includes('n0.n4.n3.n2') || p.includes('node.n0.n4.n3.n2')) ||
+      (h.fieldNames || []).includes('f4'),
+    );
+    __meshDumpWrite(
+      '/tmp/many-plans-strip-dump.json',
+      JSON.stringify({ hopCount: hops.length, dropCount: dropForHop.size, target, all: dumpHops }, null, 2),
+    );
+  }
   if (!dropForHop.size) {
     return root;
   }
@@ -6437,7 +6473,10 @@ function earliestHopWave(hop: { dependsOn?: string[] }, waveById: Map<string, nu
   return w;
 }
 
-function buildCompletesWaveMap(root: StitchPlanNode): Map<string, number> {
+function buildCompletesWaveMap(root: StitchPlanNode): {
+  waves: Map<string, number>;
+  cyclic: boolean;
+} {
   const hops: Array<
     | Extract<StitchPlanNode, { kind: 'Fetch' }>
     | Extract<StitchPlanNode, { kind: 'BatchFetch' }>
@@ -6452,11 +6491,13 @@ function buildCompletesWaveMap(root: StitchPlanNode): Map<string, number> {
   }
   const memo = new Map<string, number>();
   const visiting = new Set<string>();
+  let cyclic = false;
   const waveOf = (id: string): number => {
     if (memo.has(id)) {
       return memo.get(id)!;
     }
     if (visiting.has(id)) {
+      cyclic = true;
       return 0;
     }
     visiting.add(id);
@@ -6474,7 +6515,7 @@ function buildCompletesWaveMap(root: StitchPlanNode): Map<string, number> {
   for (const id of byId.keys()) {
     waveOf(id);
   }
-  return memo;
+  return { waves: memo, cyclic };
 }
 
 function countFoldableEntityHops(root: StitchPlanNode): number {
@@ -6621,17 +6662,17 @@ function foldSameWaveSubgraphFetches(
     hop => `${depsKey(hop)}::${subKey(hop.subschema)}`,
   );
 
-  // Pass 2: aggressive wave fold only on mid-size plans. Deep recursive
-  // graphs (many-plans) leave mutual dependsOn after fold; strip then cuts
-  // path edges → null leaves. Skip pass 2 above this ceiling (exact-deps only).
-  const foldable = countFoldableEntityHops(next);
-  if (
-    foldable < AGGRESSIVE_WAVE_FOLD_MIN_ENTITY_HOPS ||
-    foldable >= AGGRESSIVE_WAVE_FOLD_MAX_ENTITY_HOPS
-  ) {
+  // Pass 2: aggressive wave fold on large plans. Skip when dependsOn is already
+  // cyclic — waveOf parks cycle members at 0 and BatchFetch densifies SCCs;
+  // stripDependsOnCycles then cuts path edges (many-plans nulls). planning-large
+  // stays non-cyclic so it still gets earliest-wave coalesce.
+  if (countFoldableEntityHops(next) < AGGRESSIVE_WAVE_FOLD_MIN_ENTITY_HOPS) {
     return next;
   }
-  const waveById = buildCompletesWaveMap(next);
+  const { waves: waveById, cyclic } = buildCompletesWaveMap(next);
+  if (cyclic) {
+    return next;
+  }
   return foldEntityHopsByKey(
     next,
     stitchingInfo,

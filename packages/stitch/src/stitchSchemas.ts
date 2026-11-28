@@ -252,6 +252,36 @@ function cloneResolverMap(resolverMap: IResolvers, schema: GraphQLSchema): IReso
  * key fields of a merged type; those get delegated to the owning subschema so
  * the rest of the fields resolve through regular type merging.
  */
+/** True when this resolve runs under classic execute (no stitch plan hydration). */
+function needsClassicTypeMerging(info: {
+  operation?: { operation?: string; selectionSet?: { selections: readonly any[] } };
+  fragments?: Record<string, { selectionSet?: { selections: readonly any[] } }>;
+}): boolean {
+  if (info?.operation?.operation === 'subscription') {
+    return true;
+  }
+  const stack = [...(info?.operation?.selectionSet?.selections ?? [])];
+  for (const frag of Object.values(info?.fragments ?? {})) {
+    if (frag?.selectionSet?.selections) {
+      stack.push(...frag.selectionSet.selections);
+    }
+  }
+  while (stack.length) {
+    const sel = stack.pop()!;
+    if (
+      sel?.directives?.some(
+        (d: { name: { value: string } }) => d.name.value === 'defer' || d.name.value === 'stream',
+      )
+    ) {
+      return true;
+    }
+    if (sel?.selectionSet?.selections) {
+      stack.push(...sel.selectionSet.selections);
+    }
+  }
+  return false;
+}
+
 /**
  * Wrap merged-entity field resolvers: ExternalObject parents resolve from
  * response keys (and rethrow matching unpathed errors); otherwise call the
@@ -291,12 +321,13 @@ function wrapMergedTypeResolversForBackboneHydration<TContext extends Record<str
       ) {
         // ExternalObject parents are backbone/stitch payloads. Handle them even
         // when callers omit contextValue (HYDRATED lives on a private bag then).
-        // Queries/mutations: skip type merging (plan already hydrated).
-        // Subscriptions: allow mergeFields for nested entity stubs
-        // (Comment.post → Post.title) — classic execute, no stitch plan.
+        // Backbone-planned queries/mutations: skip type merging (already hydrated).
+        // Classic execute paths (subscription, @defer/@stream) still need
+        // mergeFields for nested entity stubs (Comment.post → Post.title,
+        // deferred author.name, etc.).
         if (parent != null && isExternalObject(parent)) {
           const responseKey = info.fieldNodes[0]?.alias?.value ?? info.fieldName;
-          const skipTypeMerging = info?.operation?.operation !== 'subscription';
+          const skipTypeMerging = !needsClassicTypeMerging(info);
           if (Object.prototype.hasOwnProperty.call(parent, responseKey)) {
             return resolveExternalValue(
               parent[responseKey],
