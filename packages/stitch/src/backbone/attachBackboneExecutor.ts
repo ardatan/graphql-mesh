@@ -2,7 +2,6 @@ import { isObjectType, type GraphQLFieldResolver, type GraphQLSchema } from 'gra
 import type { StitchingInfo } from '@graphql-tools/delegate';
 import type { Executor } from '@graphql-tools/utils';
 import { createBackboneExecutor } from './createBackboneExecutor.js';
-import type { BackboneExecutorOptions } from './types.js';
 
 type RootResolveSnapshot = Map<string, GraphQLFieldResolver<any, any> | undefined>;
 
@@ -59,44 +58,21 @@ export function markChangedRootResolvesAsLocal(
 }
 
 /**
- * Merge explicit attach options with values already stored flat on
- * `stitchingInfo` (`overrideLabels` / `handleProgressiveOverride`) so
- * re-attach after `mapSchema` can be optionless. Labels and handlers come
- * from `stitchSchemas` / attach options only.
- */
-export function resolveBackboneExecutorOptions(
-  schema: GraphQLSchema,
-  options: BackboneExecutorOptions = {},
-): BackboneExecutorOptions {
-  const stitchingInfo = schema.extensions?.stitchingInfo as StitchingInfo | undefined;
-  return {
-    handleProgressiveOverride:
-      options.handleProgressiveOverride ?? stitchingInfo?.handleProgressiveOverride,
-    overrideLabels: options.overrideLabels ?? stitchingInfo?.overrideLabels,
-  };
-}
-
-/**
  * Install the stitching backbone on a schema:
  * - root Query/Mutation proxying resolvers (stock `graphql-js` execute -> backbone)
  * - `stitchingInfo.backboneExecutor` for gateway / direct execute
  *
- * Call on the **final** schema after any `mapSchema` transforms that yield a
- * new schema instance (e.g. federation filter). Safe to call again to rebind;
- * progressive override fields persist flat on `stitchingInfo` so later
- * re-attaches need no bag. Mesh `@pubsubPublish` belongs in fusion-runtime
- * (executor wrap), not here - do not mapSchema-wrap Mutation fields for it.
+ * Progressive-override inputs must already live flat on `stitchingInfo`
+ * (`overrideLabels` / `handleProgressiveOverride`) — typically written by
+ * `stitchSchemas`. Call on the **final** schema after any `mapSchema`
+ * transforms that yield a new schema instance (e.g. federation filter). Safe
+ * to call again to rebind. Mesh `@pubsubPublish` belongs in fusion-runtime
+ * (executor wrap), not here.
  */
-export function attachBackboneExecutor(
-  schema: GraphQLSchema,
-  options: BackboneExecutorOptions = {},
-): GraphQLSchema {
-  const resolved = resolveBackboneExecutorOptions(schema, options);
-  const executor = createBackboneExecutor(schema, resolved);
+export function attachBackboneExecutor(schema: GraphQLSchema): GraphQLSchema {
+  const executor = createBackboneExecutor(schema);
   const stitchingInfo = schema.extensions?.stitchingInfo as StitchingInfo | undefined;
   if (stitchingInfo) {
-    stitchingInfo.overrideLabels = resolved.overrideLabels;
-    stitchingInfo.handleProgressiveOverride = resolved.handleProgressiveOverride;
     stitchingInfo.backboneExecutor = executor;
   }
   return schema;

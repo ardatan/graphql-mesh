@@ -130,6 +130,8 @@ describe('backbone correctness: percentage progressive-override cache', () => {
     let destinationCalls = 0;
     let sourceCalls = 0;
     const schema = stitchSchemas({
+      // percent(...) bypasses plan cache so override handlers re-run every request.
+      overrideLabels: ['percent(50)'],
       subschemas: [
         {
           schema: remoteA,
@@ -189,10 +191,7 @@ describe('backbone correctness: percentage progressive-override cache', () => {
     };
 
     try {
-      const backbone = createBackboneExecutor(schema, {
-        // percent(...) bypasses plan cache so override handlers re-run every request.
-        overrideLabels: ['percent(50)'],
-      });
+      const backbone = createBackboneExecutor(schema);
       const document = parse(`{ hello }`);
       active = true;
 

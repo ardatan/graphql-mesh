@@ -159,22 +159,29 @@ export function stitchSchemas<TContext extends Record<string, any> = Record<stri
     applyExtensions(schema, mergedSchemaExtensions);
   }
 
-  if (contextProvidersOption && schema.extensions?.stitchingInfo) {
-    (
-      schema.extensions.stitchingInfo as { contextProviders?: Record<string, string[]> }
-    ).contextProviders = contextProvidersOption;
+  if (schema.extensions?.stitchingInfo) {
+    const info = schema.extensions.stitchingInfo as {
+      contextProviders?: Record<string, string[]>;
+      overrideLabels?: Iterable<string>;
+      handleProgressiveOverride?: (label: string, context: any) => boolean | Promise<boolean>;
+    };
+    if (contextProvidersOption) {
+      info.contextProviders = contextProvidersOption;
+    }
+    // Progressive-override inputs live flat on stitchingInfo; the backbone
+    // executor reads them from there (no options bag on attach/create).
+    if (overrideLabelsOption != null) {
+      info.overrideLabels = overrideLabelsOption;
+    }
+    if (handleProgressiveOverrideOption != null) {
+      info.handleProgressiveOverride = handleProgressiveOverrideOption;
+    }
   }
 
   // Backbone executor + root proxying resolvers on the stitched schema
   // (stored on stitchingInfo). Callers that mapSchema afterward (e.g.
-  // federation filter) must re-attach on the new instance. Progressive-override
-  // inputs come from stitchSchemas options.
-  return attachBackboneExecutor(schema, {
-    ...(overrideLabelsOption != null ? { overrideLabels: overrideLabelsOption } : {}),
-    ...(handleProgressiveOverrideOption != null
-      ? { handleProgressiveOverride: handleProgressiveOverrideOption }
-      : {}),
-  });
+  // federation filter) must re-attach on the new instance.
+  return attachBackboneExecutor(schema);
 }
 
 function stripCustomDirectiveUsages(types: GraphQLNamedType[]): void {

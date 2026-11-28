@@ -2,7 +2,6 @@ export {
   attachBackboneExecutor,
   getBackboneExecutor,
   markChangedRootResolvesAsLocal,
-  resolveBackboneExecutorOptions,
   snapshotRootFieldResolves,
 } from './attachBackboneExecutor.js';
 export { defaultMergedResolver } from './defaultMergedResolver.js';
@@ -24,7 +23,6 @@ export {
   installRootProxyingResolvers,
 } from './rootProxyingResolvers.js';
 export {
-  type BackboneExecutorOptions,
   type BuildStitchPlanOptions,
   type StitchPlan,
   type StitchPlanNode,

@@ -2444,13 +2444,9 @@ export function getStitchedSchemaFromSupergraphSdl(opts: GetStitchedSchemaFromSu
     // Late root resolver overrides (Query.me -> local) must plan as Islands.
     markChangedRootResolvesAsLocal(supergraphSchema, rootResolvesBefore);
   }
-  // Re-attach after mapSchema. Progressive-override inputs come from
-  // stitchSchemas options (stored flat on stitchingInfo); pass them again so
-  // a fresh schema instance still keys the plan cache.
-  return attachBackboneExecutor(supergraphSchema, {
-    overrideLabels: stitchSchemasOpts.overrideLabels,
-    handleProgressiveOverride: stitchSchemasOpts.handleProgressiveOverride,
-  });
+  // Re-attach after mapSchema. Progressive-override inputs already live flat
+  // on stitchingInfo from stitchSchemas; createBackboneExecutor reads them.
+  return attachBackboneExecutor(supergraphSchema);
 }
 
 /**
