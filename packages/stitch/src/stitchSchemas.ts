@@ -33,7 +33,7 @@ import {
 import { inspect, type IResolvers } from '@graphql-tools/utils';
 import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { defaultMergedResolver as backboneDefaultMergedResolver } from './backbone/defaultMergedResolver.js';
-import { attachBackboneExecutor, BACKBONE_EXECUTING } from './backbone/rootProxyingResolvers.js';
+import { installRootProxyingResolvers, BACKBONE_EXECUTING } from './backbone/rootProxyingResolvers.js';
 import { resolveLocalFieldResult } from './resolveLocalFieldResult.js';
 import { addStitchingInfo, completeStitchingInfo, createStitchingInfo } from './stitchingInfo.js';
 import {
@@ -163,7 +163,7 @@ export function stitchSchemas<TContext extends Record<string, any> = Record<stri
   }
 
   // Shared backboneExecutor + root proxies (plan/locals from info.schema).
-  return attachBackboneExecutor(schema);
+  return installRootProxyingResolvers(schema);
 }
 
 function stripCustomDirectiveUsages(types: GraphQLNamedType[]): void {

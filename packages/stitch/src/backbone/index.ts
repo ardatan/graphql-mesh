@@ -5,7 +5,7 @@ export { executeStitchPlan } from './executeStitchPlan.js';
 export { isLocalField } from './localFields.js';
 export { projectDataToOperation } from './projectResult.js';
 export {
-  attachBackboneExecutor,
+  installRootProxyingResolvers,
   BACKBONE_EXECUTING,
   getOriginalRootResolve,
 } from './rootProxyingResolvers.js';

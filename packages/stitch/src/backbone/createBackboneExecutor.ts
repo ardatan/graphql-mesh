@@ -232,7 +232,7 @@ export function backboneExecutor(
 /**
  * Schema-bound {@link backboneExecutor} (memoized per schema). Calls
  * `backboneExecutor(request, schema)` — does not mutate `info.schema`.
- * Does not install root proxies — call {@link attachBackboneExecutor} /
+ * Does not install root proxies — call {@link installRootProxyingResolvers} /
  * `stitchSchemas` for that.
  */
 export const getBackboneExecutorBySchema = memoize1(function getBackboneExecutorBySchema(
