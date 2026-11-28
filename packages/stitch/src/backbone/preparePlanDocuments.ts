@@ -354,7 +354,7 @@ function buildRootFetchDocument(
   operation: OperationDefinitionNode,
   fieldNode: FieldNode,
   subgraphSchema: GraphQLSchema,
-): DocumentNode {
+): { document: DocumentNode; variableNames: readonly string[] } {
   // Keep nested @skip/@include for subgraph evaluation (provides-scope /
   // Condition). Root Condition nodes strip only the root field's own
   // directives before planning.
@@ -373,21 +373,25 @@ function buildRootFetchDocument(
     };
   }
   const usedVars = collectUsedVariableNames(cleaned);
+  const variableNames = [...usedVars];
   const filteredDefs = filterVariableDefinitions(operation.variableDefinitions, usedVars);
   return {
-    kind: Kind.DOCUMENT,
-    definitions: [
-      {
-        kind: Kind.OPERATION_DEFINITION,
-        operation: operation.operation,
-        name: operation.name,
-        variableDefinitions: filteredDefs,
-        selectionSet: {
-          kind: Kind.SELECTION_SET,
-          selections: [cleaned],
+    document: {
+      kind: Kind.DOCUMENT,
+      definitions: [
+        {
+          kind: Kind.OPERATION_DEFINITION,
+          operation: operation.operation,
+          name: operation.name,
+          variableDefinitions: filteredDefs,
+          selectionSet: {
+            kind: Kind.SELECTION_SET,
+            selections: [cleaned],
+          },
         },
-      },
-    ],
+      ],
+    },
+    variableNames,
   };
 }
 
@@ -431,9 +435,15 @@ export function preparePlanDocuments(
   }
   if (root.kind === 'Fetch') {
     if (root.rootField) {
+      const prepared = buildRootFetchDocument(
+        operation,
+        root.rootField,
+        targetSchema(root.subschema),
+      );
       return {
         ...root,
-        document: buildRootFetchDocument(operation, root.rootField, targetSchema(root.subschema)),
+        document: prepared.document,
+        variableNames: prepared.variableNames,
       };
     }
     if (!root.entityTypeName) {

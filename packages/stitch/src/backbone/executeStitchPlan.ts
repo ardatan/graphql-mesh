@@ -956,9 +956,7 @@ function executeFetchNode(
       );
     }
     const variables: Record<string, any> = {};
-    const op = document.definitions.find(d => d.kind === Kind.OPERATION_DEFINITION);
-    for (const def of op?.variableDefinitions ?? []) {
-      const name = def.variable.name.value;
+    for (const name of node.variableNames ?? []) {
       ensureVariableValue(ctx.variableValues, name, ctx.variableDefaults);
       if (name in ctx.variableValues) {
         variables[name] = ctx.variableValues[name];

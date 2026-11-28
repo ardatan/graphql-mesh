@@ -86,6 +86,11 @@ export type StitchPlanNode =
        */
       document?: DocumentNode;
       /**
+       * Variable names used by {@link document} (plan-time). Execute binds
+       * values by lookup — does not re-walk the document AST.
+       */
+      variableNames?: readonly string[];
+      /**
        * When set, hop runs only if any DNF AND-group matches `variableValues`.
        * Root `@skip`/`@include` use Condition nodes; runIf remains for fold/batch.
        */
