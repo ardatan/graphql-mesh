@@ -117,6 +117,7 @@ function leafKeysSatisfied(value: Record<string, any>, keys: readonly string[]):
 function selectionSatisfiedByDeep(
   value: Record<string, any>,
   selectionSet: SelectionSetNode,
+  schema?: GraphQLSchema,
 ): boolean {
   for (const sel of selectionSet.selections) {
     if (sel.kind === Kind.FIELD) {
@@ -139,13 +140,13 @@ function selectionSatisfiedByDeep(
           if (
             item != null &&
             typeof item === 'object' &&
-            !selectionSatisfiedBy(item, sel.selectionSet)
+            !selectionSatisfiedBy(item, sel.selectionSet, schema)
           ) {
             return false;
           }
         }
       } else if (typeof child === 'object') {
-        if (!selectionSatisfiedBy(child, sel.selectionSet)) {
+        if (!selectionSatisfiedBy(child, sel.selectionSet, schema)) {
           return false;
         }
       } else {
@@ -155,10 +156,17 @@ function selectionSatisfiedByDeep(
       if (sel.typeCondition) {
         const tn = value.__typename;
         if (tn != null && tn !== sel.typeCondition.name.value) {
+          // @interfaceObject parents still carry the interface __typename until
+          // a concrete hop runs. Only skip when a *different concrete* object
+          // type was already resolved (Admin vs Regular).
+          const runtime = schema?.getType(tn);
+          if (runtime != null && (isInterfaceType(runtime) || !isObjectType(runtime))) {
+            return false;
+          }
           continue;
         }
       }
-      if (!selectionSatisfiedBy(value, sel.selectionSet)) {
+      if (!selectionSatisfiedBy(value, sel.selectionSet, schema)) {
         return false;
       }
     } else {
@@ -176,6 +184,7 @@ function selectionSatisfiedByDeep(
 function selectionSatisfiedBy(
   value: Record<string, any> | null | undefined,
   selectionSet: SelectionSetNode,
+  schema?: GraphQLSchema,
 ): boolean {
   if (value == null || typeof value !== 'object' || Array.isArray(value)) {
     return false;
@@ -188,7 +197,7 @@ function selectionSatisfiedBy(
   if (info.topKeys.length && !leafKeysSatisfied(value, info.topKeys)) {
     return false;
   }
-  return selectionSatisfiedByDeep(value, selectionSet);
+  return selectionSatisfiedByDeep(value, selectionSet, schema);
 }
 
 /** Copy missing selection fields (incl. nested) from cached entity onto parent. */
@@ -355,9 +364,9 @@ function tryReuseEntityIntoParent(
 ): boolean {
   if (!entityReuseAllowed(ctx) || !ctx.entityByRepHash?.size) {
     // Fall back: parent already has the needed selection from an earlier merge.
-    return selectionSatisfiedBy(parent, selectionSet);
+    return selectionSatisfiedBy(parent, selectionSet, ctx.schema);
   }
-  if (selectionSatisfiedBy(parent, selectionSet)) {
+  if (selectionSatisfiedBy(parent, selectionSet, ctx.schema)) {
     return true;
   }
   const hash = representationHash(parent, hopSubschema, entityTypeName);
@@ -365,7 +374,7 @@ function tryReuseEntityIntoParent(
     return false;
   }
   const cached = ctx.entityByRepHash.get(hash);
-  if (!cached || !selectionSatisfiedBy(cached, selectionSet)) {
+  if (!cached || !selectionSatisfiedBy(cached, selectionSet, ctx.schema)) {
     return false;
   }
   // Cached already satisfied the selection — copy is sufficient (no re-walk).
@@ -1091,6 +1100,7 @@ function executeFetchNode(
 
   // Always-on entity reuse (queries): copy by rep-hash / parent leaves, skip HTTP.
   if (entityReuseAllowed(ctx)) {
+    const before = parents.length;
     parents = parents.filter(
       p =>
         !tryReuseEntityIntoParent(ctx, node.subschema, node.entityTypeName!, p, node.selectionSet),
