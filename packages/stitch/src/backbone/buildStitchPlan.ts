@@ -1816,7 +1816,6 @@ function planMergedTypeFollowUps(
     planningContext,
     overrideInfo,
   );
-
   const stages: StitchPlanNode[] = [];
   for (const delegationMap of delegationMaps) {
     const parallel: StitchPlanNode[] = [];
@@ -3175,7 +3174,6 @@ function planRootField(
           }
         }
       }
-
       // Expand requires bridges for interface fields onto the root Fetch.
       const bridgeFragments: SelectionNode[] = [];
       if (interfaceFields.length) {
