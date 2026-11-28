@@ -2059,10 +2059,20 @@ function executeBatchFetchNode(
     return;
   }
 
-  // Prefer one concatenated merge-field HTTP whenever the plan attached a
-  // document and every alias is leaf-only (scalars + @include/@skip). Nested
-  // / arg-bearing aliases fall through to parallel Fetch (Transformer).
-  if (node.document && activeAliases.every(a => isLeafOnlySelection(a.selectionSet))) {
+  // Prefer one concatenated merge-field HTTP when the plan attached a document
+  // and the raw path is safe:
+  // - leaf-only aliases (scalars / @include/@skip), or
+  // - mixed entity types (optimizations: User.reviews + Product.reviews → one
+  //   hop; each `_entities` result matches one type inline fragment).
+  // Same-type nested multi-alias BatchFetch stays on parallel Fetch: the
+  // prebuilt doc unions same-type inline fragments for every key, which
+  // mis-merges deep many-plans trees (n1.n0.n4.n5.f6). Gateway `batch`
+  // still collapses same-tick Fetches.
+  const allLeafOnly = activeAliases.every(a => isLeafOnlySelection(a.selectionSet));
+  const mixedEntityTypes = activeAliases.some(
+    a => a.entityTypeName !== activeAliases[0]!.entityTypeName,
+  );
+  if (node.document && (allLeafOnly || mixedEntityTypes)) {
     const prepared: BatchAliasPrep[] = [];
     const allKeys: any[] = [];
     let canRawBatch = true;

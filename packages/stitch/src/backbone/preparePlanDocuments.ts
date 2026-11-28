@@ -1,6 +1,5 @@
 import {
   getNamedType,
-  isAbstractType,
   isInterfaceType,
   isNullableType,
   isObjectType,
@@ -218,13 +217,11 @@ export function filterSelectionSetForSubschema(
           }
         };
         pushDeps(fieldNodesByField?.[typeName]?.[name]);
-        if (isAbstractType(type) && fieldNodesByField) {
-          const concretes = isInterfaceType(type)
-            ? schema.getPossibleTypes(type)
-            : isUnionType(type)
-              ? type.getTypes()
-              : [];
-          for (const concrete of concretes) {
+        // Parent here always has getFields (object/interface). Unions are
+        // filtered out above — only interfaces need concrete key-dep lookup
+        // (e.g. Product.sku → id on each implementing type).
+        if (isInterfaceType(type) && fieldNodesByField) {
+          for (const concrete of schema.getPossibleTypes(type)) {
             pushDeps(fieldNodesByField[concrete.name]?.[name]);
           }
         }
