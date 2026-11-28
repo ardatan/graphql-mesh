@@ -72,6 +72,48 @@ Generated and hand-written subgraphs share the same compose and
 [schema registry](/v2/concepts/schema-registry) path. [Transform Subgraph](/v2/transforms) is
 optional -- skip it when Hand-write or Generate-then-edit already owns the SDL.
 
+<a id="routing-url" />
+
+## Subgraph routing URL (`routingUrl`)
+
+Gateways often need a **served / join graph URL** that differs from the **upstream API** endpoint.
+Mesh Compose keeps those separate:
+
+| Concern                                                           | Where it lives                                                                              |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Upstream API (HTTP GraphQL, Connect `@source`, protocol endpoint) | `@transport(location:)` (or Connectors `@source(http.baseURL)`) from the loader or hand SDL |
+| Served subgraph / join graph URL for the gateway                  | `@join__graph(url:)`                                                                        |
+
+Optional `subgraphs[].routingUrl` writes the join graph URL. When set, Compose stamps it on
+`@join__graph(url:)` and leaves `@transport(location:)` as the upstream endpoint. Omit it for the
+previous behavior (join URL follows transport / source location).
+
+```ts
+import {
+  defineConfig as defineComposeConfig,
+  loadGraphQLHTTPSubgraph
+} from '@graphql-mesh/compose-cli'
+
+export const composeConfig = defineComposeConfig({
+  subgraphs: [
+    {
+      name: 'users',
+      // Join / gateway-facing URL written to @join__graph(url:)
+      routingUrl: 'http://localhost:4001/graphql',
+      sourceHandler: loadGraphQLHTTPSubgraph('users', {
+        // Upstream API stays on @transport(location:)
+        endpoint: 'http://upstream:8080/graphql'
+      })
+    }
+  ]
+})
+```
+
+Without Mesh Compose (Rover, Apollo Router overlays, registry publish `--url`), use Router / Rover
+`routing_url` for the same split -- see
+[buildSubgraphSchema: URL split](/v2/guides/build-subgraph-schema#url-split). That overlay path does
+not replace `routingUrl` when you compose with Mesh; pick one place to own the join URL.
+
 ## Hand-written SDL
 
 ```ts
