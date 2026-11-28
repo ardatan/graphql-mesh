@@ -3062,12 +3062,10 @@ function planRootField(
           const cond = fragment.typeCondition.name.value;
           if (cond !== returnType.name) {
             clientHasConcreteFragments = true;
-          }
-          const nested = flattenToFieldNodes(fragment.selectionSet.selections, fragments).filter(
-            fn => fn.name.value !== '__typename' && !isFieldCovered(fn.name.value, cond),
-          );
-          if (!nested.length) {
-            if (cond !== returnType.name) {
+            const nested = flattenToFieldNodes(fragment.selectionSet.selections, fragments).filter(
+              fn => fn.name.value !== '__typename' && !isFieldCovered(fn.name.value, cond),
+            );
+            if (!nested.length) {
               concreteFragments.push({
                 kind: Kind.INLINE_FRAGMENT,
                 typeCondition: fragment.typeCondition,
@@ -3078,17 +3076,102 @@ function planRootField(
                   },
                 ]),
               });
+              continue;
             }
-            continue;
-          }
-          if (cond === returnType.name) {
-            interfaceFields.push(...nested);
-          } else {
             concreteFragments.push({
               kind: Kind.INLINE_FRAGMENT,
               typeCondition: fragment.typeCondition,
               selectionSet: selectionSetOf(nested),
             });
+            continue;
+          }
+          // Fragment on the interface itself (e.g. `fragment NodeFields on Node {
+          //   ... on Leaf { extra } }`): re-classify selections so nested
+          // concrete inline fragments keep their type conditions instead of
+          // being flattened onto the interface.
+          for (const inner of fragment.selectionSet.selections) {
+            if (inner.kind === Kind.FIELD) {
+              if (
+                inner.name.value !== '__typename' &&
+                !isFieldCovered(inner.name.value, returnType.name)
+              ) {
+                interfaceFields.push(inner);
+              }
+            } else if (inner.kind === Kind.INLINE_FRAGMENT) {
+              const innerCond = inner.typeCondition?.name.value;
+              if (!innerCond) {
+                continue;
+              }
+              if (innerCond !== returnType.name) {
+                clientHasConcreteFragments = true;
+              }
+              const nested = flattenToFieldNodes(inner.selectionSet.selections, fragments).filter(
+                fn => fn.name.value !== '__typename' && !isFieldCovered(fn.name.value, innerCond),
+              );
+              if (!nested.length) {
+                if (innerCond !== returnType.name) {
+                  concreteFragments.push({
+                    ...inner,
+                    selectionSet: selectionSetOf([
+                      {
+                        kind: Kind.FIELD,
+                        name: { kind: Kind.NAME, value: '__typename' },
+                      },
+                    ]),
+                  });
+                }
+                continue;
+              }
+              if (innerCond === returnType.name) {
+                interfaceFields.push(...nested);
+              } else {
+                concreteFragments.push({
+                  ...inner,
+                  selectionSet: selectionSetOf(nested),
+                });
+              }
+            } else if (inner.kind === Kind.FRAGMENT_SPREAD) {
+              // Nested spreads (NodeFields -> LeafFields on Leaf): one level deep.
+              const nestedFrag = fragments[inner.name.value];
+              if (!nestedFrag) {
+                continue;
+              }
+              const nestedCond = nestedFrag.typeCondition.name.value;
+              if (nestedCond !== returnType.name) {
+                clientHasConcreteFragments = true;
+              }
+              const nested = flattenToFieldNodes(
+                nestedFrag.selectionSet.selections,
+                fragments,
+              ).filter(
+                fn =>
+                  fn.name.value !== '__typename' && !isFieldCovered(fn.name.value, nestedCond),
+              );
+              if (!nested.length) {
+                if (nestedCond !== returnType.name) {
+                  concreteFragments.push({
+                    kind: Kind.INLINE_FRAGMENT,
+                    typeCondition: nestedFrag.typeCondition,
+                    selectionSet: selectionSetOf([
+                      {
+                        kind: Kind.FIELD,
+                        name: { kind: Kind.NAME, value: '__typename' },
+                      },
+                    ]),
+                  });
+                }
+                continue;
+              }
+              if (nestedCond === returnType.name) {
+                interfaceFields.push(...nested);
+              } else {
+                concreteFragments.push({
+                  kind: Kind.INLINE_FRAGMENT,
+                  typeCondition: nestedFrag.typeCondition,
+                  selectionSet: selectionSetOf(nested),
+                });
+              }
+            }
           }
         }
       }
