@@ -172,15 +172,6 @@ export interface StitchPlan {
   incompleteReasons: string[];
 }
 
-/** Per-call inputs for `buildStitchPlan`. */
-export interface BuildStitchPlanOptions {
-  /**
-   * Gateway-owned active progressive-override labels (plan-cache key). Not the
-   * full request context — override handlers see a labels-only bag.
-   */
-  activeLabels?: object;
-}
-
 export interface BackboneExecutionContext {
   schema: GraphQLSchema;
   document: DocumentNode;

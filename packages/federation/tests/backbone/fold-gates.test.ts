@@ -6,7 +6,6 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Kind, parse } from 'graphql';
-import { getFragmentsFromDocument } from '@graphql-tools/executor';
 import { buildStitchPlan, collectExecutableHops, type StitchPlanNode } from '@graphql-tools/stitch';
 import { getStitchedSchemaFromSupergraphSdl } from '../../src/supergraph';
 import { DESCRIPTIONS, QUERIES } from '../fixtures/planning-large/queries.js';
@@ -106,7 +105,7 @@ describe('backbone wave-per-subgraph fold (federation)', () => {
       }
     `);
     const op = document.definitions.find(d => d.kind === Kind.OPERATION_DEFINITION)!;
-    const plan = buildStitchPlan(schema, op, getFragmentsFromDocument(document), {});
+    const plan = buildStitchPlan(schema, document);
     expect(plan.incomplete).toBe(false);
     const { http } = countPlanHttpHops(plan.root);
     // Known target: 2 root Fetches + ≤1 inventory wave (wave fold).
@@ -200,7 +199,7 @@ describe('planning-large fold gates vs Hive Router Rust query planner', () => {
     for (const name of names) {
       const document = parse(QUERIES[name].replaceAll('__ID__', '1'));
       const op = document.definitions.find(d => d.kind === Kind.OPERATION_DEFINITION)!;
-      const plan = buildStitchPlan(schema, op, getFragmentsFromDocument(document), {});
+      const plan = buildStitchPlan(schema, document);
       expect(plan.incomplete).toBe(false);
       if (plan.incomplete) {
         throw new Error(`${name} incomplete: ${plan.incompleteReasons}`);

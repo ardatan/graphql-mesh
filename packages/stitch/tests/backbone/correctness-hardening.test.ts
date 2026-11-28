@@ -175,18 +175,17 @@ describe('backbone correctness: progressive-override per request', () => {
       useDestination = i % 2 === 0;
       const beforeDest = destinationCalls;
       const beforeSrc = sourceCalls;
-      // Fresh labels Set per request (gateway-owned); plan memo keys that object.
+      // Unique sorted-label key each request → plan Map miss and rebuild.
       const result = await exec(backbone, {
         document,
         context: {
-          [Symbol.for('hive.gateway.overrideLabels')]: new Set(['rollout']),
+          [Symbol.for('hive.gateway.overrideLabels')]: new Set([`label-${i}`]),
         },
       });
       expect(result.errors).toBeUndefined();
       const hello = String((result.data as any)?.hello);
       routes.push(hello);
       expect(hello).toBe(useDestination ? 'from-a' : 'from-b');
-      // Each request re-plans: both override handlers run again.
       expect(destinationCalls).toBeGreaterThan(beforeDest);
       expect(sourceCalls).toBeGreaterThan(beforeSrc);
     }
@@ -205,6 +204,21 @@ describe('backbone correctness: progressive-override per request', () => {
       'from-a',
       'from-b',
     ]);
+
+    // Same label key hits the plan Map — override handlers do not re-run.
+    const cachedBeforeDest = destinationCalls;
+    const cachedBeforeSrc = sourceCalls;
+    useDestination = false;
+    const cached = await exec(backbone, {
+      document,
+      context: {
+        [Symbol.for('hive.gateway.overrideLabels')]: new Set(['label-0']),
+      },
+    });
+    expect(cached.errors).toBeUndefined();
+    expect(cached.data).toEqual({ hello: 'from-a' });
+    expect(destinationCalls).toBe(cachedBeforeDest);
+    expect(sourceCalls).toBe(cachedBeforeSrc);
   });
 });
 

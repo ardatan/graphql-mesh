@@ -134,7 +134,7 @@ describe('backbone aggressive BatchFetch + entityReuse', () => {
         }
       }
     `);
-    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, {});
+    const plan = buildStitchPlan(schema, document);
     expect(plan.incompleteReasons).toEqual([]);
     const batches: Array<Extract<StitchPlanNode, { kind: 'BatchFetch' }>> = [];
     walkBatches(plan.root, batches);
@@ -253,9 +253,7 @@ describe('backbone aggressive BatchFetch + entityReuse', () => {
             }
           }
         }
-      `).definitions[0] as any,
-      {},
-      {},
+      `),
     );
     expect(plan.incompleteReasons).toEqual([]);
     const batches: Array<Extract<StitchPlanNode, { kind: 'BatchFetch' }>> = [];
@@ -440,9 +438,7 @@ describe('backbone aggressive BatchFetch + entityReuse', () => {
             }
           }
         }
-      `).definitions[0] as any,
-      {},
-      {},
+      `),
     );
     expect(plan.incompleteReasons).toEqual([]);
     const batches: Array<Extract<StitchPlanNode, { kind: 'BatchFetch' }>> = [];
@@ -535,7 +531,7 @@ describe('backbone aggressive BatchFetch + entityReuse', () => {
         }
       }
     `);
-    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, {});
+    const plan = buildStitchPlan(schema, document);
     expect(plan.incompleteReasons).toEqual([]);
     expect(plan.root.kind).toBe('Condition');
     expect((plan.root as any).condition).toBe('wantProducts');
@@ -953,7 +949,7 @@ describe('backbone aggressive BatchFetch + entityReuse', () => {
         }
       }
     `);
-    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, {});
+    const plan = buildStitchPlan(schema, document);
     expect(plan.incompleteReasons).toEqual([]);
     const batches: Array<Extract<StitchPlanNode, { kind: 'BatchFetch' }>> = [];
     walkBatches(plan.root, batches);

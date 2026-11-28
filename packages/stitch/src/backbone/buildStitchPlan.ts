@@ -1,5 +1,6 @@
 import {
   getNamedType,
+  getOperationAST,
   isAbstractType,
   isInterfaceType,
   isLeafType,
@@ -7,6 +8,7 @@ import {
   isUnionType,
   Kind,
   valueFromASTUntyped,
+  type DocumentNode,
   type FieldNode,
   type FragmentDefinitionNode,
   type GraphQLInterfaceType,
@@ -19,6 +21,7 @@ import {
 } from 'graphql';
 import type { StitchingInfo, Subschema } from '@graphql-tools/delegate';
 import { handleOverrideByDelegation, leftOverByDelegationPlan } from '@graphql-tools/delegate';
+import { getFragmentsFromDocument } from '@graphql-tools/executor';
 import { getDefinedRootType } from '@graphql-tools/utils';
 import { isLocalField } from './localFields.js';
 import { getBatchedMergeEntry, inferMergeArgName } from './mergeEntry.js';
@@ -26,12 +29,7 @@ import { buildPlanSchedule, collectExecutableHops, planHasCondition } from './pl
 import { flattenPlanControlFlow } from './planShape.js';
 import { preparePlanDocuments } from './preparePlanDocuments.js';
 import { orRunIf, runIfKey } from './runIf.js';
-import type {
-  BuildStitchPlanOptions,
-  PathSegment,
-  StitchPlan,
-  StitchPlanNode,
-} from './types.js';
+import type { PathSegment, StitchPlan, StitchPlanNode } from './types.js';
 
 /**
  * Aggressive (earliest-wave) fold only kicks in when the plan still has many
@@ -3268,13 +3266,29 @@ function planRootField(
   return sequenceRootFollowUps(rootNode, null);
 }
 
+/**
+ * Build a stitch plan for one operation in `document`.
+ * Variable-independent: root `@skip`/`@include` are Condition nodes.
+ * Progressive override uses `activeLabels` only (not full request context).
+ */
 export function buildStitchPlan(
   schema: GraphQLSchema,
-  operation: OperationDefinitionNode,
-  fragments: Record<string, FragmentDefinitionNode>,
-  variableValues: Record<string, any>,
-  options: BuildStitchPlanOptions = {},
+  document: DocumentNode,
+  operationName?: string | null,
+  activeLabels?: Iterable<string> | null,
 ): StitchPlan {
+  const operation = getOperationAST(document, operationName ?? undefined);
+  const fragments = getFragmentsFromDocument(document);
+  if (!operation) {
+    return {
+      operation: operation as any,
+      fragments,
+      root: { kind: 'Parallel', nodes: [] },
+      incomplete: true,
+      incompleteReasons: ['Missing operation'],
+    };
+  }
+
   const incompleteReasons: string[] = [];
   const stitchingInfo = schema.extensions?.stitchingInfo as StitchingInfo | undefined;
 
@@ -3295,48 +3309,29 @@ export function buildStitchPlan(
   // root + entity hops on concrete members). Do not mark incomplete solely for
   // abstracts - Cast/Flatten gaps must fail at execute so we fix plan quality.
 
-  // Plan is variable-independent: root @skip/@include are Condition nodes;
-  // nested directives stay on the AST for subgraphs. Callers may still pass
-  // variables for tests / tooling — defaults are applied but not cache keys.
-  const coercedVariables = coerceOperationVariables(operation, variableValues);
-
   const previousPlanningContext = planningContext;
   // Labels-only bag (not full request context) for override handlers.
   planningContext =
-    options.activeLabels != null
-      ? { [OVERRIDE_LABELS_CONTEXT_KEY]: options.activeLabels }
-      : undefined;
+    activeLabels != null ? { [OVERRIDE_LABELS_CONTEXT_KEY]: activeLabels } : undefined;
   try {
-    if (incompleteReasons.length > 0) {
-      // Still attempt a best-effort plan for warming, but never throw out of here.
-      try {
-        return buildCompletePlan(
-          schema,
-          stitchingInfo,
-          operation,
-          fragments,
-          coercedVariables,
-          incompleteReasons,
-        );
-      } catch {
-        return {
-          operation,
-          fragments,
-          root: { kind: 'Parallel', nodes: [] },
-          incomplete: true,
-          incompleteReasons,
-        };
-      }
-    }
-
     return buildCompletePlan(
       schema,
       stitchingInfo,
       operation,
       fragments,
-      coercedVariables,
+      {},
       incompleteReasons,
     );
+  } catch {
+    return {
+      operation,
+      fragments,
+      root: { kind: 'Parallel', nodes: [] },
+      incomplete: true,
+      incompleteReasons: incompleteReasons.length
+        ? incompleteReasons
+        : ['Plan build failed'],
+    };
   } finally {
     planningContext = previousPlanningContext;
   }

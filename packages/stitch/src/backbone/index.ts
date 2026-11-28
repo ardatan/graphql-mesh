@@ -10,7 +10,6 @@ export {
   getOriginalRootResolve,
 } from './rootProxyingResolvers.js';
 export {
-  type BuildStitchPlanOptions,
   type StitchPlan,
   type StitchPlanNode,
   type StitchPlanSchedule,

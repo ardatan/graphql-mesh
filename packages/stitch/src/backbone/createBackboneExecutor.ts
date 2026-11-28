@@ -1,11 +1,9 @@
 import { GraphQLError, Kind, type DocumentNode, type GraphQLSchema } from 'graphql';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
-import { getFragmentsFromDocument } from '@graphql-tools/executor';
 import {
   getOperationASTFromRequest,
   isAsyncIterable,
   memoize1,
-  memoize3,
   type ExecutionRequest,
   type ExecutionResult,
   type Executor,
@@ -59,69 +57,36 @@ function documentHasDeferOrStream(request: ExecutionRequest): boolean {
 /** Same key fusion sets on request context with the per-request active labels. */
 const OVERRIDE_LABELS_CONTEXT_KEY = Symbol.for('hive.gateway.overrideLabels');
 
-/** When context has no active labels object — stable WeakMap key for memoize3. */
-const EMPTY_ACTIVE_LABELS: object = Object.freeze({});
-
-/**
- * Build inputs for the memoize3 miss path. Plan is independent of request
- * variables/context (Condition for @skip/@include; labels are the memo key).
- */
-let planBuildInput:
-  | {
-      operation: NonNullable<ReturnType<typeof getOperationASTFromRequest>>;
-      fragments: ReturnType<typeof getFragmentsFromDocument>;
-      activeLabels: object | undefined;
-    }
-  | undefined;
-
-/** Plan cache: memoize3(schema, request.document, activeLabels). */
-const cachedPlanBySchemaDocumentAndLabels = memoize3(function cachedPlanBySchemaDocumentAndLabels(
-  schema: GraphQLSchema,
-  _document: DocumentNode,
-  _activeLabels: object,
-): StitchPlan {
-  const input = planBuildInput!;
-  try {
-    return buildStitchPlan(schema, input.operation, input.fragments, {}, {
-      activeLabels: input.activeLabels,
-    });
-  } catch (err) {
-    return {
-      operation: input.operation,
-      fragments: input.fragments,
-      root: { kind: 'Parallel', nodes: [] },
-      incomplete: true,
-      incompleteReasons: [err instanceof Error ? err.message : 'Plan build failed'],
-    };
-  }
-});
+/** schema → document → Map keyed by `${operationName}::${sortedLabels}`. */
+const plansBySchema = new WeakMap<GraphQLSchema, WeakMap<DocumentNode, Map<string, StitchPlan>>>();
 
 function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): StitchPlan {
-  const operation = getOperationASTFromRequest(request);
-  if (!operation) {
-    return {
-      operation: operation as any,
-      fragments: {},
-      root: { kind: 'Parallel', nodes: [] },
-      incomplete: true,
-      incompleteReasons: ['Missing operation'],
-    };
+  const activeLabelsRaw = request.context?.[OVERRIDE_LABELS_CONTEXT_KEY];
+  const activeLabels: Iterable<string> | undefined =
+    activeLabelsRaw != null && typeof (activeLabelsRaw as any)[Symbol.iterator] === 'function'
+      ? (activeLabelsRaw as Iterable<string>)
+      : undefined;
+  const operationName = request.operationName ?? '';
+  const sortedLabels = activeLabels != null ? [...activeLabels].map(String).sort().join(',') : '';
+  const key = `${operationName}::${sortedLabels}`;
+
+  let byDocument = plansBySchema.get(schema);
+  if (!byDocument) {
+    byDocument = new WeakMap();
+    plansBySchema.set(schema, byDocument);
   }
-  const fragments = getFragmentsFromDocument(request.document);
-  // Per-request active labels only (fusion / gateway context) — no schema.extensions bag.
-  const activeLabels = request.context?.[OVERRIDE_LABELS_CONTEXT_KEY];
-  const labelsKey: object =
-    activeLabels != null && typeof activeLabels === 'object' ? activeLabels : EMPTY_ACTIVE_LABELS;
-  planBuildInput = {
-    operation,
-    fragments,
-    activeLabels: labelsKey === EMPTY_ACTIVE_LABELS ? undefined : labelsKey,
-  };
-  try {
-    return cachedPlanBySchemaDocumentAndLabels(schema, request.document, labelsKey);
-  } finally {
-    planBuildInput = undefined;
+  let cache = byDocument.get(request.document);
+  if (!cache) {
+    cache = new Map();
+    byDocument.set(request.document, cache);
   }
+  const cached = cache.get(key);
+  if (cached) {
+    return cached;
+  }
+  const plan = buildStitchPlan(schema, request.document, request.operationName, activeLabels);
+  cache.set(key, plan);
+  return plan;
 }
 
 /**
