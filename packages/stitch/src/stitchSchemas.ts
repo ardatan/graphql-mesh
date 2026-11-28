@@ -15,6 +15,7 @@ import {
   type GraphQLObjectType,
 } from 'graphql';
 import {
+  defaultMergedResolver as classicDefaultMergedResolver,
   getSubschema,
   getUnpathedErrors,
   isExternalObject,
@@ -252,14 +253,11 @@ function cloneResolverMap(resolverMap: IResolvers, schema: GraphQLSchema): IReso
  * key fields of a merged type; those get delegated to the owning subschema so
  * the rest of the fields resolve through regular type merging.
  */
-/** True when this resolve runs under classic execute (no stitch plan hydration). */
-function needsClassicTypeMerging(info: {
-  operation?: { operation?: string; selectionSet?: { selections: readonly any[] } };
+/** True when the operation document uses `@defer` / `@stream`. */
+function documentHasDeferOrStream(info: {
+  operation?: { selectionSet?: { selections: readonly any[] } };
   fragments?: Record<string, { selectionSet?: { selections: readonly any[] } }>;
 }): boolean {
-  if (info?.operation?.operation === 'subscription') {
-    return true;
-  }
   const stack = [...(info?.operation?.selectionSet?.selections ?? [])];
   for (const frag of Object.values(info?.fragments ?? {})) {
     if (frag?.selectionSet?.selections) {
@@ -280,6 +278,18 @@ function needsClassicTypeMerging(info: {
     }
   }
   return false;
+}
+
+/**
+ * True when this resolve runs under classic execute (no stitch plan hydration).
+ * Subscriptions and @defer/@stream need resolveExternalValue type merging for
+ * present entity stubs (Comment.post → Post.title).
+ */
+function needsClassicTypeMerging(info: {
+  operation?: { operation?: string; selectionSet?: { selections: readonly any[] } };
+  fragments?: Record<string, { selectionSet?: { selections: readonly any[] } }>;
+}): boolean {
+  return info?.operation?.operation === 'subscription' || documentHasDeferOrStream(info);
 }
 
 /**
@@ -349,6 +359,15 @@ function wrapMergedTypeResolversForBackboneHydration<TContext extends Record<str
               undefined,
               skipTypeMerging,
             );
+          }
+          // Gateway-owned @defer/@stream omits deferred selections from the
+          // initial subgraph response, so the key is missing here. Backbone
+          // DMR returns undefined; classic DMR runs mergeFields /
+          // resolveMissingFieldFromSourceSubschema. Subscriptions keep the
+          // present-stub merge path above (classic DMR on missing keys breaks
+          // subscription payloads).
+          if (documentHasDeferOrStream(info)) {
+            return classicDefaultMergedResolver(parent, args, context, info);
           }
           // Missing key: rethrow unpathed subgraph errors (shared-root non-null).
           // Otherwise fall through so subscription / local resolvers still run.
