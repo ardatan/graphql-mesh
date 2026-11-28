@@ -210,10 +210,7 @@ describe('Federation @context / @fromContext', () => {
       },
     });
     expect(opts.contextProviders?.['accounts__userContext']).toContain('User');
-    expect(
-      (opts.schemaExtensions as { schemaExtensions?: { contextProviders?: unknown } } | undefined)
-        ?.schemaExtensions?.contextProviders,
-    ).toBeUndefined();
+    expect(opts.schemaExtensions).toBeUndefined();
   });
 
   it('plans a context-bearing entity hop with parentDepth rewrite', () => {

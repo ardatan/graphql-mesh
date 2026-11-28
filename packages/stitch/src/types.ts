@@ -79,6 +79,17 @@ export interface IStitchSchemasOptions<TContext = Record<string, any>> extends O
    * calling `stitchSchemas`). There is no `schema.extensions` fallback.
    */
   contextProviders?: Record<string, string[]>;
+  /**
+   * Known progressive-override labels from the supergraph. Passed through to
+   * `attachBackboneExecutor` for plan-cache keying. Prefer this over putting
+   * labels on `schema.extensions`.
+   */
+  overrideLabels?: Iterable<string>;
+  /**
+   * Progressive override label handler. Passed through to
+   * `attachBackboneExecutor` with `overrideLabels`.
+   */
+  handleProgressiveOverride?: (label: string, context: any) => boolean | Promise<boolean>;
 }
 
 export type SubschemaConfigTransform<TContext = Record<string, any>> = (

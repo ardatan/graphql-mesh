@@ -223,7 +223,8 @@ export interface BackboneExecutorOptions {
   /**
    * Known progressive-override labels from the supergraph. Combined with
    * `handleProgressiveOverride` + request context to cache plans per enabled set.
-   * Falls back to `schema.extensions.overrideLabels` when omitted.
+   * Prefer `stitchSchemas({ overrideLabels })` / attach options; persisted on
+   * `backboneExecutorOptions` for optionless re-attach after `mapSchema`.
    */
   overrideLabels?: Iterable<string>;
 }

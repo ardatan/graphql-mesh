@@ -78,7 +78,6 @@ import {
   parseSelectionSet,
   type ASTVisitorKeyMap,
   type Executor,
-  type SchemaExtensions,
 } from '@graphql-tools/utils';
 import { handleMaybePromise, isPromise } from '@whatwg-node/promise-helpers';
 import {
@@ -2399,15 +2398,6 @@ export function getStitchingOptionsFromSupergraphSdl(
       opts.onSubschemaConfig(subschema as FederationSubschemaConfig);
     }
   }
-  let schemaExtensions: SchemaExtensions | undefined;
-  if (overrideLabels.size) {
-    schemaExtensions = {
-      schemaExtensions: {
-        overrideLabels,
-      },
-      types: {},
-    };
-  }
   const hasContextProviders = Object.keys(contextProviders).length > 0;
 
   return {
@@ -2423,7 +2413,13 @@ export function getStitchingOptionsFromSupergraphSdl(
       fieldConfigMerger,
     },
     ...(hasContextProviders ? { contextProviders } : {}),
-    schemaExtensions,
+    ...(overrideLabels.size ? { overrideLabels } : {}),
+    ...(opts.handleProgressiveOverride
+      ? {
+          handleProgressiveOverride: (label: string, context: any) =>
+            opts.handleProgressiveOverride!(label, context, undefined as any),
+        }
+      : {}),
   };
 }
 
@@ -2448,17 +2444,12 @@ export function getStitchedSchemaFromSupergraphSdl(opts: GetStitchedSchemaFromSu
     // Late root resolver overrides (Query.me -> local) must plan as Islands.
     markChangedRootResolvesAsLocal(supergraphSchema, rootResolvesBefore);
   }
-  // Persist progressive-override plan-cache opts on schema.extensions so a
-  // later mapSchema + bare re-attach (e.g. filterInternalFieldsAndTypes) needs
-  // no options bag.
-  // `contextProviders` are set on stitchingInfo inside stitchSchemas from the
-  // top-level option (mapSchema preserves stitchingInfo).
+  // Re-attach after mapSchema. Progressive-override inputs come from
+  // stitchSchemas options (stored on backboneExecutorOptions); pass them again
+  // so a fresh schema instance still keys the plan cache correctly.
   return attachBackboneExecutor(supergraphSchema, {
-    // Plan-cache keying only needs label + context; federation's handler also
-    // accepts resolve info when used as a field override callback.
-    handleProgressiveOverride: opts.handleProgressiveOverride
-      ? (label, context) => opts.handleProgressiveOverride!(label, context, undefined as any)
-      : undefined,
+    overrideLabels: stitchSchemasOpts.overrideLabels,
+    handleProgressiveOverride: stitchSchemasOpts.handleProgressiveOverride,
   });
 }
 

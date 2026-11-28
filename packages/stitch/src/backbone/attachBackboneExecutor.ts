@@ -62,9 +62,10 @@ export function markChangedRootResolvesAsLocal(
 }
 
 /**
- * Merge explicit attach options with values already on the schema
- * (`backboneExecutorOptions`, `overrideLabels`) so re-attach after `mapSchema`
- * can be optionless.
+ * Merge explicit attach options with values already stored on the schema
+ * (`backboneExecutorOptions`) so re-attach after `mapSchema` can be optionless.
+ * Labels and handlers come from `stitchSchemas` / attach options only (not
+ * `schema.extensions.overrideLabels`).
  */
 export function resolveBackboneExecutorOptions(
   schema: GraphQLSchema,
@@ -75,10 +76,7 @@ export function resolveBackboneExecutorOptions(
   return {
     handleProgressiveOverride:
       options.handleProgressiveOverride ?? stored?.handleProgressiveOverride,
-    overrideLabels:
-      options.overrideLabels ??
-      stored?.overrideLabels ??
-      (schema.extensions?.overrideLabels as Iterable<string> | undefined),
+    overrideLabels: options.overrideLabels ?? stored?.overrideLabels,
   };
 }
 
