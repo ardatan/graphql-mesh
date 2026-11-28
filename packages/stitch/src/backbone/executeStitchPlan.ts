@@ -955,11 +955,14 @@ function executeFetchNode(
         }),
       );
     }
-    const variables: Record<string, any> = {};
-    for (const name of node.variableNames ?? []) {
-      ensureVariableValue(ctx.variableValues, name, ctx.variableDefaults);
-      if (name in ctx.variableValues) {
-        variables[name] = ctx.variableValues[name];
+    let variables: Record<string, any> | undefined;
+    if (node.variableNames?.length) {
+      variables = {};
+      for (const name of node.variableNames) {
+        ensureVariableValue(ctx.variableValues, name, ctx.variableDefaults);
+        if (name in ctx.variableValues) {
+          variables[name] = ctx.variableValues[name];
+        }
       }
     }
 
