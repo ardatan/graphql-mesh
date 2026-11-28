@@ -59,6 +59,13 @@ export interface SubgraphConfig {
   name: string;
   schema: GraphQLSchema;
   transforms?: SubgraphTransform[];
+  /**
+   * Optional URL written to `@join__graph(url:)`.
+   *
+   * When omitted, Compose uses `@transport(location:)` (or Connectors
+   * `@source(http.baseURL)`). When set, `@transport(location:)` stays the
+   * upstream API endpoint while the join graph URL uses this value.
+   */
   url?: string;
 }
 
@@ -199,7 +206,9 @@ export function getAnnotatedSubgraphs(
   const pendingAnnotated: PendingAnnotated[] = [];
   for (const subgraphConfig of subgraphs) {
     const { name: subgraphName, schema, transforms } = subgraphConfig;
-    let url: string = subgraphConfig.url;
+    const hasExplicitJoinUrl =
+      typeof subgraphConfig.url === 'string' && subgraphConfig.url.length > 0;
+    let url: string | undefined = hasExplicitJoinUrl ? subgraphConfig.url : undefined;
     const subgraphSchemaExtensions = getDirectiveExtensions(schema);
     // Snapshot before transforms: encapsulate may import Fed `@inaccessible`
     // via `@link` before convertSubgraphToFederationv2 runs.
@@ -222,19 +231,29 @@ export function getAnnotatedSubgraphs(
     let removeTransportFromExtras = false;
     if (isConnectorsSubgraph) {
       removeTransportDirectiveDefinition = true;
-      if (apolloSource?.http?.baseURL) {
+      // Explicit `url` (Compose `routingUrl`) wins over `@source` for join__graph.
+      if (!hasExplicitJoinUrl && apolloSource?.http?.baseURL) {
         url = apolloSource.http.baseURL;
       }
     } else if (transportDirective) {
-      url = transportDirective.location;
+      // Explicit `url` wins for `@join__graph(url:)`; keep transport location as upstream.
+      if (!hasExplicitJoinUrl) {
+        url = transportDirective.location;
+      }
       if (
         !options.alwaysAddTransportDirective &&
         transportDirective.kind === 'http' &&
         !transportDirective.headers &&
         isEmptyObject(transportDirective.options)
       ) {
-        removeTransportDirectiveDefinition = true;
-        removeTransportFromExtras = true;
+        // Drop pure http only when join url will match transport location.
+        // When `url` / routingUrl differs, keep `@transport(location:)` as upstream.
+        const joinMatchesLocation =
+          !hasExplicitJoinUrl || subgraphConfig.url === transportDirective.location;
+        if (joinMatchesLocation) {
+          removeTransportDirectiveDefinition = true;
+          removeTransportFromExtras = true;
+        }
       }
     }
 
@@ -267,12 +286,19 @@ export function getAnnotatedSubgraphs(
       const hasOptions = Object.keys(mergedOptions).length > 0;
       const hasHeaders = existingTransport.headers != null;
       if (hasOptions || hasHeaders) {
+        // Transport location stays the upstream Connectors source / stamped URL.
+        // Explicit join `url` (routingUrl) must not replace it.
+        const upstreamLocation =
+          apolloSource?.http?.baseURL ||
+          existingTransport.location ||
+          (!hasExplicitJoinUrl ? url : undefined) ||
+          '';
         extensions.directives.transport = [
           {
             ...existingTransport,
             subgraph: subgraphName,
             kind: 'connect',
-            location: url || apolloSource?.http?.baseURL || existingTransport.location || '',
+            location: upstreamLocation,
             ...(hasOptions ? { options: mergedOptions } : {}),
           },
         ];

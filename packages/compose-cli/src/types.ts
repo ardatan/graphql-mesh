@@ -28,6 +28,17 @@ export interface MeshComposeCLIConfig extends ComposeSubgraphsOptions {
 
 export type MeshComposeCLISubgraphConfig = {
   transforms?: MeshComposeCLITransformConfig[];
+  /**
+   * Optional URL written to `@join__graph(url:)`.
+   *
+   * When omitted, the join URL comes from `@transport(location:)` (or Connectors
+   * `@source(http.baseURL)`). When set, `@transport(location:)` stays the upstream
+   * API endpoint while the join graph URL uses this value (for example a served
+   * subgraph URL). Without Mesh Compose, Router overlays use `routing_url` instead.
+   *
+   * @example 'http://localhost:4001/graphql'
+   */
+  routingUrl?: string;
 } & (
   | {
       /**

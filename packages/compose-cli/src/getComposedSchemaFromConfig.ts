@@ -66,6 +66,7 @@ export async function getComposedResultFromConfig(
             name: resolved.name,
             schema: resolved.schema,
             transforms: subgraphCLIConfig.transforms,
+            url: subgraphCLIConfig.routingUrl || undefined,
           };
         } catch (e) {
           if (isDebug) {
@@ -98,6 +99,7 @@ export async function getComposedResultFromConfig(
         name: subgraphName,
         schema: subgraphSchema,
         transforms: subgraphCLIConfig.transforms,
+        url: subgraphCLIConfig.routingUrl || undefined,
       };
     }),
   );

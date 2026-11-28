@@ -1,4 +1,4 @@
-import { buildSchema, GraphQLEnumType, GraphQLSchema } from 'graphql';
+import { buildSchema, GraphQLEnumType, type GraphQLSchema } from 'graphql';
 import {
   composeSubgraphs,
   createPruneTransform,
@@ -103,6 +103,64 @@ describe('Composition', () => {
     ]);
 
     expect(supergraphSdl).toMatchSnapshot();
+  });
+  it('writes SubgraphConfig.url to @join__graph and keeps upstream @transport location', () => {
+    const { supergraphSdl, errors } = composeSubgraphs([
+      {
+        name: 'users',
+        url: 'http://router-facing:4001/graphql',
+        schema: buildSchema(/* GraphQL */ `
+          schema
+            @transport(subgraph: "users", kind: "http", location: "http://upstream:8080/graphql") {
+            query: Query
+          }
+          directive @transport(
+            subgraph: String!
+            kind: String!
+            location: String
+          ) repeatable on SCHEMA
+          type Query {
+            me: String
+          }
+        `),
+      },
+    ]);
+    expect(errors).toBeUndefined();
+    expect(supergraphSdl).toMatch(
+      /@join__graph\(name:\s*"users",\s*url:\s*"http:\/\/router-facing:4001\/graphql"\)/,
+    );
+    expect(supergraphSdl).toMatch(/location:\s*"http:\/\/upstream:8080\/graphql"/);
+    expect(supergraphSdl).not.toMatch(
+      /@join__graph\(name:\s*"users",\s*url:\s*"http:\/\/upstream:8080\/graphql"\)/,
+    );
+  });
+  it('drops pure http @transport when SubgraphConfig.url matches location', () => {
+    const { supergraphSdl, errors } = composeSubgraphs([
+      {
+        name: 'users',
+        url: 'http://localhost:4001/graphql',
+        schema: buildSchema(/* GraphQL */ `
+          schema
+            @transport(subgraph: "users", kind: "http", location: "http://localhost:4001/graphql") {
+            query: Query
+          }
+          directive @transport(
+            subgraph: String!
+            kind: String!
+            location: String
+          ) repeatable on SCHEMA
+          type Query {
+            me: String
+          }
+        `),
+      },
+    ]);
+    expect(errors).toBeUndefined();
+    expect(supergraphSdl).toMatch(
+      /@join__graph\(name:\s*"users",\s*url:\s*"http:\/\/localhost:4001\/graphql"\)/,
+    );
+    expect(supergraphSdl).not.toMatch(/name:\s*"transport"/);
+    expect(supergraphSdl).not.toMatch(/(?<!directive )@transport\s*\(/);
   });
   describe('Pruning', () => {
     it('keeps enums that are only used in directive args', () => {
