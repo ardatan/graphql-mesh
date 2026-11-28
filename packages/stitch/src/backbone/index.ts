@@ -1,8 +1,4 @@
-export {
-  backboneExecutor,
-  createBackboneExecutor,
-  getBackboneExecutor,
-} from './createBackboneExecutor.js';
+export { backboneExecutor, getBackboneExecutor } from './createBackboneExecutor.js';
 export { defaultMergedResolver } from './defaultMergedResolver.js';
 export { buildStitchPlan } from './buildStitchPlan.js';
 export { executeStitchPlan } from './executeStitchPlan.js';

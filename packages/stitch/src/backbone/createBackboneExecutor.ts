@@ -4,6 +4,7 @@ import { getFragmentsFromDocument } from '@graphql-tools/executor';
 import {
   getOperationASTFromRequest,
   isAsyncIterable,
+  memoize1,
   type ExecutionRequest,
   type ExecutionResult,
   type Executor,
@@ -126,19 +127,17 @@ function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): Stitch
 
 /**
  * Shared stitching backbone executor — no per-schema instance stored.
- * Schema resolution: explicit `schema` arg, else `request.info?.schema`, else throw.
- * Plan / locals / progressive-override come from that schema's stitchingInfo.
+ * Schema from `request.info.schema` only. Plan / locals / progressive-override
+ * come from that schema's stitchingInfo.
  */
 export function backboneExecutor(
   request: ExecutionRequest,
-  schema?: GraphQLSchema,
 ): ReturnType<Executor<Record<string, any>>> {
-  const activeSchema = schema ?? request.info?.schema;
+  const activeSchema = request.info?.schema;
   if (activeSchema == null) {
-    throw new GraphQLError(
-      'backboneExecutor requires a schema (pass schema arg or request.info.schema)',
-      { extensions: { code: 'BACKBONE_MISSING_SCHEMA' } },
-    );
+    throw new GraphQLError('backboneExecutor requires request.info.schema', {
+      extensions: { code: 'BACKBONE_MISSING_SCHEMA' },
+    });
   }
 
   const operation = getOperationASTFromRequest(request);
@@ -192,19 +191,23 @@ export function backboneExecutor(
 }
 
 /**
- * Derive an executor for `schema` without storing one on the schema.
- * Always plans against the bound schema via the second arg (nested-gateway safe).
- * Does not install root proxies — call {@link attachBackboneExecutor} (or
- * `stitchSchemas`) for that.
+ * Schema-bound {@link backboneExecutor} (memoized per schema). Forces the bound
+ * schema onto `request.info.schema` before calling (nested-gateway safe).
+ * Does not install root proxies — call {@link attachBackboneExecutor} /
+ * `stitchSchemas` for that.
  */
-export function getBackboneExecutor(schema: GraphQLSchema): Executor {
-  return ((request: ExecutionRequest) => backboneExecutor(request, schema)) as Executor;
-}
-
-/**
- * Schema-bound {@link backboneExecutor} wrapper. Does not attach root proxies —
- * use {@link attachBackboneExecutor} / `stitchSchemas` for install.
- */
-export function createBackboneExecutor(schema: GraphQLSchema): Executor {
-  return getBackboneExecutor(schema);
-}
+export const getBackboneExecutor = memoize1(function getBackboneExecutor(
+  schema: GraphQLSchema,
+): Executor {
+  return ((request: ExecutionRequest) => {
+    if (request.info?.schema !== schema) {
+      request = {
+        ...request,
+        info: request.info
+          ? { ...request.info, schema }
+          : ({ schema } as NonNullable<ExecutionRequest['info']>),
+      };
+    }
+    return backboneExecutor(request);
+  }) as Executor;
+});

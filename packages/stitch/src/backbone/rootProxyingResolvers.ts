@@ -16,7 +16,7 @@ import {
   UNPATHED_ERRORS_SYMBOL,
 } from '@graphql-tools/delegate';
 import { CRITICAL_ERROR } from '@graphql-tools/executor';
-import type { ExecutionRequest } from '@graphql-tools/utils';
+import { memoize2, type ExecutionRequest } from '@graphql-tools/utils';
 import { handleMaybePromise, type MaybePromise } from '@whatwg-node/promise-helpers';
 import { backboneExecutor } from './createBackboneExecutor.js';
 
@@ -34,26 +34,22 @@ const originalResolveByField = new WeakMap<object, GraphQLFieldResolver<any, any
 const planResultByContext = new WeakMap<object, any>();
 const planPromiseByContext = new WeakMap<object, MaybePromise<any>>();
 
+/** Stable empty fragments map for memoize2 when `info.fragments` is absent. */
+const EMPTY_FRAGMENTS: Record<string, FragmentDefinitionNode> = Object.freeze({});
+
 /**
- * Stable document per `info.operation` so plan cache can key by
+ * Stable document per (operation, fragments) so plan cache can key by
  * `request.document` (root proxies used to rebuild a fresh Document every call).
  */
-const documentByOperation = new WeakMap<OperationDefinitionNode, DocumentNode>();
-
-function memoizedRootProxyDocument(
+const memoizedRootProxyDocument = memoize2(function memoizedRootProxyDocument(
   operation: OperationDefinitionNode,
-  fragments: Record<string, FragmentDefinitionNode> | undefined,
+  fragments: Record<string, FragmentDefinitionNode>,
 ): DocumentNode {
-  let document = documentByOperation.get(operation);
-  if (!document) {
-    document = {
-      kind: Kind.DOCUMENT,
-      definitions: [operation, ...Object.values(fragments ?? {})],
-    };
-    documentByOperation.set(operation, document);
-  }
-  return document;
-}
+  return {
+    kind: Kind.DOCUMENT,
+    definitions: [operation, ...Object.values(fragments)],
+  };
+});
 
 function selectionHasDeferOrStream(selections: readonly SelectionNode[]): boolean {
   const stack = [...selections];
@@ -181,18 +177,18 @@ export function attachBackboneExecutor(schema: GraphQLSchema): GraphQLSchema {
           // so File/upload scalars and other runtime values reach subgraphs
           // (same as classic delegate/createRequest).
           const request: ExecutionRequest = {
-            document: memoizedRootProxyDocument(info.operation, info.fragments),
+            document: memoizedRootProxyDocument(info.operation, info.fragments ?? EMPTY_FRAGMENTS),
             variables: getCoercedVariableValues(info.variableValues) ?? {},
             context,
             rootValue: root,
             operationName: info.operation.name?.value,
-            // Shared backboneExecutor: pass info.schema (or omit — same source).
+            // Shared backboneExecutor reads schema from info.schema.
             info,
           };
           // Sync backbone results stay sync (fakePromise) - no Promise.resolve
           // microtask. Share one MaybePromise across sibling root fields.
           pending = handleMaybePromise(
-            () => backboneExecutor(request, info.schema),
+            () => backboneExecutor(request),
             result => {
               planResultByContext.set(context, result);
               return result;

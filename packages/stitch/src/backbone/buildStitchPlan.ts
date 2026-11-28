@@ -3287,7 +3287,7 @@ export function buildStitchPlan(
     };
   }
 
-  // Subscriptions are routed to schema execute in createBackboneExecutor
+  // Subscriptions are routed to schema execute in backboneExecutor
   // (classic subscribe + type merging). Planning them here is unused.
 
   // Abstract / interface / union selections are planned (inline fragments on
