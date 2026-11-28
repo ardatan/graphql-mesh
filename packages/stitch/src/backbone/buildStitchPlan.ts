@@ -20,6 +20,11 @@ import {
 import type { StitchingInfo, Subschema } from '@graphql-tools/delegate';
 import { handleOverrideByDelegation, leftOverByDelegationPlan } from '@graphql-tools/delegate';
 import { getDefinedRootType } from '@graphql-tools/utils';
+import {
+  buildContextArgumentsForFetch,
+  injectContextBridgesIntoSelections,
+  selectionHasContextArguments,
+} from './contextArguments.js';
 import { isLocalField } from './localFields.js';
 import { getBatchedMergeEntry, inferMergeArgName } from './mergeEntry.js';
 import { buildPlanSchedule, collectExecutableHops, planHasCondition } from './planSchedule.js';
@@ -668,6 +673,11 @@ function fieldFetchableOnSubschema(
   // NOT block reading a locally-owned key - Hive QP still fetches Book.upc
   // from A without id.
   const mergeField = subschema.merge?.[typeName]?.fields?.[fieldName];
+  // Federation `@fromContext` always needs a later entity hop after the
+  // ancestor context value exists (even in the same subgraph).
+  if (mergeField?.contextArguments?.length) {
+    return false;
+  }
   if (!mergeField?.selectionSet && !mergeField?.computed) {
     return true;
   }
@@ -2262,6 +2272,8 @@ function planRootField(
   // Flattening into field nodes would drop those directives (provides-scope).
   // Merge deps into same-name fields so shallow client selections (data {
   // __typename }) absorb deeper @requires bridges (data { foo ... on Bar }).
+  // Also inject Federation `@fromContext` bridges onto `@context` ancestors
+  // (e.g. User.currency for Transaction.amount).
   const selectionSetForPartition: SelectionSetNode | undefined =
     fieldNode.selectionSet && returnTypeName
       ? (() => {
@@ -2283,7 +2295,13 @@ function planRootField(
               merged.push(dep);
             }
           }
-          return selectionSetOf(merged);
+          const withContextBridges = injectContextBridgesIntoSelections(
+            schema,
+            stitchingInfo,
+            returnTypeName,
+            merged,
+          );
+          return selectionSetOf(withContextBridges);
         })()
       : undefined;
 
@@ -5361,9 +5379,11 @@ function buildCompletePlan(
   // Wave fold: same dependsOn wave + same subgraph → one BatchFetch
   // (or covering Fetch). Runs after reuse so reuse edges affect wave layers.
   const folded = isMutation ? withReuse : foldSameWaveSubgraphFetches(withReuse, stitchingInfo);
+  // Stamp Federation `@fromContext` rewrites onto entity hops before docs.
+  const withContext = attachContextArgumentsToPlan(folded, schema, stitchingInfo);
   const withDocs = isMutation
-    ? folded
-    : preparePlanDocuments(folded, {
+    ? withContext
+    : preparePlanDocuments(withContext, {
         operation,
         fragments,
         fieldNodesByField: stitchingInfo.fieldNodesByField,
@@ -5386,6 +5406,104 @@ function buildCompletePlan(
     incomplete: incompleteReasons.length > 0,
     incompleteReasons,
   };
+}
+
+/**
+ * Attach `contextArguments` to entity Fetches whose selection includes
+ * Federation `@fromContext` fields. parentDepth is derived from flattenPaths.
+ */
+function attachContextArgumentsToPlan(
+  node: StitchPlanNode,
+  schema: GraphQLSchema,
+  stitchingInfo: StitchingInfo,
+  variableCounter: { n: number } = { n: 0 },
+): StitchPlanNode {
+  if (node.kind === 'Sequence' || node.kind === 'Parallel') {
+    return {
+      kind: node.kind,
+      nodes: node.nodes.map(n =>
+        attachContextArgumentsToPlan(n, schema, stitchingInfo, variableCounter),
+      ),
+    };
+  }
+  if (node.kind === 'Condition') {
+    return {
+      ...node,
+      ifClause: node.ifClause
+        ? attachContextArgumentsToPlan(node.ifClause, schema, stitchingInfo, variableCounter)
+        : undefined,
+      elseClause: node.elseClause
+        ? attachContextArgumentsToPlan(node.elseClause, schema, stitchingInfo, variableCounter)
+        : undefined,
+    };
+  }
+  if (node.kind === 'Island') {
+    return node.continue
+      ? {
+          ...node,
+          continue: attachContextArgumentsToPlan(
+            node.continue,
+            schema,
+            stitchingInfo,
+            variableCounter,
+          ),
+        }
+      : node;
+  }
+  if (node.kind === 'BatchFetch') {
+    return {
+      ...node,
+      aliases: node.aliases.map(alias => {
+        if (
+          !selectionHasContextArguments(
+            stitchingInfo,
+            node.subschema,
+            alias.entityTypeName,
+            alias.selectionSet,
+          )
+        ) {
+          return alias;
+        }
+        const path = alias.flattenPaths[0] ?? [];
+        const contextArguments = buildContextArgumentsForFetch(
+          schema,
+          stitchingInfo,
+          node.subschema,
+          alias.entityTypeName,
+          alias.selectionSet,
+          path,
+          variableCounter,
+        );
+        return contextArguments ? { ...alias, contextArguments } : alias;
+      }),
+    };
+  }
+  if (node.kind === 'Fetch') {
+    if (
+      !node.entityTypeName ||
+      !node.flattenPaths?.length ||
+      !selectionHasContextArguments(
+        stitchingInfo,
+        node.subschema,
+        node.entityTypeName,
+        node.selectionSet,
+      )
+    ) {
+      return node;
+    }
+    const path = node.flattenPaths[0]!;
+    const contextArguments = buildContextArgumentsForFetch(
+      schema,
+      stitchingInfo,
+      node.subschema,
+      node.entityTypeName,
+      node.selectionSet,
+      path,
+      variableCounter,
+    );
+    return contextArguments ? { ...node, contextArguments } : node;
+  }
+  return node;
 }
 
 function collectExecutableFetches(

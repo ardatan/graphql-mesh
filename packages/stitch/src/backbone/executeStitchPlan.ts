@@ -7,7 +7,9 @@ import {
   isObjectType,
   Kind,
   OperationTypeNode,
+  parseType,
   visit,
+  type ArgumentNode,
   type DocumentNode,
   type FieldNode,
   type GraphQLObjectType,
@@ -15,6 +17,7 @@ import {
   type GraphQLSchema,
   type SelectionNode,
   type SelectionSetNode,
+  type TypeNode,
   type VariableDefinitionNode,
 } from 'graphql';
 import {
@@ -40,7 +43,12 @@ import {
 } from '@graphql-tools/utils';
 import { handleMaybePromise, isPromise, type MaybePromise } from '@whatwg-node/promise-helpers';
 import { asGetArgumentValuesVariables } from '../variableValues.js';
-import { getBatchedMergeEntry } from './mergeEntry.js';
+import { readContextValue, stableStringifyContext } from './contextArguments.js';
+import {
+  buildBatchedMergeDocument,
+  getBatchedMergeEntry,
+  inferMergeArgName,
+} from './mergeEntry.js';
 import {
   buildPlanSchedule,
   collectExecutableHops,
@@ -52,6 +60,7 @@ import { evaluateRunIf } from './runIf.js';
 import type {
   BackboneExecutionContext,
   PathSegment,
+  StitchContextArgument,
   StitchPlan,
   StitchPlanNode,
   StitchPlanSchedule,
@@ -984,10 +993,23 @@ function buildRootDocument(
 }
 
 function collectEntitiesAtPath(data: any, path: PathSegment[]): Array<Record<string, any>> {
-  let current: any[] = [data];
+  return collectEntitiesWithAncestorsAtPath(data, path).map(e => e.entity);
+}
+
+/**
+ * Walk a flatten path collecting each entity plus its object ancestors
+ * (immediate parent last). Used for Federation `@fromContext` parentDepth.
+ */
+function collectEntitiesWithAncestorsAtPath(
+  data: any,
+  path: PathSegment[],
+): Array<{ entity: Record<string, any>; ancestors: object[] }> {
+  type Frame = { value: any; ancestors: object[] };
+  let current: Frame[] = [{ value: data, ancestors: [] }];
   for (const segment of path) {
-    const next: any[] = [];
-    for (const item of current) {
+    const next: Frame[] = [];
+    for (const frame of current) {
+      const item = frame.value;
       if (item == null) {
         continue;
       }
@@ -995,7 +1017,10 @@ function collectEntitiesAtPath(data: any, path: PathSegment[]): Array<Record<str
         if (Array.isArray(item)) {
           const el = item[segment];
           if (el != null) {
-            next.push(el);
+            next.push({
+              value: el,
+              ancestors: typeof item === 'object' ? [...frame.ancestors, item] : frame.ancestors,
+            });
           }
         }
         continue;
@@ -1004,23 +1029,273 @@ function collectEntitiesAtPath(data: any, path: PathSegment[]): Array<Record<str
       if (Array.isArray(value)) {
         for (const el of value) {
           if (el != null && typeof el === 'object') {
-            next.push(el);
+            next.push({
+              value: el,
+              ancestors: typeof item === 'object' ? [...frame.ancestors, item] : frame.ancestors,
+            });
           }
         }
       } else if (value != null && typeof value === 'object') {
-        next.push(value);
+        next.push({
+          value,
+          ancestors: typeof item === 'object' ? [...frame.ancestors, item] : frame.ancestors,
+        });
       } else if (value != null && typeof item === 'object') {
-        // Encapsulate `@resolveTo(__typename)` leaves a string (`"Query"`) at
-        // the path. Promote in place to `{}` so nested Islands can attach —
-        // same shape graphql-js builds when nested resolvers run on that parent.
         const promoted: Record<string, any> = {};
         item[segment] = promoted;
-        next.push(promoted);
+        next.push({ value: promoted, ancestors: [...frame.ancestors, item] });
       }
     }
     current = next;
   }
-  return current;
+  return current
+    .filter(f => f.value != null && typeof f.value === 'object')
+    .map(f => ({ entity: f.value as Record<string, any>, ancestors: f.ancestors }));
+}
+
+/**
+ * Federation `@fromContext` entity hop: group entities by distinct context
+ * value tuples, send one `_entities` request per group (MVP: one request per
+ * distinct tuple), inject context variables as field arguments.
+ */
+function tryExecuteEntitiesBatchWithContext(
+  node: Extract<StitchPlanNode, { kind: 'Fetch' }>,
+  hopSubschema: Subschema,
+  ctx: BackboneExecutionContext,
+): MaybePromise<void> | undefined {
+  const typeName = node.entityTypeName!;
+  const contextArguments = node.contextArguments!;
+  const entry = getBatchedMergeEntry(hopSubschema, typeName);
+  if (!entry) {
+    return undefined;
+  }
+  const located: Array<{
+    entity: Record<string, any>;
+    ancestors: object[];
+    groupKey: string;
+    contextVars: Record<string, unknown>;
+  }> = [];
+  const seen = new Set<Record<string, any>>();
+  for (const path of node.flattenPaths ?? []) {
+    for (const { entity, ancestors } of collectEntitiesWithAncestorsAtPath(ctx.data, path)) {
+      if (!matchEntityParent(entity, typeName, ctx.schema) || seen.has(entity)) {
+        continue;
+      }
+      seen.add(entity);
+      const contextVars: Record<string, unknown> = {};
+      for (const ca of contextArguments) {
+        const ancestor =
+          ca.parentDepth === 0 ? entity : ancestors[ancestors.length - ca.parentDepth];
+        const value =
+          ancestor === undefined
+            ? null
+            : (readContextValue(ancestor, ca.selectionPath, ctx.schema) ?? null);
+        contextVars[ca.variableName] = value;
+      }
+      located.push({
+        entity,
+        ancestors,
+        groupKey: stableStringifyContext(contextArguments.map(ca => contextVars[ca.variableName])),
+        contextVars,
+      });
+    }
+  }
+  if (!located.length) {
+    return undefined;
+  }
+
+  const groups = new Map<string, typeof located>();
+  for (const item of located) {
+    let list = groups.get(item.groupKey);
+    if (!list) {
+      list = [];
+      groups.set(item.groupKey, list);
+    }
+    list.push(item);
+  }
+
+  const selectionWithArgs = applyContextArgsToSelectionSet(node.selectionSet, contextArguments);
+  const schema = (hopSubschema.transformedSchema ?? hopSubschema.schema) as GraphQLSchema;
+  const baseDoc = buildBatchedMergeDocument(
+    schema,
+    entry,
+    [{ entityTypeName: typeName, selectionSet: selectionWithArgs }],
+    ctx.operation.name,
+  );
+  if (!baseDoc) {
+    return undefined;
+  }
+  const document = addContextVariableDefinitions(baseDoc, contextArguments);
+  const argName = inferMergeArgName(entry.argsFromKeys);
+  if (argName == null) {
+    return undefined;
+  }
+  const executor = getSubschemaExecutor(hopSubschema);
+  const jobs: MaybePromise<unknown>[] = [];
+  for (const group of groups.values()) {
+    const keys: any[] = [];
+    const parentKeyIndex: number[] = new Array(group.length);
+    const identityToIndex = new Map<string, number>();
+    const cacheKeyFn = entry.dataLoaderOptions?.cacheKeyFn;
+    for (let i = 0; i < group.length; i++) {
+      const key = entry.key(group[i]!.entity);
+      if (key == null) {
+        parentKeyIndex[i] = -1;
+        continue;
+      }
+      const identity = cacheKeyFn != null ? String(cacheKeyFn(key)) : JSON.stringify(key);
+      let idx = identityToIndex.get(identity);
+      if (idx == null) {
+        idx = keys.length;
+        identityToIndex.set(identity, idx);
+        keys.push(key);
+      }
+      parentKeyIndex[i] = idx;
+    }
+    if (!keys.length) {
+      continue;
+    }
+    const variables: Record<string, unknown> = {
+      ...entry.argsFromKeys(keys),
+      ...group[0]!.contextVars,
+    };
+    jobs.push(
+      handleMaybePromise(
+        () =>
+          executor({
+            document,
+            variables,
+            context: ctx.contextValue,
+            rootValue: hopSubschema.rootValue ?? ctx.rootValue,
+            operationType: OperationTypeNode.QUERY,
+            signal: ctx.signal,
+            subgraphName: hopSubschema.name,
+          } satisfies ExecutionRequest) as MaybePromise<ExecutionResult>,
+        (result: ExecutionResult) => {
+          if (result.errors?.length) {
+            ctx.errors.push(...result.errors);
+          }
+          let payload = result.data?.[entry.fieldName];
+          if (entry.valuesFromResults != null && payload != null) {
+            payload = entry.valuesFromResults(payload, keys);
+          }
+          if (!Array.isArray(payload)) {
+            return;
+          }
+          for (let i = 0; i < group.length; i++) {
+            const ki = parentKeyIndex[i]!;
+            if (ki < 0) {
+              continue;
+            }
+            const entityResult = payload[ki];
+            if (entityResult instanceof Error) {
+              ctx.errors.push(entityResult);
+              continue;
+            }
+            if (entityResult == null || typeof entityResult !== 'object') {
+              continue;
+            }
+            mergeEntityIntoParent(
+              group[i]!.entity,
+              entityResult as Record<string, any>,
+              ctx.schema,
+              node.subschema,
+            );
+            rememberEntityForReuse(ctx, node.subschema, typeName, group[i]!.entity);
+          }
+        },
+      ),
+    );
+  }
+  return handleMaybePromise(
+    () => awaitMaybePromises(jobs),
+    () => undefined,
+  );
+}
+
+function applyContextArgsToSelectionSet(
+  selectionSet: SelectionSetNode,
+  contextArguments: StitchContextArgument[],
+): SelectionSetNode {
+  const byField = new Map<string, StitchContextArgument[]>();
+  for (const ca of contextArguments) {
+    let list = byField.get(ca.fieldName);
+    if (!list) {
+      list = [];
+      byField.set(ca.fieldName, list);
+    }
+    list.push(ca);
+  }
+  return {
+    kind: Kind.SELECTION_SET,
+    selections: selectionSet.selections.map(sel => {
+      if (sel.kind !== Kind.FIELD) {
+        return sel;
+      }
+      const fieldArgs = byField.get(sel.name.value);
+      if (!fieldArgs?.length) {
+        return sel;
+      }
+      const extraArgs: ArgumentNode[] = fieldArgs.map(
+        (ca): ArgumentNode => ({
+          kind: Kind.ARGUMENT,
+          name: { kind: Kind.NAME, value: ca.argName },
+          value: {
+            kind: Kind.VARIABLE,
+            name: { kind: Kind.NAME, value: ca.variableName },
+          },
+        }),
+      );
+      return {
+        ...sel,
+        arguments: [...(sel.arguments ?? []), ...extraArgs],
+      };
+    }),
+  };
+}
+
+function addContextVariableDefinitions(
+  document: DocumentNode,
+  contextArguments: StitchContextArgument[],
+): DocumentNode {
+  const op = document.definitions.find(d => d.kind === Kind.OPERATION_DEFINITION);
+  if (!op || op.kind !== Kind.OPERATION_DEFINITION) {
+    return document;
+  }
+  const existing = new Set((op.variableDefinitions ?? []).map(v => v.variable.name.value));
+  const extra: VariableDefinitionNode[] = contextArguments
+    .filter(ca => !existing.has(ca.variableName))
+    .map(
+      (ca): VariableDefinitionNode => ({
+        kind: Kind.VARIABLE_DEFINITION,
+        variable: {
+          kind: Kind.VARIABLE,
+          name: { kind: Kind.NAME, value: ca.variableName },
+        },
+        type: parseTypeString(ca.type),
+      }),
+    );
+  if (!extra.length) {
+    return document;
+  }
+  return {
+    kind: Kind.DOCUMENT,
+    definitions: document.definitions.map(def => {
+      if (def.kind !== Kind.OPERATION_DEFINITION) {
+        return def;
+      }
+      return {
+        ...def,
+        variableDefinitions: [...(def.variableDefinitions ?? []), ...extra],
+      };
+    }),
+  };
+}
+
+function parseTypeString(typeStr: string): TypeNode {
+  // Nullable named types are the common case for contextual args (composition
+  // requires nullable). Non-null / list forms are rare but supported via parseType.
+  return parseType(typeStr);
 }
 
 function executeFetchNode(
@@ -1374,6 +1649,9 @@ function tryExecuteEntitiesBatch(
   hopSubschema: Subschema,
   ctx: BackboneExecutionContext,
 ): MaybePromise<void> | undefined {
+  if (node.contextArguments?.length && node.flattenPaths?.length) {
+    return tryExecuteEntitiesBatchWithContext(node, hopSubschema, ctx);
+  }
   const typeName = node.entityTypeName!;
   const entry = getBatchedMergeEntry(hopSubschema, typeName);
   if (!entry) {

@@ -12,6 +12,31 @@ import type { Subschema } from '@graphql-tools/delegate';
 export type PathSegment = string | number;
 
 /**
+ * One segment of a Federation context rewrite path after `Parent` depth is
+ * peeled off.
+ */
+export type StitchContextPathSegment = { Key: string } | { TypenameEquals: string[] };
+
+/**
+ * How to fill one `@fromContext` argument on an entity Fetch from an ancestor
+ * in the in-flight response (Federation join `contextArguments`).
+ */
+export interface StitchContextArgument {
+  /** Field that owns the `@fromContext` argument (e.g. `amount`). */
+  fieldName: string;
+  /** Subgraph argument name. */
+  argName: string;
+  /** Variable name in the subgraph operation (e.g. `__context_0`). */
+  variableName: string;
+  /** GraphQL input type string for the variable. */
+  type: string;
+  /** How many object parents to walk up from the entity. */
+  parentDepth: number;
+  /** Selection from that ancestor (`Key` / `TypenameEquals` segments). */
+  selectionPath: StitchContextPathSegment[];
+}
+
+/**
  * One variable predicate inside a `runIf` AND-group.
  */
 export interface StitchRunIfClause {
@@ -44,6 +69,8 @@ export interface StitchBatchAlias {
   representationsVariable?: string;
   /** Per-alias `@skip`/`@include` gate; off aliases send no representations. */
   runIf?: StitchRunIf;
+  /** Federation `@fromContext` args for this alias's entity selection. */
+  contextArguments?: StitchContextArgument[];
 }
 
 /**
@@ -95,6 +122,11 @@ export type StitchPlanNode =
        * Execute may copy by representation hash and skip HTTP.
        */
       reuseFrom?: string[];
+      /**
+       * Federation `@fromContext` args for this entity hop. Execute groups
+       * entities by distinct context values and injects them as variables.
+       */
+      contextArguments?: StitchContextArgument[];
     }
   | {
       kind: 'BatchFetch';
@@ -113,6 +145,8 @@ export type StitchPlanNode =
       /** Hop-level gate (DNF); also checked before any alias work. */
       runIf?: StitchRunIf;
       reuseFrom?: string[];
+      /** Per-batch hop context args (applied when aliases share grouping). */
+      contextArguments?: StitchContextArgument[];
     }
   | {
       kind: 'Island';

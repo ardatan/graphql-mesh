@@ -328,12 +328,29 @@ function createMergedTypes<TContext extends Record<string, any> = Record<string,
         > = new Map();
         if (sourceSubschemas) {
           for (const subschema of sourceSubschemas) {
-            // Subschemas that own computed / field-@requires fields must be
-            // allowed as their own merge target so shippingEstimate can
-            // re-enter after deps land.
-            const ownsComputedOrRequires =
-              fieldSelectionSets.get(subschema) != null &&
-              Object.keys(fieldSelectionSets.get(subschema)!).length > 0;
+            // Subschemas that own computed / field-@requires / @fromContext
+            // fields must be allowed as their own merge target so those
+            // fields can re-enter after ancestor deps land (same subgraph).
+            const mergeFields = subschema.merge?.[typeName]?.fields;
+            let ownsComputedOrRequires = false;
+            if (mergeFields) {
+              for (const fieldName in mergeFields) {
+                const fieldMerge = mergeFields[fieldName];
+                if (
+                  fieldMerge?.computed ||
+                  fieldMerge?.selectionSet ||
+                  (fieldMerge?.contextArguments?.length ?? 0) > 0
+                ) {
+                  ownsComputedOrRequires = true;
+                  break;
+                }
+              }
+            }
+            if (!ownsComputedOrRequires) {
+              const selectionSetFieldMap = fieldSelectionSets.get(subschema);
+              ownsComputedOrRequires =
+                selectionSetFieldMap != null && Object.keys(selectionSetFieldMap).length > 0;
+            }
             const filteredSubschemas = ownsComputedOrRequires
               ? targetSubschemas
               : targetSubschemas.filter(s => s !== subschema);

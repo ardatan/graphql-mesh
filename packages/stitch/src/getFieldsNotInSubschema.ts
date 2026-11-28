@@ -187,9 +187,20 @@ export function getFieldsNotInSubschema(
           });
         }
       }
-      const isComputedField = subschema.merge?.[gatewayType.name]?.fields?.[fieldName]?.computed;
-      if ((isComputedField || fieldNotInSchema) && fieldNodesByFieldForType) {
-        let addedThisNode = false;
+      const mergeField = subschema.merge?.[gatewayType.name]?.fields?.[fieldName];
+      const isComputedField = !!mergeField?.computed;
+      const hasContextArguments = (mergeField?.contextArguments?.length ?? 0) > 0;
+      // Computed / `@fromContext` fields must always re-enter via an entity hop
+      // even when the field exists on this subgraph schema (deps may already be
+      // present as keys). Otherwise same-subgraph deferred fields never plan.
+      if (isComputedField || hasContextArguments) {
+        fieldsNotInSchema.add(subFieldNode);
+      }
+      if (
+        (isComputedField || hasContextArguments || fieldNotInSchema) &&
+        fieldNodesByFieldForType
+      ) {
+        let addedThisNode = isComputedField || hasContextArguments;
         const visitedFieldNames = new Set<string>();
         addMissingRequiredFields({
           fieldName,
