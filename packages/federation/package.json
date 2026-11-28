@@ -73,7 +73,10 @@
     "@apollo/server": "^5.5.2",
     "@apollo/subgraph": "^2.17.0",
     "@graphql-hive/federation-gateway-audit": "0.0.3",
+    "@graphql-mesh/utils": "workspace:*",
+    "@graphql-tools/mock": "^10.1.4",
     "@graphql-yoga/plugin-defer-stream": "^4.1.1",
+    "@theguild/federation-composition": "^0.27.0",
     "@types/lodash": "4.17.27",
     "graphql": "17.1.0",
     "graphql-yoga": "^6.1.1"

@@ -116,6 +116,9 @@ module.exports = {
       '<rootDir>/node_modules/@graphql-mesh/prometheus/dist/index.cjs',
     '@graphql-mesh/plugin-jwt-auth':
       '<rootDir>/node_modules/@graphql-mesh/plugin-jwt-auth/dist/index.cjs',
+    // Hive audit package is dual-published; Jest needs the CJS entry (ESM pulls fets).
+    '@graphql-hive/federation-gateway-audit':
+      '<rootDir>/node_modules/@graphql-hive/federation-gateway-audit/dist/index.cjs',
 
     '^graphql$': '<rootDir>/node_modules/graphql/index.js',
     '^lru-cache$': '<rootDir>/node_modules/lru-cache/dist/commonjs/index.js',

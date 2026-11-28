@@ -34,6 +34,27 @@ const originalResolveByField = new WeakMap<object, GraphQLFieldResolver<any, any
 const planResultByContext = new WeakMap<object, any>();
 const planPromiseByContext = new WeakMap<object, MaybePromise<any>>();
 
+/**
+ * WeakMap key for sibling root fields in one execute.
+ * Prefer `context` (yoga / callers always pass an object). When callers omit
+ * `contextValue`, graphql-js still shares one `info.variableValues` object
+ * across sibling resolvers — use that so we do not crash WeakMap and still
+ * share one plan (duplicate hops otherwise).
+ */
+function planCacheKey(context: unknown, info: { variableValues?: unknown }): object | undefined {
+  if (context != null && (typeof context === 'object' || typeof context === 'function')) {
+    return context as object;
+  }
+  const variableValues = info.variableValues;
+  if (
+    variableValues != null &&
+    (typeof variableValues === 'object' || typeof variableValues === 'function')
+  ) {
+    return variableValues as object;
+  }
+  return undefined;
+}
+
 /** Stable empty fragments map for memoize2 when `info.fragments` is absent. */
 const EMPTY_FRAGMENTS: Record<string, FragmentDefinitionNode> = Object.freeze({});
 
@@ -141,8 +162,7 @@ export function installRootProxyingResolvers(schema: GraphQLSchema): GraphQLSche
       }
       const previousResolve: GraphQLFieldResolver<any, any> = resolveFn;
       originalResolveByField.set(field, previousResolve);
-      // Context is always an object (graphql-js execute) — type it for WeakMap keys.
-      const proxy: GraphQLFieldResolver<any, object> = function backboneRootProxyingResolver(
+      const proxy: GraphQLFieldResolver<any, any> = function backboneRootProxyingResolver(
         root,
         args,
         context,
@@ -161,17 +181,20 @@ export function installRootProxyingResolvers(schema: GraphQLSchema): GraphQLSche
           return previousResolve(root, args, context, info);
         }
         const responseKey = info.path.key;
+        const cacheKey = planCacheKey(context, info);
 
         // Share one plan across sibling roots. Never fall through to classic
         // proxying while a plan is in flight - that re-delegates e.g.
         // topProducts and schedules a duplicate inventory mergeFields hop.
         // Root Islands call getOriginalRootResolve() so they do not hit this.
-        const cached = planResultByContext.get(context);
-        if (cached != null) {
-          return applyBackboneResult(cached, responseKey);
+        if (cacheKey) {
+          const cached = planResultByContext.get(cacheKey);
+          if (cached != null) {
+            return applyBackboneResult(cached, responseKey);
+          }
         }
 
-        let pending = planPromiseByContext.get(context);
+        let pending = cacheKey ? planPromiseByContext.get(cacheKey) : undefined;
         if (!pending) {
           // GraphQL 17: info.variableValues is `{ coerced, sources }` — unwrap
           // so File/upload scalars and other runtime values reach subgraphs
@@ -190,11 +213,15 @@ export function installRootProxyingResolvers(schema: GraphQLSchema): GraphQLSche
           pending = handleMaybePromise(
             () => executor(request),
             result => {
-              planResultByContext.set(context, result);
+              if (cacheKey) {
+                planResultByContext.set(cacheKey, result);
+              }
               return result;
             },
           );
-          planPromiseByContext.set(context, pending);
+          if (cacheKey) {
+            planPromiseByContext.set(cacheKey, pending);
+          }
         }
         return handleMaybePromise(
           () => pending,
