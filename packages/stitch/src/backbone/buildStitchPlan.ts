@@ -4050,6 +4050,13 @@ function fetchDependsOn(
       if (!pathIsPrefix(ep, lp)) {
         continue;
       }
+      // Multi-path peers: if `earlier` also fetches at `lp`, it is not a
+      // parent producer of that path (both own it). Counting it created
+      // A↔B cycles (many-plans f12↔f104) that strip then severed, nulling
+      // nested leaves like n0.n4.n3.n2.f4.
+      if (earlierPaths.some(p => pathsEqual(p, lp))) {
+        continue;
+      }
       const suffix = lp.slice(ep.length);
       if (selectionProducesPathSuffix(earlier.selectionSet, suffix, fragments)) {
         return true;
@@ -6528,16 +6535,64 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
       }
     }
     if (!removed) {
-      // 5) Last resort: drop any one stuck edge so the schedule can become a DAG.
-      outer5: for (const i of stuck) {
+      // 5) Last resort: never drop a sole/key-parent edge for a consumer path
+      // (many-plans f12→f15/f46/f105 at n0.n4). Prefer non-key-parent, then
+      // key-parents with an alternate still present. Do NOT absolute-drop a
+      // remaining key-parent — that strands nested leaves (f4).
+      const keyParentCount = (i: number, path: PathSegment[]): number => {
+        let n = 0;
         for (const j of preds[i]!) {
-          if (stuckSet.has(j)) {
+          const predPaths = hopFlattenPaths(hops[j]!);
+          const parent = path.slice(0, -1);
+          if (
+            predPaths.some(pp => pathsEqual(pp, parent)) &&
+            !predPaths.some(pp => pathsEqual(pp, path))
+          ) {
+            n++;
+          }
+        }
+        return n;
+      };
+      outer5a: for (const i of stuck) {
+        for (const j of preds[i]!) {
+          if (stuckSet.has(j) && !isKeyParentEdge(i, j)) {
             markDrop(i, j);
             removed = true;
-            break outer5;
+            break outer5a;
           }
         }
       }
+      if (!removed) {
+        outer5b: for (const i of stuck) {
+          for (const j of preds[i]!) {
+            if (!stuckSet.has(j) || !isKeyParentEdge(i, j)) {
+              continue;
+            }
+            let hasAlt = false;
+            for (const cp of hopFlattenPaths(hops[i]!)) {
+              if (cp.length < 1) continue;
+              const parent = cp.slice(0, -1);
+              const predPaths = hopFlattenPaths(hops[j]!);
+              if (
+                predPaths.some(pp => pathsEqual(pp, parent)) &&
+                !predPaths.some(pp => pathsEqual(pp, cp)) &&
+                keyParentCount(i, cp) > 1
+              ) {
+                hasAlt = true;
+                break;
+              }
+            }
+            if (hasAlt) {
+              markDrop(i, j);
+              removed = true;
+              break outer5b;
+            }
+          }
+        }
+      }
+      // If only sole key-parents remain, leave them; schedule may still DAG via
+      // other drops in a later iteration, or stay cyclic (fail loud) rather than
+      // silently null nested leaves.
     }
     if (!removed) {
       break;
