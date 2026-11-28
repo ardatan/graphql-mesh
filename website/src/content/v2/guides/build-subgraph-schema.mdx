@@ -259,9 +259,14 @@ await buildSubgraphSchema(
 `GraphQLSchema` that already carries Mesh / Federation directives. Resolvers live on the schema
 module (first argument), not in Mesh options.
 
+<a id="url-split" />
+
 **URL split:** `@transport(location:)` / Connect `@source` / protocol endpoints are the **upstream
-API**. The URL you register with Apollo Router, Hive Gateway, or Rover (`routing_url`) is the
-**served subgraph** (Yoga / this process), not that upstream.
+API**. The **served subgraph** URL (Yoga / this process) goes on `@join__graph(url:)`. With Mesh
+Compose, set optional `subgraphs[].routingUrl` so Compose writes that join URL while transport
+location stays upstream -- see [Composition: routingUrl](/v2/compose#routing-url). Without Mesh
+Compose, keep using Router / Rover `routing_url` (or registry publish `--url`) as the overlay for
+the same split.
 
 ### 4. Compose with Mesh, Rover, or Hive
 
