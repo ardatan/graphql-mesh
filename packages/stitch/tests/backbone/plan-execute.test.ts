@@ -155,7 +155,7 @@ describe('stitching backbone', () => {
     });
   });
 
-  it('wraps root @skip/@include as Condition; execute selects the branch', async () => {
+  it('stamps runIf for root @skip/@include and caches a schedule', async () => {
     const schema = createStitched();
     const document = parse(/* GraphQL */ `
       query ($id: ID!, $skipEmail: Boolean!) {
@@ -168,14 +168,20 @@ describe('stitching backbone', () => {
     const planSkip = buildStitchPlan(schema, document.definitions[0] as any, {}, undefined);
     const planInclude = buildStitchPlan(schema, document.definitions[0] as any, {}, undefined);
     expect(planSkip.incompleteReasons).toEqual([]);
-    // Condition at plan time; schedule rebuilt at execute for the taken branch.
-    expect(planSkip.root.kind).toBe('Condition');
-    expect((planSkip.root as any).condition).toBe('skipEmail');
-    expect((planSkip.root as any).elseClause).toBeDefined();
-    expect((planSkip.root as any).ifClause).toBeUndefined();
-    expect(planSkip.schedule).toBeUndefined();
+    // runIf keeps the hop set fixed (no Condition) so schedule caches.
+    expect(planSkip.root.kind).not.toBe('Condition');
+    expect(planSkip.schedule).toBeDefined();
+    const hop =
+      planSkip.root.kind === 'Fetch'
+        ? planSkip.root
+        : planSkip.root.kind === 'Parallel'
+          ? planSkip.root.nodes.find(n => n.kind === 'Fetch')
+          : undefined;
+    expect(hop?.kind).toBe('Fetch');
+    // DNF: OR of AND-groups (single skip clause → one group).
+    expect((hop as any).runIf).toEqual([[{ variable: 'skipEmail', equals: false }]]);
     // Same structure regardless of variable map (one cached plan shape).
-    expect(planInclude.root).toEqual(planSkip.root);
+    expect(planInclude.root.kind).toBe(planSkip.root.kind);
 
     const executor = getBackboneExecutorBySchema(schema);
     const skipped = await exec(executor, {

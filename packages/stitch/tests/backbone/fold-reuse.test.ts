@@ -519,9 +519,9 @@ describe('backbone aggressive BatchFetch + entityReuse', () => {
     ).toBeUndefined();
   });
 
-  it('Condition-wraps root @include; Book||Magazine still BatchFetch under ifClause', () => {
+  it('OR-merges alias runIf onto BatchFetch when complementary root gates coalesce', () => {
     const schema = createBookMagazineSchema({ n: 0 });
-    // Root-level @include becomes Condition; Book||Magazine still BatchFetch inside.
+    // Root-level skip/include stamps hop runIf; Book||Magazine still BatchFetch.
     const document = parse(/* GraphQL */ `
       query ($wantProducts: Boolean!) {
         products @include(if: $wantProducts) {
@@ -537,18 +537,16 @@ describe('backbone aggressive BatchFetch + entityReuse', () => {
     `);
     const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, undefined);
     expect(plan.incompleteReasons).toEqual([]);
-    expect(plan.root.kind).toBe('Condition');
-    expect((plan.root as any).condition).toBe('wantProducts');
-    expect((plan.root as any).ifClause).toBeDefined();
     const batches: Array<Extract<StitchPlanNode, { kind: 'BatchFetch' }>> = [];
-    walkBatches((plan.root as any).ifClause, batches);
+    walkBatches(plan.root, batches);
     const multi = batches.find(
       b =>
         b.aliases.some(a => a.entityTypeName === 'Book') &&
         b.aliases.some(a => a.entityTypeName === 'Magazine'),
     );
     expect(multi).toBeDefined();
-    expect(multi!.runIf).toBeUndefined();
+    // Shared include gate stamped as DNF AND-group on the batch.
+    expect(multi!.runIf).toEqual([[{ variable: 'wantProducts', equals: true }]]);
   });
 
   it('always-on entity reuse skips redundant hop when root already has leaves', async () => {

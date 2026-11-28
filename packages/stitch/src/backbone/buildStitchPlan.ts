@@ -6,6 +6,7 @@ import {
   isObjectType,
   isUnionType,
   Kind,
+  valueFromASTUntyped,
   type FieldNode,
   type FragmentDefinitionNode,
   type GraphQLInterfaceType,
@@ -19,14 +20,44 @@ import {
 import type { StitchingInfo, Subschema } from '@graphql-tools/delegate';
 import { handleOverrideByDelegation, leftOverByDelegationPlan } from '@graphql-tools/delegate';
 import { getDefinedRootType } from '@graphql-tools/utils';
+import { writeFileSync as __meshDumpWrite } from 'node:fs';
 import { isLocalField } from './localFields.js';
 import { getBatchedMergeEntry, inferMergeArgName } from './mergeEntry.js';
 import { buildPlanSchedule, collectExecutableHops, planHasCondition } from './planSchedule.js';
 import { flattenPlanControlFlow } from './planShape.js';
 import { preparePlanDocuments } from './preparePlanDocuments.js';
-import { collectVariableDefaults, orRunIf, runIfKey } from './runIf.js';
-import type { PathSegment, StitchPlan, StitchPlanNode } from './types.js';
-import { writeFileSync as __meshDumpWrite } from 'node:fs';
+import {
+  collectVariableDefaults,
+  flattenConditionsToRunIf,
+  orRunIf,
+  runIfKey,
+  stampRunIf,
+} from './runIf.js';
+import type { PathSegment, StitchPlan, StitchPlanNode, StitchRunIfClause } from './types.js';
+
+/**
+ * Fill omitted operation variables from their GraphQL default values so
+ * `@skip`/`@include` and collectFields can evaluate without throwing.
+ */
+export function coerceOperationVariables(
+  operation: OperationDefinitionNode,
+  variableValues: Record<string, any>,
+): Record<string, any> {
+  const out: Record<string, any> = { ...variableValues };
+  for (const def of operation.variableDefinitions ?? []) {
+    const name = def.variable.name.value;
+    if (out[name] === undefined && def.defaultValue != null) {
+      out[name] = valueFromASTUntyped(def.defaultValue, out);
+    }
+  }
+  // Drop remaining undefined entries (Yoga may inject them).
+  for (const key of Object.keys(out)) {
+    if (out[key] === undefined) {
+      delete out[key];
+    }
+  }
+  return out;
+}
 
 /**
  * Aggressive (earliest-wave) fold only kicks in when the plan still has many
@@ -3397,7 +3428,8 @@ function planRootField(
 /**
  * Build a stitch plan for one operation. Caller extracts `operation` /
  * `fragments` from the document. Variable-independent: root `@skip`/`@include`
- * are Condition nodes. Progressive override uses `activeLabels` only.
+ * become hop `runIf` gates (with plan-time vars forced so every selection stays
+ * present). Progressive override uses `activeLabels` only.
  */
 export function buildStitchPlan(
   schema: GraphQLSchema,
@@ -5260,7 +5292,7 @@ function tryBatchWithinSequence(
 }
 
 /**
- * Expand root selections without evaluating `@skip`/`@include` (Condition path).
+ * Expand root selections without evaluating `@skip`/`@include` (runIf path).
  * Fragment spreads / inline fragments are flattened to field nodes.
  */
 function collectRootFieldNodesPreservingSkipInclude(
@@ -5332,20 +5364,62 @@ function stripOwnSkipIncludeDirectives(field: FieldNode): FieldNode {
 }
 
 /**
- * Root `@include(if: $v)` / `@skip(if: $v)` become Condition nodes evaluated at
- * execute (ifClause when the variable is true, elseClause when false).
+ * Stamp root-field `@skip`/`@include` as `runIf` on every hop. Keeps the hop
+ * set variable-independent so schedules cache and conditional entity hops can
+ * BatchFetch together.
  */
-function wrapRootFieldWithCondition(field: FieldNode, plan: StitchPlanNode): StitchPlanNode {
-  let node = plan;
+function wrapRootFieldWithRunIf(field: FieldNode, plan: StitchPlanNode): StitchPlanNode {
+  const clauses: StitchRunIfClause[] = [];
   const includeVar = skipIncludeVariableName(field, 'include');
   if (includeVar) {
-    node = { kind: 'Condition', condition: includeVar, ifClause: node };
+    clauses.push({ variable: includeVar, equals: true });
   }
   const skipVar = skipIncludeVariableName(field, 'skip');
   if (skipVar) {
-    node = { kind: 'Condition', condition: skipVar, elseClause: node };
+    clauses.push({ variable: skipVar, equals: false });
   }
-  return node;
+  return stampRunIf(plan, clauses);
+}
+
+/**
+ * Plan-time vars that keep every `@skip`/`@include` selection present so one
+ * document plan covers all runtime maps. Nested directives stay on the AST and
+ * are evaluated by the subgraph (or by runIf at roots).
+ */
+function variablesForcingSkipIncludePresent(
+  operation: OperationDefinitionNode,
+  fragments: Record<string, FragmentDefinitionNode>,
+  variableValues: Record<string, any>,
+): Record<string, any> {
+  const forced = { ...variableValues };
+  const visitSet = (selectionSet: SelectionSetNode) => {
+    for (const sel of selectionSet.selections) {
+      if ((sel.kind === Kind.FIELD || sel.kind === Kind.INLINE_FRAGMENT) && sel.directives) {
+        for (const dir of sel.directives) {
+          if (dir.name.value !== 'skip' && dir.name.value !== 'include') {
+            continue;
+          }
+          const arg = dir.arguments?.find(a => a.name.value === 'if');
+          if (arg?.value.kind !== Kind.VARIABLE) {
+            continue;
+          }
+          const name = arg.value.name.value;
+          // @skip(if: $v) present when $v is false; @include when $v is true.
+          forced[name] = dir.name.value === 'include';
+        }
+      }
+      if ((sel.kind === Kind.FIELD || sel.kind === Kind.INLINE_FRAGMENT) && sel.selectionSet) {
+        visitSet(sel.selectionSet);
+      } else if (sel.kind === Kind.FRAGMENT_SPREAD) {
+        const frag = fragments[sel.name.value];
+        if (frag) {
+          visitSet(frag.selectionSet);
+        }
+      }
+    }
+  };
+  visitSet(operation.selectionSet);
+  return forced;
 }
 
 function buildCompletePlan(
@@ -5358,8 +5432,9 @@ function buildCompletePlan(
 ): StitchPlan {
   const rootNodes: StitchPlanNode[] = [];
 
-  // One plan per document: Condition for root `@skip`/`@include`. Nested
-  // directives stay on the AST for subgraph evaluation.
+  // One plan per document: `runIf` for `@skip`/`@include`. Include all
+  // conditional selections while planning; subgraphs still see the directives.
+  const planVars = variablesForcingSkipIncludePresent(operation, fragments, variableValues);
   for (const fieldNode of collectRootFieldNodesPreservingSkipInclude(
     operation.selectionSet,
     fragments,
@@ -5371,8 +5446,8 @@ function buildCompletePlan(
     if (isUnconditionallyOmittedBySkipInclude(fieldNode)) {
       continue;
     }
-    // Condition decides the root field at execute; strip only own directives so
-    // nested @skip/@include remain for subgraph evaluation / provides-scope.
+    // runIf decides the root field; strip only own directives so nested
+    // @skip/@include remain for subgraph evaluation / provides-scope.
     const cleaned = stripOwnSkipIncludeDirectives(fieldNode);
     const planned = planRootField(
       schema,
@@ -5380,10 +5455,10 @@ function buildCompletePlan(
       operation,
       cleaned,
       fragments,
-      variableValues,
+      planVars,
       incompleteReasons,
     );
-    rootNodes.push(wrapRootFieldWithCondition(fieldNode, planned));
+    rootNodes.push(wrapRootFieldWithRunIf(fieldNode, planned));
   }
 
   if (!rootNodes.length && incompleteReasons.length === 0) {
@@ -5400,8 +5475,11 @@ function buildCompletePlan(
           nodes: rootNodes,
         };
 
-  // Keep Condition nodes; execute selects the branch from variable values.
-  const optimized = optimizeStitchPlanNode(rootRaw, stitchingInfo);
+  // Flatten any leftover Condition trees so both branches participate in
+  // coalesce / BatchFetch with per-hop runIf (schedule stays cacheable).
+  const withoutConditions = flattenConditionsToRunIf(rootRaw);
+  const optimized = optimizeStitchPlanNode(withoutConditions, stitchingInfo);
+
   const coalesced = coalesceSamePathEntityFields(optimized, stitchingInfo);
   const packed = packIndependentWaves(
     optimizeStitchPlanNode(coalesced, stitchingInfo),
@@ -5431,9 +5509,8 @@ function buildCompletePlan(
   // Deep recursive entity graphs (many-plans) can leave mutual dependsOn after
   // fold; drop back-edges so the schedule stays a DAG.
   const acyclic = stripDependsOnCycles(folded);
-  // Prebuild hop documents at plan time (queries + mutations). For root
-  // @skip/@include Condition, both branches get documents; execute only picks
-  // the taken branch and binds variables / applies transforms — no rebuild.
+  // Prebuild hop documents at plan time (queries + mutations). Root
+  // @skip/@include use runIf; nested directives stay on the AST for subgraphs.
   const withDocs = preparePlanDocuments(acyclic, {
     operation,
     fragments,
