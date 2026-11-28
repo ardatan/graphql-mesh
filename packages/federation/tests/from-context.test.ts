@@ -5,7 +5,6 @@ import {
   buildStitchPlan,
   createBackboneExecutor,
   fieldConfigsWithContextArguments,
-  getBackboneExecutor,
   injectContextBridgesIntoSelections,
   parseContextSelectionPath,
   readContextValue,
@@ -222,18 +221,13 @@ describe('Federation @context / @fromContext', () => {
     expect(opts).not.toHaveProperty('schemaExtensions');
   });
 
-  it('stores backboneExecutor on stitchingInfo, not schema.extensions', () => {
+  it('does not store executor or progressive-override fields on stitchingInfo', () => {
     const schema = createGateway();
-    const stitchingInfo = schema.extensions?.stitchingInfo as {
-      backboneExecutor?: unknown;
-      overrideLabels?: Iterable<string>;
-      handleProgressiveOverride?: unknown;
-      backboneExecutorOptions?: unknown;
-    };
-    expect(stitchingInfo.backboneExecutor).toBe(getBackboneExecutor(schema));
-    expect(stitchingInfo.backboneExecutor).toBeDefined();
-    // Progressive-override fields are flat on stitchingInfo (no nested bag).
+    const stitchingInfo = schema.extensions?.stitchingInfo as Record<string, unknown>;
+    expect(stitchingInfo).not.toHaveProperty('backboneExecutor');
     expect(stitchingInfo).not.toHaveProperty('backboneExecutorOptions');
+    expect(stitchingInfo).not.toHaveProperty('overrideLabels');
+    expect(stitchingInfo).not.toHaveProperty('handleProgressiveOverride');
     expect(
       (schema.extensions as { backboneExecutor?: unknown } | undefined)?.backboneExecutor,
     ).toBeUndefined();
@@ -244,6 +238,9 @@ describe('Federation @context / @fromContext', () => {
       (schema.extensions as { handleProgressiveOverride?: unknown } | undefined)
         ?.handleProgressiveOverride,
     ).toBeUndefined();
+    // Root proxies survive filter mapSchema (no federation re-attach).
+    const rootResolve = schema.getQueryType()?.getFields().users?.resolve;
+    expect(rootResolve?.name).toBe('backboneRootProxyingResolver');
   });
 
   it('plans a context-bearing entity hop with parentDepth rewrite', () => {

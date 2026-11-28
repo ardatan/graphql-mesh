@@ -1,9 +1,17 @@
 import { isObjectType, type GraphQLFieldResolver, type GraphQLSchema } from 'graphql';
 import type { StitchingInfo } from '@graphql-tools/delegate';
 import type { Executor } from '@graphql-tools/utils';
-import { createBackboneExecutor } from './createBackboneExecutor.js';
+import { createBackboneExecutor, type BackboneExecutorOptions } from './createBackboneExecutor.js';
 
 type RootResolveSnapshot = Map<string, GraphQLFieldResolver<any, any> | undefined>;
+
+/**
+ * Per-schema executor records. `mapSchema` reuses the same null-prototype
+ * `extensions` object (and shared `stitchingInfo`), so the executor must not
+ * live there — attaching a mapped copy would overwrite
+ * `getBackboneExecutor(original)`.
+ */
+const backboneExecutors = new WeakMap<GraphQLSchema, Executor>();
 
 /**
  * Snapshot Query/Mutation field `resolve` refs - compare after
@@ -60,26 +68,24 @@ export function markChangedRootResolvesAsLocal(
 /**
  * Install the stitching backbone on a schema:
  * - root Query/Mutation proxying resolvers (stock `graphql-js` execute -> backbone)
- * - `stitchingInfo.backboneExecutor` for gateway / direct execute
+ * - per-schema `getBackboneExecutor` record (WeakMap — not shared `stitchingInfo`)
  *
- * Progressive-override inputs must already live flat on `stitchingInfo`
- * (`overrideLabels` / `handleProgressiveOverride`) — typically written by
- * `stitchSchemas`. Call on the **final** schema after any `mapSchema`
- * transforms that yield a new schema instance (e.g. federation filter). Safe
- * to call again to rebind. Mesh `@pubsubPublish` belongs in fusion-runtime
- * (executor wrap), not here.
+ * Progressive-override inputs are closed over from `options` (from
+ * `stitchSchemas`), not stored on shared `stitchingInfo`. Identity / filter
+ * `mapSchema` keeps root proxies; attaching a derived schema does not
+ * overwrite `getBackboneExecutor(original)`. Mesh `@pubsubPublish` belongs
+ * in fusion-runtime (executor wrap), not here.
  */
-export function attachBackboneExecutor(schema: GraphQLSchema): GraphQLSchema {
-  const executor = createBackboneExecutor(schema);
-  const stitchingInfo = schema.extensions?.stitchingInfo as StitchingInfo | undefined;
-  if (stitchingInfo) {
-    stitchingInfo.backboneExecutor = executor;
-  }
+export function attachBackboneExecutor(
+  schema: GraphQLSchema,
+  options?: BackboneExecutorOptions,
+): GraphQLSchema {
+  const executor = createBackboneExecutor(schema, options);
+  backboneExecutors.set(schema, executor);
   return schema;
 }
 
-/** Read the backbone executor from `stitchingInfo`, if attached. */
+/** Read the backbone executor attached to this schema instance, if any. */
 export function getBackboneExecutor(schema: GraphQLSchema): Executor | undefined {
-  const stitchingInfo = schema.extensions?.stitchingInfo as StitchingInfo | undefined;
-  return stitchingInfo?.backboneExecutor;
+  return backboneExecutors.get(schema);
 }

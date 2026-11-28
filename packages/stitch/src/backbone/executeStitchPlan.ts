@@ -1014,14 +1014,15 @@ function collectEntitiesAtPath(data: any, path: PathSegment[]): Array<Record<str
 
 /**
  * Walk a flatten path collecting each entity plus its object ancestors
- * (immediate parent last). Used for Federation `@fromContext` parentDepth.
+ * (immediate parent last) and the concrete response path (with list indices).
+ * Used for Federation `@fromContext` parentDepth and error path remapping.
  */
 function collectEntitiesWithAncestorsAtPath(
   data: any,
   path: PathSegment[],
-): Array<{ entity: Record<string, any>; ancestors: object[] }> {
-  type Frame = { value: any; ancestors: object[] };
-  let current: Frame[] = [{ value: data, ancestors: [] }];
+): Array<{ entity: Record<string, any>; ancestors: object[]; responsePath: PathSegment[] }> {
+  type Frame = { value: any; ancestors: object[]; responsePath: PathSegment[] };
+  let current: Frame[] = [{ value: data, ancestors: [], responsePath: [] }];
   for (const segment of path) {
     const next: Frame[] = [];
     for (const frame of current) {
@@ -1036,6 +1037,7 @@ function collectEntitiesWithAncestorsAtPath(
             next.push({
               value: el,
               ancestors: typeof item === 'object' ? [...frame.ancestors, item] : frame.ancestors,
+              responsePath: [...frame.responsePath, segment],
             });
           }
         }
@@ -1043,11 +1045,13 @@ function collectEntitiesWithAncestorsAtPath(
       }
       const value = item[segment];
       if (Array.isArray(value)) {
-        for (const el of value) {
+        for (let index = 0; index < value.length; index++) {
+          const el = value[index];
           if (el != null && typeof el === 'object') {
             next.push({
               value: el,
               ancestors: typeof item === 'object' ? [...frame.ancestors, item] : frame.ancestors,
+              responsePath: [...frame.responsePath, segment, index],
             });
           }
         }
@@ -1055,23 +1059,34 @@ function collectEntitiesWithAncestorsAtPath(
         next.push({
           value,
           ancestors: typeof item === 'object' ? [...frame.ancestors, item] : frame.ancestors,
+          responsePath: [...frame.responsePath, segment],
         });
       } else if (value != null && typeof item === 'object') {
         const promoted: Record<string, any> = {};
         item[segment] = promoted;
-        next.push({ value: promoted, ancestors: [...frame.ancestors, item] });
+        next.push({
+          value: promoted,
+          ancestors: [...frame.ancestors, item],
+          responsePath: [...frame.responsePath, segment],
+        });
       }
     }
     current = next;
   }
   return current
     .filter(f => f.value != null && typeof f.value === 'object')
-    .map(f => ({ entity: f.value as Record<string, any>, ancestors: f.ancestors }));
+    .map(f => ({
+      entity: f.value as Record<string, any>,
+      ancestors: f.ancestors,
+      responsePath: f.responsePath,
+    }));
 }
 
 type ContextLocatedEntity = {
   entity: Record<string, any>;
   ancestors: object[];
+  /** Concrete gateway response path to this entity (includes list indices). */
+  responsePath: PathSegment[];
   groupKey: string;
   contextVars: Record<string, unknown>;
 };
@@ -1102,7 +1117,10 @@ function tryExecuteEntitiesBatchWithContext(
   const located: ContextLocatedEntity[] = [];
   const seen = new Set<Record<string, any>>();
   for (const path of node.flattenPaths ?? []) {
-    for (const { entity, ancestors } of collectEntitiesWithAncestorsAtPath(ctx.data, path)) {
+    for (const { entity, ancestors, responsePath } of collectEntitiesWithAncestorsAtPath(
+      ctx.data,
+      path,
+    )) {
       if (!matchEntityParent(entity, typeName, ctx.schema) || seen.has(entity)) {
         continue;
       }
@@ -1118,8 +1136,13 @@ function tryExecuteEntitiesBatchWithContext(
             : (readContextValue(ancestor, ca.selectionPath, ctx.schema) ?? null);
         contextVars[ca.variableName] = value;
       }
+      // Include field/arg names so currency=USD and locale=USD do not collide.
       const groupKey = stableStringifyContext(
-        contextArguments.map(ca => contextVars[ca.variableName]),
+        contextArguments.map(ca => ({
+          field: ca.fieldName,
+          arg: ca.argName,
+          value: contextVars[ca.variableName],
+        })),
       );
       // Reuse only when a prior hop stored this representation under the same
       // context identity (rep-only keys must not satisfy contextual fields).
@@ -1131,6 +1154,7 @@ function tryExecuteEntitiesBatchWithContext(
       located.push({
         entity,
         ancestors,
+        responsePath,
         groupKey,
         contextVars,
       });
@@ -1156,24 +1180,36 @@ function tryExecuteEntitiesBatchWithContext(
     list.push(item);
   }
 
-  const selectionWithArgs = applyContextArgsToSelectionSet(node.selectionSet, contextArguments);
+  const selectionWithArgs = applyContextArgsToSelectionSet(
+    node.selectionSet,
+    contextArguments,
+    typeName,
+  );
   const schema = (hopSubschema.transformedSchema ?? hopSubschema.schema) as GraphQLSchema;
+  const argName = inferMergeArgName(entry.argsFromKeys);
+  if (argName == null) {
+    return undefined;
+  }
+  // Client + context vars — merge/group allocators must avoid all of them.
+  const reservedVariableNames = new Set(
+    (ctx.operation.variableDefinitions ?? []).map(d => d.variable.name.value),
+  );
+  for (const ca of contextArguments) {
+    reservedVariableNames.add(ca.variableName);
+  }
+  const mergeVar = mergeVariableName(argName, reservedVariableNames);
   const baseDoc = buildBatchedMergeDocument(
     schema,
     entry,
     [{ entityTypeName: typeName, selectionSet: selectionWithArgs }],
     ctx.operation.name,
+    reservedVariableNames,
   );
   if (!baseDoc) {
     return undefined;
   }
   let document = addContextVariableDefinitions(baseDoc, contextArguments);
   document = addClientVariableDefinitions(document, selectionWithArgs, ctx);
-  const argName = inferMergeArgName(entry.argsFromKeys);
-  if (argName == null) {
-    return undefined;
-  }
-  const mergeVar = mergeVariableName(argName);
   const executor = getSubschemaExecutor(hopSubschema);
 
   const prepared: ContextGroupPrep[] = [];
@@ -1229,7 +1265,7 @@ function tryExecuteEntitiesBatchWithContext(
       }
       const entityResult = entities[ki];
       if (entityResult instanceof Error) {
-        ctx.errors.push(entityResult);
+        pushContextEntityError(ctx, entityResult, prep.items[i]!);
         continue;
       }
       if (entityResult == null || typeof entityResult !== 'object') {
@@ -1260,7 +1296,7 @@ function tryExecuteEntitiesBatchWithContext(
       };
       prepared.forEach((prep, groupIndex) => {
         const groupVars: Record<string, unknown> = {
-          ...remapMergeArgsToVariables(entry.argsFromKeys(prep.keys)),
+          ...remapMergeArgsToVariables(entry.argsFromKeys(prep.keys), reservedVariableNames),
           ...prep.contextVars,
         };
         Object.assign(
@@ -1292,7 +1328,7 @@ function tryExecuteEntitiesBatchWithContext(
             aliased.responseKeys.map(() => counts),
           );
           if (unaliased.errors?.length) {
-            ctx.errors.push(...unaliased.errors);
+            pushMappedContextBatchErrors(ctx, unaliased.errors, prepared, true);
           }
           const payload = unaliased.data?.[entry.fieldName];
           if (!Array.isArray(payload)) {
@@ -1313,7 +1349,7 @@ function tryExecuteEntitiesBatchWithContext(
   for (const prep of prepared) {
     const variables: Record<string, unknown> = {
       ...pickClientVariables(document, ctx),
-      ...remapMergeArgsToVariables(entry.argsFromKeys(prep.keys)),
+      ...remapMergeArgsToVariables(entry.argsFromKeys(prep.keys), reservedVariableNames),
       ...prep.contextVars,
     };
     jobs.push(
@@ -1330,7 +1366,7 @@ function tryExecuteEntitiesBatchWithContext(
           } satisfies ExecutionRequest) as MaybePromise<ExecutionResult>,
         (result: ExecutionResult) => {
           if (result.errors?.length) {
-            ctx.errors.push(...result.errors);
+            pushMappedContextBatchErrors(ctx, result.errors, [prep], false);
           }
           mergeGroupResult(prep, result.data?.[entry.fieldName]);
         },
@@ -1408,7 +1444,7 @@ interface ContextAliasedDocument {
   document: DocumentNode;
   responseKeys: string[];
   groupedVariables: Set<string>;
-  /** Names that must not be used as `${base}_${group}` (client vars). */
+  /** Names that must not be used as group-suffixed vars (client + op vars). */
   reservedVarNames: ReadonlySet<string>;
 }
 
@@ -1527,9 +1563,25 @@ function writeContextAliasedDocument(
   };
 }
 
+/**
+ * Group-suffixed variable name that avoids every reserved client/generated
+ * name, including the `__mesh_` fallback itself. Pure so document rewrite and
+ * variable remap stay aligned.
+ */
 function aliasedGroupVarName(base: string, group: number, reserved: ReadonlySet<string>): string {
-  const plain = `${base}_${group}`;
-  return reserved.has(plain) ? `__mesh_${base}_${group}` : plain;
+  let n = 0;
+  while (true) {
+    const candidate =
+      n === 0
+        ? `${base}_${group}`
+        : n === 1
+          ? `__mesh_${base}_${group}`
+          : `__mesh_${base}_${group}_${n - 1}`;
+    n++;
+    if (!reserved.has(candidate)) {
+      return candidate;
+    }
+  }
 }
 
 function splitGroup(name: string): [string, number] | null {
@@ -1550,6 +1602,73 @@ function renameGroupVariables(
     ] = value;
   }
   return renamed;
+}
+
+/**
+ * Map a subgraph entity Error onto each affected gateway response path.
+ * Deduplicated representations emit one relocated error per parent position.
+ */
+function pushContextEntityError(
+  ctx: BackboneExecutionContext,
+  entityResult: Error,
+  item: ContextLocatedEntity,
+): void {
+  if (isGraphQLErrorLike(entityResult)) {
+    const rest =
+      entityResult.path?.length && typeof entityResult.path[1] === 'number'
+        ? entityResult.path.slice(2)
+        : (entityResult.path?.slice(1) ?? []);
+    ctx.errors.push(relocatedError(entityResult, [...item.responsePath, ...rest]));
+    return;
+  }
+  ctx.errors.push(entityResult);
+}
+
+/**
+ * Map `_entities[i].…` (or aliased merge-field) errors onto public response
+ * paths via each group's entity→parent mapping. When `concatenated`, path[1]
+ * indexes the joined payload across prepared groups.
+ */
+function pushMappedContextBatchErrors(
+  ctx: BackboneExecutionContext,
+  errors: readonly GraphQLError[],
+  prepared: ContextGroupPrep[],
+  concatenated: boolean,
+): void {
+  for (const error of errors) {
+    const path = error.path;
+    if (!path?.length || typeof path[1] !== 'number') {
+      ctx.errors.push(error);
+      continue;
+    }
+    const keyIndex = path[1];
+    let offset = 0;
+    let mapped = false;
+    for (const prep of prepared) {
+      const end = offset + prep.keys.length;
+      const inGroup = concatenated
+        ? keyIndex >= offset && keyIndex < end
+        : keyIndex >= 0 && keyIndex < prep.keys.length;
+      if (!inGroup) {
+        if (concatenated) {
+          offset = end;
+        }
+        continue;
+      }
+      const localIndex = concatenated ? keyIndex - offset : keyIndex;
+      for (let i = 0; i < prep.items.length; i++) {
+        if (prep.parentKeyIndex[i] !== localIndex) {
+          continue;
+        }
+        ctx.errors.push(relocatedError(error, [...prep.items[i]!.responsePath, ...path.slice(2)]));
+        mapped = true;
+      }
+      break;
+    }
+    if (!mapped) {
+      ctx.errors.push(error);
+    }
+  }
 }
 
 function unaliasContextResult(
@@ -1618,33 +1737,40 @@ function unaliasContextResult(
 function applyContextArgsToSelectionSet(
   selectionSet: SelectionSetNode,
   contextArguments: StitchContextArgument[],
+  enclosingType?: string,
 ): SelectionSetNode {
-  // One rewrite per fieldName+argName (aliased occurrences share the variable).
-  const byField = new Map<string, StitchContextArgument[]>();
-  for (const ca of contextArguments) {
-    let list = byField.get(ca.fieldName);
-    if (!list) {
-      list = [];
-      byField.set(ca.fieldName, list);
-    }
-    if (!list.some(existing => existing.argName === ca.argName)) {
-      list.push(ca);
-    }
-  }
   return {
     kind: Kind.SELECTION_SET,
     selections: selectionSet.selections.map(sel => {
       if (sel.kind === Kind.INLINE_FRAGMENT) {
+        const on = sel.typeCondition?.name.value ?? enclosingType;
         return {
           ...sel,
-          selectionSet: applyContextArgsToSelectionSet(sel.selectionSet, contextArguments),
+          selectionSet: applyContextArgsToSelectionSet(sel.selectionSet, contextArguments, on),
         };
       }
       if (sel.kind !== Kind.FIELD) {
         return sel;
       }
-      const fieldArgs = byField.get(sel.name.value);
-      if (!fieldArgs?.length) {
+      // One rewrite per fieldName+argName within this typed branch; aliases share.
+      const fieldArgs: StitchContextArgument[] = [];
+      for (const ca of contextArguments) {
+        if (ca.fieldName !== sel.name.value) {
+          continue;
+        }
+        if (
+          ca.typeCondition != null &&
+          enclosingType != null &&
+          ca.typeCondition !== enclosingType
+        ) {
+          continue;
+        }
+        if (fieldArgs.some(existing => existing.argName === ca.argName)) {
+          continue;
+        }
+        fieldArgs.push(ca);
+      }
+      if (!fieldArgs.length) {
         return sel;
       }
       const existingArgNames = new Set((sel.arguments ?? []).map(a => a.name.value));

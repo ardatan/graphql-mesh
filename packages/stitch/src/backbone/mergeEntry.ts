@@ -169,18 +169,36 @@ export function inferMergeArgName(
 }
 
 /**
- * Operation variable for a merge arg. Prefixed so a client `$representations` (e.g. for
- * `amount(multiplier: $representations)`) cannot collide with `_entities(representations: $…)`.
+ * Operation variable for a merge arg. Prefixed so a client `$nxt` (e.g. for
+ * `amount(multiplier: $nxt)`) cannot collide with `_entities(representations: $…)`.
+ * When `reservedVariableNames` already contains the preferred name, allocate
+ * the next free `__mesh_<arg>_<n>`.
  */
-export function mergeVariableName(argName: string): string {
-  return `__mesh_${argName}`;
+export function mergeVariableName(
+  argName: string,
+  reservedVariableNames?: ReadonlySet<string>,
+): string {
+  const preferred = `__mesh_${argName}`;
+  if (!reservedVariableNames?.has(preferred)) {
+    return preferred;
+  }
+  let n = 0;
+  while (true) {
+    const candidate = `${preferred}_${n++}`;
+    if (!reservedVariableNames.has(candidate)) {
+      return candidate;
+    }
+  }
 }
 
 /** Remap `argsFromKeys` output keys to {@link mergeVariableName} variable names. */
-export function remapMergeArgsToVariables(args: Record<string, any>): Record<string, any> {
+export function remapMergeArgsToVariables(
+  args: Record<string, any>,
+  reservedVariableNames?: ReadonlySet<string>,
+): Record<string, any> {
   const out: Record<string, any> = Object.create(null);
   for (const [name, value] of Object.entries(args)) {
-    out[mergeVariableName(name)] = value;
+    out[mergeVariableName(name, reservedVariableNames)] = value;
   }
   return out;
 }
@@ -245,6 +263,7 @@ export function buildBatchedMergeDocument(
   entry: BatchedMergeEntry,
   aliases: Array<{ entityTypeName: string; selectionSet: SelectionSetNode }>,
   operationName?: NameNode | string | null,
+  reservedVariableNames?: ReadonlySet<string>,
 ): DocumentNode | null {
   if (!aliases.length) {
     return null;
@@ -253,7 +272,7 @@ export function buildBatchedMergeDocument(
   if (argName == null) {
     return null;
   }
-  const variableName = mergeVariableName(argName);
+  const variableName = mergeVariableName(argName, reservedVariableNames);
   const queryType = schema.getQueryType();
   const field = queryType?.getFields()[entry.fieldName];
   const argDef = field?.args.find(a => a.name === argName);

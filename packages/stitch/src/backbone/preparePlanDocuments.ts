@@ -448,6 +448,9 @@ export function preparePlanDocuments(
       fieldNodesByField,
     );
     const entry = getBatchedMergeEntry(root.subschema, root.entityTypeName);
+    const reservedVariableNames = new Set(
+      (operation.variableDefinitions ?? []).map(d => d.variable.name.value),
+    );
     const document =
       entry != null
         ? (buildBatchedMergeDocument(
@@ -460,6 +463,7 @@ export function preparePlanDocuments(
               },
             ],
             operation.name,
+            reservedVariableNames,
           ) ?? undefined)
         : undefined;
     return {
@@ -494,9 +498,13 @@ export function preparePlanDocuments(
           e.fieldName === first.fieldName &&
           inferMergeArgName(e.argsFromKeys) === argName,
       );
+    const reservedVariableNames = new Set(
+      (operation.variableDefinitions ?? []).map(d => d.variable.name.value),
+    );
+    const mergeVar = canBatchDoc ? mergeVariableName(argName!, reservedVariableNames) : undefined;
     const aliases: StitchBatchAlias[] = filteredAliases.map(a => ({
       ...a,
-      representationsVariable: canBatchDoc ? mergeVariableName(argName!) : undefined,
+      representationsVariable: mergeVar,
     }));
     const document = canBatchDoc
       ? (buildBatchedMergeDocument(
@@ -507,6 +515,7 @@ export function preparePlanDocuments(
             selectionSet: a.selectionSet,
           })),
           operation.name,
+          reservedVariableNames,
         ) ?? undefined)
       : undefined;
     return {

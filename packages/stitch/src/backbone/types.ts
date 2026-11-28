@@ -42,6 +42,12 @@ export interface StitchContextArgument {
   providerTypeNames: string[];
   /** Selection from that ancestor (`Key` / `TypenameEquals` / `Alternatives`). */
   selectionPath: StitchContextPathSegment[];
+  /**
+   * Concrete / inline-fragment type this rewrite was collected under. Distinct
+   * typed branches under one covering Fetch (e.g. `... on Sale` vs `... on
+   * Refund`) keep separate bindings; aliases within one type still share.
+   */
+  typeCondition?: string;
 }
 
 /**
@@ -217,9 +223,9 @@ export interface StitchPlan {
 
 /**
  * Per-call inputs for `buildStitchPlan`. Progressive-override fields are
- * normally read from `stitchingInfo` by `createBackboneExecutor` and passed
- * through here. Per-request GraphQL context comes from
- * `ExecutionRequest.context`, never a constructor opt.
+ * closed over by `createBackboneExecutor` and passed through here.
+ * Per-request GraphQL context comes from `ExecutionRequest.context`, never a
+ * constructor opt.
  */
 export interface BuildStitchPlanOptions {
   /**

@@ -3,6 +3,7 @@ import {
   isAbstractType,
   isInterfaceType,
   isObjectType,
+  isUnionType,
   Kind,
   parse,
   type FieldNode,
@@ -184,7 +185,11 @@ export function typeNamesAlongFlattenPath(
     if (typeof segment === 'number') {
       continue;
     }
-    if (!current || !(isObjectType(current) || isInterfaceType(current))) {
+    // Unions may carry `@context`; resolve applicable fragments before
+    // requiring a type with fields (e.g. account → ... on User → transactions).
+    const canResolveSelection =
+      isObjectType(current) || isInterfaceType(current) || isUnionType(current);
+    if (!current || !canResolveSelection) {
       break;
     }
     let fieldName = segment;
@@ -208,9 +213,6 @@ export function typeNamesAlongFlattenPath(
         // Provider check accepts implementers of interface providers.
         current = resolved.concreteType;
         types[types.length - 1] = current.name;
-        if (!(isObjectType(current) || isInterfaceType(current))) {
-          break;
-        }
       }
     }
     if (!(isObjectType(current) || isInterfaceType(current))) {
@@ -406,10 +408,16 @@ function collectContextArgsFromSelection(
       continue;
     }
     for (const ca of cfg.contextArguments) {
-      // Aliased occurrences of the same field share one rewrite variable —
-      // allocating per occurrence leaves unused `$__context_N` definitions.
+      // Aliased occurrences of the same field on the same type share one
+      // rewrite variable. Distinct typed branches (`... on Sale` vs
+      // `... on Refund`) keep separate bindings.
       if (
-        out.some(existing => existing.fieldName === sel.name.value && existing.argName === ca.name)
+        out.some(
+          existing =>
+            existing.fieldName === sel.name.value &&
+            existing.argName === ca.name &&
+            (existing.typeCondition ?? typeName) === typeName,
+        )
       ) {
         continue;
       }
@@ -422,7 +430,7 @@ function collectContextArgsFromSelection(
         reservedVariableNames,
       );
       if (rewrite) {
-        out.push({ ...rewrite, fieldName: sel.name.value });
+        out.push({ ...rewrite, fieldName: sel.name.value, typeCondition: typeName });
       }
     }
   }

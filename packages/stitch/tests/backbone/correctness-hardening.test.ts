@@ -2,7 +2,11 @@ import { parse } from 'graphql';
 import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import type { ExecutionResult, Executor } from '@graphql-tools/utils';
-import { BACKBONE_EXECUTING, createBackboneExecutor } from '../../src/backbone/index';
+import {
+  BACKBONE_EXECUTING,
+  createBackboneExecutor,
+  getBackboneExecutor,
+} from '../../src/backbone/index';
 import { stitchSchemas } from '../../src/stitchSchemas';
 
 async function exec(
@@ -191,7 +195,8 @@ describe('backbone correctness: percentage progressive-override cache', () => {
     };
 
     try {
-      const backbone = createBackboneExecutor(schema);
+      // Use the executor stitchSchemas attached (closes over overrideLabels).
+      const backbone = getBackboneExecutor(schema)!;
       const document = parse(`{ hello }`);
       active = true;
 

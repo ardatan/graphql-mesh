@@ -17,7 +17,6 @@ import {
 import { createDefaultExecutor, type SubschemaConfig } from '@graphql-tools/delegate';
 import { getStitchedSchemaFromSupergraphSdl } from '@graphql-tools/federation';
 import { mergeTypeDefs } from '@graphql-tools/merge';
-import { getBackboneExecutor } from '@graphql-tools/stitch';
 import { stitchingDirectives } from '@graphql-tools/stitching-directives';
 import {
   asArray,
@@ -237,6 +236,9 @@ export const handleFederationSupergraph = function ({
 
   const unifiedGraphDirectives = getDirectiveExtensions(unifiedGraph);
 
+  // Progressive-override labels come from stitchSchemas options (closed over by
+  // the backbone), not from shared stitchingInfo / schema.extensions.
+  let overrideLabels: Iterable<string> | undefined;
   const executableUnifiedGraph = getStitchedSchemaFromSupergraphSdl({
     supergraphSdl: getDocumentNodeFromSchema(unifiedGraph),
     batchDelegateOptions,
@@ -262,6 +264,7 @@ export const handleFederationSupergraph = function ({
     },
     onStitchingOptions(opts) {
       subschemas = opts.subschemas;
+      overrideLabels = opts.overrideLabels;
       opts.typeDefs = handleResolveToDirectives(
         opts.typeDefs,
         additionalTypeDefs,
@@ -322,15 +325,13 @@ export const handleFederationSupergraph = function ({
     }
     return subgraph;
   }
-  const overrideLabels = executableUnifiedGraph.extensions?.overrideLabels as
-    Set<string> | undefined;
 
-  // @pubsubPublish is Mesh/fusion concern: wrap the backbone executor (do not
-  // mapSchema Mutation fields - that replaces the schema and drops attach).
-  const backboneOrSchema =
-    getBackboneExecutor(executableUnifiedGraph) ?? createDefaultExecutor(executableUnifiedGraph);
-  const executor = wrapExecutorWithPubsubPublish(executableUnifiedGraph, backboneOrSchema);
-
+  // Stock execute via root proxies (survive filter mapSchema; no re-attach).
+  // @pubsubPublish wraps the schema executor — do not mapSchema Mutation fields.
+  const executor = wrapExecutorWithPubsubPublish(
+    executableUnifiedGraph,
+    createDefaultExecutor(executableUnifiedGraph),
+  );
   return {
     unifiedGraph: executableUnifiedGraph,
     executor,

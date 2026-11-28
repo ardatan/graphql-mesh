@@ -1,5 +1,5 @@
 import { GraphQLError, Kind, type GraphQLSchema } from 'graphql';
-import { createDefaultExecutor, type StitchingInfo } from '@graphql-tools/delegate';
+import { createDefaultExecutor } from '@graphql-tools/delegate';
 import { getFragmentsFromDocument } from '@graphql-tools/executor';
 import {
   getOperationASTFromRequest,
@@ -14,6 +14,12 @@ import { executeStitchPlan } from './executeStitchPlan.js';
 import { projectDataToOperation } from './projectResult.js';
 import { installRootProxyingResolvers } from './rootProxyingResolvers.js';
 import type { StitchPlan } from './types.js';
+
+/** Progressive-override inputs closed over at create/attach time. */
+export type BackboneExecutorOptions = {
+  overrideLabels?: Iterable<string>;
+  handleProgressiveOverride?: (label: string, context: any) => boolean | Promise<boolean>;
+};
 
 /** Full SDL introspection - schema execute (Hive also special-cases these). */
 function isSchemaIntrospectionOperation(request: ExecutionRequest): boolean {
@@ -62,19 +68,21 @@ function documentHasDeferOrStream(request: ExecutionRequest): boolean {
  * execute (schema subscribe / incremental) until those are planned end-to-end.
  * Pure `{ __typename }` is an Island on the backbone.
  *
- * Progressive-override inputs are read from `stitchingInfo` only
- * (`overrideLabels` / `handleProgressiveOverride`).
+ * Progressive-override inputs are closed over from `options` (passed by
+ * `stitchSchemas` / federation attach), not read from shared `stitchingInfo`.
  */
-export function createBackboneExecutor(schema: GraphQLSchema): Executor {
+export function createBackboneExecutor(
+  schema: GraphQLSchema,
+  options?: BackboneExecutorOptions,
+): Executor {
   const schemaExecutor = createDefaultExecutor(schema);
   const planCache = new WeakMap<ExecutionRequest['document'], Map<string | null, StitchPlan>>();
-  const stitchingInfo = schema.extensions?.stitchingInfo as StitchingInfo | undefined;
-  const overrideLabels = stitchingInfo?.overrideLabels;
-  const handleProgressiveOverride = stitchingInfo?.handleProgressiveOverride;
+  const overrideLabels = options?.overrideLabels;
+  const handleProgressiveOverride = options?.handleProgressiveOverride;
 
   // Root proxying resolvers: stock graphql-js execute -> this executor. Prefer
-  // `attachBackboneExecutor` so the executor also lands on stitchingInfo;
-  // safe to call again after mapSchema on the final schema object.
+  // `attachBackboneExecutor` so the executor is recorded per schema instance.
+  // Safe to call again after a schema-changing filter on the final schema.
   installRootProxyingResolvers(schema, request => stitchingBackboneExecutor(request));
 
   function getCachedPlan(request: ExecutionRequest): StitchPlan {

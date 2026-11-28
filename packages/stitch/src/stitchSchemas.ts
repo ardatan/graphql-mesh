@@ -159,29 +159,22 @@ export function stitchSchemas<TContext extends Record<string, any> = Record<stri
     applyExtensions(schema, mergedSchemaExtensions);
   }
 
-  if (schema.extensions?.stitchingInfo) {
-    const info = schema.extensions.stitchingInfo as {
-      contextProviders?: Record<string, string[]>;
-      overrideLabels?: Iterable<string>;
-      handleProgressiveOverride?: (label: string, context: any) => boolean | Promise<boolean>;
-    };
-    if (contextProvidersOption) {
-      info.contextProviders = contextProvidersOption;
-    }
-    // Progressive-override inputs live flat on stitchingInfo; the backbone
-    // executor reads them from there (no options bag on attach/create).
-    if (overrideLabelsOption != null) {
-      info.overrideLabels = overrideLabelsOption;
-    }
-    if (handleProgressiveOverrideOption != null) {
-      info.handleProgressiveOverride = handleProgressiveOverrideOption;
-    }
+  if (contextProvidersOption && schema.extensions?.stitchingInfo) {
+    (
+      schema.extensions.stitchingInfo as { contextProviders?: Record<string, string[]> }
+    ).contextProviders = contextProvidersOption;
   }
 
-  // Backbone executor + root proxying resolvers on the stitched schema
-  // (stored on stitchingInfo). Callers that mapSchema afterward (e.g.
-  // federation filter) must re-attach on the new instance.
-  return attachBackboneExecutor(schema);
+  // Root proxies + per-schema WeakMap executor record (gateway direct execute).
+  // Progressive-override inputs are closed over here — not stored on shared
+  // stitchingInfo. Identity / filter mapSchema keeps root proxies; no re-attach
+  // is required for stock graphql-js execute.
+  return attachBackboneExecutor(schema, {
+    ...(overrideLabelsOption != null ? { overrideLabels: overrideLabelsOption } : {}),
+    ...(handleProgressiveOverrideOption != null
+      ? { handleProgressiveOverride: handleProgressiveOverrideOption }
+      : {}),
+  });
 }
 
 function stripCustomDirectiveUsages(types: GraphQLNamedType[]): void {

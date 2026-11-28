@@ -3964,25 +3964,28 @@ function contextProviderDependsOn(
   }
   const laterPaths = fetchFlattenPaths(later);
   const earlierPaths = fetchFlattenPaths(earlier);
-  let ancestor = false;
+  // Order after any producer that supplies the context selection — ancestor
+  // or sibling under a shared prefix (e.g. users.preferences before
+  // users.transactions when amount reads preferences.isoCode).
+  let related = false;
   if (earlier.rootField) {
     const rk = earlier.rootField.alias?.value ?? earlier.rootField.name.value;
-    ancestor = laterPaths.some(lp => lp[0] === rk);
+    related = laterPaths.some(lp => lp[0] === rk);
   }
-  if (!ancestor) {
+  if (!related) {
     for (const lp of laterPaths) {
       for (const ep of earlierPaths) {
-        if (pathIsPrefix(ep, lp) && ep.length < lp.length) {
-          ancestor = true;
+        if (pathsRelatedForContextProvider(ep, lp)) {
+          related = true;
           break;
         }
       }
-      if (ancestor) {
+      if (related) {
         break;
       }
     }
   }
-  if (!ancestor) {
+  if (!related) {
     return false;
   }
   const provided = collectSelectedFieldNames(earlier.selectionSet);
@@ -3992,6 +3995,21 @@ function contextProviderDependsOn(
     }
   }
   return false;
+}
+
+/**
+ * True when `earlier` is an ancestor of `later`, or they share a non-empty
+ * prefix and then diverge (siblings / cousins under the same parent path).
+ */
+function pathsRelatedForContextProvider(earlier: PathSegment[], later: PathSegment[]): boolean {
+  if (pathIsPrefix(earlier, later) && earlier.length < later.length) {
+    return true;
+  }
+  let i = 0;
+  while (i < earlier.length && i < later.length && earlier[i] === later[i]) {
+    i++;
+  }
+  return i > 0 && i < earlier.length && i < later.length;
 }
 
 function collectContextSelectionKeys(

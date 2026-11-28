@@ -60,7 +60,6 @@ import {
 import { CRITICAL_ERROR } from '@graphql-tools/executor';
 import { buildHTTPExecutor, type HTTPExecutorOptions } from '@graphql-tools/executor-http';
 import {
-  attachBackboneExecutor,
   calculateSelectionScore,
   getDefaultFieldConfigMerger,
   markChangedRootResolvesAsLocal,
@@ -2436,7 +2435,9 @@ export function getStitchedSchemaFromSupergraphSdl(opts: GetStitchedSchemaFromSu
   // Subgraph schemas keep `@fromContext` args for entity documents; strip them
   // from the public gateway schema (join SDL never exposes them).
   supergraphSchema = stripContextualArgsFromPublicSchema(supergraphSchema);
-  // filterInternalFieldsAndTypes mapSchema -> new schema; re-bind backbone.
+  // filterInternalFieldsAndTypes mapSchema -> new schema. Root proxies from
+  // stitchSchemas survive; no backbone re-attach (executor is not stored on
+  // shared stitchingInfo / extensions).
   supergraphSchema = filterInternalFieldsAndTypes(supergraphSchema);
   if (opts.onStitchedSchema) {
     const rootResolvesBefore = snapshotRootFieldResolves(supergraphSchema);
@@ -2444,9 +2445,7 @@ export function getStitchedSchemaFromSupergraphSdl(opts: GetStitchedSchemaFromSu
     // Late root resolver overrides (Query.me -> local) must plan as Islands.
     markChangedRootResolvesAsLocal(supergraphSchema, rootResolvesBefore);
   }
-  // Re-attach after mapSchema. Progressive-override inputs already live flat
-  // on stitchingInfo from stitchSchemas; createBackboneExecutor reads them.
-  return attachBackboneExecutor(supergraphSchema);
+  return supergraphSchema;
 }
 
 /**

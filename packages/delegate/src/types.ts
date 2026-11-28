@@ -287,21 +287,6 @@ export interface StitchingInfo<TContext = Record<string, any>> {
    * name (`subgraph__localName`) → type names that set that context.
    */
   contextProviders?: Record<string, string[]>;
-  /**
-   * Operation-level stitching backbone executor when attached via
-   * `attachBackboneExecutor` / `stitchSchemas`.
-   */
-  backboneExecutor?: Executor;
-  /**
-   * Known progressive-override labels from the supergraph. Stored flat on
-   * `stitchingInfo` for optionless re-attach after `mapSchema`.
-   */
-  overrideLabels?: Iterable<string>;
-  /**
-   * Progressive override label handler. Stored flat on `stitchingInfo` for
-   * optionless re-attach after `mapSchema`.
-   */
-  handleProgressiveOverride?: (label: string, context: any) => boolean | Promise<boolean>;
 }
 
 export interface ExternalObject<TContext = Record<string, any>> {
