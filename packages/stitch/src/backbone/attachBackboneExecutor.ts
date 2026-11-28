@@ -143,17 +143,16 @@ export function retargetBackboneToSchema(schema: GraphQLSchema): GraphQLSchema {
 
   // Restore ORIGINAL_RESOLVE symbols dropped by mapSchema before reinstalling
   // proxies — otherwise install would see only the proxy fn and skip/nest.
+  // Include pre-existing localFields: skipping them left Islands calling the
+  // root proxy (re-entering the plan). Late overrides stamped by
+  // markChangedRootResolvesAsLocal already have the symbol set, so we do not
+  // overwrite them with the pre-override rootOriginals entry.
   for (const root of [schema.getQueryType(), schema.getMutationType()]) {
     if (!root || !isObjectType(root)) {
       continue;
     }
-    const locals = stitchingInfo?.localFields?.get(root.name);
     for (const [fieldName, field] of Object.entries(root.getFields())) {
       const key = `${root.name}.${fieldName}`;
-      if (locals?.has(fieldName)) {
-        // Late override already stamped on the field by markChangedRootResolvesAsLocal.
-        continue;
-      }
       if (getOriginalRootResolve(field) == null) {
         const original = runtime.rootOriginals.get(key);
         if (original) {
