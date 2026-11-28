@@ -11,7 +11,7 @@ import {
   getOperationASTFromRequest,
   isAsyncIterable,
   memoize1,
-  memoize2,
+  memoize3,
   type ExecutionRequest,
   type ExecutionResult,
   type Executor,
@@ -65,16 +65,15 @@ function documentHasDeferOrStream(request: ExecutionRequest): boolean {
 /** Same key fusion sets on request context with the per-request active labels. */
 const OVERRIDE_LABELS_CONTEXT_KEY = Symbol.for('hive.gateway.overrideLabels');
 
-/** When context has no active labels object — stable WeakMap key for memoize2. */
+/** When context has no active labels object — stable WeakMap key for memoize3. */
 const EMPTY_ACTIVE_LABELS: object = Object.freeze({});
 
 /**
- * Build inputs for the memoize2 miss path (fragments / vars / context are not
+ * Build inputs for the memoize3 miss path (fragments / vars / context are not
  * cache keys — same as the previous document+string-key cache).
  */
 let planBuildInput:
   | {
-      schema: GraphQLSchema;
       operation: OperationDefinitionNode;
       fragments: ReturnType<typeof getFragmentsFromDocument>;
       coerced: Record<string, any>;
@@ -82,27 +81,26 @@ let planBuildInput:
     }
   | undefined;
 
-/** Per-schema plan cache: memoize2(request.document, activeLabels). */
-const getPlanMemoForSchema = memoize1(function getPlanMemoForSchema(_schema: GraphQLSchema) {
-  return memoize2(function cachedPlanByDocumentAndLabels(
-    _document: DocumentNode,
-    _activeLabels: object,
-  ): StitchPlan {
-    const input = planBuildInput!;
-    try {
-      return buildStitchPlan(input.schema, input.operation, input.fragments, input.coerced, {
-        context: input.context,
-      });
-    } catch (err) {
-      return {
-        operation: input.operation,
-        fragments: input.fragments,
-        root: { kind: 'Parallel', nodes: [] },
-        incomplete: true,
-        incompleteReasons: [err instanceof Error ? err.message : 'Plan build failed'],
-      };
-    }
-  });
+/** Plan cache: memoize3(schema, request.document, activeLabels). */
+const cachedPlanBySchemaDocumentAndLabels = memoize3(function cachedPlanBySchemaDocumentAndLabels(
+  schema: GraphQLSchema,
+  _document: DocumentNode,
+  _activeLabels: object,
+): StitchPlan {
+  const input = planBuildInput!;
+  try {
+    return buildStitchPlan(schema, input.operation, input.fragments, input.coerced, {
+      context: input.context,
+    });
+  } catch (err) {
+    return {
+      operation: input.operation,
+      fragments: input.fragments,
+      root: { kind: 'Parallel', nodes: [] },
+      incomplete: true,
+      incompleteReasons: [err instanceof Error ? err.message : 'Plan build failed'],
+    };
+  }
 });
 
 function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): StitchPlan {
@@ -123,14 +121,13 @@ function getCachedPlan(schema: GraphQLSchema, request: ExecutionRequest): Stitch
   const labelsKey: object =
     activeLabels != null && typeof activeLabels === 'object' ? activeLabels : EMPTY_ACTIVE_LABELS;
   planBuildInput = {
-    schema,
     operation,
     fragments,
     coerced,
     context: request.context,
   };
   try {
-    return getPlanMemoForSchema(schema)(request.document, labelsKey);
+    return cachedPlanBySchemaDocumentAndLabels(schema, request.document, labelsKey);
   } finally {
     planBuildInput = undefined;
   }
