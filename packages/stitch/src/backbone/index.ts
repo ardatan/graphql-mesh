@@ -11,10 +11,13 @@ export {
   bindContextSelectionPathForFlattenPath,
   contextProviderParentDepth,
   fieldConfigsWithContextArguments,
+  getContextProviders,
   injectContextBridgesIntoSelections,
   parseContextSelectionPath,
   readContextValue,
   resolveContextAncestor,
+  typeMatchesContextProvider,
+  typeNamesAlongFlattenPath,
 } from './contextArguments.js';
 export { createBackboneExecutor } from './createBackboneExecutor.js';
 export { executeStitchPlan } from './executeStitchPlan.js';

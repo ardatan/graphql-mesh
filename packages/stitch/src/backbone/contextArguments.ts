@@ -306,7 +306,7 @@ function resolveSelectionForResponseKey(
 }
 
 /** True when `typeName` is a listed provider or implements a provider interface. */
-function typeMatchesContextProvider(
+export function typeMatchesContextProvider(
   schema: GraphQLSchema,
   typeName: string,
   providers: readonly string[],

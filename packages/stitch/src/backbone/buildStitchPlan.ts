@@ -22,9 +22,12 @@ import { handleOverrideByDelegation, leftOverByDelegationPlan } from '@graphql-t
 import { getDefinedRootType } from '@graphql-tools/utils';
 import {
   buildContextArgumentsForFetch,
+  getContextProviders,
   injectContextBridgesIntoSelections,
   parseContextSelectionPath,
   selectionHasContextArguments,
+  typeMatchesContextProvider,
+  typeNamesAlongFlattenPath,
 } from './contextArguments.js';
 import { isLocalField } from './localFields.js';
 import { getBatchedMergeEntry, inferMergeArgName } from './mergeEntry.js';
@@ -58,6 +61,9 @@ function selectionSetOf(selections: readonly SelectionNode[]): SelectionSetNode 
  * threading context through every recursive plan helper.
  */
 let planningContext: any;
+
+/** Gateway schema for the in-flight plan (provider type walks in dependsOn). */
+let planningSchema: GraphQLSchema | undefined;
 
 /**
  * Fill omitted operation variables from their GraphQL default values so
@@ -3333,7 +3339,9 @@ export function buildStitchPlan(
   const coercedVariables = coerceOperationVariables(operation, variableValues);
 
   const previousPlanningContext = planningContext;
+  const previousPlanningSchema = planningSchema;
   planningContext = options.context;
+  planningSchema = schema;
   try {
     if (incompleteReasons.length > 0) {
       // Still attempt a best-effort plan for warming, but never throw out of here.
@@ -3369,6 +3377,7 @@ export function buildStitchPlan(
     );
   } finally {
     planningContext = previousPlanningContext;
+    planningSchema = previousPlanningSchema;
   }
 }
 
@@ -3930,15 +3939,17 @@ function fetchDependsOn(
 
 /**
  * True when `later` has `@fromContext` fields whose context selection is
- * produced by `earlier` on an ancestor path (e.g. User.currency before
- * Transaction.amount).
+ * produced by `earlier` on the declared provider occurrence (e.g. User.currency
+ * before Transaction.amount) — not a same-named field under a non-provider
+ * parent (Order.preferences ≠ User.preferences).
  */
 function contextProviderDependsOn(
   stitchingInfo: StitchingInfo,
   later: Extract<StitchPlanNode, { kind: 'Fetch' }>,
   earlier: Extract<StitchPlanNode, { kind: 'Fetch' }>,
 ): boolean {
-  if (!later.entityTypeName || !later.selectionSet || !earlier.selectionSet) {
+  const schema = planningSchema;
+  if (!schema || !later.entityTypeName || !later.selectionSet || !earlier.selectionSet) {
     return false;
   }
   if (
@@ -3951,36 +3962,37 @@ function contextProviderDependsOn(
   ) {
     return false;
   }
-  // Full Key sequences (e.g. ['preferences','isoCode']), not a flat bag —
-  // nested names must not match unrelated sibling paths.
-  const contextPaths = collectContextSelectionKeyPaths(
+  const needs = collectContextNeeds(
+    schema,
     stitchingInfo,
     later.subschema,
     later.entityTypeName,
     later.selectionSet,
   );
-  if (!contextPaths.length) {
-    return false;
-  }
-  const rootKeys = new Set(contextPaths.map(p => p[0]).filter((k): k is string => !!k));
-  if (!rootKeys.size) {
+  if (!needs.length) {
     return false;
   }
   const laterPaths = fetchFlattenPaths(later);
   const earlierPaths = fetchFlattenPaths(earlier);
   const provided = collectSelectedFieldNames(earlier.selectionSet);
 
-  if (earlier.rootField) {
-    const rk = earlier.rootField.alias?.value ?? earlier.rootField.name.value;
-    if (laterPaths.some(lp => lp[0] === rk) && [...rootKeys].some(k => provided.has(k))) {
-      return true;
-    }
-  }
-
-  for (const lp of laterPaths) {
-    for (const ep of earlierPaths) {
-      if (earlierProvidesContextOnPath(ep, lp, contextPaths, rootKeys, provided)) {
-        return true;
+  for (const need of needs) {
+    for (const lp of laterPaths) {
+      const providerPath = contextProviderPathPrefix(schema, lp, need.providers);
+      if (!providerPath) {
+        continue;
+      }
+      if (earlier.rootField) {
+        const rk = earlier.rootField.alias?.value ?? earlier.rootField.name.value;
+        const rootPath: PathSegment[] = [rk];
+        if (earlierProvidesContextAtProvider(rootPath, providerPath, need.path, provided)) {
+          return true;
+        }
+      }
+      for (const ep of earlierPaths) {
+        if (earlierProvidesContextAtProvider(ep, providerPath, need.path, provided)) {
+          return true;
+        }
       }
     }
   }
@@ -3988,69 +4000,78 @@ function contextProviderDependsOn(
 }
 
 /**
- * True when `earlier` produces the context selection for `later`:
- * - strict ancestor selecting a root context key (User.preferences), or
- * - sibling under a shared prefix whose branch is that root key, selecting
- *   the field due at that hop (Preference.isoCode under …/preferences).
- * Nested key names alone (isoCode at …/orders/isoCode) do not qualify.
+ * Flatten-path prefix ending at the nearest declared `@context` provider for
+ * `laterPath` (types along the path: index i ↔ path.slice(0, i)).
  */
-function earlierProvidesContextOnPath(
-  earlier: PathSegment[],
-  later: PathSegment[],
-  contextPaths: readonly string[][],
-  rootKeys: ReadonlySet<string>,
-  provided: ReadonlySet<string>,
-): boolean {
-  if (pathIsPrefix(earlier, later) && earlier.length < later.length) {
-    return [...rootKeys].some(k => provided.has(k));
+function contextProviderPathPrefix(
+  schema: GraphQLSchema,
+  laterPath: PathSegment[],
+  providers: readonly string[],
+): PathSegment[] | null {
+  if (!providers.length) {
+    return null;
   }
-  let shared = 0;
-  while (
-    shared < earlier.length &&
-    shared < later.length &&
-    earlier[shared] === later[shared]
-  ) {
-    shared++;
-  }
-  if (!(shared > 0 && shared < earlier.length && shared < later.length)) {
-    return false;
-  }
-  const branch = earlier[shared];
-  if (typeof branch !== 'string' || !rootKeys.has(branch)) {
-    return false;
-  }
-  // earlier is under sharedPrefix/branch[/deeper…]
-  const depthIntoCtx = earlier.length - shared - 1;
-  for (const ctxPath of contextPaths) {
-    if (ctxPath[0] !== branch) {
-      continue;
-    }
-    if (depthIntoCtx < 0 || depthIntoCtx >= ctxPath.length) {
-      continue;
-    }
-    if (provided.has(ctxPath[depthIntoCtx]!)) {
-      return true;
-    }
-    // At the root-key hop, a nested selection of the next segment also counts
-    // (…/preferences selecting isoCode).
-    if (depthIntoCtx === 0 && ctxPath.length > 1 && provided.has(ctxPath[1]!)) {
-      return true;
+  const typeNames = typeNamesAlongFlattenPath(schema, laterPath);
+  // typeNames[0] is the root; skip the entity at the end.
+  for (let i = typeNames.length - 2; i >= 0; i--) {
+    if (typeMatchesContextProvider(schema, typeNames[i]!, providers)) {
+      return laterPath.slice(0, i);
     }
   }
-  return false;
+  return null;
 }
 
-/** Key sequences from `@fromContext` selections on fields in `selectionSet`. */
-function collectContextSelectionKeyPaths(
+/**
+ * True when `earlier` sits on the declared provider occurrence and selects the
+ * context path: at the provider selecting the root key, or under
+ * provider/…/ctxPrefix selecting the next segment.
+ */
+function earlierProvidesContextAtProvider(
+  earlier: PathSegment[],
+  providerPath: PathSegment[],
+  ctxPath: readonly string[],
+  provided: ReadonlySet<string>,
+): boolean {
+  if (!ctxPath.length) {
+    return false;
+  }
+  if (pathsEqual(earlier, providerPath)) {
+    // At User: `preferences { isoCode }` → top-level name `preferences`.
+    return provided.has(ctxPath[0]!);
+  }
+  if (!(pathIsPrefix(providerPath, earlier) && earlier.length > providerPath.length)) {
+    return false;
+  }
+  const intoCtx = earlier.slice(providerPath.length);
+  if (intoCtx.length > ctxPath.length) {
+    return false;
+  }
+  for (let i = 0; i < intoCtx.length; i++) {
+    if (String(intoCtx[i]) !== ctxPath[i]) {
+      return false;
+    }
+  }
+  // At provider/preferences: need isoCode (next segment). Full ctx path means
+  // earlier is the leaf selection hop — scalars are not entity Fetches.
+  if (intoCtx.length >= ctxPath.length) {
+    return false;
+  }
+  return provided.has(ctxPath[intoCtx.length]!);
+}
+
+/** Context Key sequences + declared provider type names for `@fromContext` fields. */
+function collectContextNeeds(
+  schema: GraphQLSchema,
   stitchingInfo: StitchingInfo,
   subschema: Subschema,
   typeName: string,
   selectionSet: SelectionSetNode,
-  out: string[][] = [],
-): string[][] {
+  out: Array<{ path: string[]; providers: string[] }> = [],
+): Array<{ path: string[]; providers: string[] }> {
   for (const sel of selectionSet.selections) {
     if (sel.kind === Kind.INLINE_FRAGMENT) {
-      collectContextSelectionKeyPaths(
+      collectContextNeeds(
+        schema,
         stitchingInfo,
         subschema,
         sel.typeCondition?.name.value ?? typeName,
@@ -4067,7 +4088,15 @@ function collectContextSelectionKeyPaths(
       continue;
     }
     for (const ca of cfg.contextArguments) {
-      addKeyPathsFromContextPath(parseContextSelectionPath(ca.selection), out);
+      const providers = getContextProviders(schema, stitchingInfo, ca.context);
+      if (!providers.length) {
+        continue;
+      }
+      const paths: string[][] = [];
+      addKeyPathsFromContextPath(parseContextSelectionPath(ca.selection), paths);
+      for (const path of paths) {
+        out.push({ path, providers });
+      }
     }
   }
   return out;

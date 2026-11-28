@@ -1922,4 +1922,237 @@ describe('contextProviderDependsOn overlapping nested keys', () => {
     const result = await executor({ document });
     expect(result.errors).toBeUndefined();
   });
+
+  it('matches declared User provider path, not Order.preferences namesake', async () => {
+    const { makeExecutableSchema } = await import('@graphql-tools/schema');
+    const { stitchSchemas } = await import('@graphql-tools/stitch');
+    // User.preferences is the declared context selection. Order.preferences is a
+    // same-named field under a non-provider parent and must not count as providing
+    // `{ preferences { isoCode } }` for Locale.label (or create a mutual dep).
+    const subgraph = makeExecutableSchema({
+      typeDefs: /* GraphQL */ `
+        type Preference {
+          id: ID!
+          isoCode: String
+          label(code: String): String
+        }
+        type Locale {
+          id: ID!
+          isoCode: String
+          label(code: String): String
+        }
+        type Order {
+          id: ID!
+          preferences: Preference
+          locale: Locale
+        }
+        type User {
+          id: ID!
+          preferences: Preference
+          orders: [Order]
+        }
+        type Query {
+          users: [User]
+          preferenceById(id: ID!): Preference
+          localeById(id: ID!): Locale
+        }
+      `,
+      resolvers: {
+        Query: {
+          users: () => [
+            {
+              id: 'u1',
+              preferences: { id: 'p-user', isoCode: 'USD' },
+              orders: [{ id: 'o1' }],
+            },
+          ],
+          preferenceById: (_: unknown, { id }: { id: string }) => ({
+            id,
+            isoCode: id.startsWith('p-user') ? 'USD' : 'EUR',
+          }),
+          localeById: (_: unknown, { id }: { id: string }) => ({
+            id,
+            isoCode: 'en',
+          }),
+        },
+        User: {
+          orders: (u: { orders: Array<{ id: string }> }) =>
+            u.orders.map(o => ({
+              ...o,
+              preferences: { id: `p-order-${o.id}`, isoCode: 'EUR' },
+              locale: { id: `l-${o.id}` },
+            })),
+        },
+        Preference: {
+          label: (_: unknown, { code }: { code?: string }) => `pref:${code}`,
+        },
+        Locale: {
+          label: (_: unknown, { code }: { code?: string }) => `loc:${code}`,
+        },
+      },
+    });
+    const fromUserPrefs = {
+      context: 'userContext',
+      name: 'code',
+      type: 'String',
+      selection: '{ preferences { isoCode } }',
+    };
+    const schema = stitchSchemas({
+      subschemas: [
+        {
+          schema: subgraph,
+          executor: createDefaultExecutor(subgraph),
+          merge: {
+            Preference: {
+              selectionSet: '{ id }',
+              fieldName: 'preferenceById',
+              key: ({ id }: { id: string }) => id,
+              argsFromKeys: (ids: readonly string[]) => ({ id: ids[0] }),
+              fields: {
+                label: {
+                  selectionSet: '{ id }',
+                  computed: true,
+                  contextArguments: [fromUserPrefs],
+                },
+              },
+            },
+            Locale: {
+              selectionSet: '{ id }',
+              fieldName: 'localeById',
+              key: ({ id }: { id: string }) => id,
+              argsFromKeys: (ids: readonly string[]) => ({ id: ids[0] }),
+              fields: {
+                label: {
+                  selectionSet: '{ id }',
+                  computed: true,
+                  contextArguments: [fromUserPrefs],
+                },
+              },
+            },
+          },
+        },
+      ],
+      contextProviders: { userContext: ['User'] },
+    });
+    const document = parse(`{
+      users {
+        preferences { isoCode }
+        orders {
+          preferences { isoCode label }
+          locale { isoCode label }
+        }
+      }
+    }`);
+    const plan = buildStitchPlan(schema, document.definitions[0] as any, {}, {});
+    expect(plan.incomplete).toBe(false);
+
+    type FetchNode = {
+      kind: string;
+      id?: string;
+      dependsOn?: string[];
+      entityTypeName?: string;
+      flattenPaths?: Array<Array<string | number>>;
+      selectionSet?: { selections: Array<{ kind: string; name?: { value: string } }> };
+    };
+    const fetches: FetchNode[] = [];
+    const walk = (n: any) => {
+      if (!n || typeof n !== 'object') return;
+      if (n.kind === 'Fetch') fetches.push(n);
+      if (Array.isArray(n.nodes)) n.nodes.forEach(walk);
+      if (Array.isArray(n.aliases)) n.aliases.forEach(walk);
+      if (n.continue) walk(n.continue);
+    };
+    walk(plan.root);
+
+    const pathKey = (p: Array<string | number>) => p.join('.');
+    const orderPrefs = fetches.filter(
+      f =>
+        f.entityTypeName === 'Preference' &&
+        f.flattenPaths?.some(p => pathKey(p) === 'users.orders.preferences'),
+    );
+    const orderLocale = fetches.filter(
+      f =>
+        f.entityTypeName === 'Locale' &&
+        f.flattenPaths?.some(p => pathKey(p) === 'users.orders.locale'),
+    );
+    const selectsLabel = (f: FetchNode) =>
+      f.selectionSet?.selections.some(
+        s => (s.kind === Kind.FIELD || s.kind === 'Field') && s.name?.value === 'label',
+      );
+    const localeLabel = orderLocale.find(selectsLabel);
+    const prefsLabel = orderPrefs.find(selectsLabel);
+    expect(localeLabel).toBeTruthy();
+    expect(prefsLabel).toBeTruthy();
+
+    // Order.preferences must not be a dependsOn of Locale (namesake ≠ User provider).
+    const prefsIds = new Set(orderPrefs.map(f => f.id).filter(Boolean) as string[]);
+    for (const dep of localeLabel!.dependsOn ?? []) {
+      expect(prefsIds.has(dep)).toBe(false);
+    }
+    // Symmetrically Locale must not gate Order.preferences.label.
+    const localeIds = new Set(orderLocale.map(f => f.id).filter(Boolean) as string[]);
+    for (const dep of prefsLabel!.dependsOn ?? []) {
+      expect(localeIds.has(dep)).toBe(false);
+    }
+    // Both contextual hops depend on the root User fetch (declared provider path),
+    // not on each other's Order.* namesake selections.
+    expect(localeLabel!.dependsOn ?? []).toContain('f0');
+    expect(prefsLabel!.dependsOn ?? []).toContain('f0');
+
+    const bag: Captured[] = [];
+    const capturing = capturingExecutor(createDefaultExecutor(subgraph), bag);
+    // Rebuild with capture so we can assert context vars from User, not Order.
+    const capturedSchema = stitchSchemas({
+      subschemas: [
+        {
+          schema: subgraph,
+          executor: capturing,
+          merge: {
+            Preference: {
+              selectionSet: '{ id }',
+              fieldName: 'preferenceById',
+              key: ({ id }: { id: string }) => id,
+              argsFromKeys: (ids: readonly string[]) => ({ id: ids[0] }),
+              fields: {
+                label: {
+                  selectionSet: '{ id }',
+                  computed: true,
+                  contextArguments: [fromUserPrefs],
+                },
+              },
+            },
+            Locale: {
+              selectionSet: '{ id }',
+              fieldName: 'localeById',
+              key: ({ id }: { id: string }) => id,
+              argsFromKeys: (ids: readonly string[]) => ({ id: ids[0] }),
+              fields: {
+                label: {
+                  selectionSet: '{ id }',
+                  computed: true,
+                  contextArguments: [fromUserPrefs],
+                },
+              },
+            },
+          },
+        },
+      ],
+      contextProviders: { userContext: ['User'] },
+    });
+    const result = await createBackboneExecutor(capturedSchema)({ document });
+    expect(result.errors).toBeUndefined();
+    const contextual = bag.filter(r =>
+      Object.keys(r.variables ?? {}).some(k => k.startsWith('__context_')),
+    );
+    expect(contextual.length).toBeGreaterThan(0);
+    for (const req of contextual) {
+      for (const [k, v] of Object.entries(req.variables ?? {})) {
+        if (k.startsWith('__context_')) {
+          // User.preferences.isoCode is USD; Order.preferences is EUR.
+          expect(v).toBe('USD');
+        }
+      }
+    }
+  });
 });
+
