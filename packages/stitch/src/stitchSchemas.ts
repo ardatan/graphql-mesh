@@ -291,8 +291,12 @@ function wrapMergedTypeResolversForBackboneHydration<TContext extends Record<str
       ) {
         // ExternalObject parents are backbone/stitch payloads. Handle them even
         // when callers omit contextValue (HYDRATED lives on a private bag then).
+        // Queries/mutations: skip type merging (plan already hydrated).
+        // Subscriptions: allow mergeFields for nested entity stubs
+        // (Comment.post → Post.title) — classic execute, no stitch plan.
         if (parent != null && isExternalObject(parent)) {
           const responseKey = info.fieldNodes[0]?.alias?.value ?? info.fieldName;
+          const skipTypeMerging = info?.operation?.operation !== 'subscription';
           if (Object.prototype.hasOwnProperty.call(parent, responseKey)) {
             return resolveExternalValue(
               parent[responseKey],
@@ -301,7 +305,7 @@ function wrapMergedTypeResolversForBackboneHydration<TContext extends Record<str
               context,
               info,
               undefined,
-              true,
+              skipTypeMerging,
             );
           }
           if (Object.prototype.hasOwnProperty.call(parent, info.fieldName)) {
@@ -312,7 +316,7 @@ function wrapMergedTypeResolversForBackboneHydration<TContext extends Record<str
               context,
               info,
               undefined,
-              true,
+              skipTypeMerging,
             );
           }
           // Missing key: rethrow unpathed subgraph errors (shared-root non-null).

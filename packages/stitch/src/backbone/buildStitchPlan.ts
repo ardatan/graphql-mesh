@@ -34,6 +34,8 @@ import type { PathSegment, StitchPlan, StitchPlanNode } from './types.js';
  * planning-large (100+ hops) gets earliest-wave coalesce.
  */
 const AGGRESSIVE_WAVE_FOLD_MIN_ENTITY_HOPS = 16;
+/** Above this, skip pass-2 wave fold (many-plans); exact-deps fold only. */
+const AGGRESSIVE_WAVE_FOLD_MAX_ENTITY_HOPS = 80;
 
 function selectionSetOf(selections: readonly SelectionNode[]): SelectionSetNode {
   return { kind: Kind.SELECTION_SET, selections: [...selections] };
@@ -6157,7 +6159,8 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
     return stuck;
   };
 
-  // Iteratively break SCCs: among stuck hops, drop earlier→later edges first.
+  // Iteratively break SCCs. Prefer dropping reuseFrom annotation waits first
+  // so path/@requires dependsOn edges stay; then earlier→later; then any.
   for (let guard = 0; guard < hops.length * hops.length; guard++) {
     const stuck = stuckOf();
     if (!stuck.length) {
@@ -6165,17 +6168,45 @@ function stripDependsOnCycles(root: StitchPlanNode): StitchPlanNode {
     }
     const stuckSet = new Set(stuck);
     let removed = false;
-    // Prefer dropping earlier-waits-on-later (i < j).
-    for (const i of stuck) {
+    // 1) Drop one reuseFrom edge inside the stuck set (annotation-added waits).
+    reuseOuter: for (const i of stuck) {
+      const hop = hops[i]!;
+      const reuse =
+        hop.kind === 'Fetch' || hop.kind === 'BatchFetch'
+          ? new Set(('reuseFrom' in hop && hop.reuseFrom) || [])
+          : new Set<string>();
+      if (!reuse.size) {
+        continue;
+      }
       for (const j of preds[i]!) {
-        if (stuckSet.has(j) && i < j) {
+        if (!stuckSet.has(j)) {
+          continue;
+        }
+        const pred = hops[j]!;
+        const predIds = hopCompletesIdList(pred as FoldableEntityHop);
+        const predId = pred.id;
+        const isReuse =
+          (predId != null && reuse.has(predId)) || predIds.some(id => reuse.has(id));
+        if (isReuse) {
           markDrop(i, j);
           removed = true;
+          break reuseOuter;
         }
       }
     }
     if (!removed) {
-      // Fall back: drop any one edge inside the stuck set.
+      // 2) Prefer dropping earlier-waits-on-later (i < j).
+      for (const i of stuck) {
+        for (const j of preds[i]!) {
+          if (stuckSet.has(j) && i < j) {
+            markDrop(i, j);
+            removed = true;
+          }
+        }
+      }
+    }
+    if (!removed) {
+      // 3) Fall back: drop any one edge inside the stuck set.
       outer: for (const i of stuck) {
         for (const j of preds[i]!) {
           if (stuckSet.has(j)) {
@@ -6590,8 +6621,14 @@ function foldSameWaveSubgraphFetches(
     hop => `${depsKey(hop)}::${subKey(hop.subschema)}`,
   );
 
-  // Pass 2: aggressive wave fold only on large plans.
-  if (countFoldableEntityHops(next) < AGGRESSIVE_WAVE_FOLD_MIN_ENTITY_HOPS) {
+  // Pass 2: aggressive wave fold only on mid-size plans. Deep recursive
+  // graphs (many-plans) leave mutual dependsOn after fold; strip then cuts
+  // path edges → null leaves. Skip pass 2 above this ceiling (exact-deps only).
+  const foldable = countFoldableEntityHops(next);
+  if (
+    foldable < AGGRESSIVE_WAVE_FOLD_MIN_ENTITY_HOPS ||
+    foldable >= AGGRESSIVE_WAVE_FOLD_MAX_ENTITY_HOPS
+  ) {
     return next;
   }
   const waveById = buildCompletesWaveMap(next);
