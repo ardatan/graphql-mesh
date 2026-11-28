@@ -48,8 +48,8 @@ function hasInaccessible(obj: DirectableObject, inaccessibleName: string) {
 
 /**
  * Strip federation join/link internals and `@inaccessible` from a stitched
- * schema. Called inside {@link stitchSchemas} before root proxies are
- * installed so the backbone binds once to the public schema.
+ * schema. Federation calls this via `beforeBackboneAttach` / the
+ * `onStitchedSchema` path so root proxies bind once to the public schema.
  */
 export function filterInternalFieldsAndTypes(finalSchema: GraphQLSchema): GraphQLSchema {
   const inaccessibleName = resolveInaccessibleDirectiveName(finalSchema);

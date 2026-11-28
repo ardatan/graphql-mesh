@@ -1,5 +1,9 @@
 export {
   attachBackboneExecutor,
+  markChangedRootResolvesAsLocal,
+  snapshotRootFieldResolves,
+} from './attachBackboneExecutor.js';
+export {
   backboneExecutor,
   createBackboneExecutor,
   getBackboneExecutor,

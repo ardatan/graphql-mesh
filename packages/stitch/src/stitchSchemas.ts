@@ -35,7 +35,6 @@ import { handleMaybePromise } from '@whatwg-node/promise-helpers';
 import { attachBackboneExecutor } from './backbone/attachBackboneExecutor.js';
 import { defaultMergedResolver as backboneDefaultMergedResolver } from './backbone/defaultMergedResolver.js';
 import { BACKBONE_EXECUTING } from './backbone/rootProxyingResolvers.js';
-import { filterInternalFieldsAndTypes } from './filterInternalFieldsAndTypes.js';
 import { resolveLocalFieldResult } from './resolveLocalFieldResult.js';
 import { addStitchingInfo, completeStitchingInfo, createStitchingInfo } from './stitchingInfo.js';
 import {
@@ -63,7 +62,7 @@ export function stitchSchemas<TContext extends Record<string, any> = Record<stri
     schemaExtensions,
     overrideLabels: overrideLabelsOption,
     handleProgressiveOverride: handleProgressiveOverrideOption,
-    filterFederationInternals: filterFederationInternalsOption,
+    beforeBackboneAttach,
     ...rest
   } = options;
   let {
@@ -160,11 +159,10 @@ export function stitchSchemas<TContext extends Record<string, any> = Record<stri
     applyExtensions(schema, mergedSchemaExtensions);
   }
 
-  // Federation join internals only — not every stitchSchemas caller (plain
-  // stitch may keep `_entities` / subgraph SDL). Filter before proxies so the
-  // backbone binds once to the public schema (no retarget / re-attach).
-  if (filterFederationInternalsOption || schema.getType('join__Graph') != null) {
-    schema = filterInternalFieldsAndTypes(schema);
+  // Optional pre-attach transform (federation filter / onStitchedSchema). Stitch
+  // itself stays generic — no join__Graph / federation filter here.
+  if (beforeBackboneAttach) {
+    schema = beforeBackboneAttach(schema) || schema;
   }
 
   // Shared backboneExecutor + root proxies. Progressive-override inputs live on

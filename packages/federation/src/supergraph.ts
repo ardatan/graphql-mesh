@@ -58,7 +58,10 @@ import { CRITICAL_ERROR } from '@graphql-tools/executor';
 import { buildHTTPExecutor, type HTTPExecutorOptions } from '@graphql-tools/executor-http';
 import {
   calculateSelectionScore,
+  filterInternalFieldsAndTypes,
   getDefaultFieldConfigMerger,
+  markChangedRootResolvesAsLocal,
+  snapshotRootFieldResolves,
   stitchSchemas,
   ValidationLevel,
   type IStitchSchemasOptions,
@@ -2254,8 +2257,6 @@ export function getStitchingOptionsFromSupergraphSdl(
     typeDefs: additionalTypeDefs,
     assumeValid: true,
     assumeValidSDL: true,
-    // Strip join__/inaccessible before backbone proxies (also auto via join__Graph).
-    filterFederationInternals: true,
     typeMergingOptions: {
       useNonNullableFieldOnConflict: true,
       validationSettings: {
@@ -2284,18 +2285,34 @@ export interface GetStitchedSchemaFromSupergraphSdlOpts extends GetStitchingOpti
   supergraphSdl: string | DocumentNode;
   /** Mutate stitch options (including `resolvers` / `typeDefs`) before stitch. */
   onStitchingOptions?(opts: StitchingOptionsFromSupergraphSdl): void;
+  /**
+   * Mutate the filtered public schema before backbone root proxies attach.
+   * Runs after `filterInternalFieldsAndTypes`, before the single attach.
+   */
+  onStitchedSchema?(schema: GraphQLSchema): GraphQLSchema | void;
 }
 
 /**
  * Build an executable stitched schema from Federation supergraph SDL.
- * `stitchSchemas` filters join internals then installs shared backbone root
- * proxies (plan/locals from `info.schema`). `onStitchedSchema` was removed —
- * mutate via `onStitchingOptions` / resolvers before stitch completes.
+ * Filter join internals and run `onStitchedSchema` via `beforeBackboneAttach`
+ * so shared root proxies install once on the public schema (no retarget /
+ * WeakMap / post-attach mapSchema rebind).
  */
 export function getStitchedSchemaFromSupergraphSdl(opts: GetStitchedSchemaFromSupergraphSdlOpts) {
   const stitchSchemasOpts = getStitchingOptionsFromSupergraphSdl(opts);
   opts.onStitchingOptions?.(stitchSchemasOpts);
-  return stitchSchemas(stitchSchemasOpts);
+  return stitchSchemas({
+    ...stitchSchemasOpts,
+    beforeBackboneAttach(schema) {
+      let next = filterInternalFieldsAndTypes(schema);
+      if (opts.onStitchedSchema) {
+        const rootResolvesBefore = snapshotRootFieldResolves(next);
+        next = opts.onStitchedSchema(next) || next;
+        markChangedRootResolvesAsLocal(next, rootResolvesBefore);
+      }
+      return next;
+    },
+  });
 }
 
 const anyTypeDefinitionNode: ScalarTypeDefinitionNode = {
